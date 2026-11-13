@@ -838,3 +838,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-060 on its branch `task/TASK-060-reports-exports`: PG-051 *Laporan* — the stock, purchase, sales, receivable, payment, profit and cash-flow reports, each by its read class, one section per company, no total across companies, each in one snapshot —; PG-052 *Laporan Gabungan* with the consolidated figures and the inter-company allocation report; PG-053 *Ekspor Saya*; ROUTE-283's admission, the `GenerateExport` job writing a private EXPORT file through DOC under the recorded context, and ROUTE-284's download re-authorized at request time.
 - Every check passed in fresh CI on `fd32ed5`. Codex's review unavailable at its usage limit — the fallback review under CR-001, approved by the Owner (DIR-107; APPR-029). TASK-060 DONE — progress 62 / 87 —; TASK-062, TASK-063, TASK-064, TASK-065, TASK-067 and TASK-068 READY.
+
+## Unreleased — 2026-11-13, TASK-093 — the in-place re-authentication's account and password
+
+- Built TASK-093 on its branch `task/TASK-093-reauth-identity`: the session's opaque account key on every authenticated answer and the root view, the in-place dialog resuming the covered page only for its own account on the endpoint's own success, a session still signed in after a 419 proving its account by AU-15's password confirmation with its e-mail, an ended one signing in anew with its second factor.
+- Updated the locked `phpseclib/phpseclib` to 4.0.3 for the advisory GHSA-w3p9-g4p2-h3rr of 2026-11-02 that TL-14's PHP audit refuses (SX-05); no package added or removed.

@@ -25,10 +25,19 @@ final class ReturnFixture
             return response()->json(['error' => 'not signed in'], 401);
         }
 
-        Authorization::grantCompany($user, $company->id);
+        // A run composed over another fixture of the same company (TASK-063's CJ-06) already holds its active grant: one active grant per company.
+        if (DB::table('user_company_grants')->where('user_id', $user->id)->where('company_id', $company->id)->whereNull('revoked_at')->doesntExist()) {
+            Authorization::grantCompany($user, $company->id);
+        }
 
         foreach (['stock.view', 'cost.view', 'projects.view', 'evidence.view', 'stock.reserve', 'purchase_return.record', 'cases.close'] as $capability) {
-            Authorization::grant($user, $capability);
+            // The same: a capability the composed run already granted stays its one active grant.
+            $held = DB::table('user_capability_grants as g')->join('capabilities as c', 'c.id', '=', 'g.capability_id')
+                ->where('g.user_id', $user->id)->where('c.code', $capability)->whereNull('g.revoked_at')->exists();
+
+            if (! $held) {
+                Authorization::grant($user, $capability);
+            }
         }
 
         $lot = DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->join('purchase_lines as l', 'l.id', '=', 'r.purchase_line_id')->join('purchases as p', 'p.id', '=', 'l.purchase_id')

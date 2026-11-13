@@ -39,9 +39,12 @@ final class ConfirmPasswordController
         }
 
         $password = AttemptLogin::password($request->input('password'));
+        // TASK-093: the in-place dialog of a session still signed in names its account by e-mail; another account's
+        // e-mail is refused as a wrong password is — the covered page never resumes under an identity not proved.
+        $sameAccount = AttemptLogin::namesAccount($user, $request->input('email'));
 
         try {
-            $matches = $user !== null && $password !== ''
+            $matches = $user !== null && $password !== '' && $sameAccount
                 && $slots->authenticated('password.confirm', fn (): bool => Hash::check($password, $user->getAuthPassword()));
         } catch (VerificationRefused) {
             return response()->json(['message' => trans_choice('messages.msg_20', 1, ['count' => 1])], 429, ['Retry-After' => '1']);

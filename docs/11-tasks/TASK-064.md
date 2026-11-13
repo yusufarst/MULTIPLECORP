@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** VERIFYING
 
 **RISK CLASS:** STANDARD
 
@@ -31,6 +31,8 @@ These journeys prove the cross-cutting promises no single module owns: isolation
 - TASK-059 — Search and scanning
 - TASK-060 — Reports, the consolidated report and exports
 - TASK-061 — Activity history and security log
+- TASK-093 — Defect D6 — the in-place re-authentication resumes only its own account and only on a checked password (UXH-02; IP-11) (Change 19)
+- TASK-094 — Defect D7 — PG-014's inputs frozen while a save's outcome is unknown (IP-02; D-UX-02) (Change 19)
 
 **BLOCKS:**
 

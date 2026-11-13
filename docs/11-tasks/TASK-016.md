@@ -40,6 +40,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 - TASK-030 — Evidence and uploaded documents
 - TASK-031 — Correction cases
 - TASK-061 — Activity history and security log
+- TASK-093 — Defect D6 — the in-place re-authentication resumes only its own account and only on a checked password (UXH-02; IP-11)
 
 **PARALLEL SAFE:** NO — every page Task renders inside the shell
 

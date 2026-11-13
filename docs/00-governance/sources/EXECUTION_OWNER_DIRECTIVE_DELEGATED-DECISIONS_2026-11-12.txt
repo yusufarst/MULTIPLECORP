@@ -1,0 +1,294 @@
+Owner directive received in session during execution, 2026-11-12 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received. It came with the attachment `OPERATOR_INPUT_REQUEST_OWNER_PREPARED.md` — the operator input request of 2026-11-11 with the Owner-prepared addendum of 2026-11-12 —, whose addendum is appended verbatim to docs/handoff/OPERATOR_INPUT_REQUEST.md.
+
+OWNER DIRECTIVE — DELEGATED DECISIONS, OPERATOR INPUTS & SECURITY PRIORITY
+MULTIPLECORP — 12 NOVEMBER 2026
+PRIORITY: CRITICAL
+MODE: MAXIMUM SAFE EXECUTION — CONTINUE WITHOUT UNNECESSARY OWNER QUESTIONS
+DEADLINE: 12 NOVEMBER 2026, 23:59 WIB
+Saya sebagai Project Owner memberikan arahan lanjutan yang mengikat untuk pelaksanaan MULTIPLECORP di bawah DIR-109 dan seluruh aturan governance yang masih berlaku.
+Saya melampirkan:
+`OPERATOR_INPUT_REQUEST_OWNER_PREPARED.md`
+File ini berisi dokumen permintaan operator asli beserta keputusan teknis yang saya delegasikan dan rekomendasi yang telah disiapkan.
+PERINTAH UTAMA: JANGAN TERUS-MENERUS MEMINTA SAYA MEMILIH IMPLEMENTASI TEKNIS YANG SUDAH DIATUR DALAM SPESIFIKASI ATAU DAPAT DIPUTUSKAN SESUAI KEWENANGAN AGENT.
+Gunakan preferensi dalam file terlampir sejauh sesuai dengan kontrak APPROVED.
+Buat keputusan teknis rutin secara mandiri. Eskalasi hanya bila kewenangan keputusan, keamanan, biaya, atau kontrak benar-benar mengharuskannya.
+Delegasi keputusan ini tidak mengizinkan agent mengarang bukti, menggantikan operator manusia, atau menerima akses production.
+1. PROSES FILE YANG SAYA LAMPIRKAN SEKARANG
+Baca keseluruhan:
+`OPERATOR_INPUT_REQUEST_OWNER_PREPARED.md`
+Bandingkan dengan:
+
+* `docs/handoff/OPERATOR_INPUT_REQUEST.md`
+* `docs/09-operations/INFRASTRUCTURE.md`
+* `docs/09-operations/BACKUP_RECOVERY.md`
+* `docs/10-release/RELEASE_PLAN.md`
+* TASK-071 sampai TASK-087 yang relevan.
+* CHANGE_CONTROL serta source record keputusan Owner.
+
+Lakukan tindakan berikut:
+
+1. Ekstrak seluruh preferensi teknis yang sudah disiapkan.
+2. Gunakan preferensi tersebut sebagai pilihan awal, bukan mengulang pertanyaan yang sama kepada Owner.
+3. Pastikan tidak ada yang bertentangan dengan approved specification.
+4. Catat arahan Owner ini pada record yang sesuai jika diwajibkan CHANGE_CONTROL.
+5. Jangan mengubah status `OPERATOR_INPUT_REQUEST.md` menjadi CLOSED sebelum input manusia benar-benar diterima.
+6. Jangan mengubah input yang masih `NOT CONFIRMED`, `NOT MEASURED`, atau `NOT PROVIDED` menjadi PASS.
+7. Jangan menggabungkan perubahan governance ke PR lain tanpa batas scope dan histori yang jelas.
+8. Jangan menjadikan lampiran sebagai bukti palsu untuk menyelesaikan Task milik HUMAN OPERATOR.
+
+Jika berkas tersebut tidak tersedia sebagai attachment, gunakan salinan teks yang saya kirim dan minta satu kali unggahan ulang. Jangan mengulang permintaan jika berkas sudah dapat dibaca.
+2. KEPUTUSAN TEKNIS OWNER
+Gunakan keputusan berikut sebagai pilihan default yang saya delegasikan, sepanjang sesuai aturan approved.
+A. Deployment
+Gunakan Docker Compose sebagai pilihan default bersyarat.
+Jika OPI-03 membuktikan Coolify sudah dipasang dan dipakai di VPS, gunakan ketentuan approved yang mengizinkan Coolify.
+Jangan mengasumsikan Docker Compose atau Coolify sudah terpasang.
+Nginx tetap dipertahankan.
+MULTIPLECORP dan aplikasi produksi kedua wajib terisolasi.
+Tidak boleh ada perubahan pada aplikasi kedua tanpa kewenangan dan prosedur yang sah.
+B. Alert channel
+Pilihan utama saya adalah Telegram bot pada mekanisme gratis.
+Persyaratannya:
+
+* Notifikasi untuk Owner dan operator.
+* Tidak menambah biaya berulang.
+* Token disimpan di tempat rahasia yang disetujui.
+* Tidak ada credential atau data sensitif dalam notifikasi.
+* Pengiriman nyata harus diuji oleh operator.
+* Penerapan mengikuti COST_POLICY dan INFRASTRUCTURE.
+
+Pilihan tersebut adalah preferensi Owner, belum merupakan bukti OPI-05 selesai.
+C. Backup
+Gunakan rancangan backup approved:
+
+* Backup lokal pada VPS.
+* Salinan terenkripsi di luar VPS dan akun provider.
+* Kunci enkripsi disimpan terpisah.
+* Pemulihan wajib diuji.
+* Jangan menggunakan layanan berbayar baru tanpa izin.
+
+Prioritaskan perangkat atau storage yang sudah dimiliki Owner atau klien.
+Jenis perangkat, keberadaannya, pemilik aktual, dan keberhasilan backup harus dikonfirmasi manusia.
+D. Provider-side features
+Semua fitur AI atau otomatisasi provider yang dapat bertindak pada host atau data wajib diperiksa.
+Default keselamatan: fitur tersebut nonaktif sebelum data produksi, kecuali jangkauannya telah diterima secara resmi oleh Owner bersama klien.
+Jangan mencatatnya sudah OFF sebelum operator memverifikasi panel.
+E. Google OAuth
+Ikuti kontrak OAuth yang sudah approved.
+Tidak boleh mengaktifkan Google sign-in sebelum OAuth client dan redirect URI sah.
+Tidak boleh menghapus kebutuhan V1 hanya karena OAuth belum disiapkan.
+F. Biaya
+Target tambahan biaya berulang tetap nol kecuali ada keputusan sah yang menyatakan lain.
+Tidak boleh mengambil subscription baru atau mengubah infrastruktur berbayar secara sepihak.
+Keputusan-keputusan di atas tidak perlu ditanyakan ulang kepada saya hanya untuk menentukan pola implementasi teknisnya.
+3. SELESAIKAN PENGUMPULAN INPUT OPERATOR DENGAN BENAR
+Jangan hanya menulis daftar OPI lalu menyatakan persoalannya sudah diselesaikan.
+Pisahkan secara eksplisit:
+A. Policy decided — arah teknis sudah tersedia.
+B. Fact verified — operator telah mengukur atau mengonfirmasi kondisi nyata.
+C. Evidence missing — fakta masih membutuhkan operator, klien atau data steward.
+D. Task unblocked — seluruh prasyarat resmi Task benar-benar telah terpenuhi.
+Input prioritas:
+
+* OPI-26: pemberian akses VPS kepada operator oleh klien.
+* OPI-03: inventaris layanan VPS dan shared proxy.
+* OPI-02: disk, OS dan bandwidth nyata.
+* OPI-27: pemakaian resource dan maintenance window aplikasi kedua.
+* OPI-29: inventaris fitur provider yang aktif.
+* OPI-30: domain dan staging hostname yang disimpan melalui kanal operator yang tepat.
+* OPI-05: alert channel yang dikonfirmasi dan diuji.
+* OPI-04, OPI-28, OPI-31, OPI-32: DNS, pemegang akses, 2FA dan lokasi backup.
+* OPI-07 dan OPI-08: pengukuran host dan konektivitas.
+* OPI-06: kesiapan Google Cloud Owner.
+* DEP-05: struktur legacy, jumlah dan control totals dari data steward.
+* OPI-21 dan OPI-22: pengukuran storage serta pengaturan backup terkait TASK-071.
+
+Periksa juga setiap prasyarat lain pada kontrak TASK-071 dan RELEASE_PLAN; daftar ini bukan pengganti kontraknya.
+PENTING: jangan pernah mengisi angka palsu, mengarang layanan yang terpasang, atau menandai akses telah diberikan hanya karena Owner telah memilih rekomendasi teknis.
+Jika input faktual belum tersedia:
+
+1. Pertahankan status BLOCKED.
+2. Catat satu permintaan operator yang spesifik dan ringkas.
+3. Sebutkan siapa yang berwenang memberikan bukti.
+4. Jelaskan bagaimana bukti dicatat dengan aman.
+5. Lanjutkan Task AGENT independen.
+
+Jangan berhenti seluruh proyek karena satu input eksternal belum diterima.
+4. PRIORITAS SECURITY — TASK-064
+Ada dua dugaan material yang harus diverifikasi.
+SECURITY FINDING A — UXH-02
+Pada `session-core.ts`, `sameAccount()` membandingkan account hints menggunakan `JSON.stringify`.
+Account hints tidak mengandung identifier akun unik.
+Risikonya adalah akun B dengan nama, capabilities, dan perusahaan yang identik dapat dianggap sama dengan akun A saat autentikasi ulang.
+Ini berpotensi membuat:
+
+* Halaman akun A tetap terbuka.
+* Input lama akun A tetap terlihat.
+* Pending command akun A dikirim ulang oleh sesi akun B.
+* Batas pemisahan akun dalam UXH-02 dilanggar.
+
+PERINTAH:
+
+1. Buat skenario deterministik dengan dua akun berbeda.
+2. Berikan nama tampilan, capabilities, dan perusahaan yang sama.
+3. Pastikan user ID berbeda.
+4. Buat input serta pending command pada akun A.
+5. Paksa re-authentication.
+6. Lakukan sign-in menggunakan akun B.
+7. Pastikan halaman A tidak dapat dilanjutkan.
+8. Pastikan input A tidak terlihat.
+9. Pastikan command A tidak dikirim ulang.
+10. Pastikan tidak ada efek bisnis tercatat atas identitas yang salah.
+
+Jika defect terbukti, lakukan perbaikan sesuai kontrak UXH-02 dan mekanisme defect/CHANGE_CONTROL.
+Gunakan identitas akun yang stabil dan berasal dari server. Jangan hanya mengubah fixture agar pengujian tampak berhasil.
+SECURITY FINDING B — REAUTH 419
+Ada dugaan bahwa setelah respons 419 pada sesi yang masih valid, dialog login ulang dapat menerima password yang salah.
+PERINTAH:
+
+1. Reproduksi 419 dengan sesi yang masih valid.
+2. Pastikan dialog re-authentication muncul.
+3. Masukkan password salah.
+4. Verifikasi respons server yang sebenarnya.
+5. Pastikan dialog tidak menutup.
+6. Pastikan pending command tidak dijalankan.
+7. Pastikan halaman tidak dibuka kembali berdasarkan autentikasi palsu.
+8. Uji pula password benar dan flow TOTP untuk memastikan jalur sah tetap berfungsi.
+9. Uji bahwa guest middleware, redirect, dan interpretasi HTTP response tidak menciptakan false authentication success.
+
+Jika terkonfirmasi, ini defect keamanan blocking.
+Jangan memperbaikinya dengan mengabaikan 419, mengubah kode status yang diharapkan, atau melemahkan tes.
+SECURITY FINDING C — PG-014 pending command
+Verifikasi bahwa input form terkunci saat hasil command belum diketahui, sesuai IP-02 dan kontrak terkait.
+Jika terbukti ada celah, perbaiki melalui jalur yang sah tanpa membuat Task baru secara sembarangan.
+SECURITY RULE
+Dua defect keamanan pertama tidak boleh ditunda sampai seluruh Task selesai apabila benar-benar terbukti.
+Jangan menahan Task independen yang tidak terdampak.
+Catat bukti, tingkat risiko, sumber defect, dan remediasi.
+5. PRIORITAS PR DAN TEST
+Periksa state aktual repository sebelum mengambil tindakan.
+PR #77 — TASK-063
+
+* Verifikasi HEAD saat ini.
+* Evaluasi seluruh CI dan Codex yang relevan.
+* Pastikan CJ-06 serta CJ-15 lulus Chromium dan WebKit.
+* Pastikan perbaikan D1–D5 telah masuk.
+* Jika semua gate sah, tuntaskan DONE record dan merge.
+* Jangan menunggu PR #81 jika tidak ada dependency material.
+
+PR #81 — TASK-064
+
+* Verifikasi HEAD saat ini.
+* Baca hasil CI dan Codex.
+* Jangan menganggap Codex bersih berarti dugaan keamanan sudah aman.
+* Jalankan pengujian security A/B/C yang disebut di atas.
+* Tutup kekurangan cakupan QS-14 pada CJ-13.
+* Perbaiki kegagalan journey secara terarah.
+* Jangan mengubah kontrak supaya tes hijau.
+* CJ-16 tetap NOT RUN sampai pengujian staging oleh operator benar-benar dilakukan, sesuai kontrak TASK-064.
+* Jangan mengklaim CJ-16 PASS hanya karena fixture sudah ditulis.
+
+Jika ditemukan defect, rekam melalui prosedur feedback yang disetujui.
+Jika diperlukan perubahan kode di modul yang telah DONE, jangan menyisipkannya secara diam-diam ke scope verifikasi.
+6. PERCEPATAN CI — DIR-109
+Pertahankan mode percepatan yang sudah disahkan.
+
+* Maksimum tiga helper sesuai DIR-108.
+* Maksimum dua PR implementasi yang belum terverifikasi dalam antrean.
+* Gunakan watcher tunggal jika cukup.
+* Jangan polling GitHub Actions berulang kali tanpa tujuan.
+* Gunakan waktu CI untuk Task independen yang eligible.
+* Jangan mencampur worktree.
+* Jangan menjalankan pengujian berbagi database secara bersamaan.
+* Jangan memindahkan perubahan belum diverifikasi ke `main`.
+* Jangan merge PR gagal.
+* Jangan menandai Task DONE sebelum persyaratannya terpenuhi.
+
+CI failure yang material harus diperbaiki secepat mungkin.
+CI failure yang terisolasi boleh menunggu dalam antrean terkontrol selama Task independen berjalan, sesuai DIR-109.
+Jangan mengubah kegagalan menjadi PASS melalui pengecualian yang tidak sah.
+7. LANJUTKAN TASK YANG ELIGIBLE
+Setelah PR #77 dan PR #81 ditangani sesuai prioritas dan kapasitas antrean:
+
+1. TASK-065 — UI/UX consistency.
+2. TASK-067 — Localization.
+3. TASK-068 — Performance.
+4. TASK-066 — Accessibility, setelah dependency sah.
+5. TASK-069 — Security dan route integrity, setelah dependency sah.
+6. TASK-070 — Release regression, setelah dependency sah.
+7. Task release engineering AGENT yang telah READY.
+
+Untuk Task yang membutuhkan OPI atau DEP-05, jangan mengarang input. Bekerjalah pada Task lain yang sah.
+Target saya adalah menyelesaikan seluruh Task AGENT yang memungkinkan hari ini, tanpa mengorbankan keamanan ataupun bukti.
+8. JANGAN MELEMPARKAN KEPUTUSAN TEKNIS RUTIN KEMBALI KE OWNER
+Saya mendelegasikan pilihan implementasi yang sudah dicakup approved specification.
+Jangan meminta persetujuan lagi hanya karena tersedia dua teknik implementasi yang sama-sama aman dan sah.
+Gunakan:
+
+1. Approved canonical specification.
+2. Keputusan Owner yang sudah tercatat.
+3. Preferensi Owner dalam lampiran.
+4. CHANGE_CONTROL untuk perbedaan atau keputusan baru.
+5. Penilaian teknis untuk pilihan rutin dalam scope.
+
+Tetap minta keputusan Owner jika menyangkut perubahan scope, biaya, penerimaan risiko material, pengecualian terhadap approved requirement, atau hal yang secara eksplisit menjadi kewenangan Owner.
+Jangan menganggap delegasi ini sebagai izin untuk menerima risiko keamanan atau mengubah aturan keuangan.
+9. FILE DAN BUKTI
+Gunakan repository yang sudah tersedia. Jangan meminta saya mengunggah ulang file yang sudah ada.
+Jika suatu bukti faktual membutuhkan berkas di luar repository:
+
+* Sebutkan nama atau jenis berkas yang dibutuhkan.
+* Sebutkan peran yang harus menyediakannya.
+* Tentukan apakah berkas boleh dibaca agent.
+* Tentukan tempat penyimpanan yang sesuai.
+* Jangan meminta data produksi atau credential untuk diunggah ke chat.
+
+Tidak perlu screenshot setiap langkah jika bukti automated test sudah memadai.
+Jangan meminta raw database dump, credential, private key, token, backup production, atau file data pribadi.
+Untuk DEP-05, hanya berikan struktur sintetis/non-sensitif yang sah kepada agent; data legacy nyata dan rekonsiliasi privat tetap di kanal yang disetujui.
+10. HASIL YANG WAJIB DILAPORKAN
+Saya tidak ingin laporan panjang yang hanya berisi rencana.
+Laporkan hasil nyata dengan format:
+MULTIPLECORP — EXECUTION RESULT
+
+* Main HEAD dan tree verification:
+* DONE / 92:
+* PR merged beserta SHA:
+* Task selesai:
+* CI PASS/FAIL yang masih berlaku:
+* Security findings: CONFIRMED / NOT REPRODUCED / PENDING:
+* Remediasi:
+* OPI yang benar-benar terverifikasi:
+* OPI yang masih menunggu manusia:
+* Task AGENT berikutnya:
+* Tindakan manusia yang benar-benar tidak dapat digantikan:
+
+Hindari laporan status yang terlalu sering. Berikan pembaruan untuk perubahan material, bukan setiap langkah membaca file.
+11. ATURAN PENUTUPAN HARI
+Sebelum deadline, usahakan:
+
+* Semua Task eligible selesai.
+* Semua temuan keamanan blocking diselesaikan.
+* Semua PR eligible merged.
+* Semua status Task akurat.
+* Semua input operator yang tersedia benar-benar dicatat.
+* Semua input manusia yang belum tersedia tetap tercatat sebagai blocker.
+* Tidak ada persyaratan V1 yang dihapus.
+* Tidak ada klaim DONE palsu.
+* Tidak ada tindakan production tanpa operator.
+* Tidak ada pekerjaan independen yang sengaja dibiarkan menganggur.
+
+Jika 92/92 tidak tercapai karena input manusia belum tersedia, jangan mengarang bukti.
+Selesaikan sebanyak mungkin Task yang sah terlebih dahulu.
+12. PERINTAH EKSEKUSI FINAL
+I HAVE DELEGATED ROUTINE TECHNICAL CHOICES. USE THEM.
+DO NOT ASK ME TO SELECT APPROVED IMPLEMENTATION DETAILS AGAIN.
+DO NOT SUBSTITUTE AN AI STATEMENT FOR REAL OPERATOR EVIDENCE.
+DO NOT WAIT IDLY FOR CI WHILE ELIGIBLE WORK EXISTS.
+DO NOT MERGE UNVERIFIED CODE.
+DO NOT IGNORE CONFIRMED SECURITY DEFECTS.
+DO NOT REPLAN THE WHOLE PROJECT.
+DO NOT CREATE UNNECESSARY NEW TASKS.
+CONTINUE EXECUTION UNTIL NO AUTHORIZED, ELIGIBLE WORK REMAINS OR THE ACTIVE SESSION ENDS.
+Mulai dari status aktual PR #77 dan PR #81, selesaikan diagnosis keamanan TASK-064, proses lampiran keputusan Owner dengan pencatatan yang benar, dan lanjutkan Task eligible tanpa meminta saya mengulangi keputusan teknis yang telah didelegasikan.
+EXECUTE NOW.

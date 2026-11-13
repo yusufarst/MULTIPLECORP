@@ -84,6 +84,15 @@ final class AttemptLogin
     }
 
     /** AU-01: the e-mail trimmed and in lower case. */
+    /**
+     * TASK-093: whether a confirmation that names its account by e-mail names the session's own — the identifier
+     * normalized as at sign-in; a confirmation without an e-mail (AU-15's step-up) names none and is not refused here.
+     */
+    public static function namesAccount(mixed $user, mixed $email): bool
+    {
+        return $email === null || ($user instanceof User && is_string($email) && self::identifier($email) === mb_strtolower($user->email));
+    }
+
     public static function identifier(mixed $email): string
     {
         return mb_strtolower(trim(is_string($email) ? $email : ''));

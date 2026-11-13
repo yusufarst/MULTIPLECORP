@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SessionDeadline;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
@@ -28,6 +29,9 @@ use Tests\Support\Fixtures\HandoverFixture;
 use Tests\Support\Fixtures\ImportFixture;
 use Tests\Support\Fixtures\InvoiceFixture;
 use Tests\Support\Fixtures\JourneyAccessFixture;
+use Tests\Support\Fixtures\JourneyCompletionFixture;
+use Tests\Support\Fixtures\JourneyDocumentFixture;
+use Tests\Support\Fixtures\JourneyFinanceFixture;
 use Tests\Support\Fixtures\JourneyFixture;
 use Tests\Support\Fixtures\JourneyMasterFixture;
 use Tests\Support\Fixtures\JourneySessionFixture;
@@ -38,6 +42,7 @@ use Tests\Support\Fixtures\OtherCashFixture;
 use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\PurchaseFixture;
 use Tests\Support\Fixtures\QuotationFixture;
+use Tests\Support\Fixtures\ReauthFixture;
 use Tests\Support\Fixtures\ReceivingFixture;
 use Tests\Support\Fixtures\ReservationFixture;
 use Tests\Support\Fixtures\ReturnFixture;
@@ -50,7 +55,9 @@ use Tests\Support\Fixtures\StockFixture;
 // and CSRF token — a page before sign-in stores nothing (INT-001) —, so they touch no database — but for the
 // sign-in journeys' account, which the migrated stack keeps (scripts/verify.sh).
 
-Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(function (): void {
+// SessionDeadline gives the shell stub's answers the account key a signed-in page carries (TASK-093; UXH-02); with no
+// session and no account it adds nothing to the other pages here.
+Route::middleware([SetLocale::class, HandleInertiaRequests::class, SessionDeadline::class])->group(function (): void {
     // TL-09–TL-12 (TASK-014): INT-001's switch on a page with a field, before sign-in, so the switch is shown to
     // keep the unsent input and the layout (LOCALIZATION §3.7).
     Route::get('__fixtures/bahasa', fn () => Inertia::render('Fixtures/LanguageSwitch'));
@@ -74,6 +81,10 @@ Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(funct
 // TL-09–TL-12 (TASK-017): a synthetic account and its reset link for one run, so the sign-in, reset and logout
 // journeys run against the real routes of PG-001 and PG-003.
 Route::post('__fixtures/akun', [AccountFixture::class, 'create']);
+// TL-09 (TASK-093): an account's session aged past the idle limit; the recorded outcome of commands by command_id.
+Route::post('__fixtures/reauth/usang', [ReauthFixture::class, 'age']);
+Route::get('__fixtures/reauth/perintah', [ReauthFixture::class, 'commands']);
+Route::post('__fixtures/reauth/lingkup', [ReauthFixture::class, 'scope']);
 
 // TL-09 (TASK-064): CJ-10's, CJ-18's and CJ-21's session and command-identity preconditions and readings, and FX-08's clock for one request.
 if (! app()->runningInConsole()) {
@@ -105,6 +116,11 @@ Route::post('__fixtures/penomoran', [NumberingFixture::class, 'arm']);
 // TL-09–TL-12 (TASK-029): the synthetic subjects of the issuing Tasks for the requests of an armed run.
 if (! app()->runningInConsole()) {
     DocumentFixture::apply();
+}
+
+// TL-09 (TASK-063): CJ-14's row bound lowered for a run's own requests that name one (X-Fixture-Export-Bound), never raised.
+if (! app()->runningInConsole()) {
+    JourneyDocumentFixture::apply();
 }
 
 // TL-09–TL-12 (TASK-030): PG-038's company for the run, with a reference-less client order for IP-05's warning.
@@ -162,6 +178,15 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     Route::post('__fixtures/journey-c/stok', [JourneyStockFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/journey-c/kembar', [JourneyStockFixture::class, 'twin'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/journey-c/siplah', [JourneyStockFixture::class, 'siplah'])->withoutMiddleware(PreventRequestForgery::class);
+    // TL-09 (TASK-063): CJ-06's backdating — a company whose previous month's invoice period is not live and has no counter, and its one-company invoice Admin.
+    Route::post('__fixtures/journey-b/periode', [JourneyFinanceFixture::class, 'period'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/journey-b/admin', [JourneyFinanceFixture::class, 'admin'])->withoutMiddleware(PreventRequestForgery::class);
+    // TL-09 (TASK-063): CJ-14's older receivable billed past its due date; CJ-15's sweeper tick for a failed rendition and its issued paper's text.
+    Route::post('__fixtures/journey-b2/piutang', [JourneyDocumentFixture::class, 'olderReceivable'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/journey-b2/rendisi-ulang', [JourneyDocumentFixture::class, 'retry'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::get('__fixtures/journey-b2/isi', [JourneyDocumentFixture::class, 'paper']);
+    // TL-09 (TASK-063): CJ-17's cancellation world — TASK-038's reserved project with its product named for PG-019.
+    Route::post('__fixtures/journey-b3/batal', [JourneyCompletionFixture::class, 'cancellation'])->withoutMiddleware(PreventRequestForgery::class);
     // TL-09 (TASK-064): CJ-09, CJ-11 and CJ-13's companies, the signed-in account's own grants, the step-up's 15 minutes passed, two QS-14 sources.
     Route::post('__fixtures/journey-k1/perusahaan', [JourneyAccessFixture::class, 'companies'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/journey-k1/hak', [JourneyAccessFixture::class, 'grant'])->withoutMiddleware(PreventRequestForgery::class);

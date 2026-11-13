@@ -1,0 +1,500 @@
+Owner directive received in session during execution, 2026-11-13 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+MULTIPLECORP — OWNER FINAL DIRECTIVE
+OPTION A APPROVAL, RELEASE STABILIZATION, EXECUTION ACCELERATION & PRODUCTION READINESS
+DATE: 13 November 2026
+TARGET PRODUCTION DATE: 14 November 2026
+PRIORITY: CRITICAL
+EXECUTION MODE: RELEASE STABILIZATION — MAXIMUM SAFE THROUGHPUT
+AUTHORITY: PROJECT OWNER
+SESSION: Continue the existing Claude Code Autonomous Executor session.
+0. MANDATORY LANGUAGE REQUIREMENT
+ALL COMMUNICATION ADDRESSED TO THE PROJECT OWNER MUST BE IN BAHASA INDONESIA.
+This requirement applies without exception to:
+
+* Progress updates.
+* Execution reports.
+* Status summaries.
+* Questions and approval requests.
+* Security findings.
+* CI failure explanations.
+* Blocker notifications.
+* Release readiness reports.
+* Final execution summaries.
+* Helper-agent findings communicated to the Owner.
+
+Technical identifiers, file paths, commands, programming terminology, Git commit messages, and code may remain in English where appropriate.
+Internal technical reasoning and helper-agent instructions may use English.
+Do not respond to the Project Owner in English unless explicitly requested.
+All future Owner-facing reports must follow this requirement.
+1. IMMEDIATE OWNER DECISION — OPTION A APPROVED
+I am explicitly approving:
+OPTION A — ONE COMBINED DEFECT TASK FOR D8 AND D9.
+This decision is FINAL.
+Do not ask me to choose between Option A and Option B again.
+The combined defect Task must cover:
+D8 — Capability-denied pages crash instead of displaying the approved access-denied page.
+D9 — PG-065 password form input is cleared when a request ends with HTTP 401, potentially violating IP-11.
+Use the existing CHANGE_CONTROL mechanism to create exactly ONE combined defect Task, if both findings fall within the applicable confirmed-defect record.
+This is not approval to create unlimited additional Tasks.
+This is not approval to change the accepted V1 scope.
+This is not approval to weaken the Definition of Done.
+This is not approval to bypass security, authorization, or testing requirements.
+The purpose of this decision is to preserve governance while minimizing administrative overhead.
+1.1 D8 — Required investigation and correction
+The reported root cause is that capability authorization middleware executes before `HandleInertiaRequests`, causing an access-denied page to render without the expected shared authentication props.
+The frontend then throws a JavaScript error when it attempts to access missing authentication data.
+Investigate and confirm this root cause through appropriate server and browser tests.
+The corrected behavior must satisfy these conditions:
+
+1. Capability-denied routes return the approved response status.
+2. PG-005 renders correctly.
+3. No JavaScript crash occurs.
+4. Authentication and authorization boundaries remain enforced.
+5. No forbidden information is exposed.
+6. No unrelated route becomes accessible.
+7. Anonymous and authenticated users continue receiving the correct responses.
+8. Chromium and WebKit verify the relevant denied-page behavior.
+9. Existing security tests remain enabled and unchanged unless the approved contract explicitly requires correction.
+
+Use the smallest safe correction.
+Do not weaken capability middleware.
+Do not replace denial with an unauthorized success.
+Do not introduce a new authentication bypass.
+1.2 D9 — Required investigation and conditional correction
+The reported behavior is that PG-065 clears its password input when a request finishes, including when HTTP 401 interrupts the request.
+The Executor currently classifies this as a potential IP-11 violation, with limited functional impact because the replayed request may still retain its original payload.
+Do not assume that the defect is confirmed solely from reading code.
+First reproduce the behavior deterministically.
+Verify:
+
+1. What the user enters before interruption.
+2. What happens when HTTP 401 occurs.
+3. Whether the displayed input is cleared.
+4. Whether the pending command retains its original payload.
+5. Whether the user must re-enter data unnecessarily.
+6. Whether the actual behavior violates IP-11.
+7. Whether the interaction remains correct after re-authentication.
+8. Whether any sensitive value is exposed, logged, or retained beyond the approved security boundary.
+
+If D9 is confirmed, correct it within the same combined Task.
+If D9 is not confirmed, record the evidence and avoid speculative product changes.
+Preserve all security and password-handling rules. Do not persist passwords in an unsafe location merely to retain form state.
+1.3 Combined Task governance
+Record the Owner's approval using the narrowest legitimate CHANGE_CONTROL procedure.
+
+* Use the next valid Task identifier only if required by the approved Task model.
+* Do not invent a Task number without checking the current register.
+* Do not initiate a new project planning phase.
+* Do not rewrite existing approved requirements.
+* Keep the combined Task's acceptance criteria focused on D8 and D9.
+* Do not silently extend its scope to unrelated defects.
+* Update dependencies, TASK_PLAN and CURRENT_HANDOFF consistently.
+* Preserve the original discovery evidence.
+
+Once the combined Task is formally recorded, implement it efficiently and independently of unrelated cosmetic work.
+ONE COMBINED TASK. NO SEPARATE D8 AND D9 TASKS.
+2. CHANGE THE EXECUTION OBJECTIVE
+The previous execution objective was to complete every Task as quickly as possible.
+That approach has produced a repeated cycle:
+Implementation → CI → journey failure → new defect Task → further implementation → more journey failures → additional Task.
+This cycle must now be controlled.
+The new objective is:
+MAKE MULTIPLECORP PRODUCTION-READY AS EARLY AS POSSIBLE, WITH 14 NOVEMBER 2026 AS THE TARGET DATE.
+The objective is not to maximize the number of Task records.
+The objective is not to maximize the amount of code written.
+The objective is not to complete unnecessary refinements before production.
+The objective is to achieve verified software correctness, security, operational readiness, and business readiness.
+No additional feature is authorized through this directive.
+Do not pursue cosmetic perfection at the expense of release-critical work.
+Do not confuse a green isolated test with production readiness.
+Do not confuse a Task marked DONE on an unmerged branch with a Task completed on `main`.
+3. APPLY AN IMMEDIATE RELEASE FREEZE
+Effective immediately, apply the following release-stabilization restrictions.
+STOP:
+
+* New feature development.
+* Cosmetic refactoring.
+* Unnecessary architectural redesign.
+* Additional speculative abstractions.
+* Unrequested design changes.
+* Broad repository audits without a material trigger.
+* Repeated full-project planning.
+* Automatic creation of a new Task for every test failure.
+* Rewriting approved requirements to obtain passing tests.
+* Changing expected test results without contractual evidence.
+* Repeated Codex review cycles beyond the authorized review rules.
+* Administrative work that provides no required completion evidence.
+
+CONTINUE:
+
+* Fixing confirmed security vulnerabilities.
+* Fixing confirmed data-integrity problems.
+* Fixing release-blocking application defects.
+* Correcting broken test fixtures.
+* Correcting assertions that contradict approved specifications.
+* Completing already-approved eligible Tasks.
+* Required verification and regression testing.
+* Release engineering.
+* Operator handoff and evidence preparation.
+* Staging readiness.
+* Backup and restore readiness.
+* Production readiness assessment.
+
+A failing test does not automatically prove a product defect.
+A code observation does not automatically prove an exploitable vulnerability.
+A valid product behavior must not be changed merely because a test has the wrong expectation.
+4. STRICT DEFECT TRIAGE
+Classify every outstanding finding before creating additional work.
+P0 — Critical
+Examples:
+
+* Cross-account command replay.
+* Unauthorized access to another account's data.
+* Confirmed authentication bypass.
+* Corruption or loss of financial or inventory data.
+* An exploitable vulnerability with critical production consequences.
+
+Action: Release blocker. Fix before production.
+P1 — High / Release blocking
+Examples:
+
+* Required authentication flow is unusable.
+* A critical business journey fails.
+* An access-denied page crashes in a materially unsafe or unusable way.
+* Required security or operational controls cannot function.
+* A mandatory release verification fails for a product defect.
+
+Action: Fix before production.
+P2 — Moderate
+Examples:
+
+* An isolated UX defect.
+* A noncritical interaction with a verified workaround.
+* A limited functional regression whose risk is understood.
+
+Action: Fix when feasible. Deferral requires the applicable risk-acceptance procedure and Owner authority. Do not silently classify it as acceptable.
+P3 — Minor
+Examples:
+
+* Cosmetic inconsistencies.
+* Nonmaterial spacing differences.
+* Minor presentation defects without significant functional impact.
+
+Action: Defer when contractually permissible and record accurately.
+Test or fixture failure
+Examples:
+
+* Nonunique synthetic factory data.
+* Incorrect test setup.
+* Wrong test sequence.
+* An assertion inconsistent with DESIGN_SYSTEM.
+* A test requiring permissions its fixture does not possess.
+
+Action: Correct within the owning verification Task when permitted. Do not create a product defect Task.
+Unconfirmed finding
+Action: Investigate sufficiently to determine whether it is a genuine defect, test failure, infrastructure problem, or expected behavior.
+Do not automatically create a Task.
+If governance requires a defect Task for a confirmed issue in an already-DONE module, follow CHANGE_CONTROL. Do not bypass it, but consolidate only where the approved mechanism permits.
+5. CURRENT REPOSITORY BASELINE
+The latest state previously reported to me was:
+
+* `main`: `82f9e08`.
+* TASK-093, PR #82: latest reported head `aaacd7c`.
+* TASK-063, PR #77: latest reported head `7b9f207`.
+* TASK-064, PR #81: latest reported head `c1f8732`.
+* Change 19 introduced TASK-093 and TASK-094.
+* Current Task total in the active planning branch: 94.
+* The production target is 14 November 2026.
+* The operator input request remains OPEN.
+
+These values are historical context, not authorization to assume that they are still current.
+Before acting, inspect GitHub and the repository.
+Confirm:
+
+1. Latest `main` SHA.
+2. Current Task count and state.
+3. Exact HEAD of every open PR.
+4. Latest CI attempt tied to each HEAD.
+5. Latest applicable Codex review.
+6. Remaining unresolved material findings.
+7. Actual worktree state.
+8. Active background processes.
+9. Current dependency graph.
+10. Actual operator inputs received.
+
+Do not use an outdated CI result as evidence for a newer commit.
+6. EXECUTION PRIORITY — FINISH THE EXISTING WORK
+PRIORITY 1 — PR #82 / TASK-093
+This Task addresses the security defect involving re-authentication, account identity, and pending-command replay.
+Required outcomes:
+
+* A second account with identical visible account hints cannot resume the first account's pending command.
+* Account comparison uses a trustworthy server-derived identity.
+* Incorrect passwords cannot unlock the re-authentication dialog.
+* Correct passwords can recover a still-authenticated session through a legitimate verification path.
+* Expired sessions continue through the approved full sign-in and TOTP flow.
+* Redirected HTML cannot be interpreted as successful authentication.
+* Missing or invalid CSRF verification cannot be treated as a successful login.
+* No replay happens before credential and account verification.
+* Original command identity is preserved only where legitimate replay is permitted.
+
+The reported phpseclib security update must be verified through CI, including the dependency audit and lock-file integrity.
+Review the latest CI results.
+If the latest head passes every required check and review condition, complete the merge immediately using the approved exact-head procedure.
+If it fails, diagnose the specific failure and apply the smallest correction.
+Do not repeat reviews already completed on unchanged relevant code.
+Do not claim TASK-093 DONE on `main` before its actual merge.
+PRIORITY 2 — PR #77 / TASK-063
+Once necessary dependencies are merged, synchronize PR #77 with current `main` using the approved procedure.
+The previously reported CJ-14 WebKit failure was associated with a deferred response arriving while the test entered the date.
+Verify that the final test waits for the actual required response without arbitrary sleeps.
+Preserve the browser assertions.
+Verify CJ-06, CJ-14 and CJ-15, including the required Chromium and WebKit results.
+Confirm the PDF interruption exception remains tightly scoped and does not mask unrelated failures.
+Resolve the dependency audit through the tested update, not by disabling TL-14.
+Include the required final DONE record and obtain fresh CI evidence for its actual final head.
+Merge only after all mandatory gates pass.
+PRIORITY 3 — TASK-094 / D7
+Fix PG-014's behavior when a save command has an unknown outcome.
+The relevant form inputs must remain frozen as required by IP-02.
+Preserve the original command identity, payload and idempotency protections.
+Do not permit another conflicting submission while the earlier outcome remains unknown.
+Test successful responses, rejected responses, interrupted requests and the unknown-outcome state.
+Keep this Task tightly scoped.
+PRIORITY 4 — ONE COMBINED D8/D9 TASK
+Implement the Owner-approved Option A.
+Follow the instructions in Section 1.
+Do not split this work into two Tasks.
+PRIORITY 5 — TASK-064
+After the required defect fixes are merged, synchronize TASK-064 with the current `main`.
+Close the existing journey failures with targeted corrections.
+Known areas:
+
+* CJ-09: access-denied page, addressed through D8.
+* CJ-10: PG-065 input behavior, addressed through D9 if confirmed.
+* CJ-12: synthetic fixture email collision.
+* CJ-13: duplicate classification and approved test sequence.
+* CJ-19: PIC selection after MSG-17; requires diagnosis.
+* CJ-21: corrected by the D6 and D7 implementations.
+* CJ-22: heading size assertion must follow DESIGN_SYSTEM §5.2.
+* QS-14: close the required missing source coverage.
+
+CJ-16 remains NOT RUN until the required staging evidence exists.
+Do not record CJ-16 as PASS without its required execution.
+Do not weaken assertions simply to obtain a successful run.
+Finish TASK-064 only when its Definition of Done is genuinely satisfied.
+7. RELEASE ENGINEERING HAS EQUAL URGENCY
+The current critical path is not exclusively application code.
+Production readiness also depends on:
+
+* TASK-071 — Operator inputs.
+* TASK-072 — Deployment definition.
+* TASK-074 — Backup tooling.
+* TASK-075 — Monitoring.
+* TASK-076 — Operator runbooks.
+* TASK-077 — Cutover tooling.
+* TASK-078 — Staging deployment.
+* TASK-079 — Staging measurements.
+* TASK-080 — Alert delivery.
+* TASK-081 — Staging drills.
+* TASK-082/083 — Owner responsibilities.
+* TASK-084 — Production preparation.
+* TASK-085 — Installation.
+* TASK-086 — UAT.
+* TASK-087 — Cutover and go-live.
+
+Do not alter the approved prerequisites of these Tasks.
+However, do not waste available time.
+While CI runs, prepare independently authorized release artifacts, deployment templates, runbooks, evidence checklists, and staging test procedures without falsely starting Tasks whose READY gate has not been satisfied.
+No unauthorized production or VPS access is permitted.
+The Owner has already delegated routine technical preferences through DIR-110.
+Do not ask me to choose Docker Compose versus Coolify again.
+Use the approved conditional rule:
+
+* Docker Compose as the default unless OPI-03 verifies that the existing host uses Coolify.
+* Preserve Nginx.
+* Isolate MULTIPLECORP from the second production application.
+* Prefer zero-cost Telegram alerting, subject to operator confirmation and delivery testing.
+* Preserve approved local and off-server encrypted backup arrangements.
+* Do not introduce recurring costs without approval.
+
+These preferences are not substitutes for actual operator evidence.
+8. OPERATOR INPUTS — IMMEDIATE ACTION
+The Owner-prepared operator request already exists.
+Do not ask me to upload it again.
+Identify the actual outstanding evidence and prepare a concise, actionable human-operator handoff.
+Prioritize:
+Before staging:
+
+* OPI-26 — Client grants VPS access to the authorized human operator.
+* OPI-03 — Inventory of installed services, deployment stack and firewall.
+* OPI-02 — Host operating system, disk and bandwidth measurements.
+* OPI-27 — Second application's resource use and maintenance windows.
+* OPI-29 — Provider-side feature inventory.
+* OPI-30 — Application and staging domain information.
+* OPI-21/22 — Required storage and backup arrangements.
+* OPI-05 — Confirmed alert channel.
+
+Before production:
+
+* OPI-04 — DNS configuration.
+* OPI-28 — Provider-account access and two-factor authentication.
+* OPI-31 — Administrative-access holders.
+* OPI-32 — Off-server backup destination and key custody.
+* OPI-07/08/25 — Required measurements and outbound connectivity.
+* OPI-23 — Backup timing.
+* OPI-06 — Google Cloud readiness, or the approved non-enabled configuration.
+* OPI-01/24 — Operator and backup-operator arrangements.
+* DEP-05 — Legacy-data structures, reconciliation control totals and agreed migration boundary.
+* DEP-03/04/06/09/11 — Required validators and UAT evidence.
+
+Use the approved source documents to verify the exact checklist. Do not treat this summary as permission to omit other required inputs.
+For each missing item, specify:
+
+1. The responsible human role.
+2. The precise information needed.
+3. The approved record where it belongs.
+4. The Task it blocks.
+5. Whether the evidence can be provided as a non-sensitive summary.
+6. Whether human access or an external authorization is required.
+
+DO NOT REQUEST SECRETS IN CHAT.
+Do not accept passwords, private keys, API tokens, production dumps or backup encryption keys through the AI conversation.
+Do not mark operator inputs completed without evidence.
+If the Owner is acting as the human operator, provide precise authorized manual steps for the Owner to perform. Do not impersonate completion.
+9. CI AND REVIEW EFFICIENCY
+Minimize waiting without compromising verification.
+
+* Use one watcher where practical.
+* Avoid repeated manual CI polling.
+* Do not restart a complete test suite without a reason.
+* Do not restart Codex review for unchanged production logic when the approved rules do not require it.
+* Use targeted local checks to diagnose failures.
+* Keep test environments and databases isolated.
+* Never merge unverified changes.
+* Never force-push or rewrite published history.
+* Keep commit author and committer identities consistent with the Owner's established policy.
+* Do not add AI attribution.
+
+DIR-109's original one-day authorization expired on 12 November 2026.
+Do not silently extend it.
+Use DIR-111 and current governance only to the extent they actually authorize the relevant scheduling behavior.
+If a scheduling adjustment requires CHANGE_CONTROL, record it narrowly rather than assuming an unlimited exception.
+Do not open another unverified PR while the applicable queue limit is exceeded.
+Prioritize closing existing PRs.
+10. RELEASE READINESS — STRICT GO/NO-GO
+The production target is 14 November 2026.
+This is a target, not a waiver.
+PRODUCTION GO requires independently supported evidence that:
+
+1. No unresolved P0 or P1 release blocker remains.
+2. Required CI passes on the exact release candidate.
+3. Required end-to-end regression passes.
+4. Authentication and authorization boundaries are correct.
+5. Financial and inventory invariants are verified.
+6. Deployment configuration is validated.
+7. Staging smoke checks pass.
+8. The second production application is protected.
+9. Host capacity is adequate.
+10. Backup and off-server copy requirements are met.
+11. Mandatory restore tests pass.
+12. Monitoring and alert delivery are operational.
+13. DNS, HTTPS and environment secrets are configured securely.
+14. Required data migration and reconciliation are complete.
+15. UAT is completed by authorized validators.
+16. The authorized operator and Owner approve the release.
+
+If a mandatory prerequisite is missing, report NO-GO for real production use.
+Do not manufacture readiness.
+Do not use an arbitrary deadline to override security or data integrity.
+If 14 November cannot be achieved, provide the precise outstanding blockers and next actions rather than inventing a guaranteed alternative date.
+A clearly identified blocked release is better than a falsely declared successful deployment.
+11. REQUIRED EXECUTION DISCIPLINE
+Every active implementation activity must produce one of:
+
+* A verified code correction.
+* A required automated test.
+* Reproducible diagnostic evidence.
+* A completed release artifact.
+* A resolved operational blocker.
+* A valid governance record.
+
+Avoid unnecessary reports and repeated explanations.
+Do not repeatedly summarize decisions already approved.
+Do not keep asking me to approve routine technical implementation details.
+Do not create administrative Tasks simply to reflect the existence of other administrative Tasks.
+Do not turn test-fixture mistakes into product defects.
+Do not create a separate Task for every symptom if the approved governance permits one coherent defect correction.
+Do not use release pressure as an excuse to disregard a confirmed security vulnerability.
+Do not launch a new planning cycle.
+The objective is the shortest safe path to production.
+12. THE REPORT I REQUIRE
+Respond in Bahasa Indonesia using this structure:
+MULTIPLECORP — RELEASE EXECUTION
+A. Keputusan Owner
+Confirm that Option A has been accepted:
+
+* One combined Task for D8/D9.
+* No separate D8 and D9 Tasks.
+* Narrow CHANGE_CONTROL recording.
+* No unnecessary Task proliferation.
+
+B. Kondisi GitHub aktual
+
+* Current `main` SHA.
+* Current DONE / TOTAL.
+* Current open PRs and exact HEADs.
+* CI PASS/FAIL status.
+* Unresolved Codex findings.
+
+C. Progress eksekusi
+
+* PRs actually merged.
+* Code fixes actually completed.
+* Tests actually passed.
+* Current blockers.
+* Next executable Task.
+
+D. Production readiness
+
+* Code: READY / NOT READY.
+* Operations: READY / NOT READY.
+* Business: READY / NOT READY.
+* Overall GO / NO-GO.
+
+E. Human actions required
+A compact list of actions that cannot legitimately be performed by the agent, with their responsible roles.
+F. Immediate next actions
+List the next concrete actions in dependency order.
+Use verified facts, not predictions.
+Keep status reports concise, but never omit material safety or readiness information.
+13. FINAL EXECUTION ORDER
+I am not requesting another planning presentation.
+I have already approved Option A.
+Execute the following:
+
+1. Record the Owner's Option A approval through the proper CHANGE_CONTROL procedure.
+2. Verify the latest PR #82 CI and resolve remaining material failures.
+3. Merge PR #82 when all required gates pass.
+4. Synchronize and finish PR #77.
+5. Finish TASK-094.
+6. Implement the single approved combined D8/D9 Task.
+7. Stabilize TASK-064.
+8. Continue the eligible verification and release-engineering Tasks, with operational readiness treated as a critical path.
+9. Obtain and track human-operated staging, backup, restore, monitoring and UAT evidence.
+10. Produce the actual 14 November GO/NO-GO decision when the required evidence is available.
+
+Do not wait passively where independent authorized work exists.
+Do not promise unattended execution after the session ends.
+Do not bypass required approvals.
+Do not produce a false DONE or GO.
+OPTION A: APPROVED.
+RELEASE FREEZE: ACTIVE.
+TARGET PRODUCTION: 14 NOVEMBER 2026, SUBJECT TO ALL MANDATORY GATES.
+STOP AUTOMATIC TASK PROLIFERATION.
+PRIORITIZE CLOSURE OF EXISTING WORK.
+FIX CONFIRMED SECURITY AND RELEASE BLOCKERS.
+PREPARE THE OPERATIONAL CRITICAL PATH.
+COMMUNICATE WITH THE OWNER ONLY IN BAHASA INDONESIA.
+CONTINUE EXECUTION NOW — DO NOT STOP AT A PLAN.

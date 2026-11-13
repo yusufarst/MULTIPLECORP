@@ -9,6 +9,9 @@ export const BACKGROUND_HEADER = 'X-Background-Request';
 /** The absolute deadline the server sends outside the page data (AU-08; `SessionDeadline`). */
 export const DEADLINE_HEADER = 'x-session-deadline';
 
+/** UXH-02 (TASK-093): the session's opaque account key, sent beside the deadline, outside the page data. */
+export const ACCOUNT_HEADER = 'x-session-account';
+
 /** AU-07's idle limit and the warning before it (IP-11; MSG-33). */
 export const IDLE_MINUTES = 60;
 export const IDLE_WARNING_MINUTES = 5;
@@ -90,8 +93,26 @@ export function sessionOver(deadline: number | null, now: number): boolean {
     return deadline !== null && now >= deadline;
 }
 
-/** The account the re-authenticated session belongs to must be the covered page's (IP-11): same name,
-    capabilities and companies, or the page is loaded again from the server. */
-export function sameAccount(before: unknown, after: unknown): boolean {
-    return JSON.stringify(before) === JSON.stringify(after);
+/** The account the re-authenticated session belongs to must be the covered page's (IP-11; UXH-02): the same account
+    — its opaque key, known on both sides —, and the same name, capabilities and companies; otherwise the page is
+    loaded again from the server. Two accounts whose hints match are still two keys (TASK-093). */
+export function sameAccount(before: unknown, after: unknown, beforeKey: string | null, afterKey: string | null): boolean {
+    return beforeKey !== null && afterKey !== null && beforeKey === afterKey && JSON.stringify(before) === JSON.stringify(after);
+}
+
+/** The outcome of the in-place dialog's request, read from what the server answered (TASK-093). */
+export type DialogAnswer = 'ok' | 'two_factor' | 'enrolment' | 'expired' | 'failed';
+
+/**
+ * A success only from the endpoint's own JSON answer — `signed_in`, `confirmed` or `two_factor` —, never from a
+ * redirect followed to a page: a signed-in session's sign-in request is redirected by the guest guard and its password
+ * never checked, so a 200 page after a redirect, or any answer without those flags, is a failure (TASK-093).
+ */
+export function dialogAnswer(status: number, redirected: boolean, contentType: string | null, reply: Record<string, unknown>): DialogAnswer {
+    if (status < 200 || status >= 300) return reply.expired === true ? 'expired' : 'failed';
+    if (redirected || !(contentType ?? '').includes('application/json')) return 'failed';
+    if (reply.two_factor === true) return 'two_factor';
+    if (reply.enrolment_only === true && typeof reply.location === 'string') return 'enrolment';
+
+    return reply.signed_in === true || reply.confirmed === true ? 'ok' : 'failed';
 }

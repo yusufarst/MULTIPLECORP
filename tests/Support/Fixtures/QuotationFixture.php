@@ -2,6 +2,8 @@
 
 namespace Tests\Support\Fixtures;
 
+use App\Modules\IAM\Models\User;
+use App\Modules\IAM\Services\CatalogueSync;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Actions\IssueQuotation;
@@ -35,6 +37,19 @@ final class QuotationFixture
         $user = $request->user();
         $actor = $user?->getAuthIdentifier();
         $actor = is_int($actor) ? $actor : 0;
+
+        // TASK-093: `actor: owner` drafts as an Owner made here, its e-mail the call's own, so the page's account — an
+        // Admin of the company alone — need not hold every capability the project's creation takes.
+        if ($request->input('actor') === 'owner') {
+            if (! DB::table('roles')->where('code', 'OWNER')->exists()) {
+                app(CatalogueSync::class)->run();
+            }
+
+            $owner = User::factory()->create(['email' => 'pemilik-penawaran-'.Str::lower(Str::random(16)).'@contoh.test']);
+            DB::table('user_roles')->insert(['user_id' => $owner->id, 'role_id' => DB::table('roles')->where('code', 'OWNER')->value('id'), 'granted_at' => now()]);
+            $actor = $owner->id;
+        }
+
         $year = substr(BusinessDate::today(), 0, 4);
         Numbering::goLive("{$year}-01-01");
         NumberingFixture::arm(Request::create('/', 'POST', ['go_live' => "{$year}-01-01"]));
