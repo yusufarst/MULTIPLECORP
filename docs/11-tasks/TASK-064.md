@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -254,32 +254,33 @@ These journeys prove the cross-cutting promises no single module owns: isolation
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI on the suite's code (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI on the suite's code (TL-02)
+- [x] Relevant automated tests: every PHP layer PASS in CI; `tests/Interaction/ShellTest.php`'s account-key check made exact (below)
+- [x] Authorization: N/A — the denial suites are TASK-069's; CJ-09, CJ-11 and CJ-13 assert the refusals and grants their steps meet, high-risk accounts signed in with TOTP (AU-18)
+- [x] Route integrity: N/A — the crawl and audit are TASK-069's; each journey's network capture flags any 404, 405, 419 or 5xx it did not expect, none found; the route audit (TL-07) PASS in CI
+- [x] Interaction behavior: N/A — the INT- tests are the module Tasks'; the journeys walk them
+- [x] Browser E2E if required: CJ-09–CJ-13, CJ-18, CJ-19, CJ-21 and CJ-22 PASS on Chromium and WebKit (TL-09) in this head's CI; CJ-16 written, its FX-09 batches in place, NOT RUN — the operator's staging run (TASK-081), skipped in CI with its reason
+- [x] Responsive/adaptive if required: the journeys at their own phone and desktop widths; TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: N/A — no page built; CJ-22's anti-slop checks on DESIGN_SYSTEM §5.2's scale
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: no credential in the suite — accounts and secrets generated per run; CJ-21's UXH-02 cases (TASK-093) and IP-11's in-place re-authentication PASS; every journey's CSP capture clean but WebKit's own `<select>` report; TL-14 PASS
+- [x] Database safety review: test data only — synthetic companies created for each run on the CI stack's database; no schema change; production not touched
+- [x] Final diff review: Codex's review of `f976270` on pull request #81 without finding; the later heads are the suite's own fixes and the merges of `main`, checked by the executor (DIR-096's bounded loop)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and pull request #81's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103). The earlier head `af83391` (runs 43414463682, 43414467272) passed CJ-12, CJ-13 and CJ-21 and failed CJ-09, CJ-10 and CJ-19, which waited on TASK-095 — merged since as `c7634b9` —, CJ-22 on its own display-size probe and `ShellTest`'s random key check, both fixed here; its pull request run's E2E was stopped at the 45-minute job bound. `f976270` and `c1f8732` before it found D6–D10.
+- Build result: TL-13 PASS in the same runs
+- Route evidence: N/A — no application route added or changed; the journeys' test-only routes `__fixtures/journey-k1/*`, `journey-k2/*`, `journey-k3/*` exist only in the fixtures' routes
+- Interaction evidence: N/A — no INT- contract built
+- Browser evidence: `E2E: PASS — Evidence: this head, CI ubuntu-24.04, tests/Browser/E2E/journey-cj09.spec.ts, journey-cj10, journey-cj11, journey-cj12, journey-cj13, journey-cj18, journey-cj19, journey-cj21, journey-cj22 on Chromium and WebKit; each test's console-and-network.json and reconcile-guards.json in the run's browser-evidence-e2e artifact`; `E2E: NOT RUN — CJ-16 (journey-cj16.spec.ts, FX-09), staging only, the operator's run (TASK-081)`
+- Localization evidence: N/A — CJ-18 switches the language on its page; both languages' completeness is TASK-067's
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — Playwright only
+- Files changed: `.github/workflows/ci.yml`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/sources/EXECUTION_OWNER_DIRECTIVE_RELEASE-CLOSURE_2026-11-13.txt`, `routes/fixtures.php`, `tests/Browser/E2E/journey-cj09.spec.ts`, `tests/Browser/E2E/journey-cj10.spec.ts`, `tests/Browser/E2E/journey-cj11.spec.ts`, `tests/Browser/E2E/journey-cj12.spec.ts`, `tests/Browser/E2E/journey-cj13.spec.ts`, `tests/Browser/E2E/journey-cj16.spec.ts`, `tests/Browser/E2E/journey-cj18.spec.ts`, `tests/Browser/E2E/journey-cj19.spec.ts`, `tests/Browser/E2E/journey-cj21.spec.ts`, `tests/Browser/E2E/journey-cj22.spec.ts`, `tests/Browser/journey-k1-fixtures.ts`, `tests/Browser/journey-k2-fixtures.ts`, `tests/Browser/journey-k3-fixtures.ts`, `tests/Interaction/ShellTest.php`, `tests/Support/Fixtures/ImportFixture.php`, `tests/Support/Fixtures/InvoiceFixture.php`, `tests/Support/Fixtures/JourneyAccessFixture.php`, `tests/Support/Fixtures/JourneyMasterFixture.php`, `tests/Support/Fixtures/JourneySessionFixture.php`; `docs/11-tasks/TASK_PLAN.md`, this file; `docs/handoff/CURRENT_HANDOFF.md`
+- Commit SHA: this branch's commits on `task/TASK-064-critical-journeys-c`, `main` merged in — never rebased —, the Owner's identity, no AI attribution
+- Notes: criteria 1–10 and 12 PASS by the journeys above; criterion 11 by CJ-16's specification and FX-09 batches, its run NOT RUN until the operator's staging run. **Defects found and sent to their owners (criterion 12):** D6 — UXH-02's account and the re-authentication after a 419, security — TASK-093; D7 — PG-014's inputs while an outcome is unknown — TASK-094 (Change 19); D8 — a capability-refused address's PG-005 without the shared props —, D9 — PG-065's password input cleared by a 401 — and D10 — PG-013's unit and PIC after MSG-17 — the one combined TASK-095 (Change 20; APPR-030, APPR-031); each DONE and merged; no expected value, requirement or assertion changed here. **Suite faults, not defects:** CJ-12's search fixture Owner's factory e-mail colliding on the shared database (now run-scoped); CJ-13's *Impor* item asserted against a twin committed before preparation, which the product rightly answers INVALID (UXS-19) — now made as the product makes it, a valid LEGACY_DOCUMENT batch whose twin commits before its import (`CommitImport`); CJ-13's refund with an unbacked remainder, said not composable, made through RecordPayment, RefundCredit and ContraPayment as `PaymentRacesTest` does, ReconcileGuards clean — every QS-14 source now asserted; CJ-19's new rack beyond the first page of the shared database's paged list, reached with "Muat Lagi"; CJ-22's title bound read against DESIGN_SYSTEM §5.2's title and display sizes, not 20 px; the merged captures reading TASK-063's deferred PDF-frame decisions live; `ShellTest`'s account-key check, a substring test on a hex digest that failed at random, made exact. The browser layers' job bound raised from 45 to 60 minutes: the E2E layer took 42 minutes with these journeys and two pull-request runs were stopped at 45 while four layers shared the runners
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
