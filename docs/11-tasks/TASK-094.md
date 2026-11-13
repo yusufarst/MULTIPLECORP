@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-12 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 19, created through the executor feedback loop from TASK-064's defect D7 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -197,32 +197,33 @@ TASK-064's CJ-21 test 1, in fresh CI on `f976270`, found on Chromium and WebKit 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
+- [x] Relevant automated tests: every layer in this head's CI
+- [x] Authorization: N/A — unchanged
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: `tests/Browser/E2E/quotations.spec.ts`'s TASK-094 test — a refusal (a validity already past) leaving the draft editable, a save held in flight, a lost answer and an unreached request each freezing the draft's fields, its line's removal and "Simpan Draf", "Coba Lagi" resending the same `command_id`, the draft editable again once saved
+- [x] Browser E2E if required: that test on Chromium and WebKit (TL-09); CJ-21 test 1 in TASK-064's verification on the merged code
+- [x] Responsive/adaptive if required: N/A — the composition unchanged; the fieldset keeps the form's own layout
+- [x] Visual breathing room/density if UI: N/A — no visual change but the browser's own disabled state
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: N/A — no new surface; the command's identity, payload and idempotency unchanged
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: Codex's review of this pull request before the merge (DIR-096's bounded loop)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: N/A — no route is added or changed
-- Interaction evidence: the browser test named in TEST REQUIREMENTS
-- Browser evidence: `E2E: PASS — Evidence: …` on Chromium and WebKit
-- Localization evidence: no new key unless named in IN SCOPE; existing keys in both languages
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and the pull request's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103: the record in the final code commit)
+- Build result: TL-13 in the same runs
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: `tests/Browser/E2E/quotations.spec.ts`'s TASK-094 test
+- Browser evidence: `E2E: PASS — Evidence: this head, CI ubuntu-24.04, tests/Browser/E2E/quotations.spec.ts on Chromium and WebKit`, as the pull request's checks show before the merge
+- Localization evidence: no new key
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `resources/js/Pages/PRJ/Quotation.tsx`; `tests/Browser/E2E/quotations.spec.ts`; `docs/11-tasks/TASK_PLAN.md`, this file; `docs/handoff/CURRENT_HANDOFF.md`; on the same branch, the operator handoff of DIR-112 §8 (`docs/handoff/OPERATOR_INPUT_REQUEST.md`)
+- Commit SHA: this branch's commits on `task/TASK-094-quotation-freeze` from `main` at `911b8e4`, the Owner's identity, no AI attribution
+- Notes: the draft's form is one `<fieldset>` disabled by the save's own `frozen` state — in flight or its outcome unknown —, as PG-042's and the fulfilment composers' forms are, so every field, the line's removal and the stale comparison's controls inside it are frozen with it; "Simpan Draf" and the answer's "Coba Lagi" sit outside it, the first already disabled by the same state, the second resending the same `command_id` and payload (IP-04); nothing of the command, its payload or its idempotency changes. Criterion 2 — TASK-064's CJ-21, its assertions unchanged — is run in TASK-064's verification on the merged code, as TASK-093's CJ-21 test 4 is. Tried locally first on the Docker stack, whose answers took 8–11 s each on this workstation, so the browser evidence is CI's (DIR-105)
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
