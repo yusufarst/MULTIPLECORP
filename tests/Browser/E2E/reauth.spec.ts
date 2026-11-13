@@ -10,24 +10,30 @@ const expect = base.configure({ timeout: 60_000 });
 // account — a wrong password, another account's e-mail or a forged token refused, the dialog open, nothing replayed —;
 // an ended session signs in anew with its second factor; another account, even with the same display name, capabilities
 // and companies, gets the full document load and never the first account's command. Each replay is counted by the
-// outcome the server recorded for its command_id (CI-05), never by a second effect.
+// outcome the server recorded for its command_id (CI-05), never by a second effect. Every account here is an Admin with
+// a second factor, scoped to the one company the test creates: an Owner's hints list every company, which a parallel
+// test changes — and a changed hint rightly loads the page afresh (UXH-02).
 
 test.describe.configure({ timeout: 300_000 });
 
 type Recorded = { command_id: string; state: string; actor: string | null };
 
-async function ownerAccount(page: Page, run: string): Promise<Account> {
-    const response = await page.request.post('/__fixtures/akun', { data: { run, kind: 'owner', totp: true, locale: 'id' } });
+/** An account named as every fixture account is ("Rani Uji"), with TOTP, given ADMIN_OPERASIONAL, `company` alone and PG-014's capabilities. */
+async function scopedAccount(page: Page, run: string, company: string): Promise<Account> {
+    const response = await page.request.post('/__fixtures/akun', { data: { run, kind: 'totp', locale: 'id' } });
     expect(response.ok(), await response.text()).toBe(true);
+    const account = (await response.json()) as Account;
+    const scoped = await page.request.post('/__fixtures/reauth/lingkup', { data: { account: account.id, company } });
+    expect(scoped.ok(), await scoped.text()).toBe(true);
 
-    return (await response.json()) as Account;
+    return account;
 }
 
-/** PG-014 with a draft, its Owner signed in on the page; the Owner's credentials. */
-async function draftPage(page: Page, run: string): Promise<{ account: Account; path: string }> {
-    const account = await ownerAccount(page, run);
-    await signIn(page, account);
+/** PG-014 with a draft, its account signed in on the page; the account's credentials and company. */
+async function draftPage(page: Page, run: string): Promise<{ account: Account; path: string; company: string }> {
     const company = await numberingCompany(page, `${String(new Date().getFullYear())}-01-01`);
+    const account = await scopedAccount(page, run, company);
+    await signIn(page, account);
     const made = await page.request.post('/__fixtures/penawaran', { data: { company, lines: 1, stage: 'draft' } });
     expect(made.ok(), await made.text()).toBe(true);
     const quotation = (await made.json()) as { project: string; number: string };
@@ -35,7 +41,7 @@ async function draftPage(page: Page, run: string): Promise<{ account: Account; p
     await page.goto(path);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(`Penawaran ${quotation.number}`);
 
-    return { account, path };
+    return { account, path, company };
 }
 
 /** Every command the page sends to `path`, its command_id among them (IP-02). */
@@ -107,8 +113,8 @@ async function mark(page: Page): Promise<void> {
 test('a session still signed in after a 419: a forged token, a wrong password and another account\'s e-mail refused with nothing replayed, then its own password replays the one command once (D6; IP-11; AU-15)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = `reauth-hidup-${String(Date.now())}`;
-    const { account, path } = await draftPage(page, run);
-    const other = await ownerAccount(page, `${run}-lain`);
+    const { account, path, company } = await draftPage(page, run);
+    const other = await scopedAccount(page, `${run}-lain`, company);
     const sent = commandsTo(page, path);
     await mark(page);
 
@@ -156,9 +162,9 @@ test('a session still signed in after a 419: a forged token, a wrong password an
 test('an ended session signs in anew with its second factor and replays the one command; another account with the same display hints gets the full document load and nothing of it (D6; UXH-02; AU-16)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = `reauth-habis-${String(Date.now())}`;
-    const { account, path } = await draftPage(page, run);
-    // The fixture names every account alike: a second Owner has the same display name, capabilities and companies.
-    const twin = await ownerAccount(page, `${run}-kembar`);
+    const { account, path, company } = await draftPage(page, run);
+    // The fixture names every account alike: a second account with the same role, grants and company has the same hints.
+    const twin = await scopedAccount(page, `${run}-kembar`, company);
     const sent = commandsTo(page, path);
 
     // The same account: password and code, the page resumed, the pending command replayed once.

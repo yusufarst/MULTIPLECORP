@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-12 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 19, created through the executor feedback loop from TASK-064's defect D6 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -201,32 +201,33 @@ TASK-064's CJ-21 test 4, in fresh CI on `f976270` (runs 43219763584 and 43219798
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript — the application, `tests/Browser` and `tests/Frontend` — in this head's CI (TL-02)
+- [x] Relevant automated tests: `tests/Frontend/session-reauth.test.ts` and `shell.test.ts` (the key comparison, the answer's reading); `tests/Interaction/ShellTest.php` (the key distinct for two accounts whose hints match and absent for a guest; the guest guard's unchecked redirect; the confirmation refusing another account's e-mail and a wrong password, each recorded, and accepting the session's own)
+- [x] Authorization: the password confirmation keeps AU-15's throttle (five a minute, MSG-20), VerificationSlots and the PASSWORD_CONFIRMATION_FAILED event; no capability changed
+- [x] Route integrity: no application route added or changed; local fixture routes only (`__fixtures/reauth/*`)
+- [x] Interaction behavior: `tests/Browser/E2E/reauth.spec.ts` on PG-014's real save and the application's own gateway, and `shell.spec.ts`'s re-authentication tests
+- [x] Browser E2E if required: those tests on Chromium and WebKit (TL-09); CJ-21 in TASK-064's verification on the merged code
+- [x] Responsive/adaptive if required: N/A — the dialog's layout unchanged
+- [x] Visual breathing room/density if UI: N/A — no visual change
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: the six regression cases the Owner required (2026-11-12) — a live session's 419 with a wrong password, another account's credentials or a forged token refused with the dialog open and nothing replayed; its own password replaying the one `command_id` once; an ended session signing in anew with its TOTP and replaying it once; another account with identical hints getting the full document load and nothing of the first account's command
+- [x] Database safety review: no schema change, no migration; the fixtures read `command_log`, age local test sessions and grant local test accounts only; production not touched
+- [x] Final diff review: Codex's review of `a9eb3dc` on pull request #82 raised one P1 — a 419 on a session still signed in could not be recovered, `/masuk` behind `guest` never checking the password —, fixed in `6cdc138`; its targeted re-review of `6cdc138` without finding (DIR-096's bounded loop); this head's delta — the shell fixture's account key, the e-mail match moved out of the controller, the browser spec's scoped accounts — checked by the executor, not a further review
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: N/A — no route is added or changed
-- Interaction evidence: the browser test named in TEST REQUIREMENTS
-- Browser evidence: `E2E: PASS — Evidence: …` on Chromium and WebKit
-- Localization evidence: no new key unless named in IN SCOPE; existing keys in both languages
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and pull request #82's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103: the record in the final code commit). `a9eb3dc`'s runs were superseded by `6cdc138`; `6cdc138`'s runs (43230180431, 43230192360) failed TL-02 (`shell.test.ts` still comparing hints without keys), TL-03 (the controller using the IAM model) and six TL-09 tests: `shell.spec.ts`'s two re-authentication tests, whose stub page carried no account key, so the guard rightly loaded the page afresh, and two `reauth.spec.ts` tests, whose Owners' hints list every company — which parallel tests add —, so the hints changed between the cover and the sign-in and the guard rightly loaded the page afresh; all fixed in this head
+- Build result: TL-13 in the same runs
+- Route evidence: N/A — no application route added or changed
+- Interaction evidence: `tests/Interaction/ShellTest.php`'s three TASK-093 tests
+- Browser evidence: `E2E: PASS — Evidence: this head, CI ubuntu-24.04, tests/Browser/E2E/reauth.spec.ts and shell.spec.ts on Chromium and WebKit`, as pull request #82's checks show before the merge
+- Localization evidence: no new key
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Http/Middleware/SessionDeadline.php`; `resources/views/app.blade.php`; `resources/js/lib/session-account.ts`, `session-core.ts`, `session-guard.tsx`; `app/Modules/IAM/Authentication/AttemptLogin.php`; `app/Modules/IAM/Http/Controllers/ConfirmPasswordController.php`; `routes/fixtures.php`; `tests/Support/Fixtures/ShellFixture.php`, `ReauthFixture.php`; `tests/Frontend/session-reauth.test.ts`, `shell.test.ts`; `tests/Interaction/ShellTest.php`; `tests/Browser/E2E/reauth.spec.ts`; `docs/11-tasks/TASK_PLAN.md`, this file; `docs/handoff/CURRENT_HANDOFF.md` (Change 19's contracts and mirrors in `a9eb3dc`)
+- Commit SHA: `a9eb3dc`, `6cdc138` and this head on `task/TASK-093-reauth-identity`, the Owner's identity, no AI attribution
+- Notes: the dialog tells a live session from an ended one by its background read of the open address — an answer carrying the session's key is a live session —; a live session proves its account by AU-15's password confirmation with the dialog's e-mail, which must name the session's own account (normalized as at sign-in) or the confirmation is refused and recorded as a wrong password is; an ended session signs in at `/masuk` with its mandatory second factor; in both, only the endpoint's own JSON success counts, and the page resumes only when the new session's opaque key equals the covered page's and the hints match. The CSRF guard is untouched: a request with a forged token is answered 419 and read as a refusal. The Owner's direction of 2026-11-12 (the security fix of pull request #82) widened IN SCOPE to this live-session path within TASK-093, no new Task
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

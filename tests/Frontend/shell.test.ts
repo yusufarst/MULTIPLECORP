@@ -139,6 +139,9 @@ void test('IP-11: MSG-34 from fifteen minutes before the absolute limit; the min
     assert.equal(sessionOver(null, deadline), false);
     assert.equal(minutesUntil(deadline, deadline - 61_000), 2);
     assert.equal(minutesUntil(deadline, deadline + 5), 0);
-    assert.equal(sameAccount({ name: 'A', capabilities: ['x'] }, { name: 'A', capabilities: ['x'] }), true);
-    assert.equal(sameAccount({ name: 'A', capabilities: ['x'] }, { name: 'B', capabilities: ['x'] }), false);
+    assert.equal(sameAccount({ name: 'A', capabilities: ['x'] }, { name: 'A', capabilities: ['x'] }, 'k1', 'k1'), true);
+    assert.equal(sameAccount({ name: 'A', capabilities: ['x'] }, { name: 'B', capabilities: ['x'] }, 'k1', 'k1'), false);
+    // TASK-093: identical hints are not the same account without the same opaque key.
+    assert.equal(sameAccount({ name: 'A', capabilities: ['x'] }, { name: 'A', capabilities: ['x'] }, 'k1', 'k2'), false);
+    assert.equal(sameAccount({ name: 'A', capabilities: ['x'] }, { name: 'A', capabilities: ['x'] }, null, null), false);
 });

@@ -6,7 +6,6 @@ use App\Http\Middleware\RequireStepUp;
 use App\Modules\IAM\Authentication\AttemptLogin;
 use App\Modules\IAM\Authentication\VerificationRefused;
 use App\Modules\IAM\Authentication\VerificationSlots;
-use App\Modules\IAM\Models\User;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Http\JsonResponse;
@@ -42,8 +41,7 @@ final class ConfirmPasswordController
         $password = AttemptLogin::password($request->input('password'));
         // TASK-093: the in-place dialog of a session still signed in names its account by e-mail; another account's
         // e-mail is refused as a wrong password is — the covered page never resumes under an identity not proved.
-        $email = $request->input('email');
-        $sameAccount = $email === null || (is_string($email) && $user instanceof User && mb_strtolower(trim($email)) === mb_strtolower($user->email));
+        $sameAccount = AttemptLogin::namesAccount($user, $request->input('email'));
 
         try {
             $matches = $user !== null && $password !== '' && $sameAccount

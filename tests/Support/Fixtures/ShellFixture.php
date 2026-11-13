@@ -2,6 +2,7 @@
 
 namespace Tests\Support\Fixtures;
 
+use Illuminate\Auth\GenericUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +36,9 @@ final class ShellFixture
         // The session's account: the address's persona, or whoever signed in through the dialog since (UXH-02).
         $key = Cache::get("shell-fixture:{$run}:persona", $request->query('persona'));
         $persona = self::PERSONAS[$key] ?? self::PERSONAS['owner'];
+        // TASK-093: the persona stands as the session's account, so the stub page carries an account key as a
+        // signed-in page does — the same persona's key after the dialog, another persona's a different one (UXH-02).
+        $request->setUserResolver(fn (): GenericUser => new GenericUser(['id' => "shell-fixture|{$run}|".(is_string($key) ? $key : 'owner')]));
 
         return [
             'auth' => [...$persona, 'companies' => $key === 'gudang' ? [self::COMPANIES[0]] : self::COMPANIES],

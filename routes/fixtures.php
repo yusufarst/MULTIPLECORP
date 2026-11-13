@@ -75,6 +75,7 @@ Route::post('__fixtures/akun', [AccountFixture::class, 'create']);
 // TL-09 (TASK-093): an account's session aged past the idle limit; the recorded outcome of commands by command_id.
 Route::post('__fixtures/reauth/usang', [ReauthFixture::class, 'age']);
 Route::get('__fixtures/reauth/perintah', [ReauthFixture::class, 'commands']);
+Route::post('__fixtures/reauth/lingkup', [ReauthFixture::class, 'scope']);
 
 // TL-09–TL-12 (TASK-019): the faked Google — sign-in on with a synthetic client and the token exchange answered
 // locally — for the Google journey, armed and disarmed by the run.
