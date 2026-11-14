@@ -8,6 +8,7 @@
 #   sh scripts/verify.sh browser-e2e   one of them: browser-e2e, browser-localization, browser-responsive, browser-accessibility (CI's parallel layers; DIR-103)
 #   sh scripts/verify.sh performance   TL-15, with the load tool's smoke run
 #   sh scripts/verify.sh migration     TL-16, on a fresh database only
+#   sh scripts/verify.sh deployment    TL-05 on the deployment definition (TASK-072), on a CI runner only
 #
 # A layer whose first test is not written yet reports EMPTY with the Task that writes it, and runs once
 # it exists; any FAIL or NOT RUN fails the command. VERIFY_PHP, VERIFY_NODE, VERIFY_E2E and VERIFY_K6 replace
@@ -148,6 +149,14 @@ migration_layers() {
     esac
 }
 
+# TASK-072: deploy/coolify/compose.yml started with throwaway values and checked as Coolify's proxy reaches it.
+deployment_layers() {
+    case $environment in
+        CI*) check 'TL-05 Deployment definition (TASK-072)' sh scripts/ci/check-deployment.sh ;;
+        *) report 'TL-05 Deployment definition (TASK-072)' 'NOT RUN — it starts a production stack, on a CI runner only' 'none' 'none' ;;
+    esac
+}
+
 [ $# -gt 0 ] || set -- local
 for section in "$@"; do
     case $section in
@@ -156,7 +165,8 @@ for section in "$@"; do
         browser-e2e | browser-localization | browser-responsive | browser-accessibility) browser_stack; browser_layer "${section#browser-}" ;;
         performance) performance_layers ;;
         migration) migration_layers ;;
-        *) echo "usage: sh scripts/verify.sh [local] [browser] [browser-<layer>] [performance] [migration]" >&2; exit 2 ;;
+        deployment) deployment_layers ;;
+        *) echo "usage: sh scripts/verify.sh [local] [browser] [browser-<layer>] [performance] [migration] [deployment]" >&2; exit 2 ;;
     esac
 done
 

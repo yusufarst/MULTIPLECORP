@@ -1,7 +1,10 @@
-# The CI of TEST_STRATEGY §17 (TASK-003, grown from TASK-001's minimal CI): on every push to a branch and
-# every pull request — a pushed tag runs the release gate, never a second CI run (TASK-073) —, on a fresh runner, the Docker Compose stack of DEVELOPMENT.md runs the verification command —
+# The CI of TEST_STRATEGY §17 (TASK-003, grown from TASK-001's minimal CI): once for every commit pushed to a branch,
+# `main` included — a pull request's checks are its head's push run, never a second run for the pull request's own event,
+# and a pull request merges only when its head contains `main`'s tip (DIR-118, APPR-034) —; a pushed tag runs the release
+# gate, never a second CI run (TASK-073). On a fresh runner, the Docker Compose stack of DEVELOPMENT.md runs the verification command —
 # the repository gates, TL-01–TL-08, TL-13 and TL-14 —, the browser suite of TL-09–TL-12 on Chromium and
-# WebKit — each layer on a runner of its own, the required check its aggregator (DIR-103) —, and TL-15 and TL-16; a failing check fails its job. No secret but the CI's own token, read-only,
+# WebKit — each layer on a runner of its own, the required check its aggregator (DIR-103) —, TL-15 and TL-16, and the
+# deployment definition's TL-05 (TASK-072); a failing check fails its job. No secret but the CI's own token, read-only,
 # for Composer's downloads from GitHub; the one action, GitHub's own artifact upload, pinned to a commit
 # (SECURITY SX-05; SECURITY_TEST_MATRIX SM-15). Each job keeps its verification summary for 90 days, the evidence the
 # release integrity report of a later tag reads (RELEASE_PLAN §11; TASK-073); CI tests and reports, and never deploys (RL-01).
@@ -11,7 +14,6 @@ on:
   push:
     branches:
       - '**'
-  pull_request:
 
 permissions:
   contents: read
@@ -27,14 +29,12 @@ jobs:
     timeout-minutes: 30
     env:
       BEFORE_SHA: ${{ github.event.before }}
-      BASE_SHA: ${{ github.event.pull_request.base.sha }}
-      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
     steps:
       - name: Check out the tested commit with its recent history
         run: |
           git init -q .
           git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          git fetch -q --no-tags --depth=100 origin "${GITHUB_SHA}" ${BASE_SHA:+"$BASE_SHA"} ${HEAD_SHA:+"$HEAD_SHA"}
+          git fetch -q --no-tags --depth=100 origin "${GITHUB_SHA}"
           git checkout -q --detach "${GITHUB_SHA}"
           git log -1 --format='Tested commit: %H'
 
@@ -49,8 +49,19 @@ jobs:
           echo "HOST_UID=$(id -u)" >> "$GITHUB_ENV"
           echo "HOST_GID=$(id -g)" >> "$GITHUB_ENV"
           echo "VERIFY_ENVIRONMENT=CI ubuntu-24.04 run ${GITHUB_RUN_ID}" >> "$GITHUB_ENV"
-          if [ -n "${BASE_SHA}" ]; then
-            range="${BASE_SHA}..${HEAD_SHA}"
+          # A branch's every commit since it left `main`, as its pull request's range was (DIR-118); on `main`, the push's.
+          base=''
+          if [ "${GITHUB_REF_NAME}" != main ] && git fetch -q --no-tags --depth=100 origin main; then
+            main_tip=$(git rev-parse FETCH_HEAD)
+            base=$(git merge-base "${main_tip}" "${GITHUB_SHA}" 2>/dev/null || true)
+            if [ "${base}" = "${main_tip}" ]; then
+              echo "The tested commit contains main's tip ${main_tip}."
+            else
+              echo "::notice::The tested commit does not contain main's tip ${main_tip}: merge main into the branch, and let that push's run pass, before its pull request merges (DIR-118)."
+            fi
+          fi
+          if [ -n "${base}" ]; then
+            range="${base}..${GITHUB_SHA}"
           elif [ -n "${BEFORE_SHA}" ] && git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
             range="${BEFORE_SHA}..${GITHUB_SHA}"
           else
@@ -178,7 +189,7 @@ jobs:
       - name: Fetch each layer's summary from its latest job
         if: needs.browser-layer.result == 'success'
         env:
-          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          HEAD_SHA: ${{ github.sha }}
         run: |
           mkdir -p evidence
           gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" --jq '.artifacts[]' > browser-artifacts.ndjson
@@ -249,3 +260,49 @@ jobs:
       - name: Stop the stack
         if: always()
         run: docker compose down -v
+
+  # TL-05 on the deployment definition (TASK-072): deploy/coolify/compose.yml started with throwaway values generated on
+  # the runner and checked as Coolify's proxy reaches it — private and authenticated stores, no migration, superuser or
+  # administration credential in a running process, the headers, the trusted host and proxy, the request log, the
+  # maintenance mode and Valkey's keys across restarts. It deploys nothing anywhere (RL-01).
+  deployment-definition:
+    name: Deployment definition — TL-05 on the Coolify stack
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Check out the tested commit
+        run: |
+          git init -q .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch -q --no-tags --depth=1 origin "${GITHUB_SHA}"
+          git checkout -q --detach FETCH_HEAD
+          git log -1 --format='Tested commit: %H'
+
+      - name: Prepare the environment
+        run: |
+          echo "VERIFY_ENVIRONMENT=CI ubuntu-24.04 run ${GITHUB_RUN_ID}" >> "$GITHUB_ENV"
+          echo "DEPLOY_CHECK_PREBUILT=yes" >> "$GITHUB_ENV"
+
+      - name: Build the production image
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ github.token }}"}}'
+        run: docker build --quiet --secret id=composer_auth,env=COMPOSER_AUTH -f docker/php/Dockerfile.production -t multiplecorp-app:production-deploy-check .
+
+      - name: The deployment definition, started and checked
+        run: sh scripts/verify.sh deployment
+
+      - name: Stack logs
+        if: failure()
+        run: docker compose -p mcdeploy -f deploy/coolify/compose.yml --env-file "${RUNNER_TEMP}/mcdeploy.env" logs --no-color
+
+      - name: Keep the evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: deployment-evidence
+          path: storage/logs/verify/
+          retention-days: 90
+
+      - name: Stop the stack
+        if: always()
+        run: sh scripts/ci/check-deployment.sh down

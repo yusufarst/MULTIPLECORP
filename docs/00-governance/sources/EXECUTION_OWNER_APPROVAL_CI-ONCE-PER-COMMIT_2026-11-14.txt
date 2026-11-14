@@ -1,0 +1,24 @@
+Owner approval received in session during execution, 2026-11-14 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+TASK
+Owner approves Option A for MULTIPLECORP CI optimization.
+READ
+Existing CI governance, TASK-001/002/003, `.github/workflows/ci.yml`, release evidence requirements, and applicable CHANGE_CONTROL rules.
+GOAL
+Run the full mandatory CI suite once per commit instead of duplicating it for push and pull_request events.
+DO
+
+1. Remove the redundant `pull_request` CI trigger and preserve `push` CI for every branch, including `main`.
+2. Preserve all mandatory gates, browser layers, evidence, and release requirements.
+3. Ensure commit-range verification and PR merge eligibility remain correct. Account for changes to `main` before merging.
+4. Record the Owner-approved amendment through existing CHANGE_CONTROL. Create no new Task.
+5. Do not interrupt CI already running unnecessarily.
+6. Continue TASK-072 immediately. No additional review loops beyond existing binding requirements.
+
+VERIFY
+Confirm the resulting workflow runs once per pushed commit, retains every required check, and remains compatible with release evidence.
+STOP IF
+An additional material authorization or safety conflict is discovered. Report only the exact conflict.
+UPDATE
+Keep reporting concise and continue implementation without artificial holds.
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.
