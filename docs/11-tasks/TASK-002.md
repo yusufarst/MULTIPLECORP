@@ -6,6 +6,8 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
+Amendment: on 2026-11-14 the Owner approved, under [APPR-034](../00-governance/DECISION_LOG.md#dir-118-and-appr-034--ci-once-per-pushed-commit-2026-11-14) (DIR-118; TASK_PLAN Change 23), CI once for every pushed commit: the workflow runs on every push to a branch, `main` included, and no longer a second time for a pull request's own event — "on every push and pull request" in criterion 7 reads as once for every pushed commit, a pull request's checks being its head's push run, merged only when that head contains `main`'s tip. No gate, layer, check or evidence changes; the DONE record below is historical and unchanged.
+
 **STATUS:** DONE
 
 **RISK CLASS:** STANDARD

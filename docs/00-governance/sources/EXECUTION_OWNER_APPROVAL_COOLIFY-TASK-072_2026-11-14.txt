@@ -1,0 +1,35 @@
+Owner approval received in session during execution, 2026-11-14 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER APPROVAL — COOLIFY AND PARALLEL TASK-072 PREPARATION
+Decision: APPROVE BOTH.
+I explicitly approve:
+
+1. Adopting self-hosted Coolify as the intended deployment management platform for MULTIPLECORP on the existing Hostinger VPS, which will also host BANTUKASIR.
+2. Amending the TASK-072 dependency through the approved CHANGE_CONTROL process so that its repository-only preparation can begin alongside TASK-071, using the already verified OPI-03 infrastructure facts.
+
+This is authorization to prepare the deployment solution, NOT authorization to install Coolify, operate the VPS, or release the application.
+Execution instructions
+
+* Record this Owner decision and the minimum required architectural amendments.
+* Keep the total TASK count fixed at 95.
+* Preserve the existing TASK-072 acceptance criteria and mandatory release gates.
+* Prepare Coolify-compatible MULTIPLECORP deployment definitions, health checks, staging configuration, and operator documentation in a separate worktree.
+* Keep TASK-071's unverified operator inputs outstanding.
+* Do not start downstream work that still depends on those outstanding inputs.
+* Do not disturb PR #85 or its running CI.
+* Avoid additional heavy CI runs until the active PR is resolved.
+* Do not change BANTUKASIR's repository or approved architecture on its behalf.
+* Preserve strict isolation between both applications, including networks, databases, volumes, credentials, backups, and deployment operations.
+* Treat the shared Coolify management plane as a security consideration requiring documented controls and Owner acceptance.
+* Plan a controlled transition from host Nginx to the Coolify proxy, with conflict checks and rollback instructions.
+* Do not stop Nginx, install Coolify, change firewall rules, or access the VPS. Those actions are reserved for the human Owner.
+* Keep production deployment manual, from an approved and verified main commit.
+* Do not enable automatic production deployments.
+
+Priority
+FIRST: complete PR #85 and TASK-067.
+IN PARALLEL: prepare the authorized TASK-072 repository artifacts in an isolated worktree without interrupting PR #85.
+THEN: continue the existing release-critical TASK sequence, minimizing unnecessary process and duplicate work.
+Do not request further approval for implementation details already covered by this decision. Request approval only for genuinely new material scope or production-impacting actions.
+ALL user-facing responses, progress reports, and summaries MUST be in Bahasa Indonesia.
+Proceed autonomously within these boundaries.

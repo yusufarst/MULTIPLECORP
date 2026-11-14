@@ -1,0 +1,63 @@
+Owner directive received in session during execution, 2026-11-14 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+URGENT OWNER DIRECTIVE — SHIP MULTIPLECORP
+The Owner is dissatisfied with the excessive process, repeated testing cycles, prolonged CI failures, and slow progress toward production.
+The primary objective is now to finish the application and reach a safe, publicly accessible production release as quickly as possible.
+This directive supersedes previous recommendations that unnecessarily expand the work, but does not override mandatory security, data-integrity, or release requirements.
+1. STOP PROCESS PROLIFERATION
+Effective immediately:
+
+* Do not create additional TASKs.
+* Do not initiate optional audits, cosmetic improvements, or speculative refactoring.
+* Do not expand the scope of existing tasks beyond their approved acceptance criteria.
+* Stop treating every minor finding as a separate release-blocking project.
+* Do not repeatedly request Owner decisions for minor implementation details already within approved scope.
+* Do not introduce new development tools, plugins, or workflows merely for optimization.
+* Avoid redundant CI runs, duplicated test preparation, and unnecessary documentation.
+
+2. PRIORITIZE IMPLEMENTATION
+Complete the remaining approved work through the shortest practical critical path.
+Prioritize:
+
+1. Actual release-blocking functional defects.
+2. Security, authentication, authorization, and data integrity.
+3. Essential business journeys.
+4. Deployment readiness.
+5. Operational prerequisites for production.
+
+Address non-blocking cosmetic P3 findings through existing governance without unnecessarily delaying the critical path.
+3. COMPLETE PR #85
+For TASK-067:
+
+* Diagnose the current localization CI failures by their common root causes.
+* Fix the minimum necessary code or test defects without weakening required assertions.
+* Do not repeat full test suites unnecessarily.
+* Complete the required CI and review gates.
+* Merge once all mandatory conditions are satisfied.
+
+Then continue immediately to the remaining approved release-critical tasks.
+4. FASTEST SAFE PRODUCTION PATH
+The Owner has prepared a Hostinger KVM 4 VPS with Ubuntu, Docker, Nginx, and UFW.
+The Owner prefers Coolify as the shared deployment manager for MULTIPLECORP and BANTUKASIR.
+Prepare the minimum change-control and deployment artifacts needed to support this decision.
+Preserve strict isolation of each application's databases, networks, volumes, secrets, backups, and runtime resources.
+Do not access the VPS or perform deployment yourself. The human Owner performs VPS operations manually.
+Do not bypass mandatory CI, security, backup/restore, staging smoke tests, or release approval. However, eliminate nonessential repetition and arrange prerequisites in parallel where safe.
+5. AUTONOMOUS EXECUTION
+Do not stop after each progress report.
+Continue coding and completing already authorized work autonomously.
+Ask the Owner only when a genuinely new approval, business decision, or human-only operational action is required.
+Report meaningful milestones rather than every small internal step.
+6. REPORT THE ACTUAL CRITICAL PATH
+Provide a concise report containing:
+
+* DONE / TOTAL TASKs and percentage.
+* Current active task and PR.
+* Exact remaining release blockers.
+* What is being actively implemented.
+* What the Owner must do personally.
+* The shortest safe route to a publicly accessible MULTIPLECORP application.
+
+Separate truly blocking release requirements from optional improvements.
+MANDATORY: ALL USER-FACING COMMUNICATION MUST BE IN BAHASA INDONESIA.
+Proceed immediately with the authorized implementation. Do not add new TASKs or unnecessary process.

@@ -1,0 +1,21 @@
+# The production image's build context (docker/php/Dockerfile.production; TASK-072): the application only — never a local
+# environment file, dependencies installed on a workstation, test output, evidence, or the repository's history (SX-01).
+.git
+.github
+.env
+.env.*
+!.env.example
+node_modules
+vendor
+public/build
+public/hot
+storage/logs/*
+storage/test-results
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/*
+bootstrap/cache/*.php
+tests
+docs
+*.log

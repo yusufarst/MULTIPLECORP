@@ -6,7 +6,9 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on OPI-03
+Amendment: on 2026-11-14 the Owner approved, under [APPR-033](../00-governance/DECISION_LOG.md#dir-117-and-appr-033--coolify-and-task-072s-start-of-2026-11-14) (DIR-117; TASK_PLAN Change 22), self-hosted Coolify as the tooling of DIR-079 CB-05's choice — INFRASTRUCTURE P9Q-02 amended to option (b) — and this Task's repository-only preparation begun alongside TASK-071 on OPI-03's verified facts; its acceptance criteria and every release gate are unchanged, and its DONE still waits on TASK-071.
+
+**STATUS:** IN_PROGRESS
 
 **RISK CLASS:** HIGH
 
