@@ -56,13 +56,28 @@ export function concatenated(code: string): string[] {
     const worded = (node: ts.Node): boolean => (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) && /\p{L}/u.test(node.text);
     const at = (node: ts.Node): string =>
         `${String(source.getLineAndCharacterOfPosition(node.getStart()).line + 1)}: ${node.getText().replace(/\s+/g, ' ').slice(0, 120)}`;
+    const plus = (node: ts.Node): node is ts.BinaryExpression => ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.PlusToken;
+    const operands = (node: ts.Expression): ts.Expression[] => (plus(node) ? [...operands(node.left), ...operands(node.right)] : [ts.isParenthesizedExpression(node) ? node.expression : node]);
+    const blank = (node: ts.Node): boolean => (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) && node.text.trim() === '';
+    // Two calls side by side, nothing but white space between them: one sentence in two keys.
+    const adjacent = (pieces: ts.Expression[]): boolean => {
+        const kept = pieces.filter((piece) => !blank(piece));
+
+        return kept.some((piece, index) => index > 0 && call(piece) && call(kept[index - 1]));
+    };
     const visit = (node: ts.Node): void => {
-        if (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.PlusToken) {
-            if ((call(node.left) && (call(node.right) || worded(node.right))) || (call(node.right) && worded(node.left))) found.push(at(node));
+        // A `+` chain read whole, from its outermost `+`: a call beside words, or two calls with only white space between.
+        if (plus(node) && !plus(node.parent)) {
+            const pieces = operands(node);
+
+            if ((pieces.some(call) && pieces.some(worded)) || adjacent(pieces)) found.push(at(node));
         }
 
         if (ts.isTemplateExpression(node) && node.templateSpans.some((span) => call(span.expression))) {
-            if (/\p{L}/u.test([node.head.text, ...node.templateSpans.map((span) => span.literal.text)].join(''))) found.push(at(node));
+            const words = /\p{L}/u.test([node.head.text, ...node.templateSpans.map((span) => span.literal.text)].join(''));
+            const sideBySide = node.templateSpans.some((span, index) => index > 0 && call(span.expression) && call(node.templateSpans[index - 1]?.expression) && (node.templateSpans[index - 1]?.literal.text ?? '').trim() === '');
+
+            if (words || sideBySide) found.push(at(node));
         }
 
         if (ts.isJsxElement(node) || ts.isJsxFragment(node)) {
@@ -93,6 +108,10 @@ void test('finds a sentence built from pieces and nothing else', () => {
     assert.equal(concatenated(`const a = t('x.y') + ' baru';`).length, 1);
     assert.equal(concatenated(`const a = 'Total ' + t('x.y');`).length, 1);
     assert.equal(concatenated(`const a = t('x.y') + t('z.w');`).length, 1);
+    assert.equal(concatenated(`const a = t('a.b') + ' ' + t('c.d');`).length, 1);
+    assert.equal(concatenated('const a = `${t(\'a.b\')} ${t(\'c.d\')}`;').length, 1);
+    assert.equal(concatenated(`const a = t('a.b') + ' · ' + t('c.d');`).length, 0);
+    assert.equal(concatenated(`const a = 'Rp ' + format(x);`).length, 0);
     assert.equal(concatenated('const a = `${t(\'x.y\')} baru`;').length, 1);
     assert.equal(concatenated(`const a = <p>{t('a.b')} {t('c.d')}</p>;`).length, 1);
     assert.equal(concatenated(`const a = <p>{t('a.b')} · {t('c.d')}</p>;`).length, 0);

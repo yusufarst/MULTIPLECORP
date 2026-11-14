@@ -15,11 +15,12 @@ export type Language = 'id' | 'en';
 /** TL-11's phone width (SV-02). */
 export const PHONE = { width: 390, height: 844 } as const;
 
-/** Roles and counts only, never text: the page's landmarks, then the heading levels and the buttons and links of
-    `#konten` and of an open dialog, in document order — a primary action marked `:primary`. A data set — a table, a
-    list, a region's state (PT-19) and a list's continuation (PT-08) — is left out whole: its rows are the data's,
-    which differ between two runs, never the language's. */
-export type Structure = { landmarks: string[]; headings: number[]; actions: string[] };
+/** The page's landmarks, then the heading levels and the buttons and links of `#konten` and of an open dialog, in
+    document order — a primary action marked `:primary`, each action with its accessible name, which the comparison
+    reads as the catalogue's key it renders. A data set — a table, a list, a region's state (PT-19) and a list's
+    continuation (PT-08) — is left out whole: its rows are the data's, never the language's. */
+export type Action = { role: string; name: string };
+export type Structure = { landmarks: string[]; headings: number[]; actions: Action[] };
 
 export type Snapshot = { where: string; language: Language; width: number; structure: Structure };
 
@@ -105,6 +106,13 @@ const INDONESIAN: Source[] = Object.entries(ID).flatMap(([key, value]) => {
     }
 
     const parts = withoutTypeNames(text).split(PLACEHOLDER);
+
+    // A text with a value in it is interface copy only by its own words around the value: two words beside a value —
+    // "Surat jalan :nomor" — are as likely a value someone typed ("Surat jalan pemasok …"), which is data (§3.4).
+    if (parts.length > 1 && words(literal).length < 3) {
+        return [];
+    }
+
     const probe = parts.reduce((longest, part) => (part.trim().length > longest.length ? part.trim() : longest), '');
 
     return [{ key, probe, pattern: new RegExp(`(?<![\\p{L}\\p{N}])${parts.map(escape).join('[\\s\\S]+?')}(?![\\p{L}\\p{N}])`, 'u') }];
@@ -374,7 +382,13 @@ async function read(delay: number): Promise<Reading> {
                     return [];
                 }
 
-                return [element.classList.contains('bg-primary') || element.classList.contains('bg-lime-cta') ? `${kind}:primary` : kind];
+                const labelledBy = (element.getAttribute('aria-labelledby') ?? '')
+                    .split(/\s+/)
+                    .map((id) => (id === '' ? '' : (document.getElementById(id)?.textContent ?? '')))
+                    .join(' ');
+                const name = [element.getAttribute('aria-label') ?? '', labelledBy, element.textContent, element.getAttribute('title') ?? ''].map(spaced).find((text) => text !== '') ?? '';
+
+                return [{ role: element.classList.contains('bg-primary') || element.classList.contains('bg-lime-cta') ? `${kind}:primary` : kind, name }];
             }),
     );
 
@@ -462,12 +476,63 @@ export async function audit(page: Page, language: Language, where: string): Prom
     return { where, language, width, structure: reading.structure };
 }
 
+// 6. The same regions and actions in the same order, the same primary action (§3.7), each action the same: its name is
+// read as the catalogue's keys whose text it is in its language, and two actions are the same when they render a key in
+// common — so two actions exchanging places, or one put for another, differ. A name the catalogue does not hold is a
+// value: over the same data — the switch in place — it must be the same value; across two runs, any value.
+const keysOf = (strings: Record<string, string>): Map<string, Set<string>> => {
+    const map = new Map<string, Set<string>>();
+
+    for (const [key, value] of Object.entries(strings)) {
+        for (const form of forms(value)) {
+            map.set(form, new Set([...(map.get(form) ?? []), key]));
+        }
+    }
+
+    return map;
+};
+const NAMED = { id: keysOf(ID), en: keysOf(EN) };
+
+/** What differs between two renders of one page in the two languages, empty when their structures are the same. */
+export function differences(a: Snapshot, b: Snapshot, sameData: boolean): string[] {
+    const out: string[] = [];
+    const roles = (snapshot: Snapshot): string[] => snapshot.structure.actions.map((action) => action.role);
+
+    if (JSON.stringify(a.structure.landmarks) !== JSON.stringify(b.structure.landmarks)) {
+        out.push(`landmarks ${JSON.stringify(a.structure.landmarks)} in ${a.language}, ${JSON.stringify(b.structure.landmarks)} in ${b.language}`);
+    }
+
+    if (JSON.stringify(a.structure.headings) !== JSON.stringify(b.structure.headings)) {
+        out.push(`heading levels ${JSON.stringify(a.structure.headings)} in ${a.language}, ${JSON.stringify(b.structure.headings)} in ${b.language}`);
+    }
+
+    if (JSON.stringify(roles(a)) !== JSON.stringify(roles(b))) {
+        out.push(`actions ${JSON.stringify(a.structure.actions.map((x) => `${x.role} ${x.name}`))} in ${a.language}, ${JSON.stringify(b.structure.actions.map((x) => `${x.role} ${x.name}`))} in ${b.language}`);
+
+        return out;
+    }
+
+    a.structure.actions.forEach((first, at) => {
+        const second = b.structure.actions[at] ?? { role: '', name: '' };
+        const left = NAMED[a.language].get(first.name);
+        const right = NAMED[b.language].get(second.name);
+        const same = left !== undefined && right !== undefined ? [...left].some((key) => right.has(key)) : left === undefined && right === undefined && (!sameData || first.name === second.name);
+
+        if (!same) {
+            out.push(`action ${String(at + 1)}: ${first.role} "${first.name}" in ${a.language}, "${second.name}" in ${b.language}`);
+        }
+    });
+
+    return out;
+}
+
 // The first snapshot of each page at each width in this worker — a spec file's tests run in order in one worker, its
-// Indonesian test before its English one —, against which every later render of the same page is compared.
+// Indonesian test before its English one —, against which a later render of the same page by the other test is compared
+// where the page offers no switch in place.
 const first = new Map<string, Snapshot>();
 
-/** Records a snapshot and, once the same page at the same width was recorded before in this spec file and project,
-    asserts the same structure: the same regions and actions in the same order, the same primary action (§3.7). */
+/** Records a snapshot and, once the same page at the same width was recorded before in this spec file and project in the
+    other language, asserts the same structure by identity (§3.7), the two runs' values aside. */
 export function expectSameStructure(snapshot: Snapshot): void {
     const info = test.info();
     const key = [info.project.name, info.file, snapshot.where, String(snapshot.width)].join(' | ');
@@ -479,32 +544,96 @@ export function expectSameStructure(snapshot: Snapshot): void {
         return;
     }
 
-    expect(snapshot.structure, `${snapshot.where} at ${String(snapshot.width)} px: the same regions and actions in the same order in ${earlier.language} and ${snapshot.language} (LOCALIZATION §3.7)`).toEqual(earlier.structure);
+    if (earlier.language !== snapshot.language) {
+        expect(differences(earlier, snapshot, false), `${snapshot.where} at ${String(snapshot.width)} px: the same regions and actions in the same order in ${earlier.language} and ${snapshot.language} (LOCALIZATION §3.7)`).toEqual([]);
+    }
 }
 
-/** Audits the page at the current width and at the phone's, the viewport restored after, comparing each structure with
-    the other language's render of the same page; `phone: false` where a resize would disturb the spec's flow. */
-export async function auditPage(page: Page, language: Language, where: string, { phone = true }: { phone?: boolean } = {}): Promise<void> {
-    const info = test.info();
+const MENU: Record<Language, string> = { id: 'Menu akun', en: 'Account menu' };
+const CHOICE: Record<Language, Record<Language, string>> = { id: { id: 'Bahasa Indonesia', en: 'English' }, en: { id: 'Indonesian', en: 'English' } };
 
-    if (info.timeout > 0) {
-        info.setTimeout(info.timeout + (phone ? 30_000 : 15_000));
+/**
+ * INT-002's switch in place — the account menu's *Bahasa tampilan*, the page, its data and its unsent input kept (§3.7;
+ * ROUTE-118) —, or false where the page offers none to reach: a guest's page, a fixture page without the account menu, or an
+ * open dialog, sheet, menu or list over it.
+ */
+async function switchLanguage(page: Page, from: Language, to: Language): Promise<boolean> {
+    if ((await page.locator('[role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"]').filter({ visible: true }).count()) > 0) {
+        return false;
     }
 
-    expectSameStructure(await audit(page, language, where));
+    const menu = page.getByRole('button', { name: MENU[from] });
 
-    if (!phone) {
-        return;
+    if ((await menu.count()) !== 1 || !(await menu.isVisible())) {
+        return false;
     }
 
+    await menu.click();
+    const choice = page.getByRole('menuitemcheckbox', { name: CHOICE[from][to], exact: true });
+
+    if (!(await choice.isVisible())) {
+        await page.keyboard.press('Escape');
+
+        return false;
+    }
+
+    await choice.click();
+    await expect(page.locator('html'), `the switch to ${to}`).toHaveAttribute('lang', to, { timeout: 15_000 });
+    await expect(page.getByRole('menu')).toHaveCount(0);
+
+    return true;
+}
+
+/** Runs a reading at the phone's width, the viewport restored after. */
+async function atPhone<T>(page: Page, reading: () => Promise<T>): Promise<T> {
     const size = page.viewportSize();
     await page.setViewportSize(PHONE);
 
     try {
-        expectSameStructure(await audit(page, language, where));
+        return await reading();
     } finally {
         if (size !== null) {
             await page.setViewportSize(size);
         }
+    }
+}
+
+/**
+ * Audits the page in `language` at the current width and at the phone's (`phone: false` where a resize would disturb the
+ * spec's flow), then switches the account's language in place, audits the same page over the same data in the other
+ * language and compares the two structures by identity, and switches back. Where the page offers no switch, the other
+ * language's render of the same page by the spec's other test is the comparison.
+ */
+export async function auditPage(page: Page, language: Language, where: string, { phone = true }: { phone?: boolean } = {}): Promise<void> {
+    const info = test.info();
+
+    if (info.timeout > 0) {
+        info.setTimeout(info.timeout + (phone ? 90_000 : 45_000));
+    }
+
+    const other: Language = language === 'id' ? 'en' : 'id';
+    const desk = await audit(page, language, where);
+    const small = phone ? await atPhone(page, () => audit(page, language, where)) : null;
+
+    if (!(await switchLanguage(page, language, other))) {
+        expectSameStructure(desk);
+
+        if (small !== null) {
+            expectSameStructure(small);
+        }
+
+        return;
+    }
+
+    try {
+        const deskOther = await audit(page, other, where);
+        expect(differences(desk, deskOther, true), `${where} at ${String(desk.width)} px: the same regions and actions in the same order in ${language} and ${other}, the language switched in place (LOCALIZATION §3.7)`).toEqual([]);
+
+        if (small !== null) {
+            const smallOther = await atPhone(page, () => audit(page, other, where));
+            expect(differences(small, smallOther, true), `${where} at ${String(small.width)} px: the same regions and actions in the same order in ${language} and ${other}, the language switched in place (LOCALIZATION §3.7)`).toEqual([]);
+        }
+    } finally {
+        expect(await switchLanguage(page, other, language), `${where}: the language switched back to ${language}`).toBe(true);
     }
 }
