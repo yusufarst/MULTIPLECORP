@@ -1,0 +1,68 @@
+Owner decision received in session during execution, 2026-11-14 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DECISION — APPROVE MINIMAL FIXES IN TASK-067 / PR #85
+Decision: APPROVED — Fix all four confirmed product defects within the existing TASK-067 PR #85.
+This approval is narrowly scoped. It does NOT authorize new TASKs, broad refactoring, unrelated features, or weakening any release gates.
+1. Change-control requirement
+Before modifying application code, record my explicit approval through the existing CHANGE_CONTROL / decision-log mechanism.
+Amend TASK-067 only to permit the four minimal product fixes identified by its mandatory localization and accessibility audit.
+
+* Keep the total approved TASK count at 95.
+* Do not reopen completed TASK-016, TASK-037, TASK-060, or TASK-095.
+* Reference the original TASK owners for traceability.
+* Do not create TASK-096 or any additional TASK.
+* Preserve all existing acceptance criteria and release requirements.
+
+2. Approved product corrections
+A — Navigation label truncation (P3)
+Ensure "Aktivitas & Keamanan" is fully readable when "Menu lengkap" is open at 1280 px in Indonesian.
+Use the smallest suitable layout correction. Preserve navigation functionality, responsive behavior, and both languages.
+B — PG-052 title truncation (P3)
+Ensure the English "Consolidated report" heading remains readable at 390 px without horizontal overflow or inaccessible content.
+Use a responsive layout correction, not an abbreviated translation.
+C — PG-017 Cancel button target size (P3)
+Confirm the reported failure against the applicable WCAG 2.2 AA target-size rule.
+If confirmed, provide a compliant target size or spacing solution that preserves the existing design and interaction.
+D — PG-013 "Mulai Penomoran" link after MSG-17 (P2)
+Fix the underlying flash/navigation lifecycle problem so that users consistently retain the intended next action after the successful command.
+Preserve authorization, business state transitions, validation, and existing success messaging.
+Add regression coverage for Chromium and WebKit. Do not merely increase timeouts or remove assertions.
+3. Test-tool corrections
+Fix the identified false positives separately:
+
+* Compare localization structures using stable identities and equivalent fixture data.
+* Prevent user-entered data from being mistaken for translation keys.
+* Detect concatenated translation calls separated by whitespace.
+* Preserve action identities during structural comparisons.
+
+Do not weaken the audit to make it pass.
+Retain coverage of all 65 pages, both supported languages, desktop, and 390 px where required by the approved contract.
+4. Laravel security advisory
+Include the narrowly scoped security update for GHSA-63hm-g96r-2m2q.
+The currently prepared change from laravel/framework 13.37.0 to patched 13.40.0 is approved, provided Composer dependency resolution remains valid.
+Keep composer.json unchanged unless a real compatibility requirement proves otherwise.
+Run dependency audit and the relevant regression checks.
+Do not perform unrelated dependency upgrades.
+5. Efficient execution
+Finish the approved corrections and test-tool fixes as one coordinated PR #85 batch.
+Run targeted local checks first, including lint, typecheck, affected frontend tests, and relevant browser regressions.
+Then push the reviewed batch, obtain fresh Codex review, and run the mandatory CI.
+Avoid redundant complete CI cycles. Investigate failures before another push.
+Do not classify failures as infrastructure flakes without evidence. Preserve existing authorization, security, accessibility, and business-rule assertions.
+Do not merge PR #85 until all required gates are genuinely satisfied on the reviewed exact head.
+6. After PR #85
+Once TASK-067 is verified and merged, continue the already approved task sequence toward release closure.
+Keep the Coolify decision and shared-VPS architecture change separate from this PR. Do not access or modify the VPS.
+7. Reporting
+Report in Bahasa Indonesia:
+
+1. The Owner approval and CHANGE_CONTROL record.
+2. The four product fixes completed and their regression evidence.
+3. The test-tool false positives corrected.
+4. The Laravel security patch and dependency audit results.
+5. CI and Codex review status.
+6. DONE/TOTAL progress out of the fixed 95 TASKs.
+7. The single next action toward production readiness.
+
+MANDATORY: All user-facing messages, progress updates, questions, and final reports must be in Bahasa Indonesia.
+Proceed with these approved corrections. No additional approval is required for changes strictly within this scope.

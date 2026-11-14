@@ -6,6 +6,8 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
+Amendment: on 2026-11-14 the Owner approved, under [APPR-032](../00-governance/DECISION_LOG.md#dir-116-and-appr-032--task-067s-four-minimal-product-fixes-of-2026-11-14) (DIR-116; TASK_PLAN Change 21), the minimal fix inside this Task of the four product defects its audit found — A, the navigation entry *Aktivitas & Keamanan* cut at 1280 px (TASK-016); B, PG-052's English title cut at 390 px (TASK-060); C, PG-017's "Cancel" target at 390 px (TASK-037), once confirmed; D, PG-013's "Mulai Penomoran" after MSG-17 (TASK-095) —, with the narrowly scoped laravel/framework security patch; the owners stay DONE and every acceptance criterion and release requirement is kept.
+
 **STATUS:** IN_PROGRESS
 
 **RISK CLASS:** STANDARD
@@ -67,7 +69,7 @@ CAP-14 and AC-14 require natural Indonesian by default, English through a switch
 
 **EXPECTED MODULES / FILE AREAS:**
 
-- the missing-key check over the string files and the inventory, the two-language page runs and layout checks in the browser suite, and the per-page copy lists in the test evidence area TASK-003 set up; no application code and no string file changed
+- the missing-key check over the string files and the inventory, the two-language page runs and layout checks in the browser suite, and the per-page copy lists in the test evidence area TASK-003 set up; no string file changed, and no application code but the four minimal corrections APPR-032 approves (defects A–D, their owners TASK-016, TASK-060, TASK-037 and TASK-095) with their regression tests, and the lockfile's laravel/framework security patch
 
 **BUSINESS RULES:**
 
