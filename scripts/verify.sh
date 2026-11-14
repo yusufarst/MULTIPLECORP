@@ -144,9 +144,46 @@ migration_layers() {
             check 'Stack' docker compose up -d --wait
             # As the migration/owner role, the only one that runs DDL (DATABASE §28; TASK-005).
             check 'TL-16 Migration up, down and up from empty' $php_run sh -c 'php artisan migrate --database=migration --force && php artisan migrate:rollback --database=migration --force && php artisan migrate --database=migration --force'
+            previous_release_layer
             ;;
         *) report 'TL-16 Migration' 'NOT RUN — it needs the fresh database of a CI runner' 'none' 'none' ;;
     esac
+}
+
+# The previous release: the latest `v*` tag; before the first release, the `main` the tested commit would follow — its
+# tip, or on `main` itself the commit before.
+previous_release() {
+    tag=$(git ls-remote --tags --refs origin 'v*' 2> /dev/null | sed 's#.*refs/tags/##' | sort -V | tail -n 1)
+    if [ -n "$tag" ]; then
+        git fetch -q --no-tags --depth=1 origin "refs/tags/$tag:refs/previous-release" && git rev-parse refs/previous-release
+        return
+    fi
+    git fetch -q --no-tags --depth=2 origin main:refs/previous-main || return 1
+    if [ "$(git rev-parse refs/previous-main)" = "$(git rev-parse HEAD)" ]; then git rev-parse refs/previous-main~1; else git rev-parse refs/previous-main; fi
+}
+
+# TASK-072 criterion 7 (TEST_STRATEGY §15; HO-31; GAP-012): the previous release's code runs its smoke checks — the read-only
+# checks of REL-11 — on the schema the tested commit expanded; every check that reads the schema passes and none throws.
+previous_release_layer() {
+    name='TL-16 The previous release on the expanded schema (TASK-072)'
+    if ! sha=$(previous_release) || [ -z "$sha" ]; then
+        report "$name" FAIL 'git fetch of the previous release' 'none'
+        return
+    fi
+    rm -rf .previous-release && mkdir .previous-release && git archive "$sha" | tar -x -C .previous-release
+    if [ ! -f .previous-release/app/Console/Commands/SmokeCheck.php ]; then
+        report "$name" "EMPTY — the previous release $(printf '%.7s' "$sha") has no smoke checks, which TASK-072 adds" "git archive $sha" 'none'
+        return
+    fi
+    cp .env .previous-release/.env
+    check "$name" docker compose exec -T -e COMPOSER_AUTH -w /var/www/html/.previous-release app sh -c '
+        composer install --no-interaction --prefer-dist --no-progress --quiet || exit 1
+        php artisan ops:smoke --disk-min=0 > storage/smoke.txt 2>&1
+        cat storage/smoke.txt
+        for check in "PASS database" "PASS queue" "PASS failed jobs" "PASS renditions"; do
+            grep -q "^$check" storage/smoke.txt || { echo "missing: $check"; exit 1; }
+        done
+        ! grep -Eiq "exception|SQLSTATE" storage/smoke.txt'
 }
 
 # TASK-072: deploy/coolify/compose.yml started with throwaway values and checked as Coolify's proxy reaches it.

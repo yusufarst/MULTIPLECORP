@@ -65,6 +65,12 @@ SELECT format('GRANT multiplecorp_administration TO %I', :'admin_login') \gexec
 
 -- The owner of the database owns its public schema, so only the migration login creates objects there.
 SELECT format('ALTER DATABASE %I OWNER TO %I', :'database', :'migration_login') \gexec
+
+-- TX-06 and the backstop of every class (CONCURRENCY_IDEMPOTENCY §3; HO-21): the runtime login's defaults in the
+-- application's database — a page read's 5 s statement timeout, which every other class overrides with SET LOCAL, and
+-- 15 s idle in a transaction. The test databases keep the server's defaults.
+SELECT format('ALTER ROLE %I IN DATABASE %I SET statement_timeout = %L', :'runtime_login', :'database', '5s') \gexec
+SELECT format('ALTER ROLE %I IN DATABASE %I SET idle_in_transaction_session_timeout = %L', :'runtime_login', :'database', '15s') \gexec
 SQL
 
 echo "provision-roles: the roles of DATABASE §28 are in place"
