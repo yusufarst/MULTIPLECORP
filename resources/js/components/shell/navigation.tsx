@@ -25,14 +25,15 @@ function NavLink({ entry, current, rail }: { entry: Entry; current: boolean; rai
             href={entry.href}
             aria-current={current ? 'page' : undefined}
             className={cn(
-                'relative flex h-(--nav-item-height) min-w-0 items-center gap-3 rounded-md px-(--nav-icon-inset) text-body font-medium text-text-secondary outline-none transition-colors duration-(--mc-dur-hover) hover:bg-row-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus',
+                'relative flex min-h-(--nav-item-height) min-w-0 items-center gap-3 rounded-md px-(--nav-icon-inset) text-body font-medium text-text-secondary outline-none transition-colors duration-(--mc-dur-hover) hover:bg-row-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus',
                 current &&
                     'bg-sidebar-accent font-semibold text-text-primary before:absolute before:inset-y-(--nav-indicator-inset-y) before:left-0 before:w-(--nav-indicator-width) before:rounded-full before:bg-sidebar-primary hover:bg-sidebar-accent',
                 rail && 'justify-center px-0',
             )}
         >
             <Icon icon={entry.icon} size="md" />
-            <span className={cn('min-w-0 truncate', rail && 'sr-only')}>{t(entry.label)}</span>
+            {/* A label longer than the 264 px sidebar's line wraps to a second line, never cut (LOCALIZATION §3.7; TASK-067 A). */}
+            <span className={cn('min-w-0 py-1 leading-tight break-words', rail && 'sr-only')}>{t(entry.label)}</span>
         </Link>
     );
 

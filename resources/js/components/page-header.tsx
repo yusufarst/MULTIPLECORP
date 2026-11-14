@@ -56,7 +56,8 @@ export function PageHeader({
                         <Icon icon={ArrowLeft} size="md" />
                     </Button>
                 )}
-                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                {/* The title never narrower than its longest word: the actions wrap below it instead of cutting it (LOCALIZATION §3.7; TASK-067 B). */}
+                <div className="flex min-w-min flex-1 flex-col gap-2">
                     <h1 className="text-m-title font-semibold tracking-tight text-text-primary md:text-title">{title}</h1>
                     {facts !== undefined && <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-body text-text-secondary">{facts}</div>}
                     {date}

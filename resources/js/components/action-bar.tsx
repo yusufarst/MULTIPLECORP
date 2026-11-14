@@ -7,8 +7,10 @@ import { cn } from '@/lib/utils';
 // one region with the form's buttons — "Batal" before the one primary action (GF-15) —, fixed at the bottom on
 // the phone, sticky at the bottom of a long form on the desktop. The command's answer appears directly above its
 // buttons inside it, the region growing up to a third of the viewport and scrolling inside beyond that, so the
-// answer is in view whenever the buttons are. Its two live regions exist from the page's load (§15). The page's
-// scroll padding follows its height so nothing focused hides under it (WCAG 2.4.11; GR-06).
+// answer is in view whenever the buttons are. Its two live regions exist from the page's load (§15). On the phone it
+// stands above the shell's bottom bar, "one region above the bottom bar" (§10), never under it — on a focused task the
+// bottom bar hides and the region takes the foot (TASK-067 C; WCAG 2.5.8). The page's scroll padding follows what it
+// covers of the viewport's foot so nothing focused hides under it (WCAG 2.4.11; GR-06).
 export function ActionBar({
     answer,
     answerAction,
@@ -35,13 +37,18 @@ export function ActionBar({
         }
 
         const root = document.documentElement;
-        const observer = new ResizeObserver(() => {
-            root.style.scrollPaddingBottom = `${String(element.offsetHeight)}px`;
-        });
+        // Fixed on the phone, the region and the bottom bar beneath it cover the viewport's foot from its top edge down.
+        const cover = () => {
+            const covered = getComputedStyle(element).position === 'fixed' ? window.innerHeight - element.getBoundingClientRect().top : element.offsetHeight;
+            root.style.scrollPaddingBottom = `${String(Math.max(element.offsetHeight, Math.round(covered)))}px`;
+        };
+        const observer = new ResizeObserver(cover);
         observer.observe(element);
+        window.addEventListener('resize', cover);
 
         return () => {
             observer.disconnect();
+            window.removeEventListener('resize', cover);
             root.style.removeProperty('scroll-padding-bottom');
         };
     }, [inline]);
@@ -59,7 +66,7 @@ export function ActionBar({
                 inline
                     ? 'mt-auto flex flex-col gap-3 pt-2 md:mt-2'
                     : 'fixed inset-x-0 bottom-0 z-(--z-bar) flex max-h-(--action-region-max) flex-col gap-3 overflow-y-auto border-t border-border-subtle bg-surface px-m-gutter pt-3 pb-[calc(var(--space-3)+var(--safe-bottom))] shadow-footer',
-                !inline && 'md:sticky md:bottom-0 md:px-gutter',
+                !inline && 'max-md:group-data-[bottom-bar]/shell:bottom-[calc(var(--m-bottom-nav-h)+var(--safe-bottom))] max-md:group-data-[bottom-bar]/shell:pb-3 md:sticky md:bottom-0 md:px-gutter',
                 className,
             )}
         >
