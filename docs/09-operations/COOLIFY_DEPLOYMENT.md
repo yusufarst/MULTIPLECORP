@@ -53,16 +53,31 @@ Nothing is deployed yet, so no live traffic is affected; the steps are still don
 
 In MULTIPLECORP's Coolify project, the staging environment holds one Docker Compose resource: the MULTIPLECORP repository, branch `main`, compose file `deploy/coolify/compose.yml`, the staging domain of OPI-30 on the `web` service's port 8080, its own variables from `production.env.example` with staging values, and resource limits below the headroom both production applications need (INFRASTRUCTURE §3). Synthetic data only (FX-02); started and removed by the operator; never the second application's resources (DIR-079 CB-04).
 
-## 6. A production deployment — by hand, from a verified commit
+**Seed.** After staging's first deployment, in the `app` container: `php artisan iam:install-owner --name=<name> --email=<e-mail> --operator=<the operator's name>` installs staging's first Owner (AU-25), then `php artisan staging:seed --owner=<that e-mail>` makes FX-02's companies — ARJ, BTN and CKP — and its base personas through the product's own commands as that Owner. It runs on staging only, leaves what already exists as it is, and shows each new account's password-setting link once (AU-11); the accounts use reserved example domains, so no mail leaves.
 
-INFRASTRUCTURE §5's path, through Coolify:
+**Rehearse (REL-03)** each release on staging by §6's steps, recording each step's duration for the production window, kept clear of the second application's windows (OPI-27):
 
-1. **Ready:** a `main` commit whose CI passed and whose staging rehearsal passed, with its release tag (TASK-073); `MULTIPLECORP_RELEASE` set to it.
-2. **Pre-deployment backup** by TASK-074's tooling, verified; a failed or unverified backup stops here (BK-03).
-3. **Maintenance window:** announced, outside business hours for the first three months; `php artisan down` in the `app` container — the flag lives in the shared `storage` volume every web process reads.
-4. **Deploy** the tagged commit in Coolify: the `migrate` service runs the expand-only migrations through the migration connection and the catalogue sync; every process of the release waits for it; workers and the scheduler restart with the release (HO-23); no step flushes Valkey.
-5. **Verify:** the health check `/up` through the domain; `php artisan ops:smoke` in the `app` container — the read-only smoke checks of the business heartbeat (INFRASTRUCTURE §6), each line PASS, FAIL or NOT CHECKED, exit code 1 on any FAIL —; `php artisan guards:reconcile` after a release that changes a posting service; then `php artisan up`.
-6. **Record** the deployed commit and schema version; a failed step stops for the operator's decision — code rollback is not data recovery (GAP-012).
+- the migration and the worker restart;
+- an interrupted migration — the `migrate` service stopped while it runs — and its recovery (RBK-05): PostgreSQL runs each migration in its own transaction, so the expected recovery is the deployment run again; the rehearsal confirms it and records the procedure it proved;
+- a job queued under the previous release worked by the new one, and a page loaded before the deployment posting a command afterwards (HO-31);
+- the code rollback of §6.
+
+Removed by the operator afterwards, its volumes with it.
+
+## 6. A production deployment — the release runbook (REL-08–REL-13)
+
+INFRASTRUCTURE §5's path through Coolify, by the human operator, from a verified `main` commit; each step names its source. Every step acts on MULTIPLECORP's own resource alone — never the second application, its data or its secrets —, no step flushes Valkey, and the shared host proxy changes only by §4's tested reload (INF-07; RBK-06). A failed step stops the release for the operator's and the Owner's decision — fix forward, the code rollback below, or a data recovery —, the choice and its reason recorded, the application kept in maintenance mode while writes are at risk; a code rollback is not data recovery (RBK-04; GAP-012).
+
+1. **Ready** (§5 step 1; REL-01–REL-07, TASK-073's release process): a `main` commit whose CI passed and whose staging rehearsal passed (REL-03), with the Owner's release approval and its release tag; `MULTIPLECORP_RELEASE` set to it.
+2. **Pre-deployment backup** (REL-08; BK-03; §5 step 2): by TASK-074's tooling, its verification completed; a failed or unverified backup stops here.
+3. **Maintenance window** (REL-10; §5 step 3; DIR-083 OE-08): announced, outside business hours for the first three months after go-live, for the duration the rehearsal measured. `php artisan down` in the `app` container: the flag lives in the shared `storage` volume every web process reads; a page through the domain answering 503 confirms it, while `/up` keeps answering OK (H9-14).
+4. **Drain** (REL-09; HO-34): the queue workers pause in the maintenance mode, so `php artisan queue:work --stop-when-empty --force --tries=1` in the `app` container works the in-flight cascades and exits; `php artisan ops:smoke`'s queue line then shows 0 jobs.
+5. **Deploy** (REL-10; §5 steps 4–5): the tagged commit in Coolify. The `migrate` service runs the expand-only migrations through the migration connection, then the catalogue sync; every process of the release waits for it; the workers and the scheduler restart with the release (HO-23); job payload versions are honoured (HO-31).
+6. **Verify** (REL-11; §5 step 6; GAP-013): `/up` through the domain; `php artisan ops:smoke` in the `app` container — the read-only smoke checks of the business heartbeat (INFRASTRUCTURE §6), each line PASS, FAIL or NOT CHECKED, exit code 1 on any FAIL; the scheduler's lines may show the window's pause, since scheduled tasks wait in the maintenance mode —; `php artisan guards:reconcile --operator=<name>` after a release that changes a posting service (GAP-031); the operator's read-only check of WS-10's gates and GLC-07's items. Then `php artisan up`, and `php artisan ops:smoke` again after five minutes, every line PASS but the backups' NOT CHECKED until TASK-074's tooling records them.
+7. **Monitor and record** (REL-12; §5 step 8): the heartbeat and alerts watched through the release's first business day; the deployed commit and the schema version — the last migration `php artisan migrate:status` lists — recorded with the release record (TASK-073).
+8. **Contract later** (REL-13; §5 step 7): a migration that drops, renames or retypes runs only in a later release, after the code that needed the old form is gone, its file named `_contract_`; the architecture test refuses any other (HO-31).
+
+**Code rollback** (RBK-01): in a maintenance window, by steps 3–6 — the queue drained by the newer workers first, then the previous release's tag deployed; its migrations were expand-only, so no down migration runs; pages of the newer release are reloaded or their commands refused, since the one-release validity of payloads and commands holds forward only (CONCURRENCY_IDEMPOTENCY §15). Rehearsed at REL-03.
 
 ## 7. Effect on the plan — the total stays 95
 
