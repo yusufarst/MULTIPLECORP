@@ -354,10 +354,12 @@ async function read(delay: number): Promise<Reading> {
         }
     }
 
+    // A document's paper — a draft's preview, its print copy — is the document's, Indonesian in either language (§3.4):
+    // its headings and controls are the paper's content, never the interface's structure.
     const counted = (element: Element, scope: Element): boolean => {
         const data = element.parentElement?.closest(DATA) ?? null;
 
-        return shown(element) && (data === null || !scope.contains(data));
+        return shown(element) && (data === null || !scope.contains(data)) && element.closest(PAPER) === null;
     };
     const landmarks = Array.from(document.body.querySelectorAll('header, footer, nav, main, aside, search, section, form, dialog, [role]'))
         .filter((element) => shown(element) && element.closest(TRANSIENT) === null && !within(element, DATA))
