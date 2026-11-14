@@ -37,6 +37,17 @@ class GuardMaintenance extends Command
             return self::INVALID;
         }
 
+        // On staging and production the administration credential is in no running process: the operator gives it to
+        // this run alone (INFRASTRUCTURE §4.4; COOLIFY_DEPLOYMENT §6), read here from the process, since the container's
+        // cached configuration was made without it.
+        foreach (['username' => 'DB_ADMIN_USERNAME', 'password' => 'DB_ADMIN_PASSWORD'] as $key => $variable) {
+            $given = getenv($variable);
+
+            if (is_string($given) && $given !== '') {
+                config(['database.connections.'.DatabaseRole::ADMINISTRATION_CONNECTION.".{$key}" => $given]);
+            }
+        }
+
         $connection = DB::connection(DatabaseRole::ADMINISTRATION_CONNECTION);
 
         $repaired = $connection->transaction(function () use ($connection, $family, $reconciler, $audit, $reason, $reference) {

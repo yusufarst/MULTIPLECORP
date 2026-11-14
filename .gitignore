@@ -39,3 +39,7 @@ Thumbs.db
 
 # The browser suite's reports, traces and screenshots (TASK-003).
 /storage/test-results/
+
+# TL-16: the previous release checked out by scripts/verify.sh on a CI runner (TASK-072).
+/.previous-release/
+/.previous-release.tar

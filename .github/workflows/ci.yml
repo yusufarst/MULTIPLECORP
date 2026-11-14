@@ -241,7 +241,10 @@ jobs:
           docker compose run --rm --no-deps -e COMPOSER_AUTH app composer install --no-interaction --prefer-dist --no-progress
           docker compose run --rm --no-deps app php artisan key:generate --no-interaction
 
+      # The previous release's dependencies come from the lockfile through the same read-only token (TL-16; TASK-072).
       - name: The performance and migration layers
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ github.token }}"}}'
         run: sh scripts/verify.sh performance migration
 
       - name: Stack logs

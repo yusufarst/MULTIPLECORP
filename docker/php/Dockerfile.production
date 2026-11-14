@@ -66,5 +66,9 @@ RUN set -eux; \
     # The `public` volume's mount point, owned by the runtime user: Docker gives an empty named volume the mount point's
     # owner on its first use, so the one-shot copy of the release's public files runs as www-data (compose.yml `public`).
     mkdir -p /srv/public; \
-    chown www-data:www-data /srv/public
+    chown www-data:www-data /srv/public; \
+    install -m 0755 docker/php/production-entrypoint.sh /usr/local/bin/multiplecorp-entrypoint
 USER www-data
+# Every process starts on the framework's caches made from its own environment (SX-03; production-entrypoint.sh).
+ENTRYPOINT ["multiplecorp-entrypoint"]
+CMD ["php-fpm"]

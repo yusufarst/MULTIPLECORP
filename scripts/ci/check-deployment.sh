@@ -135,6 +135,10 @@ result $? "PHP accepts the largest upload a purpose allows"
 user=$(compose exec -T app php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo Illuminate\Support\Facades\DB::scalar("select current_user");' 2>/dev/null || true)
 [ "$user" = check_runtime ]
 result $? "the application connects as the runtime role ($user)"
+# SX-03: every process runs on the framework's caches made from its own environment.
+for service in app worker-1 worker-2 scheduler; do
+    expect "$service runs on the cached configuration" compose exec -T "$service" test -f bootstrap/cache/config.php
+done
 
 # Criterion 3: WS-08's static headers, HSTS at its stage, no version banner (TLS and the redirect are the proxy's).
 page=$(request -H "Host: $host" http://web:8080/masuk)

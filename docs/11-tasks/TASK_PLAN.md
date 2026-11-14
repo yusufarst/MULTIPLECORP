@@ -28,7 +28,7 @@ Progress:
 74 / 95
 Percentage: 77.9 %
 
-CURRENT TASK: TASK-068 — Performance targets and query budgets in CI IN_PROGRESS on its branch `task/TASK-068-performance-budgets`, narrowed for the initial release (APPR-035; Change 24); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033)
+CURRENT TASK: TASK-068 — Performance targets and query budgets in CI IN_PROGRESS on its branch `task/TASK-068-performance-budgets`, narrowed for the initial release (APPR-035; Change 24); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged (pull requests #86, #87)
 NEXT READY TASK: TASK-065 READY after TASK-068, one at a time (DIR-112); TASK-066 waits on TASK-065, TASK-069 on TASK-065, TASK-066 and TASK-068, TASK-070 on TASK-065, TASK-066, TASK-068 and TASK-069; TASK-072, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
 LAST TASK PLAN CHANGE: Change 25 of 2026-11-15 — QB-09's first response amended to the seventeen reads PG-043 was measured to make, the 400 ms staging time unchanged, the Owner's APPR-036; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
