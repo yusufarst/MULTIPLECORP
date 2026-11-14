@@ -54,6 +54,11 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // SECURITY WS-11 (TASK-072): the proxy in front of MULTIPLECORP — its address or network, comma-separated — and the
+    // domains the Host header may name; none configured trusts no proxy and the application URL's host alone.
+    'trusted_proxies' => array_values(array_filter(array_map('trim', explode(',', (string) env('APP_TRUSTED_PROXIES', ''))))),
+    'trusted_hosts' => array_values(array_filter(array_map('trim', explode(',', (string) env('APP_TRUSTED_HOSTS', ''))))),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

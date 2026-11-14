@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HealthCheck;
 use App\Http\Middleware\AssignCorrelationId;
 use App\Http\Middleware\DeclareAccess;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -12,6 +13,7 @@ use App\Http\Middleware\StartSessionUnlessBackground;
 use App\Http\Responses\SystemAnswer;
 use App\Modules\IAM\Authentication\EnforceSessionLimits;
 use App\Modules\IAM\Authentication\Landing;
+use App\Support\TrustedHosts;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
@@ -33,12 +35,20 @@ return Application::configure(basePath: dirname(__DIR__))
         // production, where only ROUTE_CONTRACTS' routes exist. They keep no session — nothing is stored before
         // sign-in (INT-001) — so they need no database, which the browser job's stack does not migrate.
         then: function (): void {
+            // EN-03's minimal health check, outside the web group: no session, no cookie, no internals (SX-03; TASK-072).
+            Route::get('/up', HealthCheck::class)->middleware('access:none,health')->name('health');
+
             if (app()->environment('local')) {
                 Route::group([], base_path('routes/fixtures.php'));
             }
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // WS-11 (TASK-072): the Host header trusted only for the configured domains, read per request; the framework
+        // applies it outside local development and the test runner. The trusted proxies are set from the configuration
+        // when the application boots (AppServiceProvider).
+        $middleware->trustHosts(at: fn (): array => TrustedHosts::patterns(config()->array('app.trusted_hosts'), config()->string('app.url')), subdomains: false);
+
         // Global, so that error pages carry the policy too (SECURITY WS-08).
         $middleware->prepend(SecurityHeaders::class);
 
