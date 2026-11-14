@@ -5,6 +5,7 @@ use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\Reporting\Queries\Search;
+use App\Support\Search\NameSearch;
 use App\Support\Search\Term;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\Authorization;
@@ -65,4 +66,13 @@ it('reads a company-scoped title search through an index condition on the compan
 
     // The projects are reached through an index condition on the company, never chosen by the fragment first.
     expect($plan)->toMatch('/Scan using \S+ on projects\s.*\n\s+Index Cond: \(+company_id/');
+});
+
+it('searches with PFM-06\'s thresholds — 0.6 for word similarity, 0.3 for similarity — and its 200-candidate bound (TASK-068; PFM-06; PF-21)', function () {
+    // The word-similarity operator of NameSearch and the similarity operator read the server's thresholds on the
+    // application's own connection; the candidate set is cut at 200 before the rows asked for.
+    // show_limit() loads pg_trgm into the session, so its settings exist to be read.
+    expect((float) DB::scalar('select show_limit()'))->toBe(0.3)
+        ->and((float) DB::scalar("select current_setting('pg_trgm.word_similarity_threshold')::float"))->toBe(0.6)
+        ->and(NameSearch::CANDIDATES)->toBe(200);
 });

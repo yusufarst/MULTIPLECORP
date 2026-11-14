@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\Documents\SyntheticSubjects;
+use Tests\Support\QueryBudget;
 use Tests\Support\RefreshDatabase;
 
 // TL-15 (TASK-029; QB-12; QB-16; PFM-01; PFM-02): PG-035 reads one page of a branch in the same number of statements for
@@ -63,7 +64,9 @@ it('renders PG-035 in the same number of statements for few documents and many (
     documentsOf($this->company, 30);
     $many = $page();
 
-    expect($many)->toBe($few);
+    expect($many)->toBe($few)
+        // TASK-068: the list within QB-12's four, beyond the envelope (PFM-01).
+        ->and(QueryBudget::beyondEnvelope(fn () => $this->actingAs($this->viewer)->get('/dokumen')->assertOk()))->toBeLessThanOrEqual(4);
 });
 
 it('renders a document\'s draft composer without growing with the company\'s other documents (QB-16; PFM-02)', function () {

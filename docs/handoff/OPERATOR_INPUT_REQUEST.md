@@ -19,7 +19,7 @@ The agent Tasks can be finished in the repository, but the Tasks that need the V
 
 | Input | What to give | Unblocks |
 |---|---|---|
-| OPI-05 | A zero-cost alert channel the operator confirms. Recommended: a Telegram bot to the operator's and the Owner's phones (DIR-079 CB-06). Its token stays on the host | TASK-075, TASK-080 |
+| OPI-05 | A zero-cost alert channel the operator confirms — Telegram declined by the Owner on 2026-11-15 (DIR-121); an existing Rp0 channel evaluated first. Its credentials stay on the host | TASK-075, TASK-080 |
 | OPI-04 | The domain's DNS provider and whether a proxy fronts it | TASK-084 |
 | OPI-28 | Who holds the provider account, by role, and whether its sign-in uses a second factor | TASK-084 |
 | OPI-31 | Every holder of administrative access to the host or the provider account, by role, including the second application's operators | TASK-084 |
@@ -147,7 +147,7 @@ Hanya membaca: jangan memasang, menjalankan, menghentikan, me-reload, atau mengu
 5. **OPI-27 dan OPI-21:** CPU, memori, dan bandwidth seluruh host dari grafik panel selama periode yang representatif; disk aplikasi kedua (K) dan jendela pemeliharaannya dari klien — jangan pernah membuka atau mengubah aplikasi kedua. Sebelum MULTIPLECORP dipasang, U₀ = disk terpakai − K.
 6. **OPI-29:** di panel, setiap fitur penyedia (backup/snapshot, keamanan, konfigurasi, otomasi, AI) dan apakah aktif; jangan mengubah apa pun.
 7. **OPI-30 dan OPI-22:** nama domain/staging dan path `<BACKUP_DIR>` hanya di catatan pribadi; volume itu terpisah dari backup aplikasi kedua, izin hanya untuk operator (SX-07); jangan membuat apa pun.
-8. **OPI-05:** pastikan kanal tanpa biaya ke ponsel Anda (Telegram direkomendasikan, DIR-110) dan apakah hanya Anda yang mengendalikannya; tulis catatan §4C.4-nya (batas, kuota, lock-in, jalan keluar, portabilitas) sebelum dipakai; token dan chat ID hanya di penyimpanan rahasia Anda.
+8. **OPI-05:** pastikan kanal tanpa biaya ke ponsel Anda (bukan Telegram — ditolak Owner 2026-11-15, DIR-121; kanal Rp0 yang sudah ada dievaluasi dulu) dan apakah hanya Anda yang mengendalikannya; tulis catatan §4C.4-nya (batas, kuota, lock-in, jalan keluar, portabilitas) sebelum dipakai; token dan chat ID hanya di penyimpanan rahasia Anda.
 9. **Pencatatan:** Anda — bukan executor — memperbarui baris INF §9, BKR §7, dan RELEASE_PLAN §9 berdasarkan peran atau angka, diringkas di TASK-071 dalam bentuk TEST_STRATEGY §16; commit dengan identitas Anda, tanpa atribusi AI; pemindai rahasia CI (SM-15) harus lulus, tanpa detail host (AC-7). Input yang belum bisa diperoleh tetap terutang dan TASK-071 tetap BLOCKED (AC-8).
 
 ### 3. Inconsistencies
@@ -179,3 +179,21 @@ The Owner, the designated human operator (OPI-01), reported on 2026-11-13 in ses
 | OPI-05 | OUTSTANDING | — | The zero-cost alert channel confirmed, its §4C.4 record first |
 
 The host was rebooted after the setup; Docker, Nginx, SSH and UFW stayed active. Neither production application is deployed; no staging or production deployment is started by this record.
+
+## Received from the Owner as operator — 2026-11-15 (the Owner's answers, reconciled)
+
+The Owner's reconciled checklist and its answers of 2026-11-15 ([DIR-121](../00-governance/DECISION_LOG.md#dir-121--the-owners-operator-answers-of-2026-11-15); [source](../00-governance/sources/EXECUTION_OWNER_OPERATOR_ANSWERS_2026-11-15.txt)), recorded by role only. An answer is the Owner's statement, not a technical verification; nothing verified on 2026-11-13 is asked again. The executor never accessed the VPS.
+
+| Input | Status | The Owner's answer (non-sensitive) | Still owed |
+|---|---|---|---|
+| OPI-26, OPI-03 | VERIFIED (2026-11-13) | unchanged. Coolify is approved as the deployment target (APPR-033) but was not installed when OPI-03 was read; the repository's definition is no evidence of an installation | — |
+| OPI-02, OPI-21, OPI-27 | PARTIAL (2026-11-13) | unchanged | as recorded above |
+| OPI-04 | ANSWERED — not verified | Cloudflare is the DNS provider | its proxy mode, the live DNS state and the trusted proxies and hosts — checked when staging needs them (TASK-078) |
+| OPI-28 | PARTIAL | the Owner alone holds the provider account and panel | whether its sign-in uses a second factor |
+| OPI-31 | ANSWERED — Owner-declared | the Owner alone holds administrative access to the host and the provider account | — unless new evidence contradicts it; not an independent audit |
+| OPI-05 | OUTSTANDING | the Owner declines Telegram: the Telegram bot recommended under DIR-079 CB-06 is withdrawn from the proposed work | a zero-cost alert channel the operator confirms — an existing Rp0 channel evaluated against the rules first; no other integration added without the Owner's authorization |
+| OPI-32 | OUTSTANDING — UNDECIDED | no off-server backup destination chosen; an option at Rp0 additional cost preferred | the destination, off the VPS and the provider account, encrypted, its keys kept apart, restore-tested; its key custodian by role; nothing bought or activated |
+| OPI-22, OPI-29, OPI-30 | OUTSTANDING | — | as recorded above |
+| DEP-05 | OUTSTANDING | — | the data steward's sanitized structures, counts, control totals and cutover boundary; legacy data never assumed empty |
+
+**Effect:** TASK-071 stays BLOCKED on OPI-22, OPI-29, OPI-30 and OPI-05 (and its partial inputs); TASK-084's OPI-04, OPI-28 and OPI-32 stay open as above. INFRASTRUCTURE §9, BACKUP_RECOVERY §7 and RELEASE_PLAN §9 remain the operator's records to update (§2 step 9); where they recommend Telegram, this record supersedes the recommendation.

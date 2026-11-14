@@ -1,0 +1,25 @@
+Owner approval received in session during execution, 2026-11-15 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+TASK
+MULTIPLECORP — Owner-approved narrow amendment for QB-09 to accelerate TASK-068.
+READ
+PERFORMANCE QB-09, PERFORMANCE_TARGETS PFM-01/PFM-02, TASK-068, AS-07, and applicable CHANGE_CONTROL.
+GOAL
+Resolve the measured PG-043 invoice-detail query-budget mismatch without unnecessary product refactoring or weakening production safety.
+DO
+
+1. Amend only QB-09's first-response budget using the verified measurement of 17 data queries beyond the request envelope, subject to confirming that the measurement is representative.
+2. Preserve the 400 ms staging target, constant query counts, N+1 prevention, and data correctness.
+3. Record the narrow Owner-approved amendment using existing CHANGE_CONTROL. Create no new Task.
+4. Update only affected query-budget assertions and documentation.
+5. Do not implement deferred panels unless subsequent performance evidence demonstrates they are necessary.
+6. Continue TASK-068 immediately. Reuse existing tests and evidence. Do not initiate additional review cycles beyond binding requirements.
+7. Keep PR #87's independent fallback review and authorized merge process intact.
+
+VERIFY
+Run targeted QB-09 tests and existing mandatory CI. Report staging response-time verification as pending until measured, never PASS without evidence.
+STOP IF
+Measurements show non-constant query growth, a correctness defect, or an independent safety requirement that this amendment would violate.
+UPDATE
+Report the amended QB-09 limit, test results, remaining blockers, and next execution step concisely.
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.

@@ -7,6 +7,7 @@ use Database\Factories\DOC\FileObjectFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Tests\Support\Authorization;
+use Tests\Support\QueryBudget;
 use Tests\Support\RefreshDatabase;
 
 // TL-15 (TASK-030; QB-12; DIR-089 (2); BD-15; AS-08; criterion 11): PG-038's page in a number of statements that never
@@ -48,7 +49,10 @@ it('renders PG-038 in the same number of statements for one evidence and for 25 
     EvidenceDocument::factory()->count(30)->create(['company_id' => $this->company->id]);
     $many = evidenceStatements(fn () => $this->actingAs($this->viewer)->get('/dokumen/bukti')->assertOk());
 
-    expect($many)->toBe($one)->and($one)->toBeLessThanOrEqual(30);
+    expect($many)->toBe($one)->and($one)->toBeLessThanOrEqual(30)
+        // TASK-068: the list within QB-12's four beyond the envelope, plus one per kind of record its evidence links reach
+        // (the exclusive arc of DATABASE §22) — none linked here (PFM-01).
+        ->and(QueryBudget::beyondEnvelope(fn () => $this->actingAs($this->viewer)->get('/dokumen/bukti')->assertOk()))->toBeLessThanOrEqual(4);
 });
 
 it('serves each FL-10 lookup of the type-free identity from its index, across companies and the pool (DIR-089 (2); BD-15; AS-08)', function () {

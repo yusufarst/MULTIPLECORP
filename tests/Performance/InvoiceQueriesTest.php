@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
+use Tests\Support\QueryBudget;
 use Tests\Support\RefreshDatabase;
 
 // TL-15 (TASK-049; QB-08; QB-09; QB-13; PFM-01; PFM-02; PFM-20): PG-041 reads its page in the same number of statements for one invoice and a full page; PG-043 in the same number for one application and many; "Terbitkan Invoice" within the reference command's forty (AX-16).
@@ -71,6 +72,10 @@ it('reads PG-043 in the same number of statements for one application and many (
     }
 
     expect(invoiceStatements(fn () => $this->actingAs($this->actor)->get("/keuangan/invoice/{$public}")->assertOk()))->toBe($one);
+
+    // TASK-068: the detail within QB-09 as APPR-036 amended it — the invoice's own seventeen reads, its panels at once, and
+    // the shell's company list every page pays —, beyond the envelope (PFM-01); the same for one application and many above.
+    expect(QueryBudget::beyondEnvelope(fn () => $this->actingAs($this->actor)->get("/keuangan/invoice/{$public}")->assertOk()))->toBeLessThanOrEqual(17 + 1);
 });
 
 it('issues an invoice within the reference command\'s forty statements (QB-13; PFM-20; AX-16)', function () {

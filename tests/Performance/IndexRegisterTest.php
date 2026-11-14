@@ -1,6 +1,8 @@
 <?php
 
 use App\Support\Database\DatabaseRole;
+use App\Support\Guards\Families;
+use App\Support\Guards\Reconciler;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
@@ -358,6 +360,74 @@ it('registers each index of these tables with its query, and the query uses it',
             expect($owner->table('pg_indexes')->where('schemaname', 'public')->where('indexname', $index)->exists())->toBeTrue("{$use}: {$index} does not exist")
                 ->and(str_contains($plan, "\"Index Name\": \"{$index}\""))->toBeTrue("{$use}: the plan does not use {$index}:\n{$plan}");
         }
+    } finally {
+        $owner->rollBack();
+    }
+});
+
+/** The relations a plan reads by a sequential scan, at any depth. */
+function sequentialScans(array $node): array
+{
+    $found = ($node['Node Type'] ?? '') === 'Seq Scan' ? [(string) $node['Relation Name']] : [];
+
+    foreach ($node['Plans'] ?? [] as $child) {
+        $found = [...$found, ...sequentialScans($child)];
+    }
+
+    return $found;
+}
+
+it('keeps each registered query\'s own plan on PERFORMANCE §12\'s step-4 rule, its EXPLAIN (ANALYZE, BUFFERS) kept as evidence (TASK-068; PFM-03)', function () {
+    // The register's synthetic tables — 20,000 rows each, at or above 1x but for the audit, security, ledger, stock and
+    // import rows —, the planner free to choose; 100x is NOT TESTED for the initial release (APPR-035).
+    $owner = DB::connection(DatabaseRole::MIGRATION_CONNECTION);
+    $directory = storage_path('logs/verify/plans');
+    is_dir($directory) || mkdir($directory, 0775, true);
+    $owner->beginTransaction();
+
+    try {
+        seedIndexRegister($owner);
+        $owner->statement('set local enable_seqscan = on');
+        $company = (string) $owner->scalar('select min(id) from companies');
+        $scans = [];
+
+        foreach (INDEX_REGISTER as $use => [$index, $query]) {
+            $json = (string) $owner->scalar('explain (analyze, buffers, format json) '.str_replace('{company}', $company, $query));
+            file_put_contents($directory.'/'.preg_replace('/[^a-z0-9]+/', '-', strtolower($use)).'.json', $json);
+            $plan = json_decode($json, true)[0]['Plan'] ?? [];
+
+            foreach (sequentialScans($plan) as $relation) {
+                $rows = (int) $owner->scalar('select reltuples::bigint from pg_class where relname = ?', [$relation]);
+
+                if ($rows > 10_000) {
+                    $scans[] = "{$use}: a sequential scan of {$relation} ({$rows} rows)";
+                }
+            }
+        }
+
+        expect($scans)->toBe([]);
+
+        // PFM-08 (PF-30): each guard family's ReconcileGuards statement on the same synthetic data — one set-based read per
+        // family after the catalogue's column types —, its plan and its guard table's size kept as evidence; a batch job's
+        // whole-table read, so no scan rule applies. Its duration is staging's (TASK-079).
+        $reconciler = app(Reconciler::class);
+        $sizes = [];
+
+        foreach (Families::all() as $family) {
+            $owner->flushQueryLog();
+            $owner->enableQueryLog();
+            $reconciler->differences($owner, $family);
+            $reads = array_values(array_filter($owner->getQueryLog(), fn (array $query): bool => preg_match('/^\s*(select|with)\b/i', (string) $query['query']) === 1
+                && ! str_contains((string) $query['query'], 'pg_attribute')));
+            $owner->disableQueryLog();
+
+            expect($reads)->toHaveCount(1, "{$family->table()}: one set-based statement");
+
+            file_put_contents("{$directory}/reconcile-{$family->table()}.json", (string) $owner->scalar('explain (analyze, buffers, format json) '.$reads[0]['query'], $reads[0]['bindings']));
+            $sizes[] = $family->table().': '.(int) $owner->scalar('select count(*) from '.$family->table()).' guard rows';
+        }
+
+        file_put_contents("{$directory}/reconcile-sizes.txt", implode("\n", $sizes)."\n");
     } finally {
         $owner->rollBack();
     }

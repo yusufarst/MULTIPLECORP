@@ -6,6 +6,7 @@ use Database\Factories\PRJ\ProjectFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Tests\Support\Authorization;
+use Tests\Support\QueryBudget;
 use Tests\Support\RefreshDatabase;
 
 // TL-15 (TASK-031; QB-12; PFM-01): PG-040 reads a branch's page of cases in the same number of statements for few cases
@@ -46,5 +47,8 @@ it('renders PG-040 in the same number of statements for few cases and many (QB-1
             'case_kind' => $number % 2 === 0 ? 'PURCHASE_RETURN' : 'SALES_RETURN', 'residual_settlement_amount' => $number % 3 === 0 ? '100.00' : '0.00']);
     }
 
-    expect($page())->toBe($few);
+    expect($page())->toBe($few)
+        // TASK-068: the list within QB-12's four plus one for the audit entities it links — the closure and the step
+        // records, one kind —, beyond the envelope (PFM-01).
+        ->and(QueryBudget::beyondEnvelope(fn () => $this->actingAs($this->viewer)->get('/dokumen/kasus')->assertOk()))->toBeLessThanOrEqual(4 + 1);
 });

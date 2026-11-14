@@ -2,10 +2,11 @@
 
 // FX-06 (TEST_STRATEGY §4): the scale fixtures of PERFORMANCE AS-04 and AS-05 — AS-04's volume at 1x,
 // as written, multiplied for every table at 10x and 100x. The Task that measures a budget generates the
-// rows of its tables at each scale and analyzes them (TL-15; TASK-068).
+// rows of its tables at each scale and analyzes them (TL-15; TASK-068) — for the initial release 1x, and 10x
+// only where a selective check is practical, 100x NOT TESTED (APPR-035).
 return [
     'id' => 'FX-06',
-    'title' => 'The scale fixtures 1x, 10x and 100x of AS-04 and AS-05, generated and analyzed',
+    'title' => 'The scale fixtures 1x, 10x and 100x of AS-04 and AS-05, generated and analyzed — for the initial release 1x, and 10x only where a selective check is practical, 100x NOT TESTED (APPR-035)',
     'source' => 'PERFORMANCE §1',
     'used_by' => 'TL-15',
     'documents' => ['docs/06-api-performance/PERFORMANCE.md'],
