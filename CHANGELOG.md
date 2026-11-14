@@ -843,3 +843,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-093 on its branch `task/TASK-093-reauth-identity`: the session's opaque account key on every authenticated answer and the root view, the in-place dialog resuming the covered page only for its own account on the endpoint's own success, a session still signed in after a 419 proving its account by AU-15's password confirmation with its e-mail, an ended one signing in anew with its second factor.
 - Updated the locked `phpseclib/phpseclib` to 4.0.3 for the advisory GHSA-w3p9-g4p2-h3rr of 2026-11-02 that TL-14's PHP audit refuses (SX-05); no package added or removed.
+
+## Unreleased — 2026-11-14, TASK-067 — localization completeness and the per-page copy lists
+
+- Built TASK-067 on its branch `task/TASK-067-localization-completeness`: the missing-key and concatenated-sentence check, every page PG-001–PG-065 audited in both languages at the desktop width and at 390 px with the language switched in place, and the per-page copy lists with their language items as CI evidence; the four product defects its audit found fixed minimally under APPR-032 (DIR-116) — the navigation label wrapped, a page title kept to its longest word, the phone's action bar above the bottom bar, PG-013's next-step link kept with its answer.
+- Updated the locked `laravel/framework` to 13.40.0 for the advisory GHSA-63hm-g96r-2m2q of 2026-11-13 that TL-14's PHP audit refuses (SX-05); no package added or removed.

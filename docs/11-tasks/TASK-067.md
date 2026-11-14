@@ -8,7 +8,7 @@ Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-
 
 Amendment: on 2026-11-14 the Owner approved, under [APPR-032](../00-governance/DECISION_LOG.md#dir-116-and-appr-032--task-067s-four-minimal-product-fixes-of-2026-11-14) (DIR-116; TASK_PLAN Change 21), the minimal fix inside this Task of the four product defects its audit found — A, the navigation entry *Aktivitas & Keamanan* cut at 1280 px (TASK-016); B, PG-052's English title cut at 390 px (TASK-060); C, PG-017's "Cancel" target at 390 px (TASK-037), once confirmed; D, PG-013's "Mulai Penomoran" after MSG-17 (TASK-095) —, with the narrowly scoped laravel/framework security patch; the owners stay DONE and every acceptance criterion and release requirement is kept.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -236,32 +236,33 @@ CAP-14 and AC-14 require natural Indonesian by default, English through a switch
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint on the checker, the generator, the audit and the specs in this head's CI (TL-01); no PHP changed
+- [x] Typecheck: TypeScript over the browser and frontend test trees in this head's CI (TL-02)
+- [x] Relevant automated tests: `tests/Frontend/i18n-keys.test.ts` — the missing-key tool and the concatenated-sentence check, each with its own rules' cases —; `tests/Frontend/copy-lists.test.ts` — the generator's rules on fixtures, every page's list written and checked, a stale list failing, a page no Localization spec audits failing —; with `tests/Unit/Localization/KeyCatalogueTest.php` — LOCALIZATION §6's keys in both languages with §6's texts, every added key through the registry — and TASK-014's `multiplecorp/hardcoded-copy` rule (TL-03; TL-01)
+- [x] Authorization: N/A — no permission changed. Each page is checked as the personas who reach it: rendered as the Owner, whose role carries every capability of the catalogue (PERMISSIONS_MATRIX RG-02), so every control a persona can reach is shown, and the states only an account without access sees — PG-005, and PG-007 with MSG-38 — by `without-access.spec.ts`; the denial suites are TASK-069's
+- [x] Route integrity: N/A — no route added or changed; the crawl is TASK-069's
+- [x] Interaction behavior: INT-001 — `tests/Browser/Localization/sign-in.spec.ts`, `tests/Browser/E2E/language-switch.spec.ts` — and INT-002 — `tests/Browser/E2E/own-account.spec.ts`, CJ-18 (TASK-064) — as their contracts state, unchanged
+- [x] Browser E2E if required: the 46 Localization specs, every page PG-001–PG-065 in both languages on Chromium and WebKit (TL-10), in this head's CI
+- [x] Responsive/adaptive if required: each page in both languages at its spec's desktop width and at 390 px — no horizontal scroll outside a table, no clipped label, targets at their sizes, the same regions and actions in the same order (LOCALIZATION §3.7); the band matrix is TASK-065's
+- [x] Visual breathing room/density if UI: N/A — TASK-065's gate
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: synthetic data only, no secret in the evidence (DOD-21); the pre-login choice stored nowhere and never written to the account — `tests/Feature/LocaleTest.php`, `tests/Browser/E2E/language-switch.spec.ts`
+- [x] Database safety review: no schema change, no migration, no write path but the fixtures' synthetic runs; production not touched
+- [x] Final diff review: Codex's review of this pull request before the merge (DIR-096's bounded loop)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and the pull request's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103)
+- Build result: TL-13 PASS in the same runs
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract built; INT-001 and INT-002 exercised by their existing tests, named above
+- Browser evidence: `E2E: PASS — Evidence: this head, CI ubuntu-24.04, the localization layer — tests/Browser/Localization/*.spec.ts, 46 specs on Chromium and WebKit, every page PG-001–PG-065 audited in both languages by tests/Browser/localization-audit.ts — in the run's browser-evidence-localization artifact`
+- Localization evidence: every page in both languages at the desktop width and at 390 px (above); the per-page copy lists — each page's new keys with their state under OB-04 and its language items of AICWDF §27 with the checks behind each — in the run's `verify-evidence` artifact, `storage/logs/verify/copy-lists`, for the Owner's review at the UAT (TEST_STRATEGY §12) and for TASK-070, which enters the language items in TASK-065's gate record
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the project's own Node.js test runner, TypeScript, Playwright and axe-core, nothing installed
+- Files changed: the four corrections APPR-032 approves — `resources/js/components/shell/navigation.tsx` (A), `resources/js/components/page-header.tsx` (B), `resources/js/components/action-bar.tsx` and `resources/js/layouts/AppShell.tsx` (C), `resources/js/lib/use-command.ts` and `resources/js/Pages/PRJ/ProjectForm.tsx` (D) —; `composer.lock` (laravel/framework 13.40.0 for GHSA-63hm-g96r-2m2q); `scripts/i18n/copy-lists.mjs`; `tests/Frontend/i18n-keys.test.ts`; `tests/Frontend/copy-lists.test.ts`; `tests/Browser/localization-audit.ts`; `tests/Browser/Localization/*.spec.ts` — the 45 existing specs with their pages' audits, PG-041 added to `invoices.spec.ts`, `without-access.spec.ts` new for PG-005 and PG-007 without a company grant —; `docs/00-governance/TOOLCHAIN.md`; `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/sources/EXECUTION_OWNER_DIRECTIVE_TASK-071-EVIDENCE_2026-11-13.txt` and `docs/handoff/OPERATOR_INPUT_REQUEST.md` (DIR-115); `docs/00-governance/sources/EXECUTION_OWNER_DECISION_TASK-067-MINIMAL-FIXES_2026-11-14.txt` (DIR-116, APPR-032); `docs/11-tasks/TASK_PLAN.md` (Change 21), this file; `docs/handoff/CURRENT_HANDOFF.md`
+- Commit SHA: this branch's commits on `task/TASK-067-localization-completeness`, `main` merged in — never rebased —, the Owner's identity, no AI attribution
+- Notes: criteria 1–8 PASS. **1** — every key the interface's code names literally is in both string files, not empty, with the same named placeholders, and no sentence is built from pieces (`tests/Frontend/i18n-keys.test.ts`); LOCALIZATION §6's keys are in both languages with §6's texts and every added key came through the registry (`KeyCatalogueTest`); no hard-coded string (`multiplecorp/hardcoded-copy`); on every rendered page no key shown as itself, no control without a name and no unfilled placeholder (the audit) — missing translations: 0. **2** — on every English page no Indonesian interface string beyond LOCALIZATION §3.4's values, names, document type names and a document's paper (the audit, which also finds the server's Indonesian answer to a missing English key). **3** — every page in both languages, at its spec's desktop width and at 390 px: the same landmarks, headings, actions and primary action in the same order, no clipped label, no horizontal scroll outside a table, targets at their sizes (the audit; axe's WCAG 2.5.8 rule). **4** — INT-001's switch keeps PG-001's typed e-mail and never its password, and PG-003's token (`Localization/sign-in.spec.ts`); INT-002's keeps the page, its data and its unsent input, and the language returns after a re-login (`E2E/own-account.spec.ts`; CJ-18, TASK-064). **5** — the paper of every draft and issued document stays Indonesian with the interface in English (the Localization specs that assert it, the audit skipping only the paper), a rendition (`Localization/files.spec.ts`; `LocaleTest`'s §3.4 case), an export with its header row (`tests/Integration/Reporting/ExportJobTest.php`); dates, numbers and money in one format in both languages (`tests/Frontend/format.test.ts`, LOCALIZATION §3.3's table; OQ-04 (a)). **6** — `tests/Feature/LocaleTest.php`: Indonesian without a stored language and before any choice, the `bahasa` address key stored nowhere and never written to the account; `E2E/language-switch.spec.ts`: no cookie and no browser storage. **7** — the per-page copy lists of the 65 pages, with the shell's and the unmapped keys: 3,462 new keys — 222 accepted by construction under OB-04, 3,240 proposed for the Owner's review at the UAT —; 110 keys reach no page's list (server answers, validation messages and keys built from recorded data among them) and are listed in `unmapped.md`; LOCALIZATION §5.1's 881 keys stay validated; no key's text changed. The Owner's marks are TASK-086's, and correcting a marked key before the release is Planning's under LOCALIZATION §5. **8** — defects recorded for their Tasks and not fixed here (no string file changed in this Task; DIR-111 and DIR-114: no new Task): **P3** — 27 keys named nowhere in the code, copy no page can show: TASK-015 `actions.leave`, `actions.open_record`, `finance.cash_out`, `forms.value_taken`, `inventory.condition`, `nav.pagination_free`, `states.frozen`, `timeline.dates`; TASK-025 `companies.account.reason`; TASK-028 `locations.cut`; TASK-031 `cases.field.kind`, `cases.field.opened`, `cases.field.state`; TASK-032 `projects.line.price`, `projects.line.product`, `projects.line.quantity`; TASK-040 `stock.column.actor`, `stock.column.direction`, `stock.column.serial`, `stock.value.line`; TASK-049 `invoices.action.issue_nota`, `invoices.kuitansi.confirm_title`, `invoices.composer.client`; TASK-058 `signals.amount_row`; TASK-061 `activity.record.open`, `security_log.focus_unavailable`; and §6's `actions.abort_batch` (DIR-100), which PG-058 renders through its duplicate `import.action.abort` (TASK-057). The minimum fix is to remove each key from both string files and the registry, or to use `actions.abort_batch` where its duplicate stands; it is Planning's under LOCALIZATION §5. Each was found by the copy lists' `unmapped.md` (named nowhere) and confirmed by a search of the code. **CI before this head (TEST_STRATEGY §16):** `7839de3` (runs 43488584748, 43488621484) — the audit's first run found A–D, fixed here under APPR-032 (DIR-116; TASK_PLAN Change 21) and proven by the same audit and by D10's E2E test on Chromium and WebKit, and its own false positives; TL-14 failed on GHSA-63hm-g96r-2m2q, published that day, answered by laravel/framework 13.40.0 in the lockfile, `composer.json` unchanged. `7e0b0ec` (runs 43579445229, 43579449240) — every layer but localization passed, the E2E layer with D10's test on both engines among them; the localization failures were the audit's own — the switch back read before the account menu had opened, a label with a value not named by its key (Codex's finding), *Beranda* read while its groups loaded. `991d0f3` (runs 43584679991, 43584682876) — 186 of 190 localization tests passed; the four others compared runs of company values whose length the shared database changed between the two reads of one page, the language changing none of them; fixed in this head by reading a run of values as one place, a missing, added or exchanged catalogue action still failing the comparison; every other layer — Verify, E2E, responsive, accessibility, performance and migration — passed on both runs.
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
