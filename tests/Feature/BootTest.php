@@ -54,6 +54,8 @@ it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', f
         'GET|HEAD berkas/{id}/tampil',
         'GET|HEAD berkas/{id}/unduh', 'GET|HEAD berkas/{id}/gambar-kecil', 'GET|HEAD status/{kind}/{id}',
         'GET|HEAD cari', 'POST cari', 'GET|HEAD {fallbackPlaceholder}',
+        // EN-03's minimal health check, outside the web group (TASK-072).
+        'GET|HEAD up',
     ]);
 });
 

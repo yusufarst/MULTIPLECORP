@@ -13,6 +13,7 @@ use App\Http\Middleware\StartSessionUnlessBackground;
 use App\Http\Responses\SystemAnswer;
 use App\Modules\IAM\Authentication\EnforceSessionLimits;
 use App\Modules\IAM\Authentication\Landing;
+use App\Support\Heartbeat;
 use App\Support\TrustedHosts;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Console\Scheduling\Schedule;
@@ -99,15 +100,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // One cron entry runs the scheduler each minute (TASK-072's); every task is overlap-protected on the store
         // with an expiry longer than its longest run, so with the store down it does not run and the next minute
         // tries again (CONCURRENCY_IDEMPOTENCY §15; HO-20). A daily task that misses its minute that way is not caught
-        // up here: P9 alerts on a day without a successful run (HO-25).
-        $schedule->command('renditions:sweep')->everyMinute()->withoutOverlapping(10);
-        $schedule->command('owed-work:sweep')->everyMinute()->withoutOverlapping(10);
-        $schedule->command('guards:reconcile')->dailyAt('02:00')->timezone('Asia/Jakarta')->withoutOverlapping(180);
-        $schedule->command('command-log:purge')->daily()->withoutOverlapping(60);
+        // up here: P9 alerts on a day without a successful run (HO-25), each success recorded for the smoke check (TASK-072).
+        $schedule->command('renditions:sweep')->everyMinute()->withoutOverlapping(10)->onSuccess(Heartbeat::stamp('renditions:sweep'));
+        $schedule->command('owed-work:sweep')->everyMinute()->withoutOverlapping(10)->onSuccess(Heartbeat::stamp('owed-work:sweep'));
+        $schedule->command('guards:reconcile')->dailyAt('02:00')->timezone('Asia/Jakarta')->withoutOverlapping(180)->onSuccess(Heartbeat::stamp('guards:reconcile'));
+        $schedule->command('command-log:purge')->daily()->withoutOverlapping(60)->onSuccess(Heartbeat::stamp('command-log:purge'));
         // The failed jobs' retention, below the command log's 30 days less the queue's retry window (CI-07; HO-27).
-        $schedule->command('queue:prune-failed', ['--hours' => 336])->daily()->withoutOverlapping(30);
+        $schedule->command('queue:prune-failed', ['--hours' => 336])->daily()->withoutOverlapping(30)->onSuccess(Heartbeat::stamp('queue:prune-failed'));
         // The credential-link store's own purge (SECURITY AU-11; H9-04).
-        $schedule->command('credential-links:purge')->daily()->withoutOverlapping(30);
+        $schedule->command('credential-links:purge')->daily()->withoutOverlapping(30)->onSuccess(Heartbeat::stamp('credential-links:purge'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // One answer for a missing and an out-of-scope record, naming neither (AZ-11; CS-04; WS-10).

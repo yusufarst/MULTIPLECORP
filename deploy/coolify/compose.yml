@@ -19,13 +19,31 @@ x-app: &app
   image: multiplecorp-app:${MULTIPLECORP_RELEASE:-release}
   restart: unless-stopped
   environment: &app-environment
+    # The application's settings of .env.example in their production values (SX-03; WS-10).
+    APP_NAME: MultipleCorp
     APP_ENV: production
     APP_DEBUG: "false"
     APP_URL: ${APP_URL:?set APP_URL}
     APP_KEY: ${APP_KEY:?set APP_KEY}
     APP_TRUSTED_PROXIES: ${APP_TRUSTED_PROXIES:?set APP_TRUSTED_PROXIES}
     APP_TRUSTED_HOSTS: ${APP_TRUSTED_HOSTS:?set APP_TRUSTED_HOSTS}
-    LOG_CHANNEL: ${LOG_CHANNEL:-daily}
+    # The maintenance flag in the shared `storage` volume, read by every web process (H9-14).
+    APP_MAINTENANCE_DRIVER: file
+    LOG_CHANNEL: stack
+    LOG_STACK: daily
+    LOG_DAILY_DAYS: ${LOG_DAILY_DAYS:-14}
+    LOG_LEVEL: ${LOG_LEVEL:-info}
+    LOG_DEPRECATIONS_CHANNEL: "null"
+    SESSION_LIFETIME: "60"
+    SESSION_ENCRYPT: "true"
+    SESSION_EXPIRE_ON_CLOSE: "true"
+    SESSION_COOKIE: __Host-multiplecorp_session
+    SESSION_PATH: /
+    SESSION_DOMAIN: "null"
+    FILESYSTEM_DISK: local
+    CACHE_STORE: redis
+    REDIS_PORT: "6379"
+    MAIL_MAILER: log
     DB_CONNECTION: pgsql
     DB_HOST: db
     DB_PORT: "5432"
@@ -38,7 +56,7 @@ x-app: &app
     REDIS_HOST: cache
     REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
     SESSION_DRIVER: database
-    QUEUE_CONNECTION: database
+    QUEUE_CONNECTION: redis
     SECURITY_LOG_HMAC_KEY: ${SECURITY_LOG_HMAC_KEY:?set SECURITY_LOG_HMAC_KEY}
     GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}

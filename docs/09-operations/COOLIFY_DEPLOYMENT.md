@@ -61,7 +61,7 @@ INFRASTRUCTURE §5's path, through Coolify:
 2. **Pre-deployment backup** by TASK-074's tooling, verified; a failed or unverified backup stops here (BK-03).
 3. **Maintenance window:** announced, outside business hours for the first three months; `php artisan down` in the `app` container — the flag lives in the shared `storage` volume every web process reads.
 4. **Deploy** the tagged commit in Coolify: the `migrate` service runs the expand-only migrations through the migration connection and the catalogue sync; every process of the release waits for it; workers and the scheduler restart with the release (HO-23); no step flushes Valkey.
-5. **Verify:** the health check `/up` through the domain, the read-only smoke checks of the business heartbeat (INFRASTRUCTURE §6), `ReconcileGuards` after a release that changes a posting service; then `php artisan up`.
+5. **Verify:** the health check `/up` through the domain; `php artisan ops:smoke` in the `app` container — the read-only smoke checks of the business heartbeat (INFRASTRUCTURE §6), each line PASS, FAIL or NOT CHECKED, exit code 1 on any FAIL —; `php artisan guards:reconcile` after a release that changes a posting service; then `php artisan up`.
 6. **Record** the deployed commit and schema version; a failed step stops for the operator's decision — code rollback is not data recovery (GAP-012).
 
 ## 7. Effect on the plan — the total stays 95
