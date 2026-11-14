@@ -16,12 +16,14 @@ x-app: &app
   build:
     context: ../..
     dockerfile: docker/php/Dockerfile.production
-  image: multiplecorp-app:${MULTIPLECORP_RELEASE:-release}
+  # The environment in the tag, so staging's and production's builds on one host never share an image.
+  image: multiplecorp-app:${APP_ENV:?set APP_ENV}-${MULTIPLECORP_RELEASE:?set MULTIPLECORP_RELEASE}
   restart: unless-stopped
   environment: &app-environment
     # The application's settings of .env.example in their production values (SX-03; WS-10).
     APP_NAME: MultipleCorp
-    APP_ENV: production
+    # `production` on production, `staging` on staging (SX-03; DIR-079 CB-04).
+    APP_ENV: ${APP_ENV:?set APP_ENV}
     APP_DEBUG: "false"
     APP_URL: ${APP_URL:?set APP_URL}
     APP_KEY: ${APP_KEY:?set APP_KEY}
@@ -50,8 +52,8 @@ x-app: &app
     DB_DATABASE: ${DB_DATABASE:?set DB_DATABASE}
     DB_USERNAME: ${DB_USERNAME:?set DB_USERNAME}
     DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
-    DB_ADMIN_USERNAME: ${DB_ADMIN_USERNAME:?set DB_ADMIN_USERNAME}
-    DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD:?set DB_ADMIN_PASSWORD}
+    # The administration credential is in no running process: the operator gives it to `guards:maintain` alone, for its
+    # run (INFRASTRUCTURE §4.4; EN-07; docs/09-operations/COOLIFY_DEPLOYMENT.md §6).
     REDIS_CLIENT: predis
     REDIS_HOST: cache
     REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
@@ -198,8 +200,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_MIGRATION_USERNAME: ${DB_MIGRATION_USERNAME:?set DB_MIGRATION_USERNAME}
       DB_MIGRATION_PASSWORD: ${DB_MIGRATION_PASSWORD:?set DB_MIGRATION_PASSWORD}
-      DB_ADMIN_USERNAME: ${DB_ADMIN_USERNAME}
-      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD}
+      DB_ADMIN_USERNAME: ${DB_ADMIN_USERNAME:?set DB_ADMIN_USERNAME}
+      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD:?set DB_ADMIN_PASSWORD}
+      # Production's roles: no CREATEDB for the migration login and no test extension (the local and CI stacks' only).
+      DB_ROLES_FOR_TESTS: "no"
     command: ["sh", "/opt/postgres/provision-roles.sh"]
     networks: [internal]
     depends_on:
@@ -210,7 +214,8 @@ services:
   cache:
     image: valkey/valkey:9.1.2-alpine3.24@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11
     restart: unless-stopped
-    command: ["valkey-server", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}", "--maxmemory-policy", "noeviction", "--appendonly", "yes"]
+    # A memory ceiling below the container's limit, so a full store refuses writes instead of being killed (SZ-09).
+    command: ["valkey-server", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}", "--maxmemory", "${CACHE_MAXMEMORY:-192mb}", "--maxmemory-policy", "noeviction", "--appendonly", "yes"]
     environment:
       VALKEYCLI_AUTH: ${REDIS_PASSWORD}
     volumes:

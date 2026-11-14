@@ -16,6 +16,8 @@ RUN set -eux; \
     docker-php-ext-install -j"$(nproc)" pdo_pgsql gd zip; \
     apk del --no-network .build-deps; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
+    # Uploads up to the largest file a purpose accepts (20 MB; FilePurpose), as the production image (TASK-072).
+    printf 'upload_max_filesize = 20M\npost_max_size = 25M\n' > "$PHP_INI_DIR/conf.d/zz-uploads.ini"; \
     php -m | grep -qx pdo_pgsql; \
     php -m | grep -qx gd; \
     php -m | grep -qx zip; \

@@ -17,7 +17,8 @@ use LogicException;
 /**
  * The staging stack's synthetic seed (TASK-072; PRQ-02; TEST_STRATEGY FX-02; DIR-079 CB-04): FX-02's group — ARJ, BTN and
  * CKP — and the base personas of SECURITY_TEST_MATRIX §2 an operator signs in as on staging, each made through the product's
- * own commands as the installed first Owner, so the audit trail is the product's. Staging only; refused anywhere else.
+ * own commands as the installed first Owner, so the audit trail is the product's. Staging only — the framework's
+ * environment and the stack's APP_ENV both staging —; refused anywhere else.
  * Idempotent: a company or an account already present is left as it is. Each new account's password-setting link is shown
  * once, here, to the operator (AU-11) — the accounts use reserved example domains, so no mail reaches anyone. The persona
  * states of STM §2 that a test arranges — a capability withheld, a deactivated or Google-linked account — are the suites'.
@@ -48,7 +49,9 @@ class SeedStaging extends Command
 
     public function handle(CreateCompany $createCompany, CreateUser $createUser, GrantAccess $grantAccess, IssueCredentialLink $issueLink, AccountAccess $access): int
     {
-        if (! $this->laravel->environment('staging')) {
+        // The console's `--env` changes the environment the framework reports, never the stack's own APP_ENV, which the
+        // configuration reads: both must say staging, so `--env=staging` on production is refused too.
+        if (! $this->laravel->environment('staging') || config('app.env') !== 'staging') {
             $this->error('The synthetic seed runs on staging only (DIR-079 CB-04).');
 
             return self::FAILURE;

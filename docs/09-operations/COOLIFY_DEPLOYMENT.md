@@ -53,6 +53,8 @@ Nothing is deployed yet, so no live traffic is affected; the steps are still don
 
 In MULTIPLECORP's Coolify project, the staging environment holds one Docker Compose resource: the MULTIPLECORP repository, branch `main`, compose file `deploy/coolify/compose.yml`, the staging domain of OPI-30 on the `web` service's port 8080, its own variables from `production.env.example` with staging values, and resource limits below the headroom both production applications need (INFRASTRUCTURE §3). Synthetic data only (FX-02); started and removed by the operator; never the second application's resources (DIR-079 CB-04).
 
+**Resource settings**, on staging and production alike: *Preserve repository during deployment* on (General > Build pipeline), since `web` and `db-roles` mount the site template and the roles script from the repository when they run — without it neither starts —; *Connect to predefined network* off; `APP_ENV` `staging` here and `production` on production, the image tag carrying it so the two environments never share a build. **After the first deployment**, before the seed: `docker inspect` of the `db` and `cache` containers lists the stack's `internal` network only — a network Coolify added to either stops here for the Owner's decision (§2, §3) —, and `env` in `app`, the workers and the scheduler holds no `DB_MIGRATION_`, `DB_SUPERUSER` or `DB_ADMIN_` variable (INFRASTRUCTURE §4.4).
+
 **Seed.** After staging's first deployment, in the `app` container: `php artisan iam:install-owner --name=<name> --email=<e-mail> --operator=<the operator's name>` installs staging's first Owner (AU-25), then `php artisan staging:seed --owner=<that e-mail>` makes FX-02's companies — ARJ, BTN and CKP — and its base personas through the product's own commands as that Owner. It runs on staging only, leaves what already exists as it is, and shows each new account's password-setting link once (AU-11); the accounts use reserved example domains, so no mail leaves.
 
 **Rehearse (REL-03)** each release on staging by §6's steps, recording each step's duration for the production window, kept clear of the second application's windows (OPI-27):
@@ -78,6 +80,8 @@ INFRASTRUCTURE §5's path through Coolify, by the human operator, from a verifie
 8. **Contract later** (REL-13; §5 step 7): a migration that drops, renames or retypes runs only in a later release, after the code that needed the old form is gone, its file named `_contract_`; the architecture test refuses any other (HO-31).
 
 **Code rollback** (RBK-01): in a maintenance window, by steps 3–6 — the queue drained by the newer workers first, then the previous release's tag deployed; its migrations were expand-only, so no down migration runs; pages of the newer release are reloaded or their commands refused, since the one-release validity of payloads and commands holds forward only (CONCURRENCY_IDEMPOTENCY §15). Rehearsed at REL-03.
+
+**The administration credential** (INFRASTRUCTURE §4.4; SECURITY EN-07) is in no running process: `db-roles` provisions the login, and for an approved `guards:maintain` run the operator opens a shell in the `app` container and gives it to that run alone, from the password manager — `read -r DB_ADMIN_USERNAME; stty -echo; read -r DB_ADMIN_PASSWORD; stty echo; export DB_ADMIN_USERNAME DB_ADMIN_PASSWORD; php artisan guards:maintain <family> --reason=<why> --reference=<the defect or the restore> --operator=<name>` —, never on a command line, in a file or in the resource's variables.
 
 ## 7. Effect on the plan — the total stays 95
 

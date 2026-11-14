@@ -1,6 +1,7 @@
 # MULTIPLECORP's production image (TASK-072; INFRASTRUCTURE §4.1; DIR-117): the PHP runtime of docker/php/Dockerfile with
 # the code and the built frontend inside, no development dependency or tooling (SECURITY SX-03; WS-10), OPcache on and
-# the PHP version hidden, run as the unprivileged www-data. One image serves the web workers (php-fpm), the two queue
+# the PHP version hidden, uploads up to the largest file a purpose accepts (20 MB; FilePurpose) inside the site's 25 MB
+# body limit, run as the unprivileged www-data. One image serves the web workers (php-fpm), the two queue
 # workers and the scheduler (deploy/coolify/compose.yml). Every base image pinned by digest (SX-05). Its build context is
 # the repository, filtered by Dockerfile.production.dockerignore; the development image keeps its empty context.
 FROM composer:2.10.3@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac AS composer
@@ -28,6 +29,8 @@ RUN set -eux; \
         echo 'opcache.validate_timestamps = 0'; \
         echo 'opcache.memory_consumption = 192'; \
         echo 'opcache.max_accelerated_files = 20000'; \
+        echo 'upload_max_filesize = 20M'; \
+        echo 'post_max_size = 25M'; \
     } > "$PHP_INI_DIR/conf.d/zz-multiplecorp.ini"; \
     { \
         echo '[www]'; \
@@ -48,7 +51,10 @@ ENV PHP_FPM_PM=dynamic PHP_FPM_MAX_CHILDREN=10 PHP_FPM_START_SERVERS=3 PHP_FPM_M
 WORKDIR /var/www/html
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 COPY composer.json composer.lock ./
-RUN COMPOSER_HOME=/tmp/composer composer install --no-dev --no-interaction --prefer-dist --no-progress --no-scripts --no-autoloader
+# CI's read-only token for Composer's downloads from GitHub, when the build is given one (the `composer_auth` secret,
+# never in a layer); a build without it — Coolify's — downloads anonymously.
+RUN --mount=type=secret,id=composer_auth,target=/tmp/composer/auth.json \
+    COMPOSER_HOME=/tmp/composer composer install --no-dev --no-interaction --prefer-dist --no-progress --no-scripts --no-autoloader
 COPY . .
 COPY --from=assets /build/public/build public/build
 RUN set -eux; \

@@ -72,6 +72,18 @@ server {
         fastcgi_hide_header Referrer-Policy;
     }
 
+    # The Google callback and the credential-link pages: an error line repeats the request line with its query string,
+    # so their errors reach the log at `crit` only (LG-04; H8-20).
+    location ~ ^/(masuk/google/callback|atur-kata-sandi|reset-kata-sandi|verifikasi-email)(/|$) {
+        error_log /dev/stderr crit;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass app:9000;
+        fastcgi_param SCRIPT_FILENAME $realpath_root/index.php;
+        fastcgi_param HTTPS on;
+        fastcgi_hide_header X-Powered-By;
+        fastcgi_hide_header Referrer-Policy;
+    }
+
     location = /index.php {
         include /etc/nginx/fastcgi_params;
         fastcgi_pass app:9000;

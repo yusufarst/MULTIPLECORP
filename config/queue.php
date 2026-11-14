@@ -68,9 +68,11 @@ return [
             'driver' => 'redis',
             'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
             'queue' => env('REDIS_QUEUE', 'default'),
-            // TASK-022: above the longest job's timeout — JB-03's 10 minutes —, so a live job is never redelivered;
-            // a dead worker's job is redelivered after it, and the sweeps find its durable row sooner (JB-02, JB-09).
-            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 720),
+            // TASK-022: above the longest job's timeout, so a live job is never redelivered — since the opening import's
+            // validation (30 minutes, ValidateImportBatch) that is 31 minutes (TASK-072; INFRASTRUCTURE §4.1;
+            // tests/Feature/QueueTimeoutsTest.php) —; a dead worker's job is redelivered after it, and the sweeps find
+            // its durable row sooner (JB-02, JB-09).
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 1860),
             'block_for' => null,
             // Every job leaves only after its transaction commits (CONCURRENCY_IDEMPOTENCY §15).
             'after_commit' => true,

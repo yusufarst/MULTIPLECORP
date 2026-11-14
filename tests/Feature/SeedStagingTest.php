@@ -26,8 +26,20 @@ it('refuses to run anywhere but staging', function () {
     expect(DB::table('companies')->whereIn('code', array_keys(SeedStaging::COMPANIES))->count())->toBe(0);
 });
 
+it('refuses when only the console\'s --env names staging, the stack\'s APP_ENV another', function () {
+    $owner = Authorization::owner();
+    // What `php artisan staging:seed --env=staging` does on production: the framework's environment, not APP_ENV.
+    $this->app['env'] = 'staging';
+
+    $this->artisan('staging:seed', ['--owner' => $owner->email])
+        ->expectsOutputToContain('runs on staging only')
+        ->assertExitCode(1);
+    expect(DB::table('companies')->whereIn('code', array_keys(SeedStaging::COMPANIES))->count())->toBe(0);
+});
+
 it('makes FX-02\'s companies and base personas on staging, once, each with its link', function () {
     $this->app['env'] = 'staging';
+    config(['app.env' => 'staging']);
     $owner = Authorization::owner();
 
     $this->artisan('staging:seed', ['--owner' => $owner->email])

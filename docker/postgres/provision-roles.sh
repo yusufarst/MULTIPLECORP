@@ -9,9 +9,17 @@
 #   DB_MIGRATION_USERNAME        the migration/owner login: it owns the database and every table, and is
 #                                used only by migrations, through the `migration` connection
 #
-# Local and CI only: production's roles are provisioned by its deployment (TASK-072), under the same
-# group names. Idempotent: an existing role keeps its memberships and receives the configured password.
+# The same script provisions staging's and production's roles (deploy/coolify/compose.yml, TASK-072) with
+# DB_ROLES_FOR_TESTS=no: the migration login without CREATEDB, and no test extension. Idempotent: an existing
+# role keeps its memberships and receives the configured password.
 set -eu
+
+# The test databases' needs — CREATEDB for parallel testing, pgrowlocks for the lock-order tests — locally and in CI only.
+case ${DB_ROLES_FOR_TESTS:-yes} in
+    yes) createdb=CREATEDB ;;
+    no) createdb=NOCREATEDB ;;
+    *) echo "provision-roles: DB_ROLES_FOR_TESTS is yes or no" >&2; exit 1 ;;
+esac
 
 for name in DB_DATABASE DB_SUPERUSER DB_USERNAME DB_PASSWORD DB_MIGRATION_USERNAME DB_MIGRATION_PASSWORD DB_ADMIN_USERNAME DB_ADMIN_PASSWORD; do
     eval "value=\${$name:-}"
@@ -32,17 +40,18 @@ psql -v ON_ERROR_STOP=1 -q \
     -v database="$DB_DATABASE" \
     -v runtime_login="$DB_USERNAME" -v runtime_password="$DB_PASSWORD" \
     -v migration_login="$DB_MIGRATION_USERNAME" -v migration_password="$DB_MIGRATION_PASSWORD" \
-    -v admin_login="$DB_ADMIN_USERNAME" -v admin_password="$DB_ADMIN_PASSWORD" <<'SQL'
+    -v admin_login="$DB_ADMIN_USERNAME" -v admin_password="$DB_ADMIN_PASSWORD" -v createdb="$createdb" <<'SQL'
 SELECT 'CREATE ROLE multiplecorp_runtime NOLOGIN'
 WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'multiplecorp_runtime') \gexec
 SELECT 'CREATE ROLE multiplecorp_administration NOLOGIN'
 WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'multiplecorp_administration') \gexec
 GRANT multiplecorp_runtime TO multiplecorp_administration;
 
--- The migration/owner login: CREATEDB locally and in CI only, for the test databases parallel testing uses.
+-- The migration/owner login: CREATEDB locally and in CI only, for the test databases parallel testing uses
+-- (DB_ROLES_FOR_TESTS); NOCREATEDB on staging and production.
 SELECT format('CREATE ROLE %I LOGIN', :'migration_login')
 WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = :'migration_login') \gexec
-SELECT format('ALTER ROLE %I LOGIN NOSUPERUSER CREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'migration_login', :'migration_password') \gexec
+SELECT format('ALTER ROLE %I LOGIN NOSUPERUSER %s NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'migration_login', :'createdb', :'migration_password') \gexec
 
 SELECT format('CREATE ROLE %I LOGIN', :'runtime_login')
 WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = :'runtime_login') \gexec
@@ -59,6 +68,10 @@ SELECT format('ALTER DATABASE %I OWNER TO %I', :'database', :'migration_login') 
 SQL
 
 echo "provision-roles: the roles of DATABASE §28 are in place"
+
+if [ "${DB_ROLES_FOR_TESTS:-yes}" = no ]; then
+    exit 0
+fi
 
 # HO-13's lock-order tests read the row locks a command actually holds through the contrib extension
 # pgrowlocks, which only a superuser installs (TASK-013): in template1, which every test database is created
