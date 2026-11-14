@@ -517,25 +517,19 @@ const namedOf = (strings: Record<string, string>): Named => {
 };
 const NAMED: Record<Language, Named> = { id: namedOf(ID), en: namedOf(EN) };
 
-/** The catalogue's keys an action's name renders in its language, or null for a value the catalogue does not hold. */
+/** Every catalogue key an action's name may render in its language — exactly, filled in, or as its lead —, or null for a
+    value the catalogue does not hold. A broad text with a value ("Invoice :nomor") never hides the label a name begins with. */
 function identity(name: string, language: Language): Set<string> | null {
     const named = NAMED[language];
-    const exact = named.exact.get(name);
-
-    if (exact !== undefined) {
-        return exact;
-    }
-
-    const filled = named.templates.filter((template) => template.pattern.test(name)).map((template) => template.key);
-
-    if (filled.length > 0) {
-        return new Set(filled);
-    }
-
     // A lead of two words or more, or a one-word label its value follows after a colon ("Tampilkan: Semua perusahaan").
     const lead = named.leads.find((one) => name.startsWith(one.text) && (words(one.text).length >= 2 || name.charAt(one.text.length) === ':'));
+    const keys = new Set([
+        ...(named.exact.get(name) ?? []),
+        ...named.templates.filter((template) => template.pattern.test(name)).map((template) => template.key),
+        ...(lead?.keys ?? []),
+    ]);
 
-    return lead === undefined ? null : lead.keys;
+    return keys.size === 0 ? null : keys;
 }
 
 /** What differs between two renders of one page in the two languages, empty when their structures are the same. */
