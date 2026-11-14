@@ -419,6 +419,11 @@ async function settled(page: Page): Promise<Reading> {
  */
 export async function audit(page: Page, language: Language, where: string): Promise<Snapshot> {
     await expect(page.locator('html'), `${where}: the page is in ${language}`).toHaveAttribute('lang', language);
+    // The page read from its top, as it opens: a target is never judged while the spec's last step left it scrolled under
+    // the shell's sticky or fixed bars.
+    await page.evaluate(() => {
+        window.scrollTo(0, 0);
+    });
     const reading = await settled(page);
     const width = page.viewportSize()?.width ?? reading.width;
     const problems = new Set<string>();
@@ -477,21 +482,56 @@ export async function audit(page: Page, language: Language, where: string): Prom
 }
 
 // 6. The same regions and actions in the same order, the same primary action (§3.7), each action the same: its name is
-// read as the catalogue's keys whose text it is in its language, and two actions are the same when they render a key in
-// common — so two actions exchanging places, or one put for another, differ. A name the catalogue does not hold is a
-// value: over the same data — the switch in place — it must be the same value; across two runs, any value.
-const keysOf = (strings: Record<string, string>): Map<string, Set<string>> => {
-    const map = new Map<string, Set<string>>();
+// read as the catalogue's keys it renders in its language — a text exactly, a text with its values filled in ("Buat
+// Klien" for "Buat :objek"), or a label leading a value in one name ("Potongan menunggu bukti" before its counts) —, and
+// two actions are the same when they render a key in common, so two actions exchanging places, or one put for another,
+// differ. A name the catalogue does not render at all is a value: over the same data — the switch in place — it must be
+// the same value; across two runs, any value.
+type Named = { exact: Map<string, Set<string>>; templates: { key: string; pattern: RegExp }[]; leads: { text: string; keys: Set<string> }[] };
+const namedOf = (strings: Record<string, string>): Named => {
+    const exact = new Map<string, Set<string>>();
+    const templates: Named['templates'] = [];
 
     for (const [key, value] of Object.entries(strings)) {
         for (const form of forms(value)) {
-            map.set(form, new Set([...(map.get(form) ?? []), key]));
+            exact.set(form, new Set([...(exact.get(form) ?? []), key]));
+        }
+
+        for (const form of value.split('|').map((one) => spaced(one.replace(/^\s*(\{\d+\}|\[\d+,\s*(\d+|\*)\])/, '')))) {
+            const parts = form.split(PLACEHOLDER);
+
+            if (parts.length > 1 && /\p{L}/u.test(parts.join(''))) {
+                templates.push({ key, pattern: new RegExp(`^${parts.map(escape).join('.+?')}$`, 'su') });
+            }
         }
     }
 
-    return map;
+    const leads = [...exact].map(([text, keys]) => ({ text, keys })).sort((a, b) => b.text.length - a.text.length);
+
+    return { exact, templates, leads };
 };
-const NAMED = { id: keysOf(ID), en: keysOf(EN) };
+const NAMED: Record<Language, Named> = { id: namedOf(ID), en: namedOf(EN) };
+
+/** The catalogue's keys an action's name renders in its language, or null for a value the catalogue does not hold. */
+function identity(name: string, language: Language): Set<string> | null {
+    const named = NAMED[language];
+    const exact = named.exact.get(name);
+
+    if (exact !== undefined) {
+        return exact;
+    }
+
+    const filled = named.templates.filter((template) => template.pattern.test(name)).map((template) => template.key);
+
+    if (filled.length > 0) {
+        return new Set(filled);
+    }
+
+    // A lead of two words or more, or a one-word label its value follows after a colon ("Tampilkan: Semua perusahaan").
+    const lead = named.leads.find((one) => name.startsWith(one.text) && (words(one.text).length >= 2 || name.charAt(one.text.length) === ':'));
+
+    return lead === undefined ? null : lead.keys;
+}
 
 /** What differs between two renders of one page in the two languages, empty when their structures are the same. */
 export function differences(a: Snapshot, b: Snapshot, sameData: boolean): string[] {
@@ -514,9 +554,9 @@ export function differences(a: Snapshot, b: Snapshot, sameData: boolean): string
 
     a.structure.actions.forEach((first, at) => {
         const second = b.structure.actions[at] ?? { role: '', name: '' };
-        const left = NAMED[a.language].get(first.name);
-        const right = NAMED[b.language].get(second.name);
-        const same = left !== undefined && right !== undefined ? [...left].some((key) => right.has(key)) : left === undefined && right === undefined && (!sameData || first.name === second.name);
+        const left = identity(first.name, a.language);
+        const right = identity(second.name, b.language);
+        const same = left !== null && right !== null ? [...left].some((key) => right.has(key)) : left === null && right === null && (!sameData || first.name === second.name);
 
         if (!same) {
             out.push(`action ${String(at + 1)}: ${first.role} "${first.name}" in ${a.language}, "${second.name}" in ${b.language}`);
@@ -569,6 +609,8 @@ async function switchLanguage(page: Page, from: Language, to: Language): Promise
     }
 
     await menu.click();
+    // The menu opens with a transition: its items are read once it is shown, never while it is still appearing.
+    await expect(page.getByRole('menu'), `the account menu open in ${from}`).toBeVisible({ timeout: 10_000 });
     const choice = page.getByRole('menuitemcheckbox', { name: CHOICE[from][to], exact: true });
 
     if (!(await choice.isVisible())) {
@@ -620,6 +662,9 @@ export async function auditPage(page: Page, language: Language, where: string, {
     const other: Language = language === 'id' ? 'en' : 'id';
     const desk = await audit(page, language, where);
     const small = phone ? await atPhone(page, () => audit(page, language, where)) : null;
+    // The switch reloads the page's deferred groups (PT-19): the other language is read once they are back as they were.
+    const loading = page.locator('[data-region-state="loading"]');
+    const resting = await loading.count();
 
     if (!(await switchLanguage(page, language, other))) {
         expectSameStructure(desk);
@@ -632,6 +677,7 @@ export async function auditPage(page: Page, language: Language, where: string, {
     }
 
     try {
+        await expect.poll(() => loading.count(), { message: `${where}: the deferred groups back after the switch to ${other}`, timeout: 30_000 }).toBeLessThanOrEqual(resting);
         const deskOther = await audit(page, other, where);
         expect(differences(desk, deskOther, true), `${where} at ${String(desk.width)} px: the same regions and actions in the same order in ${language} and ${other}, the language switched in place (LOCALIZATION §3.7)`).toEqual([]);
 
