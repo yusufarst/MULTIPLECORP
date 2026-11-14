@@ -28,7 +28,7 @@ Progress:
 74 / 95
 Percentage: 77.9 %
 
-CURRENT TASK: TASK-072 — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards IN_PROGRESS on its branch `task/TASK-072-deployment-definition`, its repository preparation for Coolify alongside TASK-071 (APPR-033; Change 22); TASK-067 DONE
+CURRENT TASK: TASK-072 — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards IN_PROGRESS, its repository preparation for Coolify alongside TASK-071 (APPR-033; Change 22) — its first part merged (pull request #86), its second on its branch `task/TASK-072-runtime-settings`; TASK-067 DONE
 NEXT READY TASK: TASK-068 and TASK-065 READY, one at a time (DIR-112); TASK-066 waits on TASK-065, TASK-069 on TASK-065, TASK-066 and TASK-068, TASK-070 on TASK-065, TASK-066, TASK-068 and TASK-069; TASK-072, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
 LAST TASK PLAN CHANGE: Change 23 of 2026-11-14 — CI once for every pushed commit, the `pull_request` trigger removed (TASK-001, TASK-002 and TASK-003 amended to read so), the Owner's APPR-034; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)

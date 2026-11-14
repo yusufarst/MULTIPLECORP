@@ -19,3 +19,7 @@ bootstrap/cache/*.php
 tests
 docs
 *.log
+# The previous release TL-16 checks out on a CI runner (scripts/verify.sh), with its own environment file.
+.previous-release
+.previous-release.tar
+**/.env
