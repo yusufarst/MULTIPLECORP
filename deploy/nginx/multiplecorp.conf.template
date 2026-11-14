@@ -1,0 +1,91 @@
+# MULTIPLECORP's own Nginx site for staging and production (TASK-072; SECURITY WS-06, WS-08, H9-02, LG-04, H8-20;
+# INFRASTRUCTURE §2; DIR-117): behind Coolify's proxy, which terminates TLS and redirects plain HTTP to HTTPS for the
+# application's domain; this site listens only on the stack's own network. The static security headers of WS-08 are
+# the local stack's (docker/nginx/default.conf); HSTS follows WS-06's stages through the environment variable
+# MULTIPLECORP_HSTS (`max-age=300`, then one week, then one year with includeSubDomains once every subdomain serves
+# HTTPS), which the Nginx image substitutes into this template when the container starts. Version banners off. The login endpoint's proxy rate limit bounds its total concurrency (H9-02; TM-50; TM-58).
+# Request logs never hold a credential link's path or query string, nor the Google callback's query string.
+server_tokens off;
+
+map $upstream_http_referrer_policy $multiplecorp_referrer_policy {
+    ""      "same-origin";
+    default $upstream_http_referrer_policy;
+}
+
+# The request line logged without query strings, and the credential-link pages' tokens replaced (LG-04; H8-20).
+map $uri $multiplecorp_logged_uri {
+    ~^/(atur-kata-sandi|reset-kata-sandi|verifikasi-email)(/|$)  "/$1/[redacted]";
+    default                                                       $uri;
+}
+log_format multiplecorp '$remote_addr - [$time_local] "$request_method $multiplecorp_logged_uri" $status $body_bytes_sent "$http_user_agent" $request_time';
+
+# H9-02: the sign-in endpoint's requests limited per client address and in total; the application's own limiter stays.
+map $request_method $multiplecorp_login_client {
+    POST    $binary_remote_addr;
+    default "";
+}
+map $request_method $multiplecorp_login_all {
+    POST    "login";
+    default "";
+}
+limit_req_zone $multiplecorp_login_client zone=multiplecorp_login:10m rate=10r/m;
+limit_req_zone $multiplecorp_login_all zone=multiplecorp_login_total:1m rate=120r/m;
+
+# Coolify's proxy is the only client of this site: the client's address comes from its forwarding header (WS-11).
+set_real_ip_from 10.0.0.0/8;
+set_real_ip_from 172.16.0.0/12;
+set_real_ip_from 192.168.0.0/16;
+real_ip_header X-Forwarded-For;
+real_ip_recursive on;
+
+server {
+    listen 8080;
+    server_name _;
+    root /var/www/html/public;
+    index index.php;
+    charset utf-8;
+    client_max_body_size 25m;
+    access_log /dev/stdout multiplecorp;
+
+    # WS-06: HSTS in stages, its value the operator's; staging and the first production days start at max-age=300.
+    add_header Strict-Transport-Security "${MULTIPLECORP_HSTS}" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy $multiplecorp_referrer_policy always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()" always;
+    add_header Cross-Origin-Opener-Policy "same-origin" always;
+    add_header Cross-Origin-Resource-Policy "same-origin" always;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /masuk {
+        limit_req zone=multiplecorp_login burst=5 nodelay;
+        limit_req zone=multiplecorp_login_total burst=30 nodelay;
+        limit_req_status 429;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass app:9000;
+        fastcgi_param SCRIPT_FILENAME $realpath_root/index.php;
+        fastcgi_param HTTPS on;
+        fastcgi_hide_header X-Powered-By;
+        fastcgi_hide_header Referrer-Policy;
+    }
+
+    location = /index.php {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass app:9000;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param HTTPS on;
+        fastcgi_hide_header X-Powered-By;
+        fastcgi_hide_header Referrer-Policy;
+    }
+
+    location ~ \.php$ {
+        return 404;
+    }
+
+    location ~ /\.(?!well-known) {
+        deny all;
+    }
+}
