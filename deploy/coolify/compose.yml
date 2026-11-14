@@ -1,0 +1,236 @@
+# MULTIPLECORP's deployment definition for Coolify's Docker Compose deployment (TASK-072; INFRASTRUCTURE §2, §4; DIR-117,
+# APPR-033): one Coolify resource per environment — staging and production — in MULTIPLECORP's own Coolify project, never
+# sharing a network, a volume, a database, a cache or a secret with the second application (INF-07). Placeholder values
+# only (PRQ-01): every secret and setting comes from the resource's environment variables in Coolify, named in
+# deploy/coolify/production.env.example. Deployed by hand from a verified `main` commit or release tag; Coolify's automatic
+# deployment stays off (docs/09-operations/COOLIFY_DEPLOYMENT.md). The maintenance mode is the operator's runbook step before
+# a deployment; the expand-only migrations and the catalogue sync are the one-shot `migrate` service, which every process of
+# the release waits on (INFRASTRUCTURE §5).
+#
+# Networks: `edge` is the stack's own network, the one Coolify's proxy joins to reach `web` (the resource's "Connect to
+# predefined network" stays off); `internal` holds the database and the cache, no published port, no proxy, no other
+# application; `egress` gives the application processes their outbound HTTPS and nothing else. Limits: each service's CPU and memory come from the environment, their values from TASK-079's measurement.
+name: multiplecorp
+
+x-app: &app
+  build:
+    context: ../..
+    dockerfile: docker/php/Dockerfile.production
+  image: multiplecorp-app:${MULTIPLECORP_RELEASE:-release}
+  restart: unless-stopped
+  environment: &app-environment
+    # The application's settings of .env.example in their production values (SX-03; WS-10).
+    APP_NAME: MultipleCorp
+    APP_ENV: production
+    APP_DEBUG: "false"
+    APP_URL: ${APP_URL:?set APP_URL}
+    APP_KEY: ${APP_KEY:?set APP_KEY}
+    APP_TRUSTED_PROXIES: ${APP_TRUSTED_PROXIES:?set APP_TRUSTED_PROXIES}
+    APP_TRUSTED_HOSTS: ${APP_TRUSTED_HOSTS:?set APP_TRUSTED_HOSTS}
+    # The maintenance flag in the shared `storage` volume, read by every web process (H9-14).
+    APP_MAINTENANCE_DRIVER: file
+    LOG_CHANNEL: stack
+    LOG_STACK: daily
+    LOG_DAILY_DAYS: ${LOG_DAILY_DAYS:-14}
+    LOG_LEVEL: ${LOG_LEVEL:-info}
+    LOG_DEPRECATIONS_CHANNEL: "null"
+    SESSION_LIFETIME: "60"
+    SESSION_ENCRYPT: "true"
+    SESSION_EXPIRE_ON_CLOSE: "true"
+    SESSION_COOKIE: __Host-multiplecorp_session
+    SESSION_PATH: /
+    SESSION_DOMAIN: "null"
+    FILESYSTEM_DISK: local
+    CACHE_STORE: redis
+    REDIS_PORT: "6379"
+    MAIL_MAILER: log
+    DB_CONNECTION: pgsql
+    DB_HOST: db
+    DB_PORT: "5432"
+    DB_DATABASE: ${DB_DATABASE:?set DB_DATABASE}
+    DB_USERNAME: ${DB_USERNAME:?set DB_USERNAME}
+    DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+    DB_ADMIN_USERNAME: ${DB_ADMIN_USERNAME:?set DB_ADMIN_USERNAME}
+    DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD:?set DB_ADMIN_PASSWORD}
+    REDIS_CLIENT: predis
+    REDIS_HOST: cache
+    REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
+    SESSION_DRIVER: database
+    QUEUE_CONNECTION: redis
+    SECURITY_LOG_HMAC_KEY: ${SECURITY_LOG_HMAC_KEY:?set SECURITY_LOG_HMAC_KEY}
+    GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+    GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    PHP_FPM_MAX_CHILDREN: ${PHP_FPM_MAX_CHILDREN:-10}
+  volumes:
+    - storage:/var/www/html/storage
+  # `egress` lets the application reach the services it calls over HTTPS (Google sign-in, the alert channel); never the database.
+  networks: [internal, egress]
+  depends_on:
+    db:
+      condition: service_healthy
+    cache:
+      condition: service_healthy
+    migrate:
+      condition: service_completed_successfully
+
+services:
+  # INFRASTRUCTURE §5 step 4, once per deployment and before any process of the release starts: expand-only migrations
+  # through the migration/owner connection — its credentials in this service alone, never in a running process (§4.4;
+  # H9-01) —, then the catalogue sync under the runtime role (DIR-094). A failure stops the deployment.
+  migrate:
+    <<: *app
+    restart: "no"
+    command: ["sh", "-c", "php artisan migrate --database=migration --force --no-interaction && php artisan authorization:sync-catalogue --no-interaction"]
+    environment:
+      <<: *app-environment
+      DB_MIGRATION_USERNAME: ${DB_MIGRATION_USERNAME:?set DB_MIGRATION_USERNAME}
+      DB_MIGRATION_PASSWORD: ${DB_MIGRATION_PASSWORD:?set DB_MIGRATION_PASSWORD}
+    depends_on:
+      db-roles:
+        condition: service_completed_successfully
+      cache:
+        condition: service_healthy
+
+
+  # The web processes: php-fpm, reached only by `web`.
+  app:
+    <<: *app
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits: { cpus: "${APP_CPUS:-1.0}", memory: "${APP_MEMORY:-768M}" }
+
+  # Two queue workers and the scheduler (INFRASTRUCTURE §4.1), restarted with every deployment (HO-23).
+  worker-1:
+    <<: *app
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=1", "--max-time=3600"]
+    deploy:
+      resources:
+        limits: { cpus: "${WORKER_CPUS:-0.5}", memory: "${WORKER_MEMORY:-512M}" }
+  worker-2:
+    <<: *app
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=1", "--max-time=3600"]
+    deploy:
+      resources:
+        limits: { cpus: "${WORKER_CPUS:-0.5}", memory: "${WORKER_MEMORY:-512M}" }
+  scheduler:
+    <<: *app
+    command: ["php", "artisan", "schedule:work"]
+    deploy:
+      resources:
+        limits: { cpus: "${SCHEDULER_CPUS:-0.25}", memory: "${SCHEDULER_MEMORY:-256M}" }
+
+  # MULTIPLECORP's own Nginx: the site file, behind Coolify's proxy, which terminates TLS (deploy/nginx/multiplecorp.conf.template).
+  web:
+    image: nginx:1.30.6-alpine3.24@sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5
+    restart: unless-stopped
+    volumes:
+      - ../nginx/multiplecorp.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - public:/var/www/html/public:ro
+    environment:
+      MULTIPLECORP_HSTS: ${MULTIPLECORP_HSTS:-max-age=300}
+      NGINX_ENVSUBST_FILTER: ^MULTIPLECORP_
+    networks: [edge, internal]
+    expose: ["8080"]
+    depends_on:
+      app:
+        condition: service_healthy
+      public:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits: { cpus: "${WEB_CPUS:-0.5}", memory: "${WEB_MEMORY:-128M}" }
+
+  # The image's public folder, copied once per release for `web` to serve its static files.
+  public:
+    <<: *app
+    restart: "no"
+    command: ["sh", "-c", "cp -a /var/www/html/public/. /srv/public/"]
+    volumes:
+      - public:/srv/public
+    depends_on: {}
+
+  db:
+    image: postgres:18.6-alpine3.24@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+    restart: unless-stopped
+    command: ["postgres", "-c", "max_locks_per_transaction=2048", "-c", "shared_preload_libraries=pg_stat_statements,auto_explain"]
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:?set DB_DATABASE}
+      POSTGRES_USER: ${DB_SUPERUSER:?set DB_SUPERUSER}
+      POSTGRES_PASSWORD: ${DB_SUPERUSER_PASSWORD:?set DB_SUPERUSER_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits: { cpus: "${DB_CPUS:-1.0}", memory: "${DB_MEMORY:-1536M}" }
+
+  # The roles of DATABASE §28 (INFRASTRUCTURE §4.4), kept on every deployment by the same script as the local stack.
+  db-roles:
+    image: postgres:18.6-alpine3.24@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+    restart: "no"
+    volumes:
+      - ../../docker/postgres:/opt/postgres:ro
+    environment:
+      PGHOST: db
+      PGDATABASE: ${DB_DATABASE}
+      PGUSER: ${DB_SUPERUSER}
+      PGPASSWORD: ${DB_SUPERUSER_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_SUPERUSER: ${DB_SUPERUSER}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_MIGRATION_USERNAME: ${DB_MIGRATION_USERNAME:?set DB_MIGRATION_USERNAME}
+      DB_MIGRATION_PASSWORD: ${DB_MIGRATION_PASSWORD:?set DB_MIGRATION_PASSWORD}
+      DB_ADMIN_USERNAME: ${DB_ADMIN_USERNAME}
+      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD}
+    command: ["sh", "/opt/postgres/provision-roles.sh"]
+    networks: [internal]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Valkey with authentication, never evicting (H9-09; SZ-09), its data kept across restarts so limiter and lock keys survive (HO-23).
+  cache:
+    image: valkey/valkey:9.1.2-alpine3.24@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11
+    restart: unless-stopped
+    command: ["valkey-server", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}", "--maxmemory-policy", "noeviction", "--appendonly", "yes"]
+    environment:
+      VALKEYCLI_AUTH: ${REDIS_PASSWORD}
+    volumes:
+      - cache-data:/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep -qx PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits: { cpus: "${CACHE_CPUS:-0.25}", memory: "${CACHE_MEMORY:-256M}" }
+
+networks:
+  edge: {}
+  egress: {}
+  internal:
+    internal: true
+
+volumes:
+  storage: {}
+  public: {}
+  db-data: {}
+  cache-data: {}

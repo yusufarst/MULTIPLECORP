@@ -58,6 +58,7 @@ use App\Support\Status\StatusRead;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
@@ -138,6 +139,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // WS-11 (TASK-072): only the proxy in front of MULTIPLECORP is trusted for the client's address and scheme; none
+        // configured trusts none, as before.
+        $proxies = config('app.trusted_proxies');
+
+        if (is_array($proxies) && $proxies !== []) {
+            TrustProxies::at($proxies);
+        }
+
         // The framework's strict-model checks outside production (SECURITY WS-01; PERFORMANCE PF-02):
         // a lazy-loaded relation or a silently discarded attribute fails, so a missed eager load or
         // an unlisted field is caught by the tests.

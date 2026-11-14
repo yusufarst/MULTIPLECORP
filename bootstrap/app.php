@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HealthCheck;
 use App\Http\Middleware\AssignCorrelationId;
 use App\Http\Middleware\DeclareAccess;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -12,6 +13,8 @@ use App\Http\Middleware\StartSessionUnlessBackground;
 use App\Http\Responses\SystemAnswer;
 use App\Modules\IAM\Authentication\EnforceSessionLimits;
 use App\Modules\IAM\Authentication\Landing;
+use App\Support\Heartbeat;
+use App\Support\TrustedHosts;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
@@ -33,12 +36,20 @@ return Application::configure(basePath: dirname(__DIR__))
         // production, where only ROUTE_CONTRACTS' routes exist. They keep no session — nothing is stored before
         // sign-in (INT-001) — so they need no database, which the browser job's stack does not migrate.
         then: function (): void {
+            // EN-03's minimal health check, outside the web group: no session, no cookie, no internals (SX-03; TASK-072).
+            Route::get('/up', HealthCheck::class)->middleware('access:none,health')->name('health');
+
             if (app()->environment('local')) {
                 Route::group([], base_path('routes/fixtures.php'));
             }
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // WS-11 (TASK-072): the Host header trusted only for the configured domains, read per request; the framework
+        // applies it outside local development and the test runner. The trusted proxies are set from the configuration
+        // when the application boots (AppServiceProvider).
+        $middleware->trustHosts(at: fn (): array => TrustedHosts::patterns(config()->array('app.trusted_hosts'), config()->string('app.url')), subdomains: false);
+
         // Global, so that error pages carry the policy too (SECURITY WS-08).
         $middleware->prepend(SecurityHeaders::class);
 
@@ -89,15 +100,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // One cron entry runs the scheduler each minute (TASK-072's); every task is overlap-protected on the store
         // with an expiry longer than its longest run, so with the store down it does not run and the next minute
         // tries again (CONCURRENCY_IDEMPOTENCY §15; HO-20). A daily task that misses its minute that way is not caught
-        // up here: P9 alerts on a day without a successful run (HO-25).
-        $schedule->command('renditions:sweep')->everyMinute()->withoutOverlapping(10);
-        $schedule->command('owed-work:sweep')->everyMinute()->withoutOverlapping(10);
-        $schedule->command('guards:reconcile')->dailyAt('02:00')->timezone('Asia/Jakarta')->withoutOverlapping(180);
-        $schedule->command('command-log:purge')->daily()->withoutOverlapping(60);
+        // up here: P9 alerts on a day without a successful run (HO-25), each success recorded for the smoke check (TASK-072).
+        $schedule->command('renditions:sweep')->everyMinute()->withoutOverlapping(10)->onSuccess(Heartbeat::stamp('renditions:sweep'));
+        $schedule->command('owed-work:sweep')->everyMinute()->withoutOverlapping(10)->onSuccess(Heartbeat::stamp('owed-work:sweep'));
+        $schedule->command('guards:reconcile')->dailyAt('02:00')->timezone('Asia/Jakarta')->withoutOverlapping(180)->onSuccess(Heartbeat::stamp('guards:reconcile'));
+        $schedule->command('command-log:purge')->daily()->withoutOverlapping(60)->onSuccess(Heartbeat::stamp('command-log:purge'));
         // The failed jobs' retention, below the command log's 30 days less the queue's retry window (CI-07; HO-27).
-        $schedule->command('queue:prune-failed', ['--hours' => 336])->daily()->withoutOverlapping(30);
+        $schedule->command('queue:prune-failed', ['--hours' => 336])->daily()->withoutOverlapping(30)->onSuccess(Heartbeat::stamp('queue:prune-failed'));
         // The credential-link store's own purge (SECURITY AU-11; H9-04).
-        $schedule->command('credential-links:purge')->daily()->withoutOverlapping(30);
+        $schedule->command('credential-links:purge')->daily()->withoutOverlapping(30)->onSuccess(Heartbeat::stamp('credential-links:purge'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // One answer for a missing and an out-of-scope record, naming neither (AZ-11; CS-04; WS-10).
