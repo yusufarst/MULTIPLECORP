@@ -133,6 +133,8 @@ services:
       - public:/var/www/html/public:ro
     environment:
       MULTIPLECORP_HSTS: ${MULTIPLECORP_HSTS:-max-age=300}
+      # The application's own domain, one of APP_TRUSTED_HOSTS: the health check names it, as a browser does (WS-11).
+      MULTIPLECORP_HOST: ${MULTIPLECORP_HOST:?set MULTIPLECORP_HOST}
       NGINX_ENVSUBST_FILTER: ^MULTIPLECORP_
     networks: [edge, internal]
     expose: ["8080"]
@@ -142,7 +144,7 @@ services:
       public:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/up"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null --header \"Host: $${MULTIPLECORP_HOST}\" http://127.0.0.1:8080/up"]
       interval: 30s
       timeout: 5s
       retries: 3
