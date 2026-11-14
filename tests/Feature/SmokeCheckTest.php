@@ -3,6 +3,7 @@
 use App\Support\Heartbeat;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Tests\Support\RefreshDatabase;
 
@@ -18,8 +19,12 @@ beforeEach(function () {
 });
 
 it('passes with every scheduled task recently successful and no failure, the backups NOT CHECKED', function () {
+    Queue::shouldReceive('size')->andReturn(0);
+    Queue::shouldReceive('creationTimeOfOldestPendingJob')->andReturn(null);
+
     $this->artisan('ops:smoke', ['--disk-min' => 0])
         ->expectsOutputToContain('PASS database')
+        ->expectsOutputToContain('PASS oldest job — no job waiting')
         ->expectsOutputToContain('PASS failed jobs')
         ->expectsOutputToContain('PASS renditions')
         ->expectsOutputToContain('PASS scheduler guards:reconcile')
@@ -34,6 +39,15 @@ it('fails on a job failed in the last day', function () {
 
     $this->artisan('ops:smoke', ['--disk-min' => 0])
         ->expectsOutputToContain('FAIL failed jobs — 1 in the last 24 hours')
+        ->assertExitCode(1);
+});
+
+it('fails on a job waiting past the oldest-job limit', function () {
+    Queue::shouldReceive('size')->andReturn(1);
+    Queue::shouldReceive('creationTimeOfOldestPendingJob')->andReturn(now()->subMinutes(30)->getTimestamp());
+
+    $this->artisan('ops:smoke', ['--disk-min' => 0])
+        ->expectsOutputToContain('FAIL oldest job — 30 minutes waiting')
         ->assertExitCode(1);
 });
 

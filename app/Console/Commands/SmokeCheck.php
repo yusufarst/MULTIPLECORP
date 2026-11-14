@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Queue;
 
 /**
  * The read-only smoke checks of the business heartbeat (TASK-072; PRQ-03; GAP-013; INFRASTRUCTURE §5 step 6, §6), run by the
- * operator after a deployment and by monitoring (TASK-075): the database and its connections, the queue's backlog, the
- * failed jobs of the last day, renditions owed past their retry window, each scheduled task's last success and the free
+ * operator after a deployment and by monitoring (TASK-075): the database and its connections, the queue's backlog and its
+ * oldest waiting job's age, the failed jobs of the last day, renditions owed past their retry window, each scheduled task's last success and the free
  * disk. It reads and never writes (REL-11). Backup freshness is reported NOT CHECKED until TASK-074's tooling records it —
  * never a PASS. Exit code 1 when any check fails.
  */
 class SmokeCheck extends Command
 {
-    protected $signature = 'ops:smoke {--queue-max=1000 : the queue backlog past which the check fails} {--disk-min=0.1 : the share of free disk below which the check fails}';
+    protected $signature = 'ops:smoke {--queue-max=1000 : the queue backlog past which the check fails} {--oldest-max=15 : the minutes the oldest waiting job may wait} {--disk-min=10 : the free disk, in whole percent, below which the check fails}';
 
     protected $description = 'Read-only smoke checks of the business heartbeat';
 
@@ -37,7 +37,12 @@ class SmokeCheck extends Command
         $report($max > 0 && $used <= (int) floor($max * 0.8), 'database', "connections {$used} of {$max}");
 
         $backlog = Queue::size();
-        $report($backlog <= (int) $this->option('queue-max'), 'queue', "{$backlog} jobs waiting");
+        $report($backlog <= $count($this->option('queue-max')), 'queue', "{$backlog} jobs waiting");
+
+        // The oldest waiting job's age (INFRASTRUCTURE §6): a stalled worker shows here before the backlog grows.
+        $oldest = Queue::creationTimeOfOldestPendingJob();
+        $waited = $oldest === null ? 0 : max(0, $now->getTimestamp() - $oldest);
+        $report($waited <= $count($this->option('oldest-max')) * 60, 'oldest job', $oldest === null ? 'no job waiting' : intdiv($waited, 60).' minutes waiting');
 
         $recentFailures = DB::table('failed_jobs')->where('failed_at', '>=', $now->subDay())->count();
         $report($recentFailures === 0, 'failed jobs', "{$recentFailures} in the last 24 hours");
@@ -54,10 +59,11 @@ class SmokeCheck extends Command
             $report($last !== null && $last->greaterThanOrEqualTo($now->subMinutes($minutes)), "scheduler {$task}", $last === null ? 'no success recorded' : 'last success '.$last->toIso8601String());
         }
 
+        // Whole percent, rounded down, so a fraction never passes the threshold (ARCHITECTURE §19: no float cast in the code).
         $free = disk_free_space(storage_path());
         $total = disk_total_space(storage_path());
-        $share = $free !== false && $total !== false && $total > 0 ? $free / $total : 0.0;
-        $report($share >= (float) $this->option('disk-min'), 'disk', sprintf('%.0f%% free', $share * 100));
+        $percent = $free !== false && $total !== false && $total > 0 ? (int) floor($free * 100 / $total) : 0;
+        $report($percent >= $count($this->option('disk-min')), 'disk', "{$percent}% free");
 
         $this->line('NOT CHECKED backups — recorded by TASK-074\'s tooling');
 
