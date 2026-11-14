@@ -1,5 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
+
 // TL-10 (TASK-015; acceptance criterion 6): every component's text in both languages — no key shown as itself
 // — and the language switch on a page built from the components keeping the unsent input in every field
 // (LOCALIZATION §3.7; CJ-18 in TASK-064; the architecture challenge's sequence 17b).
@@ -16,12 +18,16 @@ test('renders every component in each language with no key shown', async ({ page
     await page.goto('/__fixtures/komponen?bahasa=en');
     await expect(page.getByRole('button', { name: 'Record Payment' }).first()).toBeVisible();
     await expectComplete(page, 'en');
+    await auditPage(page, 'en', 'the component gallery');
 
     await page.goto('/__fixtures/komponen');
     await expect(page.getByRole('button', { name: 'Catat Pembayaran' }).first()).toBeVisible();
     await expectComplete(page, 'id');
+    await auditPage(page, 'id', 'the component gallery');
 });
 
+// The switch keeps unsent input in memory: audited at its own width only, a resize never coming between the input and
+// its check (the gallery is audited at the phone width above).
 test('keeps the unsent input in every field across the switch', async ({ page }) => {
     await page.goto('/__fixtures/komponen');
 
@@ -34,6 +40,7 @@ test('keeps the unsent input in every field across the switch', async ({ page })
     await page.getByRole('radio', { name: 'SIPLAH' }).check();
     await page.getByRole('switch').check();
     await page.getByRole('textbox', { name: 'Pindai atau ketik kode' }).fill('KRT-A4');
+    await auditPage(page, 'id', 'the component gallery with the typed input', { phone: false });
 
     await page.getByRole('button', { name: 'EN', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Record Payment' }).first()).toBeVisible({ timeout: SWITCHED });
@@ -49,4 +56,5 @@ test('keeps the unsent input in every field across the switch', async ({ page })
     await expect(page.getByRole('switch')).toBeChecked();
     await expect(page.getByRole('textbox', { name: /scan or type/i })).toHaveValue('KRT-A4');
     await expectComplete(page, 'en');
+    await auditPage(page, 'en', 'the component gallery with the typed input', { phone: false });
 });

@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { clientReturnRun } from '../client-return-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -21,5 +22,6 @@ for (const [locale, texts] of [
         await expect(page.locator('[data-slot="return-lines"]')).toContainText(texts.lines);
         await expect(page.locator('[data-slot="return-form"]').getByRole('button', { name: texts.record, exact: true })).toBeVisible();
         await expect(page.locator('[data-slot="return-cases"]')).toContainText(texts.none);
+        await auditPage(page, locale, 'PG-034');
     });
 }

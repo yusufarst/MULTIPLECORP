@@ -111,20 +111,13 @@ const versionOf = (project: Existing): Record<string, string> => ({
 export default function ProjectForm({ companies, project, client, today }: Props) {
     const { t } = useTranslation();
     const page = usePage<{ auth: AccountHints }>();
-    const flash = page.flash as { answer?: { link?: string | null } };
     const canCreateClient = page.props.auth.capabilities.includes('parties.manage');
     const amend = project !== null;
     const command = useCommand<Payload>(() => (project === null ? '/proyek' : `/proyek/${project.id}`), project === null ? 'post' : 'put');
-    // C-10's "Mulai Penomoran" address arrives with the answer's flash only; it is kept with the answer that brought it, so the
-    // client's context read again after the refusal (D10) — a visit with no flash — does not take the Owner's action away.
-    const [startLink, setStartLink] = useState<{ answer: object; href: string } | null>(null);
-    const flashLink = flash.answer?.link ?? null;
-
-    if (command.answer !== null && flashLink !== null && (startLink?.answer !== command.answer || startLink.href !== flashLink)) {
-        setStartLink({ answer: command.answer, href: flashLink });
-    }
-
-    const numberingAction = startLink !== null && startLink.answer === command.answer && command.answer.kind === 'REJECTED' ? startLink.href : null;
+    // C-10's "Mulai Penomoran" address arrives with the answer's flash only; the command keeps it with the answer, read in the
+    // same callback, so the client's context read again after the refusal (D10) — a visit with no flash, whichever comes first
+    // — never takes the Owner's action away (TASK-067 D).
+    const numberingAction = command.answer?.kind === 'REJECTED' ? command.link : null;
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
     const [company, setCompany] = useState(project?.company ?? (companies.length === 1 ? (companies[0]?.id ?? '') : ''));
     const [chosenClient, setChosenClient] = useState<LookupResult | null>(project !== null && client !== null ? { id: client.id, code: '', label: client.name } : null);

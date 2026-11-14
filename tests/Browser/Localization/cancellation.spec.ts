@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { invoiceRun } from '../invoice-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -20,5 +21,6 @@ for (const [locale, texts] of [
         await page.getByRole('button', { name: texts.more }).first().click();
         await page.getByRole('menuitem', { name: texts.cancel }).click();
         await expect(page.getByRole('alertdialog')).toContainText(texts.stays);
+        await auditPage(page, locale, 'PG-011 with the cancellation dialog');
     });
 }

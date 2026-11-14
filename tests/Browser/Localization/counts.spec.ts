@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { adjustmentRun } from '../adjustment-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -19,9 +20,11 @@ for (const [locale, texts] of [
         await page.goto(`/gudang/stok-opname?produk=${run.product}`);
         await expect(page.getByRole('heading', { name: new RegExp(texts.counts, 'i'), level: 1 })).toBeVisible();
         await expect(page.locator('[data-slot="count-open"]').getByRole('button', { name: texts.start, exact: true })).toBeVisible();
+        await auditPage(page, locale, 'PG-026');
 
         await page.goto('/gudang/selisih-temuan');
         await expect(page.getByRole('heading', { name: new RegExp(texts.discrepancies, 'i'), level: 1 })).toBeVisible();
         await expect(page.locator('[data-slot="discrepancy-findings"]')).toContainText(texts.findings);
+        await auditPage(page, locale, 'PG-029');
     });
 }

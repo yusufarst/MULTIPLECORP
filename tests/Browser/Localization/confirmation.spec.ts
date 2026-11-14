@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { confirmationRun } from '../confirmation-fixtures';
+import { auditPage } from '../localization-audit';
 
 // TL-10 (TASK-034; LOCALIZATION §3; DOD-16): PG-011's *Item dan pemenuhan* in both languages — keys of the catalogue,
 // never hardcoded copy; the business data stays as entered.
@@ -21,5 +22,6 @@ for (const [locale, texts] of [
         await expect(lines.locator('[data-line="1"]')).toContainText(run.goods);
         await expect(lines.locator('[data-line="1"]').getByRole('button', { name: texts.cancel })).toBeVisible();
         await expect(lines.locator('[data-line="1"]').getByRole('button', { name: texts.replan })).toBeVisible();
+        await auditPage(page, locale, 'PG-011 confirmed');
     });
 }

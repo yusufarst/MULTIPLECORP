@@ -90,7 +90,7 @@ export default function AppShell({ title, back, focused = false, children, built
             >
                 {t('shell.skip')}
             </a>
-            <div className="flex min-h-dvh bg-canvas">
+            <div className="group/shell flex min-h-dvh bg-canvas" data-bottom-bar={!focused || undefined}>
                 <Sidebar
                     account={account}
                     pathname={pathname}

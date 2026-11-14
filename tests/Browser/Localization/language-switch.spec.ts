@@ -1,5 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
+
 // TL-10 (TASK-014; acceptance criteria 1, 3, 4): both languages complete on the page — no key shown as itself,
 // the document's language set —, an unknown choice ignored for Indonesian, and each language's strings loaded
 // once as one bundle, never per key (LOCALIZATION §3.6, §3.8; TL-15).
@@ -19,14 +21,17 @@ test('renders each language complete, an unknown choice as Indonesian (§2, §3.
     await page.goto('/__fixtures/bahasa?bahasa=en');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign in to MultipleCorp');
     await expectComplete(page, 'en');
+    await auditPage(page, 'en', 'the sign-in page');
 
     await page.goto('/__fixtures/bahasa');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Masuk ke MultipleCorp');
     await expectComplete(page, 'id');
+    await auditPage(page, 'id', 'the sign-in page');
 
     await page.goto('/__fixtures/bahasa?bahasa=fr');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Masuk ke MultipleCorp');
     await expectComplete(page, 'id');
+    await auditPage(page, 'id', 'the sign-in page');
 });
 
 test('loads each language once, as one bundle (§3.8; TL-15)', async ({ page }) => {
@@ -42,10 +47,13 @@ test('loads each language once, as one bundle (§3.8; TL-15)', async ({ page }) 
     await page.goto('/__fixtures/bahasa');
     await page.getByRole('button', { name: 'EN' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign in to MultipleCorp', { timeout: SWITCHED });
+    await auditPage(page, 'en', 'the sign-in page');
     await page.getByRole('button', { name: 'ID' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Masuk ke MultipleCorp', { timeout: SWITCHED });
+    await auditPage(page, 'id', 'the sign-in page');
     await page.getByRole('button', { name: 'EN' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign in to MultipleCorp', { timeout: SWITCHED });
+    await auditPage(page, 'en', 'the sign-in page');
 
     expect(bundles.sort()).toEqual(['en', 'id']);
 });

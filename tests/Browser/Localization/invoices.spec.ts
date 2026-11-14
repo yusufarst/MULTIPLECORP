@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { invoiceRun } from '../invoice-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -16,9 +17,16 @@ for (const [locale, texts] of [
         await page.setViewportSize({ width: 1280, height: 900 });
         const run = await invoiceRun(page, `invoice-${locale}-${String(Date.now())}`, { stage: 'issued', locale });
 
+        // PG-041, the branch's invoices: the issued invoice listed under the run's numbering (TASK-067).
+        await page.goto(`/keuangan/invoice?perusahaan=${run.company}`);
+        await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.list);
+        await expect(page.locator('#konten')).toContainText('UJI/INV/');
+        await auditPage(page, locale, 'PG-041');
+
         await page.goto(`/keuangan/invoice/${run.invoice ?? ''}`);
         await expect(page.getByText(texts.position, { exact: true })).toBeVisible();
         await expect(page.getByTestId('position')).toContainText(texts.outstanding);
+        await auditPage(page, locale, 'PG-043');
 
         await page.goto(`/keuangan/invoice/baru?proyek=${run.project}`);
         await expect(page.getByText(texts.from, { exact: true })).toBeVisible();
@@ -28,5 +36,6 @@ for (const [locale, texts] of [
         await expect(paper).toContainText('DRAF — belum terbit');
         await expect(paper).toContainText('Subtotal');
         await expect(paper).toContainText('Total');
+        await auditPage(page, locale, 'PG-042');
     });
 }

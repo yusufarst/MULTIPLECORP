@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { issuedDocument } from '../files-fixtures';
+import { auditPage } from '../localization-audit';
 import { ownerSignedIn } from '../numbering-fixtures';
 
 // TL-10 (TASK-022; LOCALIZATION §3; DOD-16): the upload field and the rendition's status texts in both languages —
@@ -17,8 +18,10 @@ for (const [locale, texts] of [
         await expect(page.getByLabel(texts.label)).toHaveCount(1);
         await expect(page.getByRole('button', { name: texts.choose })).toBeVisible();
         await expect(page.getByText(texts.owed)).toBeVisible();
+        await auditPage(page, locale, 'the files page, the rendition owed');
 
         await page.goto(`/__fixtures/berkas?versi=${await issuedDocument(page, true)}`);
         await expect(page.getByText(texts.ready)).toBeVisible();
+        await auditPage(page, locale, 'the files page, the rendition ready');
     });
 }

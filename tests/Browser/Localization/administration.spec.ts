@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { administrationRun } from '../administration-fixtures';
+import { auditPage } from '../localization-audit';
 
 // TL-10 (TASK-035; LOCALIZATION §3; DOD-16): PG-011's checklist and PG-039 in both languages — keys of the catalogue,
 // never hardcoded copy; the requirement's own description stays as entered.
@@ -19,10 +20,12 @@ for (const [locale, texts] of [
         await expect(checklist).toContainText(texts.missing);
         await expect(checklist).toContainText('SPK perusahaan untuk sekolah');
         await expect(page.getByRole('button', { name: texts.add })).toBeVisible();
+        await auditPage(page, locale, 'PG-011 with its checklist');
 
         await page.goto(`/dokumen/administrasi?cabang=${run.company}`);
         await expect(page.getByRole('heading', { name: texts.page })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.tab })).toBeVisible();
         await expect(page.getByRole('table', { name: texts.page })).toContainText(texts.required);
+        await auditPage(page, locale, 'PG-039');
     });
 }

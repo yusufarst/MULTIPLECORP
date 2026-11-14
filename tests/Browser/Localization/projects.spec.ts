@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { projectRun } from '../project-fixtures';
 
 // TL-10 (TASK-032; LOCALIZATION §3; DOD-16): PG-010, PG-011 and PG-013 in both languages — keys of the catalogue, never
@@ -17,16 +18,19 @@ for (const [locale, texts] of [
         await page.goto('/proyek');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.list);
         await expect(page.getByRole('row').filter({ hasText: run.number ?? '' }).filter({ hasText: run.code })).toContainText(texts.stage);
+        await auditPage(page, locale, 'PG-010');
 
         await page.goto(`/proyek/${run.project ?? ''}`);
         await expect(page.getByRole('list', { name: texts.track })).toContainText(texts.stage);
         await expect(content).toContainText(texts.details);
         await expect(content).toContainText(texts.history);
         await expect(content).toContainText(run.goods);
+        await auditPage(page, locale, 'PG-011');
 
         await page.goto('/proyek/baru');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.form);
         await expect(content).toContainText(texts.lines);
         await expect(page.getByRole('button', { name: texts.create })).toBeVisible();
+        await auditPage(page, locale, 'PG-013');
     });
 }

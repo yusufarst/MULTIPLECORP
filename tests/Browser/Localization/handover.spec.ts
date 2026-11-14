@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { handoverRun } from '../handover-fixtures';
+import { auditPage } from '../localization-audit';
 
 // TL-10 (TASK-047; LOCALIZATION §3, §3.4; DOD-16; criterion 4): PG-033 in both languages — keys of the catalogue, never hardcoded copy —,
 // the BAST's paper in Indonesian whatever the interface language.
@@ -26,5 +27,6 @@ for (const [locale, texts] of [
         await expect(paper).toContainText('Berita Acara Serah Terima');
         await expect(paper).toContainText('Tanggal Serah Terima');
         await expect(paper).toContainText('DRAF — belum terbit');
+        await auditPage(page, locale, 'PG-033');
     });
 }

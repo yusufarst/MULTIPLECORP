@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { logsRun } from '../logs-fixtures';
 
 // TL-10 (TASK-061; LOCALIZATION §3; DOD-16): PG-063 and PG-064 in both languages — keys of the catalogue, never
@@ -19,10 +20,12 @@ for (const [locale, texts] of [
         const table = page.getByRole('table', { name: texts.history, exact: true });
         await expect(table).toContainText(texts.action);
         await expect(table).toContainText(`Uji log ${run.tag}`);
+        await auditPage(page, locale, 'PG-063');
 
         await page.goto('/aktivitas/log-keamanan?jenis=LOGIN_FAILED');
         await expect(page.getByRole('heading', { name: texts.security })).toBeVisible();
         await expect(page.getByLabel(texts.kindFilter)).toBeVisible();
         await expect(page.getByRole('table', { name: texts.security, exact: true })).toContainText(texts.kind);
+        await auditPage(page, locale, 'PG-064');
     });
 }

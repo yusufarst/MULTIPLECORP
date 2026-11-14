@@ -1,5 +1,6 @@
 import { expect as base, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { otherCashRun } from '../other-cash-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
@@ -23,5 +24,6 @@ for (const [locale, texts] of [
         await expect(page.getByRole('button', { name: texts.cashIn, exact: true })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.tab })).toBeVisible();
         await expect(page.getByText(texts.empty)).toBeVisible();
+        await auditPage(page, locale, 'PG-049');
     });
 }
