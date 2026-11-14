@@ -153,7 +153,9 @@ migration_layers() {
 # The previous release: the latest `v*` tag; before the first release, the `main` the tested commit would follow — its
 # tip, or on `main` itself the commit before.
 previous_release() {
-    tag=$(git ls-remote --tags --refs origin 'v*' 2> /dev/null | sed 's#.*refs/tags/##' | sort -V | tail -n 1)
+    # An unanswered listing fails the step: it never falls back to `main` once a release tag may exist.
+    tags=$(git ls-remote --tags --refs origin 'v*') || return 1
+    tag=$(printf '%s\n' "$tags" | sed -n 's#.*refs/tags/##p' | sort -V | tail -n 1)
     if [ -n "$tag" ]; then
         git fetch -q --no-tags --depth=1 origin "refs/tags/$tag:refs/previous-release" && git rev-parse refs/previous-release
         return
@@ -170,7 +172,12 @@ previous_release_layer() {
         report "$name" FAIL 'git fetch of the previous release' 'none'
         return
     fi
-    rm -rf .previous-release && mkdir .previous-release && git archive "$sha" | tar -x -C .previous-release
+    rm -rf .previous-release .previous-release.tar && mkdir .previous-release
+    if ! git archive -o .previous-release.tar "$sha" || ! tar -x -C .previous-release -f .previous-release.tar; then
+        report "$name" FAIL "git archive $sha" 'none'
+        return
+    fi
+    rm -f .previous-release.tar
     if [ ! -f .previous-release/app/Console/Commands/SmokeCheck.php ]; then
         report "$name" "EMPTY — the previous release $(printf '%.7s' "$sha") has no smoke checks, which TASK-072 adds" "git archive $sha" 'none'
         return
