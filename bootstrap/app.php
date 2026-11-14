@@ -50,6 +50,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // when the application boots (AppServiceProvider).
         $middleware->trustHosts(at: fn (): array => TrustedHosts::patterns(config()->array('app.trusted_hosts'), config()->string('app.url')), subdomains: false);
 
+        // The health check answers through the maintenance mode, as the framework's own health route does, so that the
+        // stack's health checks and the operator's verification see the processes up while every other request is refused
+        // (TASK-072; H9-14).
+        $middleware->preventRequestsDuringMaintenance(except: ['up']);
+
         // Global, so that error pages carry the policy too (SECURITY WS-08).
         $middleware->prepend(SecurityHeaders::class);
 

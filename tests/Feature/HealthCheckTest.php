@@ -13,6 +13,20 @@ it('answers the health check with OK, starting no session and setting no cookie'
         ->and($response->headers->getCookies())->toBe([]);
 });
 
+it('answers through the maintenance mode while every other request is refused (H9-14)', function () {
+    // The maintenance mode on this process's array store, never the file other test processes would read.
+    config(['app.maintenance.driver' => 'cache', 'app.maintenance.store' => 'array']);
+    app()->maintenanceMode()->activate(['secret' => null, 'status' => 503]);
+
+    try {
+        $this->get('/up')->assertOk()->assertSee('OK');
+        $this->get('/masuk')->assertStatus(503);
+        $this->post('/masuk', [])->assertStatus(503);
+    } finally {
+        app()->maintenanceMode()->deactivate();
+    }
+});
+
 it('declares EN-03\'s health exception and nothing else', function () {
     $route = app('router')->getRoutes()->getByName('health');
 
