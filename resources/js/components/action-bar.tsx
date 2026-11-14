@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { type Answer, isAssertive, OutcomeMessage } from '@/components/outcome-message';
 import { cn } from '@/lib/utils';
@@ -28,6 +28,8 @@ export function ActionBar({
     className?: string;
 }) {
     const ref = useRef<HTMLDivElement>(null);
+    // Fixed on the phone, the region is out of the page's flow: a spacer of its height keeps the page's end reachable above it.
+    const [floating, setFloating] = useState(0);
 
     useEffect(() => {
         const element = ref.current;
@@ -39,8 +41,10 @@ export function ActionBar({
         const root = document.documentElement;
         // Fixed on the phone, the region and the bottom bar beneath it cover the viewport's foot from its top edge down.
         const cover = () => {
-            const covered = getComputedStyle(element).position === 'fixed' ? window.innerHeight - element.getBoundingClientRect().top : element.offsetHeight;
+            const fixed = getComputedStyle(element).position === 'fixed';
+            const covered = fixed ? window.innerHeight - element.getBoundingClientRect().top : element.offsetHeight;
             root.style.scrollPaddingBottom = `${String(Math.max(element.offsetHeight, Math.round(covered)))}px`;
+            setFloating(fixed ? element.offsetHeight : 0);
         };
         const observer = new ResizeObserver(cover);
         observer.observe(element);
@@ -57,26 +61,29 @@ export function ActionBar({
     const assertive = answer !== null && answer !== undefined && isAssertive(answer);
 
     return (
-        <div
-            ref={ref}
-            role="region"
-            aria-label={label}
-            data-print="hide"
-            className={cn(
-                inline
-                    ? 'mt-auto flex flex-col gap-3 pt-2 md:mt-2'
-                    : 'fixed inset-x-0 bottom-0 z-(--z-bar) flex max-h-(--action-region-max) flex-col gap-3 overflow-y-auto border-t border-border-subtle bg-surface px-m-gutter pt-3 pb-[calc(var(--space-3)+var(--safe-bottom))] shadow-footer',
-                !inline && 'max-md:group-data-[bottom-bar]/shell:bottom-[calc(var(--m-bottom-nav-h)+var(--safe-bottom))] max-md:group-data-[bottom-bar]/shell:pb-3 md:sticky md:bottom-0 md:px-gutter',
-                className,
-            )}
-        >
-            <div aria-live="polite" aria-atomic="true">
-                {polite && <OutcomeMessage answer={answer} action={answerAction} />}
+        <>
+            {!inline && floating > 0 && <div aria-hidden="true" data-slot="action-bar-spacer" className="shrink-0" style={{ height: floating }} />}
+            <div
+                ref={ref}
+                role="region"
+                aria-label={label}
+                data-print="hide"
+                className={cn(
+                    inline
+                        ? 'mt-auto flex flex-col gap-3 pt-2 md:mt-2'
+                        : 'fixed inset-x-0 bottom-0 z-(--z-bar) flex max-h-(--action-region-max) flex-col gap-3 overflow-y-auto border-t border-border-subtle bg-surface px-m-gutter pt-3 pb-[calc(var(--space-3)+var(--safe-bottom))] shadow-footer',
+                    !inline && 'max-md:group-data-[bottom-bar]/shell:bottom-[calc(var(--m-bottom-nav-h)+var(--safe-bottom))] max-md:group-data-[bottom-bar]/shell:pb-3 md:sticky md:bottom-0 md:px-gutter',
+                    className,
+                )}
+            >
+                <div aria-live="polite" aria-atomic="true">
+                    {polite && <OutcomeMessage answer={answer} action={answerAction} />}
+                </div>
+                <div aria-live="assertive" aria-atomic="true">
+                    {assertive && <OutcomeMessage answer={answer} action={answerAction} />}
+                </div>
+                <div className="flex flex-col-reverse gap-2 *:w-full md:flex-row md:items-center md:justify-end md:*:w-auto">{children}</div>
             </div>
-            <div aria-live="assertive" aria-atomic="true">
-                {assertive && <OutcomeMessage answer={answer} action={answerAction} />}
-            </div>
-            <div className="flex flex-col-reverse gap-2 *:w-full md:flex-row md:items-center md:justify-end md:*:w-auto">{children}</div>
-        </div>
+        </>
     );
 }
