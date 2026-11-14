@@ -363,6 +363,52 @@ it('registers each index of these tables with its query, and the query uses it',
     }
 });
 
+/** The relations a plan reads by a sequential scan, at any depth. */
+function sequentialScans(array $node): array
+{
+    $found = ($node['Node Type'] ?? '') === 'Seq Scan' ? [(string) $node['Relation Name']] : [];
+
+    foreach ($node['Plans'] ?? [] as $child) {
+        $found = [...$found, ...sequentialScans($child)];
+    }
+
+    return $found;
+}
+
+it('keeps each registered query\'s own plan on PERFORMANCE §12\'s step-4 rule, its EXPLAIN (ANALYZE, BUFFERS) kept as evidence (TASK-068; PFM-03)', function () {
+    // The register's synthetic tables — 20,000 rows each, at or above 1x but for the audit, security, ledger, stock and
+    // import rows —, the planner free to choose; 100x is NOT TESTED for the initial release (APPR-035).
+    $owner = DB::connection(DatabaseRole::MIGRATION_CONNECTION);
+    $directory = storage_path('logs/verify/plans');
+    is_dir($directory) || mkdir($directory, 0775, true);
+    $owner->beginTransaction();
+
+    try {
+        seedIndexRegister($owner);
+        $owner->statement('set local enable_seqscan = on');
+        $company = (string) $owner->scalar('select min(id) from companies');
+        $scans = [];
+
+        foreach (INDEX_REGISTER as $use => [$index, $query]) {
+            $json = (string) $owner->scalar('explain (analyze, buffers, format json) '.str_replace('{company}', $company, $query));
+            file_put_contents($directory.'/'.preg_replace('/[^a-z0-9]+/', '-', strtolower($use)).'.json', $json);
+            $plan = json_decode($json, true)[0]['Plan'] ?? [];
+
+            foreach (sequentialScans($plan) as $relation) {
+                $rows = (int) $owner->scalar('select reltuples::bigint from pg_class where relname = ?', [$relation]);
+
+                if ($rows > 10_000) {
+                    $scans[] = "{$use}: a sequential scan of {$relation} ({$rows} rows)";
+                }
+            }
+        }
+
+        expect($scans)->toBe([]);
+    } finally {
+        $owner->rollBack();
+    }
+});
+
 it('indexes every evidence link target for the cascade derivations (IX-08)', function () {
     $targets = [
         'project', 'commercial_confirmation', 'purchase', 'stock_movement', 'delivery', 'dropship_confirmation', 'service_handover',

@@ -6,6 +6,8 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
+Amendment: on 2026-11-15 the Owner approved, under [APPR-035](../00-governance/DECISION_LOG.md#dir-119-and-appr-035--task-068-simplified-for-the-initial-release-2026-11-15) (DIR-119; TASK_PLAN Change 24), TASK-068's narrowing: no 100x sizes exist for the initial release, so GT-01–GT-07 are read against the 1x sizes TASK-068 records and this Task's own staging measurements, 100x NOT TESTED; every staging measurement of this Task is unchanged.
+
 **STATUS:** TODO
 
 **RISK CLASS:** HIGH
@@ -41,7 +43,7 @@ No measurement exists: PERFORMANCE's workload, sizing and growth figures are ass
 - **The workload and server times** (PFM-13; PFM-01; PFM-02; AS-02–AS-06; DEP-09): AS-03's peak on staging at 10x — every p95 within its budget, no error, no lock-wait timeout, renditions within QB-17 —, the server times of PERFORMANCE_TARGETS §1 for the release-critical pages, PFM-02 on every page, and the rest of [PERFORMANCE_TARGETS §4](../08-testing/PERFORMANCE_TARGETS.md#4-the-release-critical-set)'s release-critical set — PFM-08, PFM-16 and PFM-20 — in the same run; load only outside both applications' business hours, bounded in duration, with the host and the other application's health watched; a time that misses opens a defect Task and AS-07's review, and the release waits; office connectivity and workload as the operator observes them (DEP-09); PFM-17's time on the device recorded beside these server times at TASK-086's device checks, judged with the Owner at UAT
 - **Durations** (OPI-25): a full backup and a restore drill measured on the VPS with TASK-074's tooling, against the 24-hour RPO and the 4-hour RTO — the inputs of OPI-23's backup time (TASK-084), BK-04's freshness margin and the freeze's sizing (IMP-13)
 - **The shared-disk budget** ([BACKUP_RECOVERY §3](../09-operations/BACKUP_RECOVERY.md#3-the-shared-disk-budget); OPI-21; GLC-05; BK-11; SZ-08; GT-04–GT-06): U₀, K and the free space as TASK-071 recorded them; DB, F, L and D projected from GT-04–GT-06 and the data steward's counts — counts only —; B from the 7 daily, 4 weekly and 3 monthly generations (DIR-079 CB-11); S measured on the first rehearsal; P computed with the off-server copy's transient file; Kₚ from OPI-27; H set; the budget held with one year's growth, the thresholds `<DISK_WARN_PCT>` and `<DISK_CRIT_PCT>` derived so that a backup and a restore drill still fit at the warning level; a retention the budget cannot hold brought back to the Owner before go-live (`DIR-081` OB-10); DB, F, L and D measured again after the opening import, before go-live, completing GLC-05 in the cutover (TASK-087)
-- **Growth** (GT-01–GT-07): the thresholds read against the 100x sizes TASK-068 produced, the first baseline of the monthly report (INFRASTRUCTURE §6; GT-07)
+- **Growth** (GT-01–GT-07): the thresholds read against the 1x sizes TASK-068 recorded and the staging measurements — 100x NOT TESTED for the initial release (APPR-035) —, the first baseline of the monthly report (INFRASTRUCTURE §6; GT-07)
 - **The assumptions replaced** (AS-01–AS-08): each figure P9 measures replaces its assumption in the record; a budget the VPS cannot meet is corrected through review, never a reason to cut approved scope (AS-07); the existing VPS stays the near-zero-cost baseline (REF-062)
 - **The record**: each measurement with its commit, scale, environment, command and output, the plans beside the query counts (PERFORMANCE_TARGETS §1); OPI-07's figures recorded in INFRASTRUCTURE §9 and OPI-21's and OPI-25's in BACKUP_RECOVERY §7, under CHANGE_CONTROL; the measured values set in the VPS's own configuration, never in the repository's template (INF-05)
 
@@ -231,7 +233,7 @@ No measurement exists: PERFORMANCE's workload, sizing and growth figures are ass
 - Security: the limiters' values under concurrency — the half of SM-14 left to measurement — with the fail-closed limiters unchanged (TL-14; PFM-12)
 - Performance: TL-15's staging half — PFM-01, PFM-02, PFM-12, PFM-13 and PERFORMANCE_TARGETS §4's release-critical set, PFM-17 beside them at TASK-086
 - Migration: N/A — no migration or import code in this Task
-- Other: the disk budget's arithmetic redone by the reviewer from the recorded terms; GT-01–GT-07 read against the 100x sizes
+- Other: the disk budget's arithmetic redone by the reviewer from the recorded terms; GT-01–GT-07 read against the recorded sizes
 
 **TEST CHECKLIST:**
 

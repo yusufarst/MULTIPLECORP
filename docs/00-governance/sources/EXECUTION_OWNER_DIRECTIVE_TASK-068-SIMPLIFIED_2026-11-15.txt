@@ -1,0 +1,30 @@
+Owner directive received in session during execution, 2026-11-15 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+TASK
+MULTIPLECORP — OWNER DIRECTIVE: Simplify TASK-068 performance verification for fast production delivery.
+READ
+TASK-068, PERFORMANCE_TARGETS, TEST_STRATEGY, RELEASE_PLAN, DIR-112, and applicable CHANGE_CONTROL rules.
+GOAL
+Complete TASK-068 as quickly and efficiently as possible. Remove excessive large-scale testing that delays production readiness and consumes unnecessary execution time, CI resources, and AI tokens.
+DO
+
+1. The Owner explicitly authorizes removing mandatory 100× fixture generation, 100× database benchmarking, and 100× EXPLAIN ANALYZE from TASK-068's initial-release acceptance criteria.
+2. Do NOT generate 12 million ledger entries, 30 million audit rows, or other massive datasets.
+3. Reuse existing performance tests and fixtures wherever possible.
+4. Keep lightweight 1× query-count and N+1 checks in CI.
+5. Perform selective 10× checks only where practical and necessary. Do not make expensive full-scale 10× generation mandatory in CI.
+6. Keep essential query budgets, security, data integrity, and production safety requirements.
+7. Remove 100× testing as a mandatory initial-release blocker through a narrowly scoped Owner-approved contract amendment. Clearly record its verification status as NOT TESTED, never PASS.
+8. Preserve staging measurements necessary for an evidence-based initial release.
+9. Update only the affected contracts and release criteria through existing CHANGE_CONTROL.
+10. Do not create new Tasks, agents, review cycles, paid infrastructure, or additional testing requirements.
+11. Prioritize implementation and completion of the existing 95 Tasks.
+12. Do not interrupt the active TASK-072 PR or its CI.
+
+VERIFY
+Run existing targeted performance tests and only the mandatory CI gates applicable to the amended contract. Reuse valid evidence.
+STOP IF
+The amendment conflicts with an independent mandatory security, data-integrity, or release-safety requirement that cannot be changed by this Owner directive. Escalate only the exact conflict while continuing other authorized work.
+UPDATE
+Report the narrow contract amendment, completed checks, remaining material risks, and next implementation step.
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.

@@ -16,6 +16,10 @@ Authority: P6 — Concurrency, Idempotency & Performance, authorized by the Owne
 
 **Boundary — nothing here is a measurement.** DATABASE §20 and §27, ARCHITECTURE §14 and §20 and SECURITY WS-12 and H6-07 speak of measured plans, targets and limit values from P6, but no application exists to measure. DIR-032 §7-B settles this for ARCHITECTURE §20 — design budgets and target values stated as assumptions, with the procedure that will verify them — and this document reads the other five sentences the same way: every number below is a **design budget, starting value or sizing sentence stated as an assumption** tied to DEP-09 and GAP-017, together with the procedure that will verify it. P8 owns `docs/08-testing/PERFORMANCE_TARGETS.md` — the measured acceptance targets and how they are measured — and turns these budgets into evidence or corrects them. P9 owns the configured values. Documentation only: no code, configuration, package, infrastructure file, test or load script.
 
+Amendment: on 2026-11-15 the Owner approved, under [APPR-035](../00-governance/DECISION_LOG.md#dir-119-and-appr-035--task-068-simplified-for-the-initial-release-2026-11-15) (DIR-119; TASK_PLAN Change 24), TASK-068's narrowing: AS-05's 100x scale, §12's 100x step, PF-30's 100x duration and the 100x measurements of QS-16–QS-19 and GT-03 are NOT TESTED for the initial release, never PASS, and block no release; the budgets, rules and indexes of this document are unchanged.
+
+Amendment: on 2026-11-15 the Owner approved, under [APPR-036](../00-governance/DECISION_LOG.md#dir-120-and-appr-036--qb-09s-first-response-amended-2026-11-15) (DIR-120; TASK_PLAN Change 25), QB-09's first response — PG-043, the invoice detail — amended from eight data statements to the seventeen of the invoice's own reads it was measured to make, the shell's one company-list read every page pays on top, constant with the rows shown; the 400 ms staging time, constant counts, N+1 prevention and data correctness unchanged, the panels read at once rather than deferred unless staging evidence shows deferring them necessary.
+
 ## Source and version evidence
 
 Read on 2026-09-30 from current official documentation; versions are evidence, not pins (DEP-07). Facts marked *source* or *old* are P8 verification items (HO-16, HO-20).
@@ -114,7 +118,7 @@ Every authenticated request pays an **envelope** before its own queries: the ses
 | QB-06 | Scanner exact lookup | ≤ 2 | — | 150 ms |
 | QB-07 | Billing and receivables (*Piutang*), aging | ≤ 4 | aging buckets: 1 group, ≤ 2 | 300 ms |
 | QB-08 | Invoices list | ≤ 4 | — | 300 ms |
-| QB-09 | Invoice detail | ≤ 8 | applications and settlements, documents: 2 groups, ≤ 4 each | 400 ms |
+| QB-09 | Invoice detail | ≤ 17 — the invoice's own reads with its applications, settlements and documents at once, the shell's company list on top (APPR-036) | none deferred while staging keeps 400 ms | 400 ms |
 | QB-10 | Dashboard and action queue | ≤ 5 | QS signals: ≤ 4 groups, ≤ 12 statements each — the register's statements, the ten completion predicates of QS-15 forming a group of their own; QS-23 read for the Owner alone (PJ-13) and QS-24 in an Admin's goods group, which then holds twelve statements (`DIR-077` CA-07, CA-10); period figures (CALC-08–CALC-14) with, on *Beranda*, the receivables position — one grouped statement over `invoice_balances` per company in scope, CALC-05's outstanding total and CALC-07's buckets (`DIR-079` CB-03): 1 group, ≤ 7, read in one snapshot (TX-10) | 300 ms; 500 ms per signal group; 1 s for the period figures |
 | QB-11 | Report on screen | ≤ 6, read in one snapshot (TX-10) | — | 1 s |
 | QB-12 | Payments, documents and evidence lists; audit timeline | ≤ 4, plus one per kind of linked record present on the page where a list follows an exclusive arc (evidence links, audit entities) | — | 300 ms |

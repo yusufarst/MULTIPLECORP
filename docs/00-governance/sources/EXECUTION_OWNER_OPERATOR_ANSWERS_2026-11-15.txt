@@ -1,0 +1,83 @@
+Owner's operator answers received in session during execution, 2026-11-15 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received: part 1 the Owner's reconciled checklist, attached as a file; part 2 the Owner's message of the same day.
+
+--- Part 1: Checklist_Input_Operator_MULTIPLECORP_Update_Jawaban_Owner_2026-11-15.md ---
+
+# Checklist Input Operator MULTIPLECORP — Rekonsiliasi jawaban Owner
+
+**Diperbarui 15 November 2026 WIB.** Dokumen ini menggabungkan catatan yang sudah ada dengan **jawaban baru Owner pada 15 November** untuk OPI-04, OPI-05, OPI-28, OPI-31, dan OPI-32. Jawaban langsung Owner ditandai sebagai *pernyataan Owner*, tidak disamakan dengan uji konfigurasi teknis. Dokumen ini **bukan** berita acara verifikasi infrastruktur baru dan **tidak otomatis** mengubah status Task di repo maupun Artifact Claude.
+
+**Sumber:** Jawaban langsung Owner pada 15 November 2026; `docs/handoff/OPERATOR_INPUT_REQUEST.md` bagian *Received from the Owner as operator — 2026-11-13*; DIR-115; handoff v7; keputusan DIR-117/APPR-033 tentang Coolify. Jika status repo berubah setelah rekonsiliasi ini, gunakan bukti yang lebih baru. **Tidak berisi rahasia, alamat IP, nama host privat, path rahasia, akun, atau kode autentikasi.**
+
+## Sebelum staging — checklist asli
+
+- [x] **OPI-26 — VERIFIED.** Klien telah memberikan akses kepada **Owner dalam peran operator VPS**, bukan kepada agen. Akses panel penyedia dan konsol administrasi berbasis browser telah dikonfirmasi dalam catatan 13 November (DIR-115). **Belum sama dengan** verifikasi login SSH menggunakan kunci independen atau pengamanan akses root; keduanya tetap menjadi pekerjaan keamanan terpisah.
+
+- [x] **OPI-03 — VERIFIED (inventaris saat diperiksa).** VPS menjalankan **Ubuntu 24.04.5 LTS**, **Docker Engine 29.9.3**, **Docker Compose 5.7.1**, **host Nginx**, **UFW** dan **Git**. Uji kontainer sudah dilakukan. UFW aktif dan mengizinkan SSH/HTTP/HTTPS; permintaan HTTP tak cocok pada Nginx mengembalikan 404. **Coolify belum terpasang menurut inventaris tersebut.** Belakangan, DIR-117/APPR-033 **menyetujui Coolify sebagai target deployment**; persetujuan dan konfigurasi di repo **tidak membuktikan instalasi Coolify di VPS telah dilakukan**.
+
+- [ ] **DEP-05 — BELUM ADA BUKTI LENGKAP.** Data steward perlu memberikan **struktur data lama yang disanitasi, jumlah baris, total kontrol yang telah direkonsiliasi, dan batas cutover yang disepakati** untuk produk, harga, pemasok, klien, stok, dan utang terbuka. Tidak ada angka tersebut yang dapat diambil secara sah dari bukti yang tersedia. **Jangan menganggap data lama kosong** hanya karena belum ada rekap.
+
+## Sebelum go-live — checklist asli
+
+- [x] **OPI-04 — DIJAWAB OWNER (15 Nov).** Owner menyatakan **menggunakan Cloudflare**. Jawaban penyedia DNS/edge telah diberikan; **mode proxy Cloudflare (proxied/DNS-only), status DNS aktual, dan daftar trusted proxies/host aplikasi belum diverifikasi**. Jangan meminta ulang nama penyedia. Periksa mode dan konfigurasi yang diperlukan hanya ketika tahap staging membutuhkan bukti tersebut.
+
+- [ ] **OPI-05 — JAWABAN OWNER: TOLAK BOT TELEGRAM.** Owner **tidak menggunakan Telegram dan meminta kandidat bot Telegram dihapus** agar tidak menambah pekerjaan. **Jangan merancang, memasang, atau menguji bot Telegram.** Ketentuan pemberitahuan/alert yang masih mengikat **belum dipenuhi** oleh penolakan satu kandidat. Bila kanal diperlukan untuk go-live, evaluasi dahulu opsi **Rp0 yang sudah tersedia** (misalnya notifikasi email dari layanan yang sudah dipakai) hanya setelah mencocokkan aturan repository, tanpa otomatis menambah integrasi/biaya. Jika Owner bermaksud menghapus *seluruh kewajiban alert*, itu memerlukan keputusan perubahan kontrak yang eksplisit; jangan diam-diam menandai OPI-05 VERIFIED. Jangan simpan detail penerima atau rahasia di repo publik.
+
+- [ ] **OPI-28 — DIJAWAB SEBAGIAN OLEH OWNER (15 Nov).** Owner menyatakan **hanya peran Owner** yang dapat mengakses panel VPS/penyedia; tidak ada peran administratif lain menurut pernyataan Owner. **Status 2FA akun penyedia belum dikonfirmasi**, sehingga butir OPI-28 belum dapat ditandai VERIFIED lengkap. Jangan tanyakan ulang siapa pemegang akses.
+
+- [x] **OPI-31 — DIJAWAB OWNER (15 Nov).** Owner menyatakan **hanya Owner** sebagai pemegang akses administratif VPS/host dan panel penyedia; tidak ada pihak lain yang diberi akses administratif menurut pernyataan Owner. Catat sebagai **inventaris akses yang dinyatakan Owner**, bukan hasil audit teknis independen. Jangan meminta ulang daftar peran kecuali ada bukti baru yang bertentangan.
+
+- [ ] **OPI-32 — BELUM DIPUTUSKAN; PRIORITAS Rp0 (jawaban Owner 15 Nov).** Owner belum memilih tujuan backup di luar VPS karena mempertimbangkan biaya dan **bersedia memakai opsi dengan biaya tambahan Rp0 bila memenuhi syarat**. Belum ada pilihan tujuan yang disetujui. Wajib tetap **di luar VPS dan akun penyedia**, terenkripsi, dengan kunci yang disimpan terpisah, serta dapat diuji restore. Prioritaskan memanfaatkan media/akun yang *sudah dimiliki Owner* jika benar-benar memenuhi syarat, tetapi **jangan menganggap media itu tersedia atau membuat layanan/akun berbiaya baru tanpa persetujuan**. Peran penjaga kunci belum dikonfirmasi; jangan menganggap otomatis Owner sebagai pemegang kunci tanpa konfirmasi.
+
+## Tambahan penting — penghambat TASK-071 yang tidak ada pada checklist asli
+
+Bagian berikut perlu ada agar dokumen tidak menampilkan kesan bahwa semua prasyarat TASK-071 sudah lengkap setelah OPI-26/03 ditandai selesai.
+
+- [ ] **OPI-22 — OUTSTANDING.** Direktori deployment MULTIPLECORP terpisah dan hanya untuk operator telah tercatat, **tetapi direktori backup, volume dan izin aksesnya yang terpisah dari aplikasi kedua belum diverifikasi**.
+
+- [ ] **OPI-29 — OUTSTANDING.** Inventaris **setiap fitur sisi penyedia** dan statusnya belum diberikan. Khususnya fitur AI/otomasi yang dapat bertindak pada host perlu dipastikan **OFF sebelum data produksi**, sesuai INF-08.
+
+- [ ] **OPI-30 — OUTSTANDING.** **Domain production dan hostname staging** belum tercatat dalam rekaman privat yang disetujui. Jangan memasukkan nama privatnya ke repository publik bila kontrak menghendaki catatan privat.
+
+- [ ] **OPI-27 — PARSIAL.** Pada pemeriksaan yang tercatat, **belum ada aplikasi production terpasang**; direktori deployment kedua aplikasi terpisah. Namun alokasi resource sebelum staging dan **jendela maintenance, backup, dan deployment** untuk dua aplikasi di VPS bersama masih perlu disepakati.
+
+## Ringkasan untuk Owner / Executor
+
+| Kategori | Status berdasarkan bukti yang ada |
+| --- | --- |
+| VERIFIED dari bukti repositori | **OPI-26, OPI-03** |
+| Jawaban baru Owner yang sudah diterima (tanpa mengklaim audit teknis) | **OPI-04 (Cloudflare), OPI-31 (hanya Owner), OPI-28 (pemegang akses Owner; 2FA belum dijawab), OPI-05 (Telegram ditolak), OPI-32 (pilih opsi backup Rp0 bila layak)** |
+| Tercatat sebagian | **OPI-27, OPI-28** (serta OPI-02 dan OPI-21 pada record utama) |
+| Belum lengkap dari checklist asli | **DEP-05; OPI-28 (2FA); OPI-05 (kanal alert tanpa Telegram); OPI-32 (tujuan backup); verifikasi teknis OPI-04 saat staging** |
+| Belum lengkap dan wajib dibawa ke TASK-071 | **OPI-22, OPI-29, OPI-30, OPI-05** |
+| Efek pada TASK-071 | **Masih BLOCKED** sampai input wajib lengkap dan diverifikasi dalam record yang disetujui |
+| Efek pada pengembangan | **Pekerjaan kode yang sudah diizinkan dapat berjalan**, tanpa menganggap staging/production sudah aman |
+
+**Aturan pencatatan:** Jawaban baru Owner harus dicatat tanpa memaksakan pekerjaan baru: **Cloudflare sudah disebut, akses panel/host dinyatakan Owner-only, Telegram ditolak, dan backup harus dicari yang Rp0 bila layak**. Butir yang sudah VERIFIED tidak boleh diminta ulang tanpa bukti baru yang bertentangan. Untuk butir lain, jangan menandai VERIFIED hanya karena ada rencana, template, atau keputusan memilih alat. Catat hanya fakta yang benar-benar diperiksa operator. Jangan kirim rahasia lewat chat maupun repo.
+
+--- Part 2: the Owner message ---
+
+TASK
+MULTIPLECORP — Update the operator records using the Owner's latest answers.
+READ
+The attached updated operator checklist and existing canonical operator records.
+GOAL
+Recognize previously supplied Owner answers without delaying active implementation.
+DO
+
+1. Record Cloudflare as the Owner's DNS/provider choice.
+2. Remove Telegram bot implementation from the proposed work. Do not add another notification integration without checking existing requirements and Owner authorization.
+3. Record the Owner as the sole declared VPS/provider administrator.
+4. Record the off-server backup destination as UNDECIDED, with a preference for Rp0 additional cost. Do not purchase or activate any service.
+5. Keep unknown technical facts, including provider 2FA status, explicitly pending.
+6. Preserve all previously VERIFIED operator inputs.
+7. At the next naturally available checkpoint, synchronize only the affected records.
+8. Do not interrupt TASK-068, PR #87, active CI, Docker processes, or current background work.
+9. Do not create new Tasks, reviews, or CI runs for this documentation update.
+
+VERIFY
+Existing answers are not requested again. Unverified requirements remain accurately identified.
+STOP IF
+An actual binding requirement conflicts with the Owner's instruction. Report only the exact conflict.
+UPDATE
+Provide one short summary after the synchronization is complete.
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.

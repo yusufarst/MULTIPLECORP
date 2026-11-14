@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\Reporting\Queries\Beranda;
 use App\Modules\Reporting\Queries\HomeGroups;
@@ -8,7 +9,9 @@ use App\Modules\Reporting\Signals\Context;
 use App\Modules\Reporting\Signals\QS20RoutedRefusals;
 use App\Modules\Reporting\Signals\QS21AcknowledgedDuplicates;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Vite;
 use Tests\Support\Authorization;
+use Tests\Support\QueryBudget;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\ReservationWorld;
 
@@ -61,6 +64,24 @@ it('reads each group of Beranda and Pekerjaan within QB-10 on two companies with
         ->and(homeStatements(fn () => $work->documents($admin)))->toBeLessThanOrEqual(6)
         ->and(homeStatements(fn () => $work->billing($admin)))->toBeLessThanOrEqual(8)
         ->and(homeStatements(fn () => $work->completion($admin)))->toBeLessThanOrEqual(12);
+});
+
+it('answers Beranda and Pekerjaan at once within QB-10\'s five statements, their signals deferred, beyond the envelope (TASK-068; QB-10; PFM-01)', function () {
+    $hot = tempnam(sys_get_temp_dir(), 'vite-hot-');
+    file_put_contents($hot, 'http://localhost:5173');
+    Vite::useHotFile($hot);
+    $world = ReservationWorld::make();
+    $world->project(['WAREHOUSE'], '5');
+    $owner = Authorization::owner();
+    $admin = User::query()->findOrFail($world->actorId);
+    $this->actingAs($owner)->get('/beranda')->assertOk();
+
+    try {
+        expect(QueryBudget::beyondEnvelope(fn () => $this->actingAs($owner)->get('/beranda')->assertOk()))->toBeLessThanOrEqual(5)
+            ->and(QueryBudget::beyondEnvelope(fn () => $this->actingAs($admin)->get('/pekerjaan')->assertOk()))->toBeLessThanOrEqual(5);
+    } finally {
+        @unlink($hot);
+    }
 });
 
 it('plans QS-20 and QS-21 on IX-13\'s partial indexes over the routed and the acknowledged codes (DIR-088; PERFORMANCE §12)', function () {

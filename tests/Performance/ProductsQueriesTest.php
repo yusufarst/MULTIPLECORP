@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
+use Tests\Support\QueryBudget;
 use Tests\Support\RefreshDatabase;
 
 // TL-15 (TASK-027; PERFORMANCE_TARGETS PFM-01, PFM-02, PFM-20; QB-03; QB-04): PG-056's list with its thumbnails and a
@@ -50,6 +51,17 @@ it('renders PG-056\'s list and a product in the same number of statements for fe
     }
 
     expect($page('/data-master/produk'))->toBe($list)->and($page($detail))->toBe($one)->and($one)->toBeLessThanOrEqual(40);
+});
+
+it('keeps PG-056\'s list within QB-03 and a product\'s record within QB-04, beyond the envelope (TASK-068; PFM-01)', function () {
+    $product = Product::factory()->create();
+    Product::factory()->count(30)->create();
+    $page = fn (string $path) => QueryBudget::beyondEnvelope(fn () => $this->actingAs($this->admin)->get($path)->assertOk());
+    $page('/data-master/produk');
+
+    // The record opens beside the list in one request: the list's three and the record's six.
+    expect($page('/data-master/produk'))->toBeLessThanOrEqual(3)
+        ->and($page("/data-master/produk?produk={$product->public_id}"))->toBeLessThanOrEqual(3 + 6);
 });
 
 it('runs a product\'s creation within an NX-01 command\'s budget (PFM-20)', function () {

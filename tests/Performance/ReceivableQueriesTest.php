@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Vite;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
+use Tests\Support\QueryBudget;
 use Tests\Support\RefreshDatabase;
 
 // TL-15 (TASK-050; QB-07; QB-13; PFM-01; PFM-02; PFM-20): PG-044 reads its page in at most four statements, the same for one receivable and a full page, ageing one group; AX-17's and AX-24's commands within the reference command's budget.
@@ -59,6 +60,10 @@ it('reads PG-044 in at most four statements, the same for one receivable and a f
 
     expect($many)->toBe($one)->and($many)->toBeLessThanOrEqual(4)
         ->and(receivableStatements(fn () => $this->actingAs($this->actor)->get('/keuangan/piutang')->assertOk()))->toBe($request);
+
+    // TASK-068: the ageing buckets one group within QB-07's two (PFM-01).
+    $viewer = app(EffectiveCapabilities::class)->for($this->world->actorId);
+    expect(QueryBudget::beyondEnvelope(fn () => $query->subtotals($viewer, [$this->world->company->id], 'aktif', null, $this->today, [])))->toBeLessThanOrEqual(2);
 });
 
 it('bills and holds within the reference command\'s budget (QB-13; PFM-20; AX-17; NX-09)', function () {
