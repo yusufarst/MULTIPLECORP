@@ -424,6 +424,11 @@ export async function audit(page: Page, language: Language, where: string): Prom
     await page.evaluate(() => {
         window.scrollTo(0, 0);
     });
+    // A page's deferred groups (PT-19) read once loaded; the design system's gallery shows the loading state as a specimen.
+    if (!new URL(page.url()).pathname.startsWith('/__fixtures/komponen')) {
+        await expect(page.locator('[data-region-state="loading"]'), `${where}: its deferred groups loaded`).toHaveCount(0, { timeout: 45_000 });
+    }
+
     const reading = await settled(page);
     const width = page.viewportSize()?.width ?? reading.width;
     const problems = new Set<string>();
