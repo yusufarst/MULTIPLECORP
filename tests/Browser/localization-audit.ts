@@ -15,12 +15,12 @@ export type Language = 'id' | 'en';
 /** TL-11's phone width (SV-02). */
 export const PHONE = { width: 390, height: 844 } as const;
 
-/** The page's landmarks, then the heading levels and the buttons and links of `#konten` and of an open dialog, in
-    document order — a primary action marked `:primary`, each action with its accessible name, which the comparison
-    reads as the catalogue's key it renders. A data set — a table, a list, a region's state (PT-19) and a list's
+/** The page's landmarks, then the headings and the buttons and links of `#konten` and of an open dialog, in document
+    order — a heading by its level (`h2`), a primary action marked `:primary`, each with its accessible name, which the
+    comparison reads as the catalogue's key it renders. A data set — a table, a list, a region's state (PT-19) and a list's
     continuation (PT-08) — is left out whole: its rows are the data's, never the language's. */
 export type Action = { role: string; name: string };
-export type Structure = { landmarks: string[]; headings: number[]; actions: Action[] };
+export type Structure = { landmarks: string[]; headings: Action[]; actions: Action[] };
 
 export type Snapshot = { where: string; language: Language; width: number; structure: Structure };
 
@@ -369,7 +369,7 @@ async function read(delay: number): Promise<Reading> {
             .map((element) => {
                 const level = Number(element.getAttribute('aria-level'));
 
-                return Number.isInteger(level) && level > 0 ? level : Number(/^h([1-6])$/.exec(element.localName)?.[1] ?? '2');
+                return { role: `h${String(Number.isInteger(level) && level > 0 ? level : Number(/^h([1-6])$/.exec(element.localName)?.[1] ?? '2'))}`, name: spaced(element.textContent) };
             }),
     );
     const actions = scopes.flatMap((scope) =>
@@ -490,8 +490,9 @@ export async function audit(page: Page, language: Language, where: string): Prom
 // read as the catalogue's keys it renders in its language — a text exactly, a text with its values filled in ("Buat
 // Klien" for "Buat :objek"), or a label leading a value in one name ("Potongan menunggu bukti" before its counts) —, and
 // two actions are the same when they render a key in common, so two actions exchanging places, or one put for another,
-// differ. A name the catalogue does not render at all is a value: over the same data — the switch in place — it must be
-// the same value; across two runs, any value.
+// differ. A name the catalogue does not render at all is a value — a company's code, a record's name —, and a run of
+// values side by side is one place of the page whose length is the data's: the shared database grows while a page is
+// read twice, and a language never adds or removes a record. Headings are compared the same way.
 type Named = { exact: Map<string, Set<string>>; templates: { key: string; pattern: RegExp }[]; leads: { text: string; keys: Set<string> }[] };
 const namedOf = (strings: Record<string, string>): Named => {
     const exact = new Map<string, Set<string>>();
@@ -532,37 +533,53 @@ function identity(name: string, language: Language): Set<string> | null {
     return keys.size === 0 ? null : keys;
 }
 
+type Place = { role: string; name: string; keys: Set<string> | null };
+
+/** A sequence read as its places: each named item with its keys, a run of values of one role as a single place. */
+function places(items: Action[], language: Language): Place[] {
+    const out: Place[] = [];
+
+    for (const item of items) {
+        const keys = identity(item.name, language);
+        const last = out.at(-1);
+
+        if (keys === null && last !== undefined && last.keys === null && last.role === item.role) {
+            continue;
+        }
+
+        out.push({ role: item.role, name: keys === null ? '(values)' : item.name, keys });
+    }
+
+    return out;
+}
+
+/** What differs between two sequences of one page in the two languages, place by place. */
+function sequence(label: string, a: Action[], b: Action[], first: Language, second: Language): string[] {
+    const left = places(a, first);
+    const right = places(b, second);
+    const shown = (list: Place[]): string => JSON.stringify(list.map((place) => `${place.role} ${place.name}`));
+
+    if (JSON.stringify(left.map((place) => place.role)) !== JSON.stringify(right.map((place) => place.role))) {
+        return [`${label} ${shown(left)} in ${first}, ${shown(right)} in ${second}`];
+    }
+
+    return left.flatMap((one, at) => {
+        const other = right[at] ?? { role: '', name: '', keys: null };
+        const same = one.keys !== null && other.keys !== null ? [...one.keys].some((key) => other.keys?.has(key) === true) : one.keys === null && other.keys === null;
+
+        return same ? [] : [`${label} ${String(at + 1)}: ${one.role} "${one.name}" in ${first}, "${other.name}" in ${second}`];
+    });
+}
+
 /** What differs between two renders of one page in the two languages, empty when their structures are the same. */
-export function differences(a: Snapshot, b: Snapshot, sameData: boolean): string[] {
+export function differences(a: Snapshot, b: Snapshot): string[] {
     const out: string[] = [];
-    const roles = (snapshot: Snapshot): string[] => snapshot.structure.actions.map((action) => action.role);
 
     if (JSON.stringify(a.structure.landmarks) !== JSON.stringify(b.structure.landmarks)) {
         out.push(`landmarks ${JSON.stringify(a.structure.landmarks)} in ${a.language}, ${JSON.stringify(b.structure.landmarks)} in ${b.language}`);
     }
 
-    if (JSON.stringify(a.structure.headings) !== JSON.stringify(b.structure.headings)) {
-        out.push(`heading levels ${JSON.stringify(a.structure.headings)} in ${a.language}, ${JSON.stringify(b.structure.headings)} in ${b.language}`);
-    }
-
-    if (JSON.stringify(roles(a)) !== JSON.stringify(roles(b))) {
-        out.push(`actions ${JSON.stringify(a.structure.actions.map((x) => `${x.role} ${x.name}`))} in ${a.language}, ${JSON.stringify(b.structure.actions.map((x) => `${x.role} ${x.name}`))} in ${b.language}`);
-
-        return out;
-    }
-
-    a.structure.actions.forEach((first, at) => {
-        const second = b.structure.actions[at] ?? { role: '', name: '' };
-        const left = identity(first.name, a.language);
-        const right = identity(second.name, b.language);
-        const same = left !== null && right !== null ? [...left].some((key) => right.has(key)) : left === null && right === null && (!sameData || first.name === second.name);
-
-        if (!same) {
-            out.push(`action ${String(at + 1)}: ${first.role} "${first.name}" in ${a.language}, "${second.name}" in ${b.language}`);
-        }
-    });
-
-    return out;
+    return [...out, ...sequence('headings', a.structure.headings, b.structure.headings, a.language, b.language), ...sequence('actions', a.structure.actions, b.structure.actions, a.language, b.language)];
 }
 
 // The first snapshot of each page at each width in this worker — a spec file's tests run in order in one worker, its
@@ -584,7 +601,7 @@ export function expectSameStructure(snapshot: Snapshot): void {
     }
 
     if (earlier.language !== snapshot.language) {
-        expect(differences(earlier, snapshot, false), `${snapshot.where} at ${String(snapshot.width)} px: the same regions and actions in the same order in ${earlier.language} and ${snapshot.language} (LOCALIZATION §3.7)`).toEqual([]);
+        expect(differences(earlier, snapshot), `${snapshot.where} at ${String(snapshot.width)} px: the same regions and actions in the same order in ${earlier.language} and ${snapshot.language} (LOCALIZATION §3.7)`).toEqual([]);
     }
 }
 
@@ -678,11 +695,11 @@ export async function auditPage(page: Page, language: Language, where: string, {
     try {
         await expect.poll(() => loading.count(), { message: `${where}: the deferred groups back after the switch to ${other}`, timeout: 30_000 }).toBeLessThanOrEqual(resting);
         const deskOther = await audit(page, other, where);
-        expect(differences(desk, deskOther, true), `${where} at ${String(desk.width)} px: the same regions and actions in the same order in ${language} and ${other}, the language switched in place (LOCALIZATION §3.7)`).toEqual([]);
+        expect(differences(desk, deskOther), `${where} at ${String(desk.width)} px: the same regions and actions in the same order in ${language} and ${other}, the language switched in place (LOCALIZATION §3.7)`).toEqual([]);
 
         if (small !== null) {
             const smallOther = await atPhone(page, () => audit(page, other, where));
-            expect(differences(small, smallOther, true), `${where} at ${String(small.width)} px: the same regions and actions in the same order in ${language} and ${other}, the language switched in place (LOCALIZATION §3.7)`).toEqual([]);
+            expect(differences(small, smallOther), `${where} at ${String(small.width)} px: the same regions and actions in the same order in ${language} and ${other}, the language switched in place (LOCALIZATION §3.7)`).toEqual([]);
         }
     } finally {
         expect(await switchLanguage(page, other, language), `${where}: the language switched back to ${language}`).toBe(true);
