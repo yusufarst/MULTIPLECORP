@@ -31,7 +31,9 @@ const pages = [
 ].filter((page) => chosen.length === 0 || chosen.includes(page.name));
 
 // The sign-in's own answers — an Inertia 409 among them — are not the measurement's.
-const thresholds = { 'http_req_failed{phase:warm}': ['rate==0'] };
+// Every measured answer must be the page itself: a redirect to the sign-in, fast as it is, fails the run rather than
+// passing its time thresholds.
+const thresholds = { 'http_req_failed{phase:warm}': ['rate==0'], 'checks{phase:warm}': ['rate==1'] };
 for (const page of pages) {
     thresholds[`http_req_duration{page:${page.name},phase:warm}`] = [`p(95)<${page.budget}`];
 }
@@ -57,9 +59,20 @@ function xsrf(jar) {
 
 // One session for the whole run, its cookies handed to every virtual user.
 export function setup() {
-    if (__ENV.COOKIE) {
-        return { cookie: __ENV.COOKIE };
+    const session = __ENV.COOKIE ? { cookie: __ENV.COOKIE } : signIn();
+
+    // Whichever way the session came, it must open every page the run measures.
+    for (const page of pages) {
+        const probe = http.get(`${base}${page.path}`, { headers: { Cookie: session.cookie }, redirects: 0 });
+        if (probe.status !== 200) {
+            fail(`The persona cannot open ${page.path} (${probe.status}): choose one whose capabilities open it, or leave it out with PAGES.`);
+        }
     }
+
+    return session;
+}
+
+function signIn() {
     if (!__ENV.EMAIL || !__ENV.PASSWORD) {
         fail('Give EMAIL and PASSWORD of a persona without a second step, or COOKIE of an open session.');
     }
@@ -74,20 +87,13 @@ export function setup() {
         fail(`The sign-in answered ${answer.status} towards "${landing}": check the persona, its password and that it needs no second step.`);
     }
     const cookies = jar.cookiesForURL(base);
-    const session = { cookie: Object.keys(cookies).map((name) => `${name}=${cookies[name][0]}`).join('; ') };
-    for (const page of pages) {
-        const probe = http.get(`${base}${page.path}`, { headers: { Cookie: session.cookie }, redirects: 0 });
-        if (probe.status !== 200) {
-            fail(`The persona cannot open ${page.path} (${probe.status}): choose one whose capabilities open it, or leave it out with PAGES.`);
-        }
-    }
 
-    return session;
+    return { cookie: Object.keys(cookies).map((name) => `${name}=${cookies[name][0]}`).join('; ') };
 }
 
 function get(session, page, phase) {
     const response = http.get(`${base}${page.path}`, { headers: { Cookie: session.cookie }, redirects: 0, tags: { page: page.name, phase } });
-    check(response, { [`${page.name} answers 200`]: (r) => r.status === 200 });
+    check(response, { [`${page.name} answers 200`]: (r) => r.status === 200 }, { phase });
 }
 
 export function warm(session) {
@@ -110,5 +116,5 @@ export function command(session) {
         redirects: 0,
         tags: { page: 'command', phase: 'warm' },
     });
-    check(response, { 'the command answers': (r) => [200, 302, 303].includes(r.status) });
+    check(response, { 'the command answers': (r) => [200, 302, 303].includes(r.status) }, { phase: 'warm' });
 }

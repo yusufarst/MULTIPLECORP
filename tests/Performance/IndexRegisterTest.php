@@ -1,6 +1,8 @@
 <?php
 
 use App\Support\Database\DatabaseRole;
+use App\Support\Guards\Families;
+use App\Support\Guards\Reconciler;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
@@ -404,6 +406,28 @@ it('keeps each registered query\'s own plan on PERFORMANCE §12\'s step-4 rule, 
         }
 
         expect($scans)->toBe([]);
+
+        // PFM-08 (PF-30): each guard family's ReconcileGuards statement on the same synthetic data — one set-based read per
+        // family after the catalogue's column types —, its plan and its guard table's size kept as evidence; a batch job's
+        // whole-table read, so no scan rule applies. Its duration is staging's (TASK-079).
+        $reconciler = app(Reconciler::class);
+        $sizes = [];
+
+        foreach (Families::all() as $family) {
+            $owner->flushQueryLog();
+            $owner->enableQueryLog();
+            $reconciler->differences($owner, $family);
+            $reads = array_values(array_filter($owner->getQueryLog(), fn (array $query): bool => preg_match('/^\s*(select|with)\b/i', (string) $query['query']) === 1
+                && ! str_contains((string) $query['query'], 'pg_attribute')));
+            $owner->disableQueryLog();
+
+            expect($reads)->toHaveCount(1, "{$family->table()}: one set-based statement");
+
+            file_put_contents("{$directory}/reconcile-{$family->table()}.json", (string) $owner->scalar('explain (analyze, buffers, format json) '.$reads[0]['query'], $reads[0]['bindings']));
+            $sizes[] = $family->table().': '.(int) $owner->scalar('select count(*) from '.$family->table()).' guard rows';
+        }
+
+        file_put_contents("{$directory}/reconcile-sizes.txt", implode("\n", $sizes)."\n");
     } finally {
         $owner->rollBack();
     }

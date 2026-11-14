@@ -20,8 +20,10 @@ $limit = max(1, (int) ($argv[1] ?? 10));
 printf("PFM-16 on %s — the latest %d of each\n", gethostname(), $limit);
 printf("renditions, issue to READY (QB-17: 30 s at 1x):\n");
 
-foreach (DB::select("select id, attempt_no, extract(epoch from updated_at - recorded_at) as seconds from document_renditions where state = 'READY' order by id desc limit ?", [$limit]) as $row) {
-    printf("  rendition %d, attempt %d: %.1f s\n", $row->id, $row->attempt_no, $row->seconds);
+// From the version's first attempt — its issue — to the attempt that reached READY: a retry is a new row of its own, so
+// the failed attempts and their back-off count in the time (QB-17).
+foreach (DB::select("select r.document_version_id, r.attempt_no, extract(epoch from r.updated_at - f.recorded_at) as seconds from document_renditions r join lateral (select min(x.recorded_at) as recorded_at from document_renditions x where x.document_version_id = r.document_version_id) f on true where r.state = 'READY' order by r.id desc limit ?", [$limit]) as $row) {
+    printf("  version %d, READY at attempt %d: %.1f s from its issue\n", $row->document_version_id, $row->attempt_no, $row->seconds);
 }
 
 printf("exports, waiting and generation (QB-15: 100,000 rows within 60 s at 10x):\n");
