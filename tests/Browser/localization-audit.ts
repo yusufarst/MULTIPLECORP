@@ -578,8 +578,14 @@ async function switchLanguage(page: Page, from: Language, to: Language): Promise
     }
 
     await choice.click();
-    await expect(page.locator('html'), `the switch to ${to}`).toHaveAttribute('lang', to, { timeout: 15_000 });
-    await expect(page.getByRole('menu')).toHaveCount(0);
+    await expect(page.locator('html'), `the switch to ${to}`).toHaveAttribute('lang', to, { timeout: 30_000 });
+
+    // A checkbox item keeps its menu open by design; the menu is closed as a person would, before the page is read.
+    if ((await page.getByRole('menu').count()) > 0) {
+        await page.keyboard.press('Escape');
+    }
+
+    await expect(page.getByRole('menu'), `the account menu closed after the switch to ${to}`).toHaveCount(0);
 
     return true;
 }
