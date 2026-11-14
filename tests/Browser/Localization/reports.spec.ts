@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { reportRun } from '../report-fixtures';
 
 // TL-10 (TASK-060; LOCALIZATION §3, §3.4; DOD-16): PG-051, PG-052 and PG-053 in both languages — keys of the catalogue,
@@ -20,13 +21,16 @@ for (const [locale, texts] of [
         await expect(page.getByRole('heading', { name: texts.reports, exact: true })).toBeVisible();
         await expect(page.getByLabel(texts.period)).toBeVisible();
         await expect(page.locator('[data-table="penjualan"]').getByRole('heading', { name: texts.sales })).toBeVisible();
+        await auditPage(page, locale, 'PG-051');
 
         await page.goto(`/laporan/gabungan?perusahaan=${run.code}`);
         await expect(page.getByRole('heading', { name: texts.consolidated, exact: true })).toBeVisible();
         await expect(page.locator('[data-table="angka"]').getByRole('heading', { name: texts.figures })).toBeVisible();
+        await auditPage(page, locale, 'PG-052');
 
         await page.goto('/laporan/ekspor');
         await expect(page.getByRole('heading', { name: texts.exports, exact: true })).toBeVisible();
         await expect(page.getByText(texts.empty)).toBeVisible();
+        await auditPage(page, locale, 'PG-053');
     });
 }

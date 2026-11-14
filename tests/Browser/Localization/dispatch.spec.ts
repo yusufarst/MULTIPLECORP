@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { dispatchRun } from '../dispatch-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -18,6 +19,7 @@ for (const [locale, texts] of [
 
         await page.goto('/gudang/barang-keluar');
         await expect(page.getByRole('heading', { name: texts.list, exact: true })).toBeVisible();
+        await auditPage(page, locale, 'PG-023');
 
         await page.goto(`/gudang/barang-keluar/${run.project}`);
         await expect(page.getByRole('heading', { name: texts.page, exact: true })).toBeVisible();
@@ -25,5 +27,6 @@ for (const [locale, texts] of [
         await expect(line.getByLabel(texts.quantity)).toBeVisible();
         await expect(line.getByText(texts.lots, { exact: true })).toBeVisible();
         await expect(line.getByRole('button', { name: texts.action })).toBeVisible();
+        await auditPage(page, locale, 'PG-024');
     });
 }

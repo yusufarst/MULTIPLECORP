@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { invoiceRun } from '../invoice-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -21,8 +22,10 @@ for (const [locale, texts] of [
         await expect(page.getByRole('heading', { name: texts.waiting, exact: true })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.all })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.remaining })).toBeVisible();
+        await auditPage(page, locale, 'PG-047');
 
         await page.getByTestId('deduction-waiting').getByRole('button', { name: texts.record }).click();
         await expect(page.getByRole('dialog', { name: texts.record })).toContainText(texts.line);
+        await auditPage(page, locale, 'PG-047 with the deduction dialog');
     });
 }

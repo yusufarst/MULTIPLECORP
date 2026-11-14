@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { documentDraft } from '../document-fixtures';
+import { auditPage } from '../localization-audit';
 
 // TL-10 (TASK-029; LOCALIZATION §3.4; DIR-037 D7; architecture challenge 17a; criterion 10): PG-035 and PG-036 in both
 // languages — the controls switch, the paper stays Indonesian.
@@ -20,8 +21,10 @@ for (const [locale, texts] of [
         await expect(paper).toContainText('DRAF — belum terbit');
         await expect(paper).toContainText('Surat Perintah Kerja');
         await expect(paper).toContainText('Hormat kami');
+        await auditPage(page, locale, 'PG-036');
 
         await page.goto('/dokumen');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.list);
+        await auditPage(page, locale, 'PG-035');
     });
 }

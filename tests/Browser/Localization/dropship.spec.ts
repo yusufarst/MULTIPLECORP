@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { dropshipRun } from '../dropship-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -21,5 +22,6 @@ for (const [locale, texts] of [
         await expect(page.locator('[data-slot="dropship-lines"]')).toContainText(texts.lines);
         await expect(page.locator('[data-slot="dropship-form"]').getByRole('button', { name: texts.confirm, exact: true })).toBeVisible();
         await expect(page.locator('[data-slot="dropship-confirmations"]')).toContainText(texts.none);
+        await auditPage(page, locale, 'PG-032');
     });
 }

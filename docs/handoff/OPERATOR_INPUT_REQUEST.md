@@ -168,11 +168,11 @@ The Owner, the designated human operator (OPI-01), reported on 2026-11-13 in ses
 
 | Input | Status | What was verified (non-sensitive) | Still owed |
 |---|---|---|---|
-| OPI-26 | PARTIAL | Provider panel access confirmed; an administrative shell through the provider's browser console confirmed | An independent SSH login (key-based client) configured and confirmed by the Owner — OPI-26 stays pending until then, as the Owner directed |
+| OPI-26 | VERIFIED | The client's grant of operator access: provider panel access confirmed; the VPS operated through the provider's browser-based administrative console (DIR-115) | — for OPI-26. Outstanding security work, not this input: an independent SSH key login and root-access hardening |
 | OPI-03 | VERIFIED | Docker Engine 29.9.3 and Docker Compose 5.7.1 installed, a test container run; host Nginx active, an unmatched HTTP request answered 404; UFW active with SSH, HTTP and HTTPS allowed; Git installed; no Coolify reported — Docker Compose applies (DIR-110) | — |
-| OPI-02 | PARTIAL | Ubuntu 24.04.5 LTS (kernel 6.8); 4 vCPU; about 15 GiB usable memory; about 192 GiB disk available before any deployment | The bandwidth allowance and its period; the used-disk figure beside the available one |
-| OPI-21 | PARTIAL | Nothing deployed yet, so U₀ is the host's own use; about 192 GiB available | U₀ as a measured figure (used disk less the second application's), recorded at staging |
-| OPI-27 | PARTIAL | The second application is not deployed yet: no resource use today; its own deployment directory created apart from MULTIPLECORP's, both empty, operator-only permissions | Its expected CPU, memory, disk and bandwidth and its backup, maintenance and deployment windows, from the client |
+| OPI-02 | PARTIAL | Ubuntu 24.04.5 LTS (kernel 6.8); 4 vCPU; about 15 GiB usable memory; the root filesystem measured before the installation at about 193 GiB total, 799 MiB used, 192 GiB available — historical evidence (DIR-115); the package advertises a 16 TB bandwidth allowance | The bandwidth allowance's accounting period; a refreshed read-only disk measurement only when a Task needs it |
+| OPI-21 | PARTIAL | The pre-installation measurement above, historical | U₀ and the free space measured read-only after the installation, when staging needs them |
+| OPI-27 | PARTIAL | No application deployed: zero workload today — not a capacity figure (DIR-115); each application's deployment directory apart, empty, operator-only | Both applications' pre-staging resource reservations and maintenance, backup and deployment windows, obtained or established on justified grounds |
 | OPI-22 | OUTSTANDING | — (MULTIPLECORP's deployment directory exists apart, operator-only) | The backup directory's volume and permissions, apart from the second application's backups |
 | OPI-29 | OUTSTANDING | — | Each provider-side feature and whether it is active |
 | OPI-30 | OUTSTANDING | — | The domain and the staging name, kept in the private record |

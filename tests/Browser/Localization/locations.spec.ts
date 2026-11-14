@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
 
 // TL-10 (TASK-028; LOCALIZATION §3; DOD-16): PG-057 in both languages — keys of the catalogue, never hardcoded copy.
@@ -17,5 +18,6 @@ for (const [locale, texts] of [
         await expect(page.getByRole('heading', { name: texts.racks, exact: true })).toBeVisible();
         await expect(page.getByRole('heading', { name: texts.minimums })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.create }).first()).toBeVisible();
+        await auditPage(page, locale, 'PG-057');
     });
 }

@@ -1,5 +1,6 @@
 import { expect as base, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { purchaseRun } from '../purchase-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
@@ -18,17 +19,21 @@ for (const [locale, texts] of [
 
         await page.goto(`/pembelian?perusahaan=${run.company}`);
         await expect(page.getByRole('heading', { name: texts.list, exact: true })).toBeVisible();
+        await auditPage(page, locale, 'PG-015');
 
         await page.goto(`/pembelian/baru?perusahaan=${run.company}`);
         await expect(page.getByRole('heading', { name: texts.create, exact: true })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.save })).toBeDisabled();
         await expect(page.getByText(texts.reason)).toBeVisible();
         await expect(page.getByRole('heading', { name: texts.other })).toBeVisible();
+        await auditPage(page, locale, 'PG-017');
 
         await page.goto(`/pembelian/${run.purchase ?? ''}`);
         await expect(page.locator('[data-line="1"]')).toContainText(texts.remaining);
+        await auditPage(page, locale, 'PG-016');
         await page.getByRole('button', { name: texts.po }).click();
         await page.waitForURL('**/dokumen/**');
         await expect(page.locator('#konten')).toContainText('Pesanan Pembelian');
+        await auditPage(page, locale, 'PG-036, the PO draft');
     });
 }

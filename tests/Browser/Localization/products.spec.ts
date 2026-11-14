@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
 
 // TL-10 (TASK-027; LOCALIZATION §3; DOD-16): PG-056 and its label in both languages — keys of the catalogue, never
@@ -16,6 +17,7 @@ for (const [locale, texts] of [
         await page.goto('/data-master/produk');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.title);
         await expect(page.getByRole('combobox', { name: texts.search })).toBeVisible();
+        await auditPage(page, locale, 'PG-056');
         await page.getByRole('button', { name: texts.create }).first().click();
         const sheet = page.getByRole('dialog', { name: texts.create });
         await sheet.getByRole('textbox').first().fill(`L10n ${String(Date.now())}`);
@@ -23,5 +25,6 @@ for (const [locale, texts] of [
         await sheet.getByRole('button', { name: texts.create }).click();
         await expect(page.getByRole('heading', { name: texts.units })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.print })).toBeVisible();
+        await auditPage(page, locale, 'PG-056, the product created');
     });
 }

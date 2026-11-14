@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { correctionCases } from '../case-fixtures';
+import { auditPage } from '../localization-audit';
 
 // TL-10 (TASK-031; LOCALIZATION §3; DOD-16): PG-040 in both languages — keys of the catalogue, never hardcoded copy.
 
@@ -17,5 +18,6 @@ for (const [locale, texts] of [
         await expect(page.getByRole('region', { name: texts.kind })).toBeVisible();
         await expect(page.locator('#konten')).toContainText(texts.residual);
         await expect(page.getByRole('button', { name: texts.close })).toHaveCount(1);
+        await auditPage(page, locale, 'PG-040');
     });
 }

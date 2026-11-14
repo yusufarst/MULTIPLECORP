@@ -7,7 +7,7 @@ import { type Outcome } from '@/lib/command-intent';
 import { useTranslation } from '@/lib/i18n';
 import { useCommandIntent } from '@/lib/use-command-intent';
 
-type Given = { kind: Outcome | 'FAILED'; cause: string | null; text: string; state?: Record<string, unknown> };
+type Given = { kind: Outcome | 'FAILED'; cause: string | null; text: string; state?: Record<string, unknown>; link?: string | null };
 
 // One command form's sending and answering (IP-01; IP-02; IP-04; TASK-024): one `command_id` minted at the user's
 // action for one intent, sent with the payload; the server's answer read from the next page's flash data and shown in
@@ -16,6 +16,9 @@ type Given = { kind: Outcome | 'FAILED'; cause: string | null; text: string; sta
 // IP-10 is the shell's: it answers 423, asks the password and sends the same request again (AU-15).
 export type CommandForm<P> = {
     answer: Answer | null;
+    /** The address the answer names for its next action — C-10's "Mulai Penomoran" —, read from the same flash in the same
+        callback as the answer, so a later visit with no flash (a partial reload) never takes it away (TASK-067 D). */
+    link: string | null;
     errors: Record<string, string>;
     state: Record<string, unknown>;
     pending: boolean;
@@ -31,6 +34,7 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
     const { t } = useTranslation();
     const intent = useCommandIntent<P>();
     const [answer, setAnswer] = useState<Answer | null>(null);
+    const [link, setLink] = useState<string | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [state, setState] = useState<Record<string, unknown>>({});
     const finished = useRef<((state: Record<string, unknown>) => void) | undefined>(undefined);
@@ -47,6 +51,7 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
             preserveState: true,
             onSuccess: (page) => {
                 const given = (page.flash as { answer?: Given }).answer;
+                setLink(given?.link ?? null);
 
                 if (given === undefined) {
                     unknown();
@@ -92,6 +97,7 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
 
     return {
         answer,
+        link,
         errors,
         state,
         pending: intent.state.phase === 'in_flight',
@@ -99,12 +105,14 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
         frozen: intent.frozen,
         clear: () => {
             setAnswer(null);
+            setLink(null);
             setErrors({});
         },
         /** The form turns to another record or command: an open intent is left, never retried against it (IP-02). */
         leave: () => {
             intent.leave();
             setAnswer(null);
+            setLink(null);
             setErrors({});
         },
         /** Sends the payload as a new intent — or, while an earlier one's outcome is unknown, retries it unchanged (IP-02). */

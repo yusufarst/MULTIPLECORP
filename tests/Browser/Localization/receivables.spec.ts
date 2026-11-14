@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { invoiceRun } from '../invoice-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -21,11 +22,13 @@ for (const [locale, texts] of [
         await expect(page.getByRole('tab', { name: texts.active })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.unbilled })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.disputed })).toBeVisible();
+        await auditPage(page, locale, 'PG-044');
 
         await page.goto(`/keuangan/invoice/${run.invoice ?? ''}`);
         await expect(page.getByText(texts.billing, { exact: true })).toBeVisible();
         await page.getByRole('button', { name: texts.more }).click();
         await expect(page.getByRole('menuitem', { name: texts.hold })).toBeVisible();
         await expect(page.getByRole('menuitem', { name: texts.writeOff })).toBeVisible();
+        await auditPage(page, locale, 'PG-043 with its receivable menu');
     });
 }

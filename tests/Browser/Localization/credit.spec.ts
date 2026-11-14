@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { creditRun } from '../credit-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -22,5 +23,6 @@ for (const [locale, texts] of [
         await expect(group.locator('[data-slot="credit-sources"]')).toContainText(texts.sources);
         await expect(group.locator('[data-slot="credit-projects"]')).toContainText(texts.projects);
         await expect(group.getByRole('button', { name: texts.refund, exact: true }).first()).toBeVisible();
+        await auditPage(page, locale, 'PG-048');
     });
 }

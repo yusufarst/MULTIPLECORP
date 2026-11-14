@@ -1,5 +1,6 @@
 import { expect as base, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { stockRun } from '../stock-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
@@ -21,10 +22,12 @@ for (const [locale, texts] of [
         const field = page.locator('#konten').getByRole('textbox', { name: texts.field });
         await field.fill(run.sku);
         await expect(page.locator('[data-slot="search-exact"]').getByRole('heading', { name: texts.match })).toBeVisible();
+        await auditPage(page, locale, 'PG-009, a code matched');
 
         await field.fill('');
         await page.keyboard.type(`TIDAKADA${locale}${String(Date.now())}`, { delay: 5 });
         await page.keyboard.press('Enter');
         await expect(page.locator('[data-slot="scan-unknown"]')).toContainText(texts.unknown);
+        await auditPage(page, locale, 'PG-009, an unknown code scanned');
     });
 }
