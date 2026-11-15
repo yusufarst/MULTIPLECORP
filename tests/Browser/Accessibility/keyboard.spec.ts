@@ -86,7 +86,8 @@ test('switches the display language from the account menu by the keyboard alone 
     await page.keyboard.press('Enter');
     const menu = page.getByRole('menu');
     await expect(menu).toBeVisible();
-    expect(await menu.evaluate((element) => element.contains(document.activeElement)), 'the focus moves into the open menu').toBe(true);
+    // The menu takes the focus once it has opened, a frame after it shows — WebKit's later than Chromium's.
+    await expect.poll(() => menu.evaluate((element) => element.contains(document.activeElement)), { message: 'the focus moves into the open menu', timeout: 2_000 }).toBe(true);
     const english = menu.getByRole('menuitemcheckbox', { name: 'English' });
 
     for (let press = 0; press < 12 && !(await english.evaluate((element) => element === document.activeElement)); press += 1) {
