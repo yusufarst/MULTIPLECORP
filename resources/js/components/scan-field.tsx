@@ -55,7 +55,7 @@ export function ScanField({
                     <ResultLine result={result} error={error} />
                 </div>
                 <div className="flex min-w-0 items-center gap-2">
-                    <InputGroup className="flex-1 max-md:h-floor">
+                    <InputGroup className="flex-1 max-md:h-floor!">
                         <InputGroupAddon divider>
                             <Icon icon={ScanBarcode} size="row" />
                             <span className="text-label whitespace-nowrap text-text-tertiary max-md:hidden">{t('pt20.ready')}</span>

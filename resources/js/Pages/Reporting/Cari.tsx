@@ -297,7 +297,7 @@ export default function Cari({ can }: Props) {
                 <Button variant="outline" size="sm" className="self-start max-md:hidden" render={<Link href={origin} />}>{t('shell.back')}</Button>
                 <ScanNotice notice={guard.notice} />
                 <div role="search" aria-label={t('pages.pg_009.title')} className="flex min-w-0 flex-col gap-2">
-                    <InputGroup className="max-md:h-floor md:max-w-search">
+                    <InputGroup className="max-md:h-floor! md:max-w-search">
                         <InputGroupAddon divider>
                             <Icon icon={Search} size="row" />
                         </InputGroupAddon>
