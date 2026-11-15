@@ -16,21 +16,21 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 95
 
-DONE: 76
-READY: 0
-IN_PROGRESS: 2
+DONE: 77
+READY: 1
+IN_PROGRESS: 1
 BLOCKED: 4
 VERIFYING: 0
-TODO: 13
+TODO: 12
 SUPERSEDED: 0
 
 Progress:
-76 / 95
-Percentage: 80.0 %
+77 / 95
+Percentage: 81.1 %
 
-CURRENT TASK: TASK-066 — Accessibility — WCAG 2.2 AA across every page IN_PROGRESS on its branch `task/TASK-066-accessibility`; TASK-065 DONE and merged as `161bb64` (pull request #90); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
-NEXT READY TASK: none READY: TASK-069 waits on TASK-066, TASK-070 on TASK-066 and TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
-LAST TASK PLAN CHANGE: Change 28 of 2026-11-15 — TASK-066 narrowed for the initial release, the AA violations it finds and the 44 px targets of GF-02 and GF-03 fixed minimally inside it, the Owner's APPR-039; no new Task
+CURRENT TASK: none in progress — TASK-066 — Accessibility — WCAG 2.2 AA across every page DONE on its branch `task/TASK-066-accessibility`, its record in its final commit (DIR-103), its pull request squash-merged by the executor once that head's fresh CI passes; TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
+NEXT READY TASK: TASK-069 READY (DIR-112); TASK-070 waits on TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
+LAST TASK PLAN CHANGE: Change 28 of 2026-11-15 — TASK-066 narrowed for the initial release, the AA violations it finds and the 44 px targets of GF-02 and GF-03 fixed minimally inside it, the Owner's APPR-039; TASK-066 DONE; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -114,7 +114,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-063](TASK-063.md) — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
 - [x] [TASK-064](TASK-064.md) — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
 - [x] [TASK-065](TASK-065.md) — UI/UX consistency gate, the responsive matrix and the anti-slop audit
-- [ ] [TASK-066](TASK-066.md) — Accessibility — WCAG 2.2 AA across every page
+- [x] [TASK-066](TASK-066.md) — Accessibility — WCAG 2.2 AA across every page
 - [x] [TASK-067](TASK-067.md) — Localization completeness and the per-page copy lists
 - [x] [TASK-068](TASK-068.md) — Performance targets and query budgets in CI
 - [ ] [TASK-069](TASK-069.md) — Security test matrix, route integrity and zero dead interactions
@@ -214,10 +214,10 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 090, 091, 092 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 093, 094, 095 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
-| [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | IN_PROGRESS | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
+| [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
 | [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
-| [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | TODO | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
+| [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | READY | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
 | [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
 | [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-26 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | IN_PROGRESS | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |

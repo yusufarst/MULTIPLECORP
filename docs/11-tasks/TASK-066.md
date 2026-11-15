@@ -8,7 +8,7 @@ Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-
 
 Amendment: on 2026-11-15 the Owner approved, under [APPR-039](../00-governance/DECISION_LOG.md#dir-125-and-appr-039--task-066-narrowed-with-its-minimal-fixes-2026-11-15) (DIR-125; TASK_PLAN Change 28), this Task's narrowing with its minimal fixes: for the initial release, the engine and the measured checks run on every page state through the localization audit's own visits at the desktop and phone widths on Chromium and WebKit; criterion 7 is met by the interaction patterns the journeys are made of — sign-in with its second step, IP-08's confirmation, the account menu, the idle warning, no single-key shortcut —, UXS-41's quotation (CJ-01), the scans (CJ-07) and every page's focus walk with no trap and no positive tab index; criterion 10's scripts are written for representative journeys and stay NOT RUN until TASK-086; and, for criteria 1, 4 and 11, the AA violations the engine finds and the 44 px coarse-pointer targets of TASK-065's GF-02 and GF-03 are fixed minimally inside this Task's pull request, as APPR-032 did for TASK-067, every other defect recorded with its evidence for the Owner's decision, the plan frozen at 95. The lines below read as amended.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -242,32 +242,33 @@ CAP-14 and AC-14 require an accessible interface on the phone and the desktop, a
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint on the suite's code and the fixed components in this head's CI (TL-01)
+- [x] Typecheck: TypeScript over the frontend and the browser suite, PHPStan over the application, in this head's CI (TL-02)
+- [x] Relevant automated tests: the audit on every page state (`tests/Browser/a11y-gate.ts` through the localization audit), `tests/Browser/Accessibility/keyboard.spec.ts` and `announcements.spec.ts`, the module accessibility specifications, CJ-22 — the [accessibility record](../08-testing/evidence/TASK-066_ACCESSIBILITY_RECORD.md) §§1–3
+- [x] Authorization: N/A — the pages audited as the personas each visit signs in; the denial suites are TASK-069's
+- [x] Route integrity: N/A — no route added or changed; the crawl is TASK-069's
+- [x] Interaction behavior: the controls' names, roles and keyboard operation through the engine on every state and the keyboard specifications
+- [x] Browser E2E if required: the journeys' runs in the e2e layer of this head's CI, UXS-41's quotation and the scans among them
+- [x] Responsive/adaptive if required: the phone and desktop widths on every state, 320 px reflow and the coarse pointer's targets from TASK-065's gate
+- [x] Visual breathing room/density if UI: N/A — TASK-065's gate
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: synthetic data only; no secret or credential in the evidence (DOD-21)
+- [x] Database safety review: no schema change, no migration; no database path touched
+- [x] Final diff review: Codex's review of pull request #91 (`a2bf305`), its two P2 findings fixed in `c0fa13e` and answered (DIR-096's bounded loop)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): `TL-12 Accessibility: PASS`, `TL-10 Localization: PASS` with the audit's state readings, `TL-11 Responsive: PASS` — Evidence: `7585efe`, CI ubuntu-24.04 run 43705483824, `sh scripts/verify.sh browser-<layer>`; its e2e and performance jobs PASS on their second attempt (§2 of the record); the last fixes proven by this record head's own fresh CI before the merge (DIR-103)
+- Build result: TL-13 PASS in the same run
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: the engine's controls checks on every state; the keyboard specifications
+- Browser evidence: `E2E: PASS — Evidence: 7585efe, run 43705483824`; the audit's readings in the localization layer's artifact ([accessibility record](../08-testing/evidence/TASK-066_ACCESSIBILITY_RECORD.md))
+- Localization evidence: N/A — no user-facing copy added; `lang` checked by TASK-067's audit on every page
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the project's axe-core and Playwright, nothing installed or paid
+- Files changed: `tests/Browser/a11y-gate.ts` new, `tests/Browser/localization-audit.ts` and `ui-gate.ts`; `tests/Browser/Accessibility/keyboard.spec.ts` and `announcements.spec.ts` new; `tests/Browser/E2E/cd06-screens.spec.ts`; the minimal fixes of APPR-039 in `resources/css/app.css`, `resources/js/components/ui/` (input group, tabs, toggle group, checkbox, radio, switch, calendar, scroll area), `resources/js/components/` (action bar, scan field, region state, data list, filters, line editor, record blocks, navigation, signals) and the pages Beranda, Pekerjaan, Cari, Tinjauan and System; the record `docs/08-testing/evidence/TASK-066_ACCESSIBILITY_RECORD.md` new; APPR-039's amendments of this file and TEST_STRATEGY §11, TASK_PLAN and DECISION_LOG with DIR-124's and DIR-125's source transcripts; CURRENT_HANDOFF
+- Commit SHA: pull request #91's squash commit on `main`, the Owner's identity, no AI attribution
+- Notes: criteria 1–11 met as APPR-039 amended them, each with its result in the [accessibility record](../08-testing/evidence/TASK-066_ACCESSIBILITY_RECORD.md) §3. **1** — no AA violation in 334 state readings of the 65 pages on Chromium and WebKit at both widths. **2** — contrast by the engine, boundaries at 3:1, the focus outlined under forced colours. **3** — the ring on every control and the focus clear of the bars and the dock after §4's fixes. **4** — 24 and 44 px measured; the floor's 48 px by its controls' sizing, not measured apart. **5** — 320 px and 1.4.12 by TASK-065's gate; 200 % zoom by the band edges. **6** — no movement under reduced motion. **7** — the patterns, UXS-41's quotation, the scans and every page's walk. **8** — the live regions' politeness, the scan field's focus, the idle warning three times. **9** — CJ-22's statuses, no badge without text. **10** — SR-01–SR-07 written, NOT RUN until TASK-086. **11** — six AA defects and GF-02 and GF-03's targets fixed minimally, the rest recorded for the Owner (§6)
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
