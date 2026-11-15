@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 import { test, type Page } from '@playwright/test';
@@ -22,6 +22,31 @@ type Tokens = { offToken: Record<string, { value: string; count: number; sample:
 type Actions = { primaryPerRegion: Record<string, number>; duplicates: { region: string; role: string; name: string; count: number }[] };
 type States = { regions: string[]; emptyShown: boolean };
 type Slop = Record<string, { count: number; samples: string[] }>;
+
+let tokenFile: Record<string, string> | null = null;
+
+/** The token file's custom properties by their declared values — the first declaration of each, outside any media query's override. */
+function declarations(): Record<string, string> {
+    if (tokenFile === null) {
+        const found: Record<string, string> = {};
+
+        try {
+            const source = readFileSync(join(process.cwd(), 'resources/css/tokens.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+
+            for (const [, name = '', value = ''] of source.matchAll(/(--[\w-]+)\s*:\s*([^;{}]+);/g)) {
+                if (value.trim() !== 'initial') {
+                    found[name] ??= value.trim();
+                }
+            }
+        } catch {
+            // Without the file the page's emitted variables stand alone.
+        }
+
+        tokenFile = found;
+    }
+
+    return tokenFile;
+}
 
 /** The gate of one page, once per engine and place — the Indonesian visit of the localization audit. */
 export async function gate(page: Page, where: string): Promise<void> {
@@ -59,7 +84,7 @@ export async function gate(page: Page, where: string): Promise<void> {
         }
     };
 
-    const tokens = await attempt('tokens', () => page.evaluate(measureTokens));
+    const tokens = await attempt('tokens', () => page.evaluate(measureTokens, declarations()));
     const actions = await attempt('actions', () => page.evaluate(measureActions));
     const states = await attempt('states', () => page.evaluate(measureStates));
     const slop = await attempt('slop', () => page.evaluate(measureSlop));
@@ -181,7 +206,7 @@ async function coarseTargets(page: Page): Promise<{ name: string; width: number;
 }
 
 /** DESIGN_SYSTEM §5's tokens resolved in the page, and every visible element's computed values outside them. */
-function measureTokens(): Tokens {
+function measureTokens(declared: Record<string, string>): Tokens {
     const names = new Set<string>();
     const walk = (rules: CSSRuleList): void => {
         for (const rule of Array.from(rules)) {
@@ -231,14 +256,24 @@ function measureTokens(): Tokens {
 
         return a === 0 ? null : [r, g, b, a];
     };
+    // A token by its custom property where the page emits it, otherwise by the value the token file declares — Tailwind
+    // inlines a `@theme` value into its utilities (a shadow, a spacing) without emitting the variable.
+    const values = new Map<string, string>(Array.from(names).map((name) => [name, `var(${name})`]));
+
+    for (const [name, value] of Object.entries(declared)) {
+        if (!values.has(name)) {
+            values.set(name, value);
+        }
+    }
+
     const resolved = (property: string, name: string): string => {
-        probe.style.setProperty(property, `var(${name})`);
+        probe.style.setProperty(property, values.get(name) ?? `var(${name})`);
         const value = getComputedStyle(probe).getPropertyValue(property);
         probe.style.removeProperty(property);
 
         return value;
     };
-    const tokens = Array.from(names);
+    const tokens = Array.from(values.keys());
     const px = (value: string): number | null => (/^-?[\d.]+px$/.test(value) ? Math.abs(Number.parseFloat(value)) : null);
     // A shadow's visible layers: Tailwind composes the ring and inset placeholders as transparent layers, which paint nothing.
     const layers = (value: string): string[] => (value === 'none' || value === '' ? [] : value.split(/,(?![^(]*\))/).map((part) => part.trim()).filter((part) => !/^rgba\(\d+, \d+, \d+, 0\)/.test(part)));
@@ -248,7 +283,8 @@ function measureTokens(): Tokens {
         weight: new Set(tokens.filter((name) => name.startsWith('--font-weight-') || /weight/.test(name)).map((name) => resolved('font-weight', name)).filter((value) => value !== '')),
         radius: new Set(tokens.filter((name) => name.startsWith('--radius')).map((name) => px(resolved('border-top-left-radius', name))).filter((value): value is number => value !== null)),
         shadow: new Set(tokens.map((name) => layers(resolved('box-shadow', name)).join(', ')).filter((value) => value !== '')),
-        spacing: new Set(tokens.filter((name) => /^--(spacing|space|control|sidebar|nav|icon)/.test(name)).map((name) => px(resolved('padding-top', name))).filter((value): value is number => value !== null)),
+        // Every length of the token file, the phone's `--m-` set included: a card's `p-m-card` is `--m-card-pad`.
+        spacing: new Set(tokens.filter((name) => !/radius|text|font|weight|leading|tracking|line-height|letter-spacing|dur|ease|z-|shadow|color|brand/.test(name)).map((name) => px(resolved('padding-top', name))).filter((value): value is number => value !== null)),
         motion: new Set(tokens.filter((name) => /dur/.test(name)).map((name) => resolved('transition-duration', name)).filter((value) => value !== '')),
     };
     holder.remove();
@@ -411,6 +447,13 @@ function measureSlop(): Slop {
     const emoji = /\p{Extended_Pictographic}/u;
     // The document's paper and a chart are content, not the interface's decoration.
     const content = '.paper, [data-slot="chart"], [data-slot="paper-frame"]';
+    // SLOP-26 as GA1 d) revised it: a title at the reference's `--text-title` and no larger — 20 px if it cannot be read.
+    const sizer = document.createElement('span');
+    sizer.style.setProperty('font-size', 'var(--text-title)');
+    document.body.appendChild(sizer);
+    const read = Number.parseFloat(getComputedStyle(sizer).fontSize);
+    sizer.remove();
+    const title = Number.isFinite(read) && read > 20 ? read : 20;
 
     for (const element of Array.from(document.body.querySelectorAll('*'))) {
         if (element.getClientRects().length === 0 || element.closest(content) !== null) {
@@ -420,11 +463,16 @@ function measureSlop(): Slop {
         const style = getComputedStyle(element);
         const box = element.getBoundingClientRect();
 
+        // A visually hidden element — the skip link until it has focus — paints nothing.
+        if (style.clipPath === 'inset(50%)' || style.getPropertyValue('clip') === 'rect(0px, 0px, 0px, 0px)') {
+            continue;
+        }
+
         if (style.backgroundImage.includes('gradient')) mark('SLOP-06/07 gradient', element);
         if ((style.backdropFilter !== '' && style.backdropFilter !== 'none') || style.filter.includes('blur')) mark('SLOP-10 blur', element);
         if (style.animationName !== 'none' && style.animationDuration !== '0s') mark('SLOP-15/43 animation', element, `${style.animationName} ${style.animationDuration} ${style.animationIterationCount}`);
         if (/^H[1-6]$/.test(element.tagName) || element.getAttribute('role') === 'heading') {
-            if (Number.parseFloat(style.fontSize) > 20) mark('SLOP-26 heading above 20 px', element, style.fontSize);
+            if (Number.parseFloat(style.fontSize) > title + 0.5) mark('SLOP-26 heading above the title size', element, `${style.fontSize} > ${String(title)}px`);
         }
         if (box.height > 0 && box.width > box.height * 1.5 && Number.parseFloat(style.borderTopLeftRadius) >= box.height / 2 - 0.5 && Number.parseFloat(style.borderTopLeftRadius) > 4) mark('SLOP-05 pill', element);
         if ((element.tagName === 'IMG' || (element.tagName === 'svg' && element.parentElement?.closest('svg') === null)) && box.width > 64 && box.height > 64) mark('SLOP-13 image above 64 px', element, `${String(Math.round(box.width))}x${String(Math.round(box.height))}`);
