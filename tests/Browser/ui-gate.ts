@@ -17,7 +17,7 @@ const touched = new Set<string>();
 
 type Result = 'PASS' | 'FAIL' | 'N/A' | 'NOT TESTED' | 'REVIEW' | 'ELSEWHERE';
 type Item = { item: string; result: Result; detail: string };
-type Width = { width: number; horizontalScroll: string[]; clippedCopy: string[] };
+type Width = { width: number; horizontalScroll: string[]; clippedCopy: string[]; spacingApplied: boolean };
 type Tokens = { offToken: Record<string, { value: string; count: number; sample: string }[]> };
 type Actions = { primaryPerRegion: Record<string, number>; duplicates: { region: string; role: string; name: string; count: number }[] };
 type States = { regions: string[]; emptyShown: boolean };
@@ -41,30 +41,41 @@ export async function gate(page: Page, where: string): Promise<void> {
     const id = /PG-\d{3}/.exec(where)?.[0] ?? where;
     const size = page.viewportSize();
     const errors: string[] = [];
-    const attempt = async <T>(what: string, run: () => Promise<T>, fallback: T): Promise<T> => {
+    // A reading that fails is recorded as such and its items NOT TESTED — never an empty reading that would pass.
+    const attempt = async <T>(what: string, run: () => Promise<T>): Promise<T | null> => {
         try {
             return await run();
         } catch (error) {
             errors.push(`${what}: ${error instanceof Error ? (error.message.split('\n')[0] ?? '') : String(error)}`);
 
-            return fallback;
+            return null;
         }
     };
 
-    const tokens = await attempt('tokens', () => page.evaluate(measureTokens), { offToken: {} });
-    const actions = await attempt('actions', () => page.evaluate(measureActions), { primaryPerRegion: {}, duplicates: [] });
-    const states = await attempt('states', () => page.evaluate(measureStates), { regions: [], emptyShown: false });
+    const tokens = await attempt('tokens', () => page.evaluate(measureTokens));
+    const actions = await attempt('actions', () => page.evaluate(measureActions));
+    const states = await attempt('states', () => page.evaluate(measureStates));
     const widths: Width[] = [];
+    const unmeasured: number[] = [];
 
     try {
         for (const width of BAND_EDGES[engine]) {
-            await page.setViewportSize({ width, height: 900 });
-            await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
-            widths.push(await attempt(`width ${String(width)}`, () => page.evaluate(measureWidth), { width, horizontalScroll: [], clippedCopy: [] }));
+            const reading = await attempt(`width ${String(width)}`, async () => {
+                await page.setViewportSize({ width, height: 900 });
+                await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
+
+                return page.evaluate(measureWidth);
+            });
+
+            if (reading === null) {
+                unmeasured.push(width);
+            } else {
+                widths.push(reading);
+            }
 
             if (engine === 'chromium' && (width === 390 || width === 1280) && !touched.has(`${id} ${String(width)}`)) {
                 touched.add(`${id} ${String(width)}`);
-                await attempt(`screenshot ${String(width)}`, () => page.screenshot({ path: join(ROOT, 'screens', `${id}-${String(width)}.png`), fullPage: true }), undefined);
+                await attempt(`screenshot ${String(width)}`, () => page.screenshot({ path: join(ROOT, 'screens', `${id}-${String(width)}.png`), fullPage: true }));
             }
         }
     } finally {
@@ -77,19 +88,29 @@ export async function gate(page: Page, where: string): Promise<void> {
 
     if (engine === 'chromium' && !touched.has(`${id} coarse`)) {
         touched.add(`${id} coarse`);
-        targets = await attempt('coarse targets', () => coarseTargets(page), null);
+        targets = await attempt('coarse targets', () => coarseTargets(page));
     }
-    const offToken = Object.values(tokens.offToken).reduce((sum, values) => sum + values.length, 0);
-    const spacingOff = (tokens.offToken.spacing ?? []).length;
-    const crowded = Object.values(actions.primaryPerRegion).filter((count) => count > 1).length;
+
+    const untested = (what: string): Item['detail'] => `NOT TESTED — the ${what} reading failed on this visit (errors)`;
+    const offToken = tokens === null ? null : Object.values(tokens.offToken).reduce((sum, values) => sum + values.length, 0);
+    const spacingOff = tokens === null ? null : (tokens.offToken.spacing ?? []).length;
+    const crowded = actions === null ? null : Object.values(actions.primaryPerRegion).filter((count) => count > 1).length;
     const scrolls = widths.filter((reading) => reading.horizontalScroll.length > 0);
     const clipped = widths.filter((reading) => reading.clippedCopy.length > 0);
+    const unspaced = widths.filter((reading) => !reading.spacingApplied).map((reading) => reading.width);
+    const phone = widths.filter((reading) => reading.width <= 390);
     const small = targets === null ? null : targets.filter((target) => target.height < 44 || target.width < 44);
     const items: Item[] = [
         { item: 'Modern visual quality', result: 'REVIEW', detail: 'SLOP-01–SLOP-45 reviewed on the screenshots of this page (TASK-065 review record)' },
-        { item: 'Design system consistency', result: offToken === 0 ? 'PASS' : 'FAIL', detail: offToken === 0 ? 'every computed colour, type, radius, elevation, motion and spacing value a token' : `${String(offToken)} distinct values outside the tokens (offToken)` },
-        { item: 'Primary action clear', result: crowded === 0 ? 'PASS' : 'FAIL', detail: crowded === 0 ? 'at most one primary action in each region' : `${String(crowded)} regions with more than one primary action` },
-        { item: 'Unnecessary duplicate actions', result: actions.duplicates.length === 0 ? 'PASS' : 'FAIL', detail: `${String(actions.duplicates.length)} duplicated actions in a region, outside rows and menus — each to be read against its INT- contract` },
+        offToken === null
+            ? { item: 'Design system consistency', result: 'NOT TESTED', detail: untested('token') }
+            : { item: 'Design system consistency', result: offToken === 0 ? 'PASS' : 'FAIL', detail: offToken === 0 ? 'every computed colour, type, radius, elevation, motion and spacing value a token' : `${String(offToken)} distinct values outside the tokens (offToken)` },
+        crowded === null || actions === null
+            ? { item: 'Primary action clear', result: 'NOT TESTED', detail: untested('action') }
+            : { item: 'Primary action clear', result: crowded === 0 ? 'PASS' : 'FAIL', detail: crowded === 0 ? 'at most one primary action in each region' : `${String(crowded)} regions with more than one primary action` },
+        actions === null
+            ? { item: 'Unnecessary duplicate actions', result: 'NOT TESTED', detail: untested('action') }
+            : { item: 'Unnecessary duplicate actions', result: actions.duplicates.length === 0 ? 'PASS' : 'FAIL', detail: `${String(actions.duplicates.length)} duplicated actions in a region, outside rows and menus — each to be read against its INT- contract` },
         { item: 'Back action clear', result: 'ELSEWHERE', detail: 'judged by the NAV- paths\' tests (TEST_STRATEGY §8; TL-09)' },
         { item: 'Navigation contract valid', result: 'ELSEWHERE', detail: 'judged by the NAV- paths\' tests (TEST_STRATEGY §8; TL-09)' },
         { item: 'Indonesian default', result: 'ELSEWHERE', detail: 'TASK-067 (TEST_STRATEGY §10), entered by TASK-070' },
@@ -97,20 +118,28 @@ export async function gate(page: Page, where: string): Promise<void> {
         { item: 'English available', result: 'ELSEWHERE', detail: 'TASK-067 (TEST_STRATEGY §10), entered by TASK-070' },
         { item: 'Missing translations: 0', result: 'ELSEWHERE', detail: 'TASK-067 (TEST_STRATEGY §10), entered by TASK-070' },
         { item: 'Language switch', result: 'ELSEWHERE', detail: 'TASK-067 (TEST_STRATEGY §10), entered by TASK-070' },
-        { item: 'Mobile-first', result: scrolls.some((reading) => reading.width <= 390) ? 'FAIL' : 'PASS', detail: 'the phone composition at 320 and 390 px without horizontal page scrolling outside a table frame' },
-        { item: 'Responsive', result: scrolls.length === 0 && clipped.length === 0 ? 'PASS' : 'FAIL', detail: `${BAND_EDGES[engine].join(', ')} px on ${engine}${engine === 'webkit' ? ' — the other band edges NOT TESTED (APPR-038)' : ''}; ${String(scrolls.length)} widths with horizontal scrolling, ${String(clipped.length)} with mandated copy cut under 1.4.12's text spacing` },
-        { item: 'Adaptive', result: small === null ? 'NOT TESTED' : small.length === 0 ? 'PASS' : 'FAIL', detail: small === null ? (engine === 'webkit' ? 'the coarse pointer measured on Chromium' : 'the coarse pointer not reached on this visit') : `${String(small.length)} controls below 44 px under a coarse pointer at 390 px` },
-        { item: 'Loading state', result: states.regions.length > 0 ? 'PASS' : 'N/A', detail: states.regions.length > 0 ? `deferred regions settled: ${states.regions.join(', ')}` : 'no deferred group on this page' },
-        { item: 'Empty state', result: states.emptyShown ? 'PASS' : 'NOT TESTED', detail: states.emptyShown ? 'an empty state shown with its title' : 'not reached on this visit\'s data' },
+        { item: 'Mobile-first', result: scrolls.some((reading) => reading.width <= 390) ? 'FAIL' : phone.length === 0 ? 'NOT TESTED' : 'PASS', detail: `the phone composition at ${phone.map((reading) => String(reading.width)).join(' and ') || 'no phone width'} px without horizontal page scrolling outside a table frame` },
+        {
+            item: 'Responsive',
+            result: scrolls.length > 0 || clipped.length > 0 ? 'FAIL' : unmeasured.length > 0 || unspaced.length > 0 ? 'NOT TESTED' : 'PASS',
+            detail: `${widths.map((reading) => String(reading.width)).join(', ')} px measured on ${engine}${engine === 'webkit' ? ' — the other band edges NOT TESTED (APPR-038)' : ''}${unmeasured.length > 0 ? `; ${unmeasured.join(', ')} px not measured (errors)` : ''}${unspaced.length > 0 ? `; 1.4.12's spacing not applied at ${unspaced.join(', ')} px, the copy unjudged there` : ''}; ${String(scrolls.length)} widths with horizontal scrolling, ${String(clipped.length)} with mandated copy cut under 1.4.12's text spacing`,
+        },
+        { item: 'Adaptive', result: small === null ? 'NOT TESTED' : small.length === 0 ? 'PASS' : 'FAIL', detail: small === null ? (engine === 'webkit' ? 'the coarse pointer measured on Chromium' : untested('coarse pointer')) : `${String(small.length)} controls below 44 px under a coarse pointer at 390 px` },
+        states === null
+            ? { item: 'Loading state', result: 'NOT TESTED', detail: untested('state') }
+            : { item: 'Loading state', result: states.regions.length > 0 ? 'PASS' : 'N/A', detail: states.regions.length > 0 ? `deferred regions settled: ${states.regions.join(', ')}` : 'no deferred group on this page' },
+        { item: 'Empty state', result: states?.emptyShown === true ? 'PASS' : 'NOT TESTED', detail: states === null ? untested('state') : states.emptyShown ? 'an empty state shown with its title' : 'not reached on this visit\'s data' },
         { item: 'Error state', result: 'NOT TESTED', detail: 'an outcome\'s error is judged by the INT- tests (TL-08), not on this visit' },
         { item: 'Destructive action safety', result: 'ELSEWHERE', detail: 'IP-08\'s confirmation judged with each INT- contract (TL-08)' },
         { item: 'Accessibility critical checks', result: 'ELSEWHERE', detail: 'TASK-066 (TEST_STRATEGY §11), entered by TASK-070' },
-        { item: 'Visual breathing room', result: spacingOff === 0 ? 'PASS' : 'FAIL', detail: spacingOff === 0 ? 'every measured spacing a token' : `${String(spacingOff)} spacing values outside the tokens` },
+        spacingOff === null
+            ? { item: 'Visual breathing room', result: 'NOT TESTED', detail: untested('token') }
+            : { item: 'Visual breathing room', result: spacingOff === 0 ? 'PASS' : 'FAIL', detail: spacingOff === 0 ? 'every measured spacing a token' : `${String(spacingOff)} spacing values outside the tokens` },
         { item: 'Content density appropriate', result: 'REVIEW', detail: 'reviewed on the screenshots against OC-09 and AICWDF §18.2 (TASK-065 review record)' },
     ];
     const file = join(ROOT, engine, `${where.replace(/[^A-Za-z0-9-]+/g, '-')}.json`);
     mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, `${JSON.stringify({ where, page: id, engine, url: page.url(), items, tokens, actions, states, widths, targets, errors }, null, 2)}\n`);
+    writeFileSync(file, `${JSON.stringify({ where, page: id, engine, url: page.url(), items, tokens, actions, states, widths, unmeasured, targets, errors }, null, 2)}\n`);
 }
 
 /** The controls under a coarse pointer at 390 px, in a touch context of the same session. */
@@ -118,7 +147,7 @@ async function coarseTargets(page: Page): Promise<{ name: string; width: number;
     const browser = page.context().browser();
 
     if (browser === null) {
-        return [];
+        throw new Error('no browser to open a touch context in');
     }
 
     const context = await browser.newContext({ storageState: await page.context().storageState(), hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 }, ignoreHTTPSErrors: true });
@@ -342,13 +371,31 @@ function measureWidth(): Width {
         }
     }
 
-    // WCAG 2.2 1.4.12's text spacing, applied for the reading and removed after.
-    const spacing = document.createElement('style');
-    spacing.textContent = '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }';
-    document.head.appendChild(spacing);
+    // WCAG 2.2 1.4.12's text spacing, applied for the reading and removed after. The page's CSP refuses an inline
+    // stylesheet without its nonce, so the rules go in as a constructed sheet — no inline style — or, where that is not
+    // supported, a style element carrying the page's own nonce; the reading counts only once the spacing has taken effect.
+    const rules = '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }';
+    const applied = (): boolean => getComputedStyle(document.body).wordSpacing !== '0px' && getComputedStyle(document.body).letterSpacing !== 'normal';
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(rules);
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+    let fallback: HTMLStyleElement | null = null;
+
+    if (!applied()) {
+        fallback = document.createElement('style');
+        fallback.nonce = document.querySelector<HTMLElement>('script[nonce], style[nonce]')?.nonce ?? '';
+        fallback.textContent = rules;
+        document.head.appendChild(fallback);
+    }
+
+    const spacingApplied = applied();
+    const undo = (): void => {
+        document.adoptedStyleSheets = document.adoptedStyleSheets.filter((adopted) => adopted !== sheet);
+        fallback?.remove();
+    };
     const clippedCopy: string[] = [];
 
-    for (const element of Array.from(document.querySelectorAll('[data-slot="select-value"], label, dd, [aria-readonly="true"], [data-slot="action-bar"] p'))) {
+    for (const element of spacingApplied ? Array.from(document.querySelectorAll('[data-slot="select-value"], label, dd, [aria-readonly="true"], [data-slot="action-bar"] p')) : []) {
         if (element.getClientRects().length === 0) {
             continue;
         }
@@ -360,7 +407,7 @@ function measureWidth(): Width {
         }
     }
 
-    spacing.remove();
+    undo();
 
-    return { width, horizontalScroll, clippedCopy: clippedCopy.slice(0, 10) };
+    return { width, horizontalScroll, clippedCopy: clippedCopy.slice(0, 10), spacingApplied };
 }
