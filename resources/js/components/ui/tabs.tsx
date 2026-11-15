@@ -25,7 +25,7 @@ export function TabsTab({ className, ...props }: TabsPrimitive.Tab.Props) {
         <TabsPrimitive.Tab
             data-slot="tabs-tab"
             className={cn(
-                'relative inline-flex min-h-touch shrink-0 items-center text-body font-medium whitespace-nowrap text-text-secondary outline-none select-none hover:text-text-primary data-selected:font-semibold data-selected:text-text-primary data-selected:after:absolute data-selected:after:inset-x-0 data-selected:after:-bottom-px data-selected:after:h-0.5 data-selected:after:bg-primary md:min-h-control-lg',
+                'relative inline-flex min-h-touch shrink-0 items-center pointer-coarse:min-w-touch pointer-coarse:justify-center text-body font-medium whitespace-nowrap text-text-secondary outline-none select-none hover:text-text-primary data-selected:font-semibold data-selected:text-text-primary data-selected:after:absolute data-selected:after:inset-x-0 data-selected:after:-bottom-px data-selected:after:h-0.5 data-selected:after:bg-primary md:min-h-control-lg',
                 className,
             )}
             {...props}

@@ -141,6 +141,29 @@
         }
     }
 
+    /* A coarse pointer's 44 px targets (D-DS-19; TASK-065 GF-03; APPR-039): a text link outside a sentence, a check and a
+       radio keep their look and their place, an invisible layer centred on each widening what a finger can hit to
+       --touch-min. A link inside a paragraph keeps WCAG 2.5.8's inline exception. */
+    @media (pointer: coarse) {
+        a[href].underline:not(p a),
+        [data-slot='checkbox'],
+        [data-slot='radio-group-item'] {
+            position: relative;
+        }
+
+        a[href].underline:not(p a)::after,
+        [data-slot='checkbox']::after,
+        [data-slot='radio-group-item']::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: max(100%, var(--touch-min));
+            height: max(100%, var(--touch-min));
+            transform: translate(-50%, -50%);
+        }
+    }
+
     ::placeholder {
         color: var(--color-text-placeholder);
         opacity: 1;

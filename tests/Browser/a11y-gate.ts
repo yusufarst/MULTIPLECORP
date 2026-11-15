@@ -173,8 +173,11 @@ async function walkFocus(page: Page): Promise<Walk> {
     const focusables = await page.evaluate(() => {
         const candidates = Array.from(document.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, [tabindex]')).filter((element) => element.tabIndex >= 0 && !element.hasAttribute('disabled') && element.getClientRects().length > 0);
 
+        // The control and its two nearest ancestors: a field's ring may be its group's (`input-group`'s halo on focus within).
         for (const element of candidates) {
-            element.dataset.a11yRest = getComputedStyle(element).boxShadow;
+            for (let node: HTMLElement | null = element, depth = 0; node !== null && depth < 3; node = node.parentElement, depth += 1) {
+                node.dataset.a11yRest ??= `${getComputedStyle(node).boxShadow}|${getComputedStyle(node).outlineStyle}`;
+            }
         }
 
         return candidates.length;
@@ -200,16 +203,23 @@ async function walkFocus(page: Page): Promise<Walk> {
 
                 const element = active as HTMLElement;
                 element.dataset.a11yWalk ??= String(index);
-                const style = getComputedStyle(element);
-                // The ring: §15's 2 px outline, or a halo the focus adds — a shadow layer, visible and spread at least 2 px, that the
-                // control did not carry at rest. A permanent shadow, or a transparent placeholder layer, is no ring.
-                const halo = style.boxShadow !== (element.dataset.a11yRest ?? 'none') && style.boxShadow.split(/,(?![^(]*\))/).some((layer) => {
-                    const colour = /rgba?\(([^)]*)\)/.exec(layer)?.[1]?.split(',').map((part) => Number.parseFloat(part)) ?? [];
-                    const lengths = layer.replace(/rgba?\([^)]*\)/g, '').match(/-?[\d.]+px/g)?.map((length) => Number.parseFloat(length)) ?? [];
+                // The ring: §15's 2 px outline, or a halo the focus adds — a shadow layer, visible and spread at least 2 px, that was
+                // not there at rest —, on the control or on one of its two nearest ancestors (a field group's focus within). A
+                // permanent shadow, or a transparent placeholder layer, is no ring.
+                const shows = (node: HTMLElement): boolean => {
+                    const style = getComputedStyle(node);
+                    const [restShadow = 'none', restOutline = 'none'] = (node.dataset.a11yRest ?? 'none|none').split('|');
+                    const outline = style.outlineStyle !== 'none' && Number.parseFloat(style.outlineWidth) >= 2 && (node === element || restOutline === 'none');
+                    const halo = style.boxShadow !== restShadow && style.boxShadow.split(/,(?![^(]*\))/).some((layer) => {
+                        const colour = /rgba?\(([^)]*)\)/.exec(layer)?.[1]?.split(',').map((part) => Number.parseFloat(part)) ?? [];
+                        const lengths = layer.replace(/rgba?\([^)]*\)/g, '').match(/-?[\d.]+px/g)?.map((length) => Number.parseFloat(length)) ?? [];
 
-                    return (colour[3] ?? 1) > 0 && (lengths[3] ?? 0) >= 2;
-                });
-                const ring = (style.outlineStyle !== 'none' && Number.parseFloat(style.outlineWidth) >= 2) || halo;
+                        return (colour[3] ?? 1) > 0 && (lengths[3] ?? 0) >= 2;
+                    });
+
+                    return outline || halo;
+                };
+                const ring = [element, element.parentElement, element.parentElement?.parentElement ?? null].some((node) => node !== null && shows(node));
                 const box = element.getBoundingClientRect();
                 // Wholly hidden: every probe point of the element answered by a fixed or sticky region that is not its own.
                 const points: [number, number][] = [[box.left + 2, box.top + 2], [box.right - 2, box.top + 2], [box.left + 2, box.bottom - 2], [box.right - 2, box.bottom - 2], [box.left + box.width / 2, box.top + box.height / 2]];

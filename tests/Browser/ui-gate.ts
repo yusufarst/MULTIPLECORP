@@ -201,8 +201,12 @@ async function coarseTargets(page: Page): Promise<{ name: string; width: number;
                 && getComputedStyle(element).clipPath !== 'inset(50%)' && getComputedStyle(element).getPropertyValue('clip') !== 'rect(0px, 0px, 0px, 0px)')
             .map((element) => {
                 const box = element.getBoundingClientRect();
+                // A finger hits an element's absolutely placed `::after` layer as the element itself (app.css's coarse-pointer
+                // targets): its box counts towards the target.
+                const layer = getComputedStyle(element, '::after');
+                const extra = layer.position === 'absolute' && layer.content !== 'none' && layer.content !== 'normal' ? [Number.parseFloat(layer.width) || 0, Number.parseFloat(layer.height) || 0] : [0, 0];
 
-                return { name: (element.getAttribute('aria-label') ?? (element.textContent.trim() || (element.getAttribute('name') ?? element.tagName))).trim().slice(0, 60), width: Math.round(box.width), height: Math.round(box.height) };
+                return { name: (element.getAttribute('aria-label') ?? (element.textContent.trim() || (element.getAttribute('name') ?? element.tagName))).trim().slice(0, 60), width: Math.round(Math.max(box.width, extra[0] ?? 0)), height: Math.round(Math.max(box.height, extra[1] ?? 0)) };
             })
             // A visually hidden control — a native box under a drawn one — is not a target of its own.
             .filter((target) => target.width > 2 && target.height > 2));

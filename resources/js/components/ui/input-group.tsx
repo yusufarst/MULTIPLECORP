@@ -10,7 +10,7 @@ export function InputGroup({ className, ...props }: ComponentProps<'div'>) {
         <div
             data-slot="input-group"
             className={cn(
-                'flex h-control-md w-full min-w-0 items-center overflow-hidden rounded-sm border border-border-input bg-surface text-(length:--text-input-size) text-text-primary shadow-xs transition-[border-color,box-shadow] duration-(--mc-dur-fast) has-[[data-slot=input-group-control]:focus-visible]:border-accent-olive has-[[data-slot=input-group-control]:focus-visible]:shadow-(--focus-ring) has-[[aria-invalid=true]]:border-danger-fg has-[:disabled]:bg-surface-sunken',
+                'flex h-control-md w-full min-w-0 items-center pointer-coarse:h-[calc(var(--touch-min)+2px)] overflow-hidden rounded-sm border border-border-input bg-surface text-(length:--text-input-size) text-text-primary shadow-xs transition-[border-color,box-shadow] duration-(--mc-dur-fast) has-[[data-slot=input-group-control]:focus-visible]:border-accent-olive has-[[data-slot=input-group-control]:focus-visible]:shadow-(--focus-ring) has-[[aria-invalid=true]]:border-danger-fg has-[:disabled]:bg-surface-sunken',
                 className,
             )}
             {...props}
