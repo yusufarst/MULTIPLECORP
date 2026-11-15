@@ -37,12 +37,39 @@ export function ScanField({
     const id = useId();
     const own = useRef<HTMLInputElement>(null);
     const ref = inputRef ?? own;
+    const docked = useRef<HTMLDivElement>(null);
+
+    // Docked on the phone, it covers the viewport's foot from its top edge down: that height, given to the page as
+    // `--scan-dock-cover`, keeps a focused control from resting behind it (WCAG 2.4.11; app.css; TASK-066).
+    useEffect(() => {
+        const element = docked.current;
+
+        if (!dock || element === null) {
+            return;
+        }
+
+        const root = document.documentElement;
+        const cover = () => {
+            const fixed = getComputedStyle(element).position === 'fixed';
+            root.style.setProperty('--scan-dock-cover', fixed ? `${String(Math.round(window.innerHeight - element.getBoundingClientRect().top))}px` : '0px');
+        };
+        const observer = new ResizeObserver(cover);
+        observer.observe(element);
+        window.addEventListener('resize', cover);
+
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', cover);
+            root.style.removeProperty('--scan-dock-cover');
+        };
+    }, [dock]);
 
     return (
         <>
             {/* The dock is out of the flow on the phone: this holds its height, so the page's last control scrolls clear of it (D-DS-08). */}
             {dock && <div aria-hidden className="h-18 md:hidden" />}
             <div
+                ref={docked}
                 data-slot="scan-field"
                 data-docked={dock ? '' : undefined}
                 className={cn(

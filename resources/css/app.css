@@ -123,7 +123,8 @@
     @media (width < 48rem) {
         html {
             scroll-padding-top: var(--m-appbar-h);
-            scroll-padding-bottom: calc(var(--m-bottom-nav-h) + var(--safe-bottom));
+            /* A docked scan field reports how much of the foot it covers (scan-field.tsx). */
+            scroll-padding-bottom: max(calc(var(--m-bottom-nav-h) + var(--safe-bottom)), var(--scan-dock-cover, 0px));
         }
     }
 
