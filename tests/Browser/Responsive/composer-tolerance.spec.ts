@@ -18,9 +18,10 @@ type Issued = { pages: number; width: number; height: number; blocks: Block[] };
 /** What may differ by rule: the draft's marking, the number line an issue fills, and the stamp and signature images. */
 const EXCEPTED = new Set(['paper-marking', 'paper-watermark', 'paper-number', 'paper-number-pending', 'paper-stamp', 'paper-sign']);
 const TOLERANCE = 1;
-// The layouts the engine's fixture drafts on PG-036 from a synthetic project — the others are their issuing modules' own
-// subjects (SyntheticSubjects::SUPPLIED) —; every layout shares the document's wrapper, the open partial and paper.css.
-const LAYOUTS = ['DOC-09', 'DOC-10'];
+// The layout the engine's fixture drafts on PG-036 from a synthetic project — the SPK; the others are their issuing modules'
+// own subjects (SyntheticSubjects::SUPPLIED), DOC-10's draft not prepared from a project —; every layout shares the
+// document's wrapper, the open partial and paper.css.
+const LAYOUTS = ['DOC-09'];
 
 for (const layout of LAYOUTS) {
     test(`${layout}'s draft preview against its issued layout within 1 mm`, async ({ page }, testInfo) => {
