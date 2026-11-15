@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 95
 
 DONE: 75
-READY: 1
-IN_PROGRESS: 1
+READY: 0
+IN_PROGRESS: 2
 BLOCKED: 4
 VERIFYING: 0
 TODO: 14
@@ -28,9 +28,9 @@ Progress:
 75 / 95
 Percentage: 78.9 %
 
-CURRENT TASK: none in progress — TASK-068 — Performance targets and query budgets in CI DONE on its branch `task/TASK-068-done`, its record in its final commit (DIR-103), its pull request squash-merged by the executor once that head's fresh CI passes (DIR-096); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
-NEXT READY TASK: TASK-065 READY (DIR-112); TASK-066 waits on TASK-065, TASK-069 on TASK-065 and TASK-066, TASK-070 on TASK-065, TASK-066 and TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
-LAST TASK PLAN CHANGE: Change 26 of 2026-11-15 — QB-16's rendition preview amended to the three statements it was measured to make, the Owner's APPR-037; TASK-068 DONE; no new Task
+CURRENT TASK: TASK-065 — UI/UX consistency gate, the responsive matrix and the anti-slop audit IN_PROGRESS on its branch `task/TASK-065-ui-consistency-gate`, narrowed for the initial release (APPR-038; Change 27); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
+NEXT READY TASK: none READY: TASK-066 waits on TASK-065, TASK-069 on TASK-065 and TASK-066, TASK-070 on TASK-065, TASK-066 and TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
+LAST TASK PLAN CHANGE: Change 27 of 2026-11-15 — TASK-065 narrowed for the initial release, the responsive matrix in full on Chromium and at three widths on WebKit, findings recorded for the Owner, the Owner's APPR-038; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -213,7 +213,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 088, 089 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 090, 091, 092 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 093, 094, 095 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
-| [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
+| [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | IN_PROGRESS | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
 | [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
@@ -323,6 +323,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 25, 2026-11-15 (the Owner's amendment of QB-09 — [APPR-036](../00-governance/DECISION_LOG.md#dir-120-and-appr-036--qb-09s-first-response-amended-2026-11-15), DIR-120 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-068's count of PG-043 beyond the envelope measured eighteen statements — seventeen of the invoice's own reads, its panels read at once, and the shell's company list — against QB-09's eight, the same for one payment application and twenty-one. *Change:* QB-09's first response — PG-043, the invoice detail — amended from eight data statements to the seventeen of the invoice's own reads it was measured to make, the shell's one company-list read every page pays on top, constant with the rows shown; the 400 ms staging time, constant counts, N+1 prevention and data correctness unchanged, the panels read at once rather than deferred unless staging evidence shows deferring them necessary; PERFORMANCE's QB-09 and TASK-068's assertion amended to read so. No other budget, time target, test or requirement changes. *Affected Tasks:* TASK-068. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* unchanged. *Scope change:* none. *Approval:* APPR-036, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 **Change 26, 2026-11-15 (the Owner's amendment of QB-16 — [APPR-037](../00-governance/DECISION_LOG.md#dir-122-and-appr-037--qb-16s-rendition-preview-amended-2026-11-15), DIR-122 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-068 measured a rendition's preview at three data statements beyond the envelope against QB-16's two, constant and without a write. *Change:* QB-16's rendition preview amended from two data statements beyond the envelope to the three it was measured to make — the file, the rendition's version for the access decision and its number for the file's name —, constant with the rows; a thumbnail and a download keep their two, the 100 ms staging time and the no-write rule unchanged; PERFORMANCE's QB-16 and TASK-068's assertion amended to read so. *Affected Tasks:* TASK-068, DONE with it. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-068 DONE; DONE 75, READY 1, IN_PROGRESS 1, BLOCKED 4, TODO 14. *Scope change:* none. *Approval:* APPR-037, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
+
+**Change 27, 2026-11-15 (the Owner's narrowing of TASK-065 — [APPR-038](../00-governance/DECISION_LOG.md#dir-123-and-appr-038--task-065-narrowed-for-the-initial-release-2026-11-15), DIR-123 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-065's matrix of ten widths on two engines for 65 pages — about 1,300 renders on each — with its audit would cost hours of runner time for each iteration, and its findings would open defect Tasks the frozen plan has no place for. *Change:* for the initial release, the responsive matrix runs at all ten band edges on Chromium and at 390, 768 and 1,280 CSS px on WebKit, the other WebKit widths NOT TESTED, never PASS; every measured check stays — the tokens, one primary action and no duplicate, the states, the touch targets, the mandated copy, the composer and preview, the CD-06 screens —; the gate records come from one visit per page, reusing the localization audit's page visits; SLOP-01–SLOP-45 are reviewed on the built screens with screenshots as their evidence; and each finding is recorded with its evidence for the Owner's decision rather than opening a defect Task, the plan being frozen at 95; TASK-065's scope and criteria 4, 8 and 9, and TEST_STRATEGY §9, amended to read so. No measured check, token, pattern or rule is removed or loosened. *Affected Tasks:* TASK-065. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-065 IN_PROGRESS; DONE 75, READY 0, IN_PROGRESS 2, BLOCKED 4, TODO 14. *Scope change:* none. *Approval:* APPR-038, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 ## 8. Owner questions
 
