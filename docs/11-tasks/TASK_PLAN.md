@@ -16,21 +16,21 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 95
 
-DONE: 74
+DONE: 75
 READY: 1
-IN_PROGRESS: 2
+IN_PROGRESS: 1
 BLOCKED: 4
 VERIFYING: 0
 TODO: 14
 SUPERSEDED: 0
 
 Progress:
-74 / 95
-Percentage: 77.9 %
+75 / 95
+Percentage: 78.9 %
 
-CURRENT TASK: TASK-068 — Performance targets and query budgets in CI IN_PROGRESS on its branch `task/TASK-068-performance-budgets`, narrowed for the initial release (APPR-035; Change 24); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged (pull requests #86, #87)
-NEXT READY TASK: TASK-065 READY after TASK-068, one at a time (DIR-112); TASK-066 waits on TASK-065, TASK-069 on TASK-065, TASK-066 and TASK-068, TASK-070 on TASK-065, TASK-066, TASK-068 and TASK-069; TASK-072, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
-LAST TASK PLAN CHANGE: Change 25 of 2026-11-15 — QB-09's first response amended to the seventeen reads PG-043 was measured to make, the 400 ms staging time unchanged, the Owner's APPR-036; no new Task
+CURRENT TASK: none in progress — TASK-068 — Performance targets and query budgets in CI DONE on its branch `task/TASK-068-done`, its record in its final commit (DIR-103), its pull request squash-merged by the executor once that head's fresh CI passes (DIR-096); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
+NEXT READY TASK: TASK-065 READY (DIR-112); TASK-066 waits on TASK-065, TASK-069 on TASK-065 and TASK-066, TASK-070 on TASK-065, TASK-066 and TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
+LAST TASK PLAN CHANGE: Change 26 of 2026-11-15 — QB-16's rendition preview amended to the three statements it was measured to make, the Owner's APPR-037; TASK-068 DONE; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -116,7 +116,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [ ] [TASK-065](TASK-065.md) — UI/UX consistency gate, the responsive matrix and the anti-slop audit
 - [ ] [TASK-066](TASK-066.md) — Accessibility — WCAG 2.2 AA across every page
 - [x] [TASK-067](TASK-067.md) — Localization completeness and the per-page copy lists
-- [ ] [TASK-068](TASK-068.md) — Performance targets and query budgets in CI
+- [x] [TASK-068](TASK-068.md) — Performance targets and query budgets in CI
 - [ ] [TASK-069](TASK-069.md) — Security test matrix, route integrity and zero dead interactions
 - [ ] [TASK-070](TASK-070.md) — Full release regression and the device UAT's preparation
 - [ ] [TASK-071](TASK-071.md) — The operator's inputs before staging
@@ -216,7 +216,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
-| [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | IN_PROGRESS | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
+| [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
 | [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | TODO | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
 | [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
 | [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-26 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
@@ -321,6 +321,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 24, 2026-11-15 (the Owner's narrowing of TASK-068 — [APPR-035](../00-governance/DECISION_LOG.md#dir-119-and-appr-035--task-068-simplified-for-the-initial-release-2026-11-15), DIR-119 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-068's 100x fixtures — about 69.5 million rows, 12 million ledger entries and 30 million audit rows among them — and their benchmarks and plans would cost hours of runner time and storage beyond the free CI runner for an initial release whose data are a fraction of 1x. *Change:* for the initial release, 100x is neither generated nor measured — no fixture, benchmark or `EXPLAIN (ANALYZE)` at 100x —, its verification recorded NOT TESTED, never PASS, and it blocks no release; the checks run at 1x in CI on every run, reusing the existing per-module tests and fixtures, and at 10x only where a selective check is practical and necessary, never as a mandatory full-scale generation; the staging measurements stay; TASK-068's objective, scope, criteria 3, 4 and 6 and test requirements, PERFORMANCE_TARGETS' 100x targets and §4's PFM-08, PERFORMANCE's 100x items, TEST_STRATEGY's FX-06 and TASK-079's growth baseline amended to read so. The query budgets, the N+1 checks and every security, data-integrity and release-safety requirement are unchanged; no assertion is weakened. *Affected Tasks:* TASK-068, TASK-079. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-068 IN_PROGRESS; DONE 74, READY 1, IN_PROGRESS 2, BLOCKED 4, TODO 14. *Scope change:* none. *Approval:* APPR-035, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 **Change 25, 2026-11-15 (the Owner's amendment of QB-09 — [APPR-036](../00-governance/DECISION_LOG.md#dir-120-and-appr-036--qb-09s-first-response-amended-2026-11-15), DIR-120 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-068's count of PG-043 beyond the envelope measured eighteen statements — seventeen of the invoice's own reads, its panels read at once, and the shell's company list — against QB-09's eight, the same for one payment application and twenty-one. *Change:* QB-09's first response — PG-043, the invoice detail — amended from eight data statements to the seventeen of the invoice's own reads it was measured to make, the shell's one company-list read every page pays on top, constant with the rows shown; the 400 ms staging time, constant counts, N+1 prevention and data correctness unchanged, the panels read at once rather than deferred unless staging evidence shows deferring them necessary; PERFORMANCE's QB-09 and TASK-068's assertion amended to read so. No other budget, time target, test or requirement changes. *Affected Tasks:* TASK-068. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* unchanged. *Scope change:* none. *Approval:* APPR-036, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
+
+**Change 26, 2026-11-15 (the Owner's amendment of QB-16 — [APPR-037](../00-governance/DECISION_LOG.md#dir-122-and-appr-037--qb-16s-rendition-preview-amended-2026-11-15), DIR-122 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-068 measured a rendition's preview at three data statements beyond the envelope against QB-16's two, constant and without a write. *Change:* QB-16's rendition preview amended from two data statements beyond the envelope to the three it was measured to make — the file, the rendition's version for the access decision and its number for the file's name —, constant with the rows; a thumbnail and a download keep their two, the 100 ms staging time and the no-write rule unchanged; PERFORMANCE's QB-16 and TASK-068's assertion amended to read so. *Affected Tasks:* TASK-068, DONE with it. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-068 DONE; DONE 75, READY 1, IN_PROGRESS 1, BLOCKED 4, TODO 14. *Scope change:* none. *Approval:* APPR-037, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 ## 8. Owner questions
 

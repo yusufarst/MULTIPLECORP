@@ -8,7 +8,7 @@ Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-
 
 Amendment: on 2026-11-15 the Owner approved, under [APPR-035](../00-governance/DECISION_LOG.md#dir-119-and-appr-035--task-068-simplified-for-the-initial-release-2026-11-15) (DIR-119; TASK_PLAN Change 24), this Task's narrowing for the initial release, 100x is neither generated nor measured — no fixture, benchmark or `EXPLAIN (ANALYZE)` at 100x —, its verification recorded NOT TESTED, never PASS, and it blocks no release; the checks run at 1x in CI on every run, reusing the existing per-module tests and fixtures, and at 10x only where a selective check is practical and necessary, never as a mandatory full-scale generation; the staging measurements stay. The query budgets, the N+1 checks, the security, data-integrity and release-safety requirements are unchanged; the lines below read as amended.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -238,32 +238,33 @@ Every budget, limit and starting value of PERFORMANCE is an assumption until mea
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint on the measurement code and ESLint on `tests/Performance/load/staging.js` in this head's CI (TL-01)
+- [x] Typecheck: PHPStan over the application, unchanged, and TypeScript over the frontend trees in this head's CI (TL-02); the measurement code is test code
+- [x] Relevant automated tests: `tests/Performance/*.php` (TL-15) — `tests/Support/QueryBudget.php`'s count beyond the envelope in `ProductsQueriesTest`, `InvoiceQueriesTest`, `ReceivableQueriesTest`, `HomeQueriesTest`, `DocumentsQueriesTest`, `CorrectionCasesQueriesTest`, `EvidenceQueriesTest`, `FileRequestsTest`, `ExportQueriesTest` and `SearchQueriesTest`, the plans of `IndexRegisterTest`, and every earlier Task's count test of the suite —, with `tests/Unit/FixtureSetsTest.php` for FX-06's amended row
+- [x] Authorization: N/A — the requests run as the personas each test signs in; the denial suites are TASK-069's
+- [x] Route integrity: N/A — no route added or changed; the crawl is TASK-069's
+- [x] Interaction behavior: N/A — no INT- contract in this Task
+- [x] Browser E2E if required: N/A — server-side measurements; the browser layers of this head's CI unchanged and PASS
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: synthetic data only; the staging scripts read only, generate no data and hold no credential — a session is the operator's `EMAIL`/`PASSWORD` or `COOKIE`, never in the repository (SX-01; DOD-21)
+- [x] Database safety review: no schema change, no migration; the plans run inside rolled-back transactions of the migration role, on synthetic rows; production not touched
+- [x] Final diff review: Codex's review of pull request #88 (`2a2899b`), its three P2 findings fixed in `f556303` and answered (DIR-096's bounded loop)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): `TL-15 Performance: PASS — Evidence: eaaaa85, CI ubuntu-24.04 run 43645395816, sh scripts/verify.sh performance migration`, every other job of that run PASS; this record's head proven by its own fresh CI before the merge (DIR-103). Locally, on the Docker Compose stack with `phpunit.xml`'s environment, the changed files' tests PASS
+- Build result: TL-13 PASS in the same run
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: N/A — server-side measurements (DOD-18)
+- Localization evidence: N/A — no user-facing copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the project's Pest, PostgreSQL and k6 (pinned in `docker-compose.yml`), nothing installed; no paid runner (APPR-035)
+- Files changed: `tests/Support/QueryBudget.php`; `tests/Performance/` — the count and plan tests named above, `ExportQueriesTest.php` new, `README.md`, `load/staging.js` new —; `tests/Fixtures/FX-06.php`; `scripts/staging/measure-hashing.php` and `measure-jobs.php` new; the amendments of APPR-035, APPR-036 and APPR-037 in this file, TASK-079, PERFORMANCE, PERFORMANCE_TARGETS, TEST_STRATEGY, TASK_PLAN and DECISION_LOG with their source transcripts; CURRENT_HANDOFF
+- Commit SHA: pull request #88's squash commit `c277281` and this record's branch `task/TASK-068-done` on `main`, the Owner's identity, no AI attribution
+- Notes: criteria 1–9 PASS as amended. **1** — every page and operation of QB-01–QB-17 has its count in TL-15 at its budget's own number beyond the envelope, on every run: QB-01's list and journey summary (its list offers no filter lookups to count), QB-02's response and groups, QB-03 and QB-04 together in PG-056's request (three and six), QB-05, QB-06, QB-07 with its ageing group, QB-08, QB-09 at seventeen with the shell's company list (APPR-036), QB-10's first response at five and each group, QB-11's reports (`tests/Feature/Reporting/ReportsPagesTest.php`), QB-12's lists — documents, correction cases with one audit kind, evidence —, QB-13's and QB-14's commands, QB-15's keyed chunks without an offset, QB-16's thumbnail and download at two and a rendition's preview at three (APPR-037), QB-17's rendition to READY; **2** — each page's count equal for one row and for many, the framework's strict lazy-loading checks on outside production (`AppServiceProvider`); **3** — every index-register query planned with `EXPLAIN (ANALYZE, BUFFERS)` on the register's synthetic tables (20,000 rows each: at or above 1x but for the audit, security, ledger, stock and import rows), none scanning a table above 10,000 rows in sequence, the plans kept in the run's `storage/logs/verify/plans/`; 10x not measured — no selective check was necessary —; 100x NOT TESTED (APPR-035); **4** — no stage filter offered, the journey summary within twelve; **5** — *Beranda*'s figures with the receivables position within seven, the bound with the receivables position (`HomeQueriesTest`); **6** — search's 0.6 and 0.3 thresholds and 200-candidate bound, each signal group within its count, `ReconcileGuards` one set-based statement per guard family with its plan and each guard table's size kept, authentication adding no business query (`SignInQueriesTest`); its duration and PFM-06's times are staging's; **7** — a ten-line class-A command within forty statements and class-B commands proportional to their rows; **8** — `tests/Performance/load/staging.js` (PFM-01's times, PFM-13's peak), `scripts/staging/measure-hashing.php` (PFM-12) and `measure-jobs.php` (PFM-16) run as written against the local stack and handed to TASK-079 with their targets (`tests/Performance/README.md`); every staging time PENDING, none reported as met from CI; **9** — the two misses, QB-09 and QB-16's preview, recorded with their measurements and decided by the Owner (APPR-036, APPR-037), no target loosened without that decision and no scope cut; CI's two time assertions turned into records (PERFORMANCE_TARGETS §1)
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
