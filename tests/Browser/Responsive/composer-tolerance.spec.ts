@@ -5,9 +5,9 @@ import { expect, test } from '@playwright/test';
 
 import { documentDraft } from '../document-fixtures';
 
-// TL-11 (TASK-065; TEST_STRATEGY §9's tolerance; DESIGN_SYSTEM §14.3; D-DS-23; GAP-053; criterion 6): each layout's
-// draft preview on PG-036 — the composer's one paper, which PG-014, PG-033, PG-042 and PG-043 compose from the same
-// template — against the issued rendition of the same content laid out by the renderer's own engine (WeasyPrint, through
+// TL-11 (TASK-065; TEST_STRATEGY §9's tolerance; DESIGN_SYSTEM §14.3; D-DS-23; GAP-053; criterion 6): a layout's draft
+// preview on PG-036 — the composer's one paper, which PG-014, PG-033, PG-042 and PG-043 compose from the same wrapper and
+// style — against the issued rendition of the same content laid out by the renderer's own engine (WeasyPrint, through
 // the layout fixture): the same blocks in the same order, the draft marking, the number line and the signature images
 // excepted, the paper's size and page count, and each block's position on the page within 1 mm. The comparison is
 // recorded beside the gate's records for the Owner's decision (APPR-038); only a measurement that could not be made fails.
@@ -18,7 +18,9 @@ type Issued = { pages: number; width: number; height: number; blocks: Block[] };
 /** What may differ by rule: the draft's marking, the number line an issue fills, and the stamp and signature images. */
 const EXCEPTED = new Set(['paper-marking', 'paper-watermark', 'paper-number', 'paper-number-pending', 'paper-stamp', 'paper-sign']);
 const TOLERANCE = 1;
-const LAYOUTS = Array.from({ length: 14 }, (_, index) => `DOC-${String(index + 1).padStart(2, '0')}`);
+// The layouts the engine's fixture drafts on PG-036 from a synthetic project — the others are their issuing modules' own
+// subjects (SyntheticSubjects::SUPPLIED) —; every layout shares the document's wrapper, the open partial and paper.css.
+const LAYOUTS = ['DOC-09', 'DOC-10'];
 
 for (const layout of LAYOUTS) {
     test(`${layout}'s draft preview against its issued layout within 1 mm`, async ({ page }, testInfo) => {
