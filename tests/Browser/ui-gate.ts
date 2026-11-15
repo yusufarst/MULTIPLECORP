@@ -39,7 +39,13 @@ export async function gate(page: Page, where: string): Promise<void> {
         info.setTimeout(info.timeout + 120_000);
     }
 
-    const id = /PG-\d{3}/.exec(where)?.[0] ?? where;
+    const id = /PG-\d{3}/.exec(where)?.[0];
+
+    // The audit's fixture places — the component gallery, the language switch's stand-in — are no page of the 65.
+    if (id === undefined) {
+        return;
+    }
+
     const size = page.viewportSize();
     const errors: string[] = [];
     // A reading that fails is recorded as such and its items NOT TESTED — never an empty reading that would pass.
@@ -159,7 +165,9 @@ async function coarseTargets(page: Page): Promise<{ name: string; width: number;
         await touch.goto(page.url(), { waitUntil: 'load' });
 
         return await touch.evaluate(() => Array.from(document.querySelectorAll<HTMLElement>('button, a[href], input:not([type="hidden"]), select, textarea, [role="button"], [role="tab"], [role="checkbox"], [role="switch"]'))
-            .filter((element) => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden' && !element.closest('p, li > a:only-child'))
+            // A visually hidden control — the skip link until it has focus — is the keyboard's, not a touch target.
+            .filter((element) => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden' && !element.closest('p, li > a:only-child')
+                && getComputedStyle(element).clipPath !== 'inset(50%)' && getComputedStyle(element).getPropertyValue('clip') !== 'rect(0px, 0px, 0px, 0px)')
             .map((element) => {
                 const box = element.getBoundingClientRect();
 
@@ -199,8 +207,15 @@ function measureTokens(): Tokens {
         }
     }
 
+    // The probe sits in a holder with sentinel values, so a property that is no value of the kind asked for — invalid at
+    // computed-value time, so inherited — reads as the sentinel and is left out. Every custom property of the token file
+    // is a candidate: `@theme inline`'s keys are not emitted, their utilities naming the brand set directly (tokens.css).
+    const holder = document.createElement('div');
+    holder.style.setProperty('color', 'rgb(1, 2, 3)');
+    holder.style.setProperty('font-size', '1.234px');
     const probe = document.createElement('div');
-    document.body.appendChild(probe);
+    holder.appendChild(probe);
+    document.body.appendChild(holder);
     const canvas = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
     // A colour's sRGB channels and alpha, read back from one painted pixel.
     const rgb = (value: string): [number, number, number, number] | null => {
@@ -225,16 +240,18 @@ function measureTokens(): Tokens {
     };
     const tokens = Array.from(names);
     const px = (value: string): number | null => (/^-?[\d.]+px$/.test(value) ? Math.abs(Number.parseFloat(value)) : null);
+    // A shadow's visible layers: Tailwind composes the ring and inset placeholders as transparent layers, which paint nothing.
+    const layers = (value: string): string[] => (value === 'none' || value === '' ? [] : value.split(/,(?![^(]*\))/).map((part) => part.trim()).filter((part) => !/^rgba\(\d+, \d+, \d+, 0\)/.test(part)));
     const allowed = {
-        colour: tokens.filter((name) => name.startsWith('--color-')).map((name) => rgb(resolved('color', name))).filter((value): value is [number, number, number, number] => value !== null),
-        size: new Set(tokens.filter((name) => /^--(text|m)-/.test(name) && !/line-height|letter-spacing|weight|tracking/.test(name)).map((name) => px(resolved('font-size', name))).filter((value): value is number => value !== null)),
+        colour: tokens.map((name) => resolved('color', name)).filter((value) => value !== 'rgb(1, 2, 3)').map(rgb).filter((value): value is [number, number, number, number] => value !== null),
+        size: new Set(tokens.filter((name) => /^--(text|m)-/.test(name) && !/line-height|letter-spacing|weight|tracking/.test(name)).map((name) => px(resolved('font-size', name))).filter((value): value is number => value !== null && value !== 1.234)),
         weight: new Set(tokens.filter((name) => name.startsWith('--font-weight-') || /weight/.test(name)).map((name) => resolved('font-weight', name)).filter((value) => value !== '')),
         radius: new Set(tokens.filter((name) => name.startsWith('--radius')).map((name) => px(resolved('border-top-left-radius', name))).filter((value): value is number => value !== null)),
-        shadow: new Set(tokens.filter((name) => name.startsWith('--shadow')).map((name) => resolved('box-shadow', name)).filter((value) => value !== '' && value !== 'none')),
+        shadow: new Set(tokens.map((name) => layers(resolved('box-shadow', name)).join(', ')).filter((value) => value !== '')),
         spacing: new Set(tokens.filter((name) => /^--(spacing|space|control|sidebar|nav|icon)/.test(name)).map((name) => px(resolved('padding-top', name))).filter((value): value is number => value !== null)),
         motion: new Set(tokens.filter((name) => /dur/.test(name)).map((name) => resolved('transition-duration', name)).filter((value) => value !== '')),
     };
-    probe.remove();
+    holder.remove();
 
     const found: Record<string, Map<string, { count: number; sample: string }>> = {};
     const note = (group: string, value: string, element: Element): void => {
@@ -252,11 +269,17 @@ function measureTokens(): Tokens {
     };
 
     for (const element of Array.from(document.body.querySelectorAll('*'))) {
-        if (element.getClientRects().length === 0 || element.closest('svg') !== null || element === probe) {
+        // The document's paper is content in its own millimetre scale (paper.css; DESIGN_SYSTEM §14.3), not the interface's
+        // tokens; a visually hidden element paints nothing until it has focus.
+        if (element.getClientRects().length === 0 || element.closest('svg, .paper') !== null || element === holder || element === probe) {
             continue;
         }
 
         const style = getComputedStyle(element);
+
+        if (style.clipPath === 'inset(50%)' || style.getPropertyValue('clip') === 'rect(0px, 0px, 0px, 0px)') {
+            continue;
+        }
 
         for (const [property, value] of [['color', style.color], ['background-color', style.backgroundColor], ['border-color', Number.parseFloat(style.borderTopWidth) > 0 ? style.borderTopColor : '']] as const) {
             const channels = rgb(value);
@@ -278,11 +301,26 @@ function measureTokens(): Tokens {
             note('radius', `border-radius: ${style.borderTopLeftRadius}`, element);
         }
 
-        if (style.boxShadow !== 'none' && !allowed.shadow.has(style.boxShadow)) {
-            note('elevation', `box-shadow: ${style.boxShadow}`, element);
+        // A ring — a zero-offset spread, focus or selection — is judged by its colour; the elevation by the rest.
+        const visibleLayers = layers(style.boxShadow);
+        const rings = visibleLayers.filter((layer) => /\s0px 0px 0px [\d.]+px( inset)?$/.test(layer));
+
+        for (const ring of rings) {
+            const channels = rgb(/^(rgba?\([^)]*\))/.exec(ring)?.[1] ?? '');
+
+            if (channels !== null && !tokenColour(channels)) {
+                note('colour', `ring: ${ring}`, element);
+            }
         }
 
-        for (const [property, value] of [['padding', style.paddingTop], ['padding', style.paddingLeft], ['margin', style.marginTop], ['margin', style.marginLeft], ['gap', style.rowGap], ['gap', style.columnGap]] as const) {
+        const elevation = visibleLayers.filter((layer) => !rings.includes(layer)).join(', ');
+
+        if (elevation !== '' && !allowed.shadow.has(elevation)) {
+            note('elevation', `box-shadow: ${elevation}`, element);
+        }
+
+        // Padding and gap carry the spacing scale; a margin is most often `auto`, which computes to a length of its own.
+        for (const [property, value] of [['padding', style.paddingTop], ['padding', style.paddingLeft], ['gap', style.rowGap], ['gap', style.columnGap]] as const) {
             const amount = px(value);
 
             if (amount !== null && !near(allowed.spacing, amount)) {
@@ -326,7 +364,8 @@ function measureActions(): Actions {
     const seen = new Map<string, number>();
 
     for (const action of Array.from(document.querySelectorAll('button, a[href], [role="button"]'))) {
-        if (!visible(action) || action.closest('tr, li, [role="row"], [role="menu"], [role="listbox"], [role="grid"], nav') !== null) {
+        // A field's own control — a password's "Tampilkan" — belongs to its field, never a duplicate of another field's.
+        if (!visible(action) || action.closest('tr, li, [role="row"], [role="menu"], [role="listbox"], [role="grid"], nav, [data-slot="input-group"]') !== null) {
             continue;
         }
 
