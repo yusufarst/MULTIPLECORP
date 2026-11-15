@@ -21,6 +21,7 @@ type Width = { width: number; horizontalScroll: string[]; clippedCopy: string[];
 type Tokens = { offToken: Record<string, { value: string; count: number; sample: string }[]> };
 type Actions = { primaryPerRegion: Record<string, number>; duplicates: { region: string; role: string; name: string; count: number }[] };
 type States = { regions: string[]; emptyShown: boolean };
+type Slop = Record<string, { count: number; samples: string[] }>;
 
 /** The gate of one page, once per engine and place — the Indonesian visit of the localization audit. */
 export async function gate(page: Page, where: string): Promise<void> {
@@ -55,6 +56,7 @@ export async function gate(page: Page, where: string): Promise<void> {
     const tokens = await attempt('tokens', () => page.evaluate(measureTokens));
     const actions = await attempt('actions', () => page.evaluate(measureActions));
     const states = await attempt('states', () => page.evaluate(measureStates));
+    const slop = await attempt('slop', () => page.evaluate(measureSlop));
     const widths: Width[] = [];
     const unmeasured: number[] = [];
 
@@ -101,7 +103,7 @@ export async function gate(page: Page, where: string): Promise<void> {
     const phone = widths.filter((reading) => reading.width <= 390);
     const small = targets === null ? null : targets.filter((target) => target.height < 44 || target.width < 44);
     const items: Item[] = [
-        { item: 'Modern visual quality', result: 'REVIEW', detail: 'SLOP-01–SLOP-45 reviewed on the screenshots of this page (TASK-065 review record)' },
+        { item: 'Modern visual quality', result: 'REVIEW', detail: `SLOP-01–SLOP-45 reviewed on the screenshots of this page with its measured marks (slop${slop === null ? ' — NOT TESTED, the reading failed' : ''}) (TASK-065 review record)` },
         offToken === null
             ? { item: 'Design system consistency', result: 'NOT TESTED', detail: untested('token') }
             : { item: 'Design system consistency', result: offToken === 0 ? 'PASS' : 'FAIL', detail: offToken === 0 ? 'every computed colour, type, radius, elevation, motion and spacing value a token' : `${String(offToken)} distinct values outside the tokens (offToken)` },
@@ -139,7 +141,7 @@ export async function gate(page: Page, where: string): Promise<void> {
     ];
     const file = join(ROOT, engine, `${where.replace(/[^A-Za-z0-9-]+/g, '-')}.json`);
     mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, `${JSON.stringify({ where, page: id, engine, url: page.url(), items, tokens, actions, states, widths, unmeasured, targets, errors }, null, 2)}\n`);
+    writeFileSync(file, `${JSON.stringify({ where, page: id, engine, url: page.url(), items, tokens, actions, states, slop, widths, unmeasured, targets, errors }, null, 2)}\n`);
 }
 
 /** The controls under a coarse pointer at 390 px, in a touch context of the same session. */
@@ -350,6 +352,58 @@ function measureStates(): States {
     const regions = Array.from(document.querySelectorAll('[data-region-state]')).map((element) => element.getAttribute('data-region-state') ?? '');
 
     return { regions: Array.from(new Set(regions)), emptyShown: document.querySelector('[data-slot="empty"] [data-slot="empty-title"]') !== null };
+}
+
+/**
+ * The anti-slop audit's measurable marks (DESIGN_SYSTEM §18), each with its count and a few samples for the reviewer, who
+ * judges them against the rule and GA1 d)'s dispositions — a pill on a state is allowed, a pill on a card is not.
+ */
+function measureSlop(): Slop {
+    const marks: Slop = {};
+    const describe = (element: Element, extra = ''): string => `${element.tagName.toLowerCase()}${element.getAttribute('data-slot') !== null ? `[data-slot=${element.getAttribute('data-slot') ?? ''}]` : ''}${extra === '' ? '' : ` ${extra}`} «${element.textContent.replace(/\s+/g, ' ').trim().slice(0, 40)}»`;
+    const mark = (slop: string, element: Element, extra = ''): void => {
+        const entry = (marks[slop] ??= { count: 0, samples: [] });
+        entry.count += 1;
+
+        if (entry.samples.length < 6) {
+            entry.samples.push(describe(element, extra));
+        }
+    };
+    const emoji = /\p{Extended_Pictographic}/u;
+    // The document's paper and a chart are content, not the interface's decoration.
+    const content = '.paper, [data-slot="chart"], [data-slot="paper-frame"]';
+
+    for (const element of Array.from(document.body.querySelectorAll('*'))) {
+        if (element.getClientRects().length === 0 || element.closest(content) !== null) {
+            continue;
+        }
+
+        const style = getComputedStyle(element);
+        const box = element.getBoundingClientRect();
+
+        if (style.backgroundImage.includes('gradient')) mark('SLOP-06/07 gradient', element);
+        if ((style.backdropFilter !== '' && style.backdropFilter !== 'none') || style.filter.includes('blur')) mark('SLOP-10 blur', element);
+        if (style.animationName !== 'none' && style.animationDuration !== '0s') mark('SLOP-15/43 animation', element, `${style.animationName} ${style.animationDuration} ${style.animationIterationCount}`);
+        if (/^H[1-6]$/.test(element.tagName) || element.getAttribute('role') === 'heading') {
+            if (Number.parseFloat(style.fontSize) > 20) mark('SLOP-26 heading above 20 px', element, style.fontSize);
+        }
+        if (box.height > 0 && box.width > box.height * 1.5 && Number.parseFloat(style.borderTopLeftRadius) >= box.height / 2 - 0.5 && Number.parseFloat(style.borderTopLeftRadius) > 4) mark('SLOP-05 pill', element);
+        if ((element.tagName === 'IMG' || (element.tagName === 'svg' && element.parentElement?.closest('svg') === null)) && box.width > 64 && box.height > 64) mark('SLOP-13 image above 64 px', element, `${String(Math.round(box.width))}x${String(Math.round(box.height))}`);
+        if (Array.from(element.childNodes).some((node) => node.nodeType === Node.TEXT_NODE && emoji.test(node.textContent ?? ''))) mark('SLOP-22 emoji', element);
+        if (element.matches('[data-slot="avatar"], [class*="avatar"]')) mark('SLOP-45 avatar', element);
+        if (element.matches('[role="progressbar"], progress')) mark('SLOP-44 progress', element);
+    }
+
+    const buttons = Array.from(document.querySelectorAll('button, a[data-slot="button"]')).filter((button) => button.getClientRects().length > 0 && button.closest(content) === null && button.textContent.trim() !== '');
+    const iconed = buttons.filter((button) => button.querySelector('svg') !== null);
+    marks['SLOP-24 labelled buttons with an icon'] = { count: iconed.length, samples: [`of ${String(buttons.length)} labelled buttons`, ...iconed.slice(0, 5).map((button) => describe(button))] };
+
+    for (const button of buttons) {
+        if (/^(suka|like|reaksi|react)/i.test(button.textContent.trim())) mark('SLOP-40/41 reaction', button);
+        if (/^muat lagi$/i.test(button.textContent.trim())) mark('SLOP-39 explicit "Muat Lagi"', button);
+    }
+
+    return marks;
 }
 
 /** At the current width: what scrolls the page sideways outside a table frame, and the mandated copy cut under 1.4.12. */
