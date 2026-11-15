@@ -59,7 +59,7 @@ function ResultRow({ row, href, exact }: { row: SearchResult; href: string; exac
 
     return (
         <li>
-            <Link href={href} className="flex min-w-0 flex-col gap-0.5 rounded-md px-3 py-2 outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-focus">
+            <Link href={href} className="flex min-w-0 flex-col gap-0.5 rounded-md px-3 py-2 outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus">
                 <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
                     <span className="min-w-0 font-medium break-words text-text-primary">{row.label}</span>
                     {code !== undefined && <span className="font-mono text-caption text-text-secondary">{code}</span>}
@@ -103,7 +103,7 @@ function Candidates({ scanned }: { scanned: Scanned }) {
             <ul className="flex min-w-0 flex-col gap-1">
                 {scan.matches.map((match: ScanMatch) => (
                     <li key={`${match.kind}:${match.product}:${match.serial ?? match.lot ?? ''}`}>
-                        <Link href={`/gudang/stok/${match.product}`} className="flex min-w-0 flex-col gap-0.5 rounded-md px-3 py-2 outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-focus">
+                        <Link href={`/gudang/stok/${match.product}`} className="flex min-w-0 flex-col gap-0.5 rounded-md px-3 py-2 outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus">
                             <span className="min-w-0 font-medium break-words text-text-primary">{match.name}</span>
                             <span className="font-mono text-caption text-text-secondary">{match.serial ?? match.lot ?? match.sku ?? ''}</span>
                         </Link>
@@ -297,7 +297,7 @@ export default function Cari({ can }: Props) {
                 <Button variant="outline" size="sm" className="self-start max-md:hidden" render={<Link href={origin} />}>{t('shell.back')}</Button>
                 <ScanNotice notice={guard.notice} />
                 <div role="search" aria-label={t('pages.pg_009.title')} className="flex min-w-0 flex-col gap-2">
-                    <InputGroup className="max-md:h-floor md:max-w-search">
+                    <InputGroup className="max-md:h-floor! md:max-w-search">
                         <InputGroupAddon divider>
                             <Icon icon={Search} size="row" />
                         </InputGroupAddon>

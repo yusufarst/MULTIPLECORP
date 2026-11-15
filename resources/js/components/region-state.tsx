@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Empty, EmptyDescription, EmptyTitle } from '@/components/ui/empty';
+import { Empty, EmptyDescription } from '@/components/ui/empty';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/lib/i18n';
@@ -77,14 +77,19 @@ const SYSTEM: Record<'not_found' | 'forbidden' | 'error', { title: 'outcome.not_
     error: { title: 'outcome.error', icon: TriangleAlert },
 };
 
-export function SystemPage({ kind, message, reference, back }: { kind: keyof typeof SYSTEM; message: ReactNode; reference: string; back: ReactNode }) {
+export function SystemPage({ kind, message, reference, back, page = false }: { kind: keyof typeof SYSTEM; message: ReactNode; reference: string; back: ReactNode; page?: boolean }) {
     const { t } = useTranslation();
     const face = SYSTEM[kind];
+    // As the page itself — PG-005, which has no page header of its own — the title is its heading (§15; WCAG 1.3.1); as a
+    // specimen inside another page it stays a title of that page's content.
+    const Title = page ? 'h1' : 'p';
 
     return (
         <Empty data-system-page={kind} className="mx-auto max-w-page-focused py-16">
             <Icon icon={face.icon} size="card" className="text-text-tertiary" />
-            <EmptyTitle className="text-title font-semibold">{t(face.title)}</EmptyTitle>
+            <Title data-slot="empty-title" className="text-title font-semibold text-text-primary">
+                {t(face.title)}
+            </Title>
             <EmptyDescription>{message}</EmptyDescription>
             <span data-code className="text-caption text-text-tertiary">
                 {t('outcome.reference', { kode: reference })}

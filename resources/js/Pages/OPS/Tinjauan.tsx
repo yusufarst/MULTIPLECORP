@@ -111,7 +111,7 @@ export default function Tinjauan() {
                                 role="tab"
                                 aria-selected={key === tab}
                                 onClick={() => { visit({ tab: key === 'aktivitas' ? null : key }); }}
-                                className={cn('inline-flex min-h-touch items-center rounded-md px-3 text-label outline-none focus-visible:outline-2 focus-visible:outline-focus', key === tab ? 'bg-surface-sunken font-semibold text-text-primary' : 'text-text-secondary hover:text-text-primary')}
+                                className={cn('inline-flex min-h-touch items-center rounded-md px-3 text-label outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus', key === tab ? 'bg-surface-sunken font-semibold text-text-primary' : 'text-text-secondary hover:text-text-primary')}
                             >
                                 {t(`pages.pg_008.tab.${key}` as TranslationKey)}
                             </button>

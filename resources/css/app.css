@@ -114,6 +114,18 @@
         text-rendering: optimizeLegibility;
         scrollbar-width: thin;
         scrollbar-color: var(--color-border-strong) transparent;
+        /* The keyboard's focus never wholly under the shell's bars (WCAG 2.4.11; TASK-066; APPR-039): a control scrolled into
+           view keeps clear of the sticky top bar and, on the phone, of the fixed bottom bar; a floating action bar sets its
+           own bottom padding over this one (action-bar.tsx). */
+        scroll-padding-top: var(--header-height);
+    }
+
+    @media (width < 48rem) {
+        html {
+            scroll-padding-top: var(--m-appbar-h);
+            /* A docked scan field reports how much of the foot it covers (scan-field.tsx). */
+            scroll-padding-bottom: max(calc(var(--m-bottom-nav-h) + var(--safe-bottom)), var(--scan-dock-cover, 0px));
+        }
     }
 
     body {
@@ -138,6 +150,29 @@
         select,
         textarea {
             font-size: var(--text-touch);
+        }
+    }
+
+    /* A coarse pointer's 44 px targets (D-DS-19; TASK-065 GF-03; APPR-039): a text link outside a sentence, a check and a
+       radio keep their look and their place, an invisible layer centred on each widening what a finger can hit to
+       --touch-min. A link inside a paragraph keeps WCAG 2.5.8's inline exception. */
+    @media (pointer: coarse) {
+        a[href].underline:not(p a),
+        [data-slot='checkbox'],
+        [data-slot='radio-group-item'] {
+            position: relative;
+        }
+
+        a[href].underline:not(p a)::after,
+        [data-slot='checkbox']::after,
+        [data-slot='radio-group-item']::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: max(100%, var(--touch-min));
+            height: max(100%, var(--touch-min));
+            transform: translate(-50%, -50%);
         }
     }
 
@@ -255,4 +290,15 @@
 }
 .base-ui-disable-scrollbar::-webkit-scrollbar {
     display: none;
+}
+
+/* Forced colours (DESIGN_SYSTEM §15; TASK-066; APPR-039): the system drops every box shadow, so a field's halo — and any
+   ring drawn as a shadow — would leave a focused control unmarked. Unlayered, so no utility's `outline-none` overrides it:
+   the keyboard's focus always carries a solid outline in the system's colour. */
+@media (forced-colors: active) {
+    :focus-visible {
+        outline-style: solid;
+        outline-width: 2px;
+        outline-offset: 2px;
+    }
 }

@@ -174,7 +174,7 @@ function PeriodFigures({ data, view }: { data: Period | Failed | undefined; view
                 />
             )}
             <p className="text-caption text-text-tertiary">{t('pages.pg_006.as_of_tpl', { v: time(data.as_of) })}</p>
-            <Table aria-label={t('pages.pg_006.figures')}>
+            <Table aria-label={t('pages.pg_006.figures')} scrollLabel={t('pages.pg_006.figures')}>
                 <TableHeader>
                     <TableRow className="hover:bg-transparent">
                         <TableHead />
@@ -259,7 +259,7 @@ export default function Beranda() {
                                     key={view.id ?? 'gabungan'}
                                     href={view.id === null ? '/beranda' : `/beranda?perusahaan=${view.id}`}
                                     aria-current={current ? 'page' : undefined}
-                                    className={cn('inline-flex min-h-touch items-center rounded-md px-3 text-label outline-none focus-visible:outline-2 focus-visible:outline-focus', current ? 'bg-surface-sunken font-semibold text-text-primary' : 'text-text-secondary hover:text-text-primary')}
+                                    className={cn('inline-flex min-h-touch items-center rounded-md px-3 text-label outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus', current ? 'bg-surface-sunken font-semibold text-text-primary' : 'text-text-secondary hover:text-text-primary')}
                                 >
                                     {view.code}
                                 </Link>
@@ -282,7 +282,7 @@ export default function Beranda() {
                 <section aria-label={t('pages.pg_006.ops')} className="flex min-w-0 flex-col gap-3">
                     <Collapsible open={open} onOpenChange={setOpen}>
                         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-                            <CollapsibleTrigger className="group/ops flex min-h-touch items-center gap-2 rounded-sm text-left text-heading-sm font-semibold outline-none focus-visible:outline-2 focus-visible:outline-focus">
+                            <CollapsibleTrigger className="group/ops flex min-h-touch items-center gap-2 rounded-sm text-left text-heading-sm font-semibold outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus">
                                 {t('pages.pg_006.ops')}
                                 {Array.isArray(operations) && <span className="text-label font-normal text-text-tertiary tabular-nums">{String(queued.length)}</span>}
                                 <Icon icon={ChevronDown} size="sm" className="text-text-tertiary group-data-[panel-open]/ops:rotate-180" />

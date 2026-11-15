@@ -1,0 +1,26 @@
+Owner decision received in session during execution, 2026-11-15 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received: the Owner's message after TASK-065's report of its findings GF-01–GF-14, GF-14 among them — TL-15's performance job reaching its 30-minute limit in two of pull request #90's four runs.
+
+TASK
+MULTIPLECORP — Owner decision on GF-14 and fast continuation of TASK-065.
+READ
+PR #90, TASK-065 gate record, GF-14 evidence, and existing release rules.
+GOAL
+Finish TASK-065 without allowing an unconfirmed intermittent performance issue to unnecessarily block the next Task.
+DO
+
+1. Treat GF-14 as an unresolved intermittent performance/CI risk, not an automatic TASK-065 merge blocker when final mandatory CI passes.
+2. Do not mark GF-14 FIXED or ignore a failing required check.
+3. Do not introduce a database index, migration, or query rewrite without confirming the root cause.
+4. Preserve the GF-14 evidence for targeted remediation within existing authorized work. No new Task.
+5. Keep GF-01 and accessibility findings accurately recorded for resolution before production approval.
+6. Merge PR #90 only when its existing mandatory gates and merge requirements are satisfied.
+7. Immediately continue TASK-066 after the authorized merge.
+8. Avoid additional review cycles, repeated full audits, and unnecessary CI runs.
+
+VERIFY
+Use existing evidence and final-head CI. No fabricated PASS results.
+STOP IF
+A confirmed release-critical defect or required CI failure prevents the authorized merge.
+UPDATE
+Report only merge status, remaining material risks, and the next implementation action.
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.

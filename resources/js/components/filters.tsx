@@ -91,7 +91,7 @@ export function FilterToolbar({
                                 <button
                                     type="button"
                                     aria-label={t('actions.remove_filter', { nama: filter.label })}
-                                    className="inline-flex size-control-xs items-center justify-center rounded-full text-text-tertiary outline-none hover:bg-surface-sunken focus-visible:outline-2 focus-visible:outline-focus"
+                                    className="inline-flex size-control-xs items-center justify-center rounded-full text-text-tertiary outline-none hover:bg-surface-sunken focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus"
                                     onClick={filter.onRemove}
                                 >
                                     <Icon icon={X} size="xs" />

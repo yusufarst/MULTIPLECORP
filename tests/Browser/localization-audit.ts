@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
 
+import { accessibility } from './a11y-gate';
 import { gate } from './ui-gate';
 
 // TL-10 (TASK-067; LOCALIZATION §3.4, §3.6, §3.7; TEST_STRATEGY §10): the page as rendered — the shell, `#konten` and an
@@ -682,12 +683,24 @@ export async function auditPage(page: Page, language: Language, where: string, {
     const other: Language = language === 'id' ? 'en' : 'id';
     const desk = await audit(page, language, where);
 
-    // TASK-065's gate on the same visit, once per page and engine in the default language (APPR-038).
+    // TASK-065's gate on the same visit, once per page and engine in the default language (APPR-038), and TASK-066's
+    // accessibility audit of the state at this width and at the phone's.
     if (language === 'id') {
         await gate(page, where);
+        await accessibility(page, where);
     }
 
-    const small = phone ? await atPhone(page, () => audit(page, language, where)) : null;
+    const small = phone
+        ? await atPhone(page, async () => {
+              const reading = await audit(page, language, where);
+
+              if (language === 'id') {
+                  await accessibility(page, where);
+              }
+
+              return reading;
+          })
+        : null;
     // The switch reloads the page's deferred groups (PT-19): the other language is read once they are back as they were.
     const loading = page.locator('[data-region-state="loading"]');
     const resting = await loading.count();

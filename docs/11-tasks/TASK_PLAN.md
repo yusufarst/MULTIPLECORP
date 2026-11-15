@@ -16,21 +16,21 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 95
 
-DONE: 76
+DONE: 77
 READY: 1
 IN_PROGRESS: 1
 BLOCKED: 4
 VERIFYING: 0
-TODO: 13
+TODO: 12
 SUPERSEDED: 0
 
 Progress:
-76 / 95
-Percentage: 80.0 %
+77 / 95
+Percentage: 81.1 %
 
-CURRENT TASK: none in progress — TASK-065 — UI/UX consistency gate, the responsive matrix and the anti-slop audit DONE on its branch `task/TASK-065-ui-consistency-gate`, its record in its final commit (DIR-103), its pull request squash-merged by the executor once that head's fresh CI passes; its fourteen findings GF-01–GF-14 for the Owner's decision ([gate record](../08-testing/evidence/TASK-065_UI_GATE_RECORD.md)); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
-NEXT READY TASK: TASK-066 READY (DIR-112); TASK-069 waits on TASK-066, TASK-070 on TASK-066 and TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
-LAST TASK PLAN CHANGE: Change 27 of 2026-11-15 — TASK-065 narrowed for the initial release, the responsive matrix in full on Chromium and at three widths on WebKit, findings recorded for the Owner, the Owner's APPR-038; TASK-065 DONE; no new Task
+CURRENT TASK: none in progress — TASK-066 — Accessibility — WCAG 2.2 AA across every page DONE on its branch `task/TASK-066-accessibility`, its record in its final commit (DIR-103), its pull request squash-merged by the executor once that head's fresh CI passes; TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
+NEXT READY TASK: TASK-069 READY (DIR-112); TASK-070 waits on TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
+LAST TASK PLAN CHANGE: Change 28 of 2026-11-15 — TASK-066 narrowed for the initial release, the AA violations it finds and the 44 px targets of GF-02 and GF-03 fixed minimally inside it, the Owner's APPR-039; TASK-066 DONE; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -114,7 +114,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-063](TASK-063.md) — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
 - [x] [TASK-064](TASK-064.md) — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
 - [x] [TASK-065](TASK-065.md) — UI/UX consistency gate, the responsive matrix and the anti-slop audit
-- [ ] [TASK-066](TASK-066.md) — Accessibility — WCAG 2.2 AA across every page
+- [x] [TASK-066](TASK-066.md) — Accessibility — WCAG 2.2 AA across every page
 - [x] [TASK-067](TASK-067.md) — Localization completeness and the per-page copy lists
 - [x] [TASK-068](TASK-068.md) — Performance targets and query budgets in CI
 - [ ] [TASK-069](TASK-069.md) — Security test matrix, route integrity and zero dead interactions
@@ -214,10 +214,10 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 090, 091, 092 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 093, 094, 095 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
-| [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
+| [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
 | [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
-| [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | TODO | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
+| [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | READY | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
 | [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
 | [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-26 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | IN_PROGRESS | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
@@ -325,6 +325,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 26, 2026-11-15 (the Owner's amendment of QB-16 — [APPR-037](../00-governance/DECISION_LOG.md#dir-122-and-appr-037--qb-16s-rendition-preview-amended-2026-11-15), DIR-122 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-068 measured a rendition's preview at three data statements beyond the envelope against QB-16's two, constant and without a write. *Change:* QB-16's rendition preview amended from two data statements beyond the envelope to the three it was measured to make — the file, the rendition's version for the access decision and its number for the file's name —, constant with the rows; a thumbnail and a download keep their two, the 100 ms staging time and the no-write rule unchanged; PERFORMANCE's QB-16 and TASK-068's assertion amended to read so. *Affected Tasks:* TASK-068, DONE with it. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-068 DONE; DONE 75, READY 1, IN_PROGRESS 1, BLOCKED 4, TODO 14. *Scope change:* none. *Approval:* APPR-037, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 **Change 27, 2026-11-15 (the Owner's narrowing of TASK-065 — [APPR-038](../00-governance/DECISION_LOG.md#dir-123-and-appr-038--task-065-narrowed-for-the-initial-release-2026-11-15), DIR-123 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-065's matrix of ten widths on two engines for 65 pages — about 1,300 renders on each — with its audit would cost hours of runner time for each iteration, and its findings would open defect Tasks the frozen plan has no place for. *Change:* for the initial release, the responsive matrix runs at all ten band edges on Chromium and at 390, 768 and 1,280 CSS px on WebKit, the other WebKit widths NOT TESTED, never PASS; every measured check stays — the tokens, one primary action and no duplicate, the states, the touch targets, the mandated copy, the composer and preview, the CD-06 screens —; the gate records come from one visit per page, reusing the localization audit's page visits; SLOP-01–SLOP-45 are reviewed on the built screens with screenshots as their evidence; and each finding is recorded with its evidence for the Owner's decision rather than opening a defect Task, the plan being frozen at 95; TASK-065's scope and criteria 4, 8 and 9, and TEST_STRATEGY §9, amended to read so. No measured check, token, pattern or rule is removed or loosened. *Affected Tasks:* TASK-065. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-065 IN_PROGRESS; DONE 75, READY 0, IN_PROGRESS 2, BLOCKED 4, TODO 14. *Scope change:* none. *Approval:* APPR-038, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
+
+**Change 28, 2026-11-15 (the Owner's narrowing of TASK-066 with its minimal fixes — [APPR-039](../00-governance/DECISION_LOG.md#dir-125-and-appr-039--task-066-narrowed-with-its-minimal-fixes-2026-11-15), DIR-125 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-066 asked the 22 critical journeys by keyboard alone, a screen-reader script for each and each defect sent to its owning Task, which the frozen plan has no place for, and its criteria 1 and 4 need the AA violations and TASK-065's 44 px targets (GF-02, GF-03) fixed. *Change:* for the initial release, the engine and the measured checks on every page state through the localization audit's visits; the keyboard-only runs over the interaction patterns, UXS-41's quotation, the scans and every page's focus walk; representative screen-reader scripts NOT RUN until TASK-086; the AA violations and the 44 px targets fixed minimally inside TASK-066's pull request as APPR-032 did for TASK-067, every other defect recorded for the Owner; TASK-066's scope and criteria 1, 4, 7, 10 and 11, and TEST_STRATEGY §11, amended to read so. No WCAG 2.2 AA criterion, rule or token loosened. *Affected Tasks:* TASK-066. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-066 IN_PROGRESS; DONE 76, READY 0, IN_PROGRESS 2, BLOCKED 4, TODO 13. *Scope change:* none. *Approval:* APPR-039, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 ## 8. Owner questions
 

@@ -44,7 +44,7 @@ export function SignalGroup({
             <Collapsible open={open} onOpenChange={setOpen}>
                 <div className="flex min-w-0 items-center justify-between gap-3">
                     <h3 className="min-w-0 text-body font-semibold text-text-primary">
-                        <CollapsibleTrigger className="group/signal flex min-h-touch min-w-0 items-center gap-2 rounded-sm text-left outline-none focus-visible:outline-2 focus-visible:outline-focus md:pointer-events-none">
+                        <CollapsibleTrigger className="group/signal flex min-h-touch min-w-0 items-center gap-2 rounded-sm text-left outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus md:pointer-events-none">
                             {title}
                             {countText !== '' && <span className="text-label font-normal text-text-tertiary tabular-nums">{countText}</span>}
                             <Icon icon={ChevronDown} size="sm" className="text-text-tertiary group-data-[panel-open]/signal:rotate-180 md:hidden" />

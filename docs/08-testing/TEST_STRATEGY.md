@@ -475,6 +475,8 @@ Every UI Task answers AICWDF §27's twenty-one items on the built screens, never
 
 ## 11. Accessibility
 
+Amendment: on 2026-11-15 the Owner approved, under [APPR-039](../00-governance/DECISION_LOG.md#dir-125-and-appr-039--task-066-narrowed-with-its-minimal-fixes-2026-11-15) (DIR-125; TASK_PLAN Change 28), TASK-066's narrowing: for the initial release, the engine and the measured checks run on every page state through the localization audit's visits at the desktop and phone widths on Chromium and WebKit; the keyboard-only runs cover the interaction patterns the critical journeys are made of, UXS-41's quotation, the scans and every page's focus walk; the screen-reader scripts are written for representative journeys and recorded NOT RUN until a person runs them; and the AA violations found and the 44 px coarse-pointer targets are fixed minimally inside TASK-066, every other defect recorded for the Owner's decision. No criterion of WCAG 2.2 AA is loosened.
+
 WCAG 2.2 at level AA, audited on the built screens against DESIGN_SYSTEM §15 with measured contrast (UXH-05; AC-14):
 
 - **Automated** — an accessibility engine runs inside the browser suite on every page state the journeys reach, at the phone and desktop widths, and fails the run on a violation of an AA criterion it can decide.
