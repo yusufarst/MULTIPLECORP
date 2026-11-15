@@ -53,7 +53,8 @@ test('CB-03 on PG-006: one company\'s receivables position among the period figu
     await expect(page.getByRole('heading', { name: 'Beranda', level: 1 })).toBeVisible();
     await expect(page.locator('[data-region-state="loading"]')).toHaveCount(0);
 
-    const figures = page.getByRole('region', { name: 'Angka Periode' });
+    // The group's region, the outer of the two so named — its table's scrolling frame is a region of the same name (2.1.1).
+    const figures = page.getByRole('region', { name: 'Angka Periode' }).first();
     await expect(figures.locator('[data-slot="metric-strip"]')).toContainText('Piutang aktif');
     await expect(figures.locator('[data-slot="metric-strip"]')).toContainText('Rp1.000.000');
     const ageing = figures.locator('[data-slot="ageing"]');

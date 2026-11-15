@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Empty, EmptyDescription, EmptyTitle } from '@/components/ui/empty';
+import { Empty, EmptyDescription } from '@/components/ui/empty';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/lib/i18n';
@@ -84,7 +84,10 @@ export function SystemPage({ kind, message, reference, back }: { kind: keyof typ
     return (
         <Empty data-system-page={kind} className="mx-auto max-w-page-focused py-16">
             <Icon icon={face.icon} size="card" className="text-text-tertiary" />
-            <EmptyTitle className="text-title font-semibold">{t(face.title)}</EmptyTitle>
+            {/* The page's own title, so its heading (§15; WCAG 1.3.1) — PG-005 has no page header of its own. */}
+            <h1 data-slot="empty-title" className="text-title font-semibold text-text-primary">
+                {t(face.title)}
+            </h1>
             <EmptyDescription>{message}</EmptyDescription>
             <span data-code className="text-caption text-text-tertiary">
                 {t('outcome.reference', { kode: reference })}

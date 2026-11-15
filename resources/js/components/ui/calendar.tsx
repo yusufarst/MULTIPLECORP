@@ -34,7 +34,7 @@ export function Calendar({ className, classNames, previousLabel, nextLabel, show
                 week: 'mt-1 flex',
                 day: 'flex size-control-md items-center justify-center p-0 text-body',
                 day_button:
-                    'inline-flex size-control-sm items-center justify-center rounded-sm text-text-primary tabular-nums outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-selected:bg-primary aria-selected:font-semibold aria-selected:text-text-on-primary',
+                    'inline-flex size-control-sm items-center justify-center rounded-sm text-text-primary tabular-nums outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-focus aria-selected:bg-primary aria-selected:font-semibold aria-selected:text-text-on-primary',
                 today: '[&>button]:ring-1 [&>button]:ring-accent-olive',
                 selected: '',
                 outside: '[&>button]:text-text-disabled',

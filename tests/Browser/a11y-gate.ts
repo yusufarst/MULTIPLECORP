@@ -126,7 +126,10 @@ function readStatic(): Static {
     // 1.4.11: a text field's, a select's and a check's boundary — its border, or its fill where it has no border — at 3:1.
     const boundaries: string[] = [];
 
-    for (const control of Array.from(document.querySelectorAll('input:not([type="hidden"]), select, textarea, [role="checkbox"], [role="radio"], [role="switch"], [data-slot="select-trigger"]'))) {
+    // A field group's control is drawn by its group — the border and the fill are the group's (input-group.tsx).
+    const controls = new Set(Array.from(document.querySelectorAll('input:not([type="hidden"]), select, textarea, [role="checkbox"], [role="radio"], [role="switch"], [data-slot="select-trigger"]')).map((element) => element.closest('[data-slot="input-group"]') ?? element));
+
+    for (const control of controls) {
         if (!visible(control) || control.closest('.paper') !== null) {
             continue;
         }
@@ -242,7 +245,7 @@ async function walkFocus(page: Page): Promise<Walk> {
                 });
                 const name = `${element.tagName.toLowerCase()}${element.getAttribute('data-slot') !== null ? `[data-slot=${element.getAttribute('data-slot') ?? ''}]` : ''} «${(element.getAttribute('aria-label') ?? element.textContent).replace(/\s+/g, ' ').trim().slice(0, 40)}»`;
 
-                return { mark: element.dataset.a11yWalk, name, ring, covered, inDialog: element.closest('[role="dialog"], [role="alertdialog"]') !== null };
+                return { mark: element.dataset.a11yWalk, name, ring, covered, inDialog: element.closest('[role="dialog"], [role="alertdialog"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"]') !== null };
             }, step);
 
             if (reading === null) {
@@ -302,9 +305,16 @@ async function startAtTop(page: Page): Promise<void> {
         const start = document.createElement('span');
         start.id = 'a11y-walk-start';
         start.tabIndex = -1;
-        document.body.prepend(start);
+        // An open modal holds the focus (§15): the walk starts at its top, never outside it, which would take the focus
+        // out of the dialog's loop and walk the background behind it.
+        const modals = Array.from(document.querySelectorAll('[role="dialog"], [role="alertdialog"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"]')).filter((element) => element.getClientRects().length > 0);
+        const modal = modals[modals.length - 1];
+        (modal ?? document.body).prepend(start);
         start.focus({ preventScroll: true });
-        window.scrollTo(0, 0);
+
+        if (modal === undefined) {
+            window.scrollTo(0, 0);
+        }
     });
 }
 

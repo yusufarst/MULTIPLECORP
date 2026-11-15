@@ -25,7 +25,7 @@ function NavLink({ entry, current, rail }: { entry: Entry; current: boolean; rai
             href={entry.href}
             aria-current={current ? 'page' : undefined}
             className={cn(
-                'relative flex min-h-(--nav-item-height) min-w-0 items-center gap-3 rounded-md px-(--nav-icon-inset) text-body font-medium text-text-secondary outline-none transition-colors duration-(--mc-dur-hover) hover:bg-row-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus',
+                'relative flex min-h-(--nav-item-height) min-w-0 items-center gap-3 rounded-md px-(--nav-icon-inset) text-body font-medium text-text-secondary outline-none transition-colors duration-(--mc-dur-hover) hover:bg-row-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-focus',
                 current &&
                     'bg-sidebar-accent font-semibold text-text-primary before:absolute before:inset-y-(--nav-indicator-inset-y) before:left-0 before:w-(--nav-indicator-width) before:rounded-full before:bg-sidebar-primary hover:bg-sidebar-accent',
                 rail && 'justify-center px-0',
@@ -85,7 +85,7 @@ export function Sidebar({ account, pathname, rail, onToggle, built = BUILT }: { 
                     <EntryList entries={modules} pathname={pathname} rail />
                 ) : (
                     <Collapsible open={open} onOpenChange={setOpen}>
-                        <CollapsibleTrigger className="group/menu flex h-(--nav-item-height) w-full items-center justify-between rounded-md px-(--nav-icon-inset) text-label font-semibold text-text-tertiary outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-focus">
+                        <CollapsibleTrigger className="group/menu flex h-(--nav-item-height) w-full items-center justify-between rounded-md px-(--nav-icon-inset) text-label font-semibold text-text-tertiary outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus">
                             {t('glossary.gl_194')}
                             <Icon icon={ChevronDown} size="sm" className="transition-transform duration-(--mc-dur-fast) group-data-[panel-open]/menu:rotate-180" />
                         </CollapsibleTrigger>
@@ -118,7 +118,7 @@ export function BottomBar({
     const { t } = useTranslation();
     const entries = bottomEntries(account, built);
     const current = currentKey(entries, pathname);
-    const item = 'flex min-h-bottom-nav min-w-bottom-nav flex-1 flex-col items-center justify-center gap-1 text-pill font-medium text-text-secondary outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus';
+    const item = 'flex min-h-bottom-nav min-w-bottom-nav flex-1 flex-col items-center justify-center gap-1 text-pill font-medium text-text-secondary outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-focus';
 
     return (
         <nav aria-label={t('shell.nav.label')} data-print="hide" className="fixed inset-x-0 bottom-0 z-(--z-bar) flex border-t border-border-subtle bg-surface pb-(--safe-bottom) md:hidden">

@@ -73,7 +73,7 @@ export function IconDisc({ icon, tone = 'neutral', size = 'md', className }: { i
 /** The KPI tile: disc, label and value, the whole card a link — no delta, sparkline or comparison (VP-3; SLOP-18). */
 export function KpiTile({ icon, tone, label, value, href }: { icon: LucideIcon; tone?: DiscTone; label: ReactNode; value: ReactNode; href: string }) {
     return (
-        <Link href={href} className="group/kpi block rounded-lg outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+        <Link href={href} className="group/kpi block rounded-lg outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-focus">
             <Card className="flex flex-row items-center gap-3 p-4 transition-colors duration-(--mc-dur-hover) group-hover/kpi:border-border-strong">
                 <IconDisc icon={icon} tone={tone} size="kpi" />
                 <span className="flex min-w-0 flex-col gap-0.5">
@@ -270,7 +270,7 @@ export function StageTrack({ stages, label, onSelect }: { stages: Stage[]; label
                         ) : (
                             <button
                                 type="button"
-                                className="flex min-h-touch items-center gap-2 rounded-sm px-1 outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-focus"
+                                className="flex min-h-touch items-center gap-2 rounded-sm px-1 outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus"
                                 onClick={() => {
                                     onSelect(stage.key);
                                 }}
@@ -329,7 +329,7 @@ export function Disclosure({ title, children, defaultOpen = false, invalid = fal
 
     return (
         <Collapsible open={open || invalid} onOpenChange={setOpen}>
-            <CollapsibleTrigger className="group/disclosure flex min-h-touch w-full items-center justify-between gap-3 rounded-sm text-left text-body font-medium text-text-primary outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-focus">
+            <CollapsibleTrigger className="group/disclosure flex min-h-touch w-full items-center justify-between gap-3 rounded-sm text-left text-body font-medium text-text-primary outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus">
                 {title}
                 <Icon icon={ChevronDown} size="sm" className="text-text-tertiary transition-transform duration-(--mc-dur-fast) group-data-[panel-open]/disclosure:rotate-180" />
             </CollapsibleTrigger>
@@ -343,7 +343,7 @@ export function Disclosure({ title, children, defaultOpen = false, invalid = fal
 export function LongText({ text, className }: { text: string; className?: string }) {
     return (
         <Popover>
-            <PopoverTrigger openOnHover delay={300} className={cn('block max-w-full min-w-0 cursor-default truncate rounded-xs text-left outline-none focus-visible:outline-2 focus-visible:outline-focus', className)}>
+            <PopoverTrigger openOnHover delay={300} className={cn('block max-w-full min-w-0 cursor-default truncate rounded-xs text-left outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus', className)}>
                 {text}
             </PopoverTrigger>
             <PopoverContent className="max-w-sheet-sm text-body [overflow-wrap:anywhere]">{text}</PopoverContent>
@@ -355,7 +355,7 @@ export function LongText({ text, className }: { text: string; className?: string
 export function TextLink({ className, ...props }: ComponentProps<typeof Link>) {
     return (
         <Link
-            className={cn('rounded-xs font-medium text-text-primary underline decoration-border-strong underline-offset-2 outline-none hover:decoration-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus', className)}
+            className={cn('rounded-xs font-medium text-text-primary underline decoration-border-strong underline-offset-2 outline-none hover:decoration-text-primary focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-focus', className)}
             {...props}
         />
     );

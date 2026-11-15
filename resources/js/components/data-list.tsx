@@ -82,7 +82,7 @@ export function DataTable<Row>({
                             {column.sort === undefined ? (
                                 column.header
                             ) : (
-                                <button type="button" onClick={column.sort.onSort} className="inline-flex items-center gap-1 rounded-xs outline-none hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                                <button type="button" onClick={column.sort.onSort} className="inline-flex items-center gap-1 rounded-xs outline-none hover:text-text-primary focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-focus">
                                     {column.header}
                                     {column.sort.direction !== 'none' && <Icon icon={column.sort.direction === 'ascending' ? ArrowUp : ArrowDown} size="xs" />}
                                 </button>
@@ -199,7 +199,7 @@ function DenseLink({ href, children }: { href: string | null; children: ReactNod
     return href === null ? (
         <div className={layout}>{children}</div>
     ) : (
-        <Link href={href} className={cn(layout, 'outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus')}>
+        <Link href={href} className={cn(layout, 'outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-focus')}>
             {children}
         </Link>
     );

@@ -25,7 +25,7 @@ export function TabsTab({ className, ...props }: TabsPrimitive.Tab.Props) {
         <TabsPrimitive.Tab
             data-slot="tabs-tab"
             className={cn(
-                'relative inline-flex min-h-touch shrink-0 items-center pointer-coarse:min-w-touch pointer-coarse:justify-center text-body font-medium whitespace-nowrap text-text-secondary outline-none select-none hover:text-text-primary data-selected:font-semibold data-selected:text-text-primary data-selected:after:absolute data-selected:after:inset-x-0 data-selected:after:-bottom-px data-selected:after:h-0.5 data-selected:after:bg-primary md:min-h-control-lg',
+                'relative inline-flex min-h-touch shrink-0 items-center pointer-coarse:min-w-touch pointer-coarse:justify-center text-body font-medium whitespace-nowrap text-text-secondary outline-none select-none hover:text-text-primary focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-focus data-selected:font-semibold data-selected:text-text-primary data-selected:after:absolute data-selected:after:inset-x-0 data-selected:after:-bottom-px data-selected:after:h-0.5 data-selected:after:bg-primary md:min-h-control-lg',
                 className,
             )}
             {...props}
@@ -34,5 +34,5 @@ export function TabsTab({ className, ...props }: TabsPrimitive.Tab.Props) {
 }
 
 export function TabsPanel({ className, ...props }: TabsPrimitive.Panel.Props) {
-    return <TabsPrimitive.Panel data-slot="tabs-panel" className={cn('pt-4 outline-none', className)} {...props} />;
+    return <TabsPrimitive.Panel data-slot="tabs-panel" className={cn('pt-4 outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-focus', className)} {...props} />;
 }

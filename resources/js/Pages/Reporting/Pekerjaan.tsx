@@ -76,7 +76,7 @@ export default function Pekerjaan() {
                                             key={view.id ?? 'semua'}
                                             href={view.id === null ? '/pekerjaan' : `/pekerjaan?perusahaan=${view.id}`}
                                             aria-current={current ? 'page' : undefined}
-                                            className={cn('inline-flex min-h-touch items-center rounded-md px-3 text-label outline-none focus-visible:outline-2 focus-visible:outline-focus', current ? 'bg-surface-sunken font-semibold text-text-primary' : 'text-text-secondary hover:text-text-primary')}
+                                            className={cn('inline-flex min-h-touch items-center rounded-md px-3 text-label outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus', current ? 'bg-surface-sunken font-semibold text-text-primary' : 'text-text-secondary hover:text-text-primary')}
                                         >
                                             {view.code}
                                         </Link>

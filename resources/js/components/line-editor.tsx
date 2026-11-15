@@ -200,7 +200,7 @@ export function LineEditor<L extends { key: string }>({
                                             data-line-number
                                             tabIndex={last ? -1 : 0}
                                             aria-label={t('forms.line_number', { n: index + 1 })}
-                                            className="inline-flex min-w-control-xs justify-end rounded-xs text-text-tertiary outline-none focus-visible:outline-2 focus-visible:outline-focus"
+                                            className="inline-flex min-w-control-xs justify-end rounded-xs text-text-tertiary outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus"
                                         >
                                             {index + 1}
                                         </span>
@@ -247,7 +247,7 @@ export function LineEditor<L extends { key: string }>({
                             <li key={line.key}>
                                 <button
                                     type="button"
-                                    className="flex min-h-row w-full min-w-0 items-center gap-3 py-3 text-left outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus"
+                                    className="flex min-h-row w-full min-w-0 items-center gap-3 py-3 text-left outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-focus"
                                     onClick={() => {
                                         setEditing(line.key);
                                     }}
