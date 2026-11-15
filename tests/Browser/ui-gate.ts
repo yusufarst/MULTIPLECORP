@@ -20,7 +20,7 @@ type Item = { item: string; result: Result; detail: string };
 type Width = { width: number; horizontalScroll: string[]; clippedCopy: string[]; spacingApplied: boolean };
 type Tokens = { offToken: Record<string, { value: string; count: number; sample: string }[]> };
 type Actions = { primaryPerRegion: Record<string, number>; duplicates: { region: string; role: string; name: string; count: number }[] };
-type States = { regions: string[]; emptyShown: boolean };
+type States = { regions: string[]; loading: number; empty: { text: boolean; actions: number; images: number }[] };
 type Slop = Record<string, { count: number; samples: string[] }>;
 
 let tokenFile: Record<string, string> | null = null;
@@ -160,8 +160,12 @@ export async function gate(page: Page, where: string): Promise<void> {
         { item: 'Adaptive', result: small === null ? 'NOT TESTED' : small.length === 0 ? 'PASS' : 'FAIL', detail: small === null ? (engine === 'webkit' ? 'the coarse pointer measured on Chromium' : untested('coarse pointer')) : `${String(small.length)} controls below 44 px under a coarse pointer at 390 px` },
         states === null
             ? { item: 'Loading state', result: 'NOT TESTED', detail: untested('state') }
-            : { item: 'Loading state', result: states.regions.length > 0 ? 'PASS' : 'N/A', detail: states.regions.length > 0 ? `deferred regions settled: ${states.regions.join(', ')}` : 'no deferred group on this page' },
-        { item: 'Empty state', result: states?.emptyShown === true ? 'PASS' : 'NOT TESTED', detail: states === null ? untested('state') : states.emptyShown ? 'an empty state shown with its title' : 'not reached on this visit\'s data' },
+            : { item: 'Loading state', result: states.loading > 0 ? 'FAIL' : 'PASS', detail: states.loading > 0 ? `${String(states.loading)} regions still loading when the visit had settled` : 'no region left loading once the visit settled; each region\'s own spinner is its module\'s TL-08/TL-09 test' },
+        states === null
+            ? { item: 'Empty state', result: 'NOT TESTED', detail: untested('state') }
+            : states.empty.length === 0
+              ? { item: 'Empty state', result: 'NOT TESTED', detail: 'not reached on this visit\'s data' }
+              : { item: 'Empty state', result: states.empty.every((one) => one.actions <= 1 && one.images === 0 && one.text) ? 'PASS' : 'FAIL', detail: `${String(states.empty.length)} empty states: one sentence, at most one action and no illustration each (PT-19; SLOP-13) — ${String(states.empty.filter((one) => one.actions > 1 || one.images > 0 || !one.text).length)} beyond` },
         { item: 'Error state', result: 'NOT TESTED', detail: 'an outcome\'s error is judged by the INT- tests (TL-08), not on this visit' },
         { item: 'Destructive action safety', result: 'ELSEWHERE', detail: 'IP-08\'s confirmation judged with each INT- contract (TL-08)' },
         { item: 'Accessibility critical checks', result: 'ELSEWHERE', detail: 'TASK-066 (TEST_STRATEGY §11), entered by TASK-070' },
@@ -424,9 +428,18 @@ function measureActions(): Actions {
 
 /** The deferred regions the page settled and whether an empty state is shown. */
 function measureStates(): States {
-    const regions = Array.from(document.querySelectorAll('[data-region-state]')).map((element) => element.getAttribute('data-region-state') ?? '');
+    const shown = (element: Element): boolean => element.getClientRects().length > 0;
+    const regions = Array.from(document.querySelectorAll('[data-region-state]')).filter(shown).map((element) => element.getAttribute('data-region-state') ?? '');
+    // PT-19's empty state — a region's or a list's —: its sentence, its actions and any picture larger than an icon.
+    const empty = Array.from(document.querySelectorAll('[data-slot="empty"], [data-region-state="empty"], [data-region-state="no-match"]'))
+        .filter((element) => shown(element) && (element.parentElement?.closest('[data-slot="empty"], [data-region-state="empty"], [data-region-state="no-match"]') ?? null) === null)
+        .map((element) => ({
+            text: element.textContent.trim() !== '',
+            actions: Array.from(element.querySelectorAll('button, a[href]')).filter(shown).length,
+            images: Array.from(element.querySelectorAll('img, svg')).filter((picture) => picture.getBoundingClientRect().width > 24).length,
+        }));
 
-    return { regions: Array.from(new Set(regions)), emptyShown: document.querySelector('[data-slot="empty"] [data-slot="empty-title"]') !== null };
+    return { regions: Array.from(new Set(regions)), loading: regions.filter((state) => state === 'loading').length, empty };
 }
 
 /**
