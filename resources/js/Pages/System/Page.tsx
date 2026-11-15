@@ -33,6 +33,7 @@ export default function SystemPageView({ kind, reference }: { kind: Kind; refere
     const { auth } = usePage<{ auth: AccountHints }>().props;
     const body = (
         <SystemPage
+            page
             kind={kind}
             message={t(MESSAGES[kind])}
             reference={reference}

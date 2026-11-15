@@ -77,17 +77,19 @@ const SYSTEM: Record<'not_found' | 'forbidden' | 'error', { title: 'outcome.not_
     error: { title: 'outcome.error', icon: TriangleAlert },
 };
 
-export function SystemPage({ kind, message, reference, back }: { kind: keyof typeof SYSTEM; message: ReactNode; reference: string; back: ReactNode }) {
+export function SystemPage({ kind, message, reference, back, page = false }: { kind: keyof typeof SYSTEM; message: ReactNode; reference: string; back: ReactNode; page?: boolean }) {
     const { t } = useTranslation();
     const face = SYSTEM[kind];
+    // As the page itself — PG-005, which has no page header of its own — the title is its heading (§15; WCAG 1.3.1); as a
+    // specimen inside another page it stays a title of that page's content.
+    const Title = page ? 'h1' : 'p';
 
     return (
         <Empty data-system-page={kind} className="mx-auto max-w-page-focused py-16">
             <Icon icon={face.icon} size="card" className="text-text-tertiary" />
-            {/* The page's own title, so its heading (§15; WCAG 1.3.1) — PG-005 has no page header of its own. */}
-            <h1 data-slot="empty-title" className="text-title font-semibold text-text-primary">
+            <Title data-slot="empty-title" className="text-title font-semibold text-text-primary">
                 {t(face.title)}
-            </h1>
+            </Title>
             <EmptyDescription>{message}</EmptyDescription>
             <span data-code className="text-caption text-text-tertiary">
                 {t('outcome.reference', { kode: reference })}

@@ -120,10 +120,16 @@ test('opens IP-08\'s confirmation, closes it with Escape to its trigger, then fi
     const reason = dialog.getByLabel('Alasan');
     await tabTo(page, reason, 10);
     await page.keyboard.type('Termin kedua');
+    // The reason given, the confirming button is enabled — the loop's last control (IP-08).
+    await expect(dialog.getByRole('button', { name: 'Catat Pembayaran', exact: true })).toBeEnabled();
 
+    // The dialog's focus loop: each Tab settles inside it — Base UI's hidden focus guards, which hand the focus back to the
+    // dialog's first or last control, are its own and never a resting place.
     for (let press = 0; press < 12; press += 1) {
         await page.keyboard.press('Tab');
-        expect(await dialog.evaluate((element) => element.contains(document.activeElement)), 'Tab stays inside the open dialog').toBe(true);
+        await expect
+            .poll(() => dialog.evaluate((element) => element.contains(document.activeElement) && !(document.activeElement?.hasAttribute('data-base-ui-focus-guard') ?? false)), { message: 'Tab stays inside the open dialog', timeout: 2_000 })
+            .toBe(true);
     }
 
     await tabTo(page, dialog.getByRole('button', { name: 'Catat Pembayaran', exact: true }), 12);

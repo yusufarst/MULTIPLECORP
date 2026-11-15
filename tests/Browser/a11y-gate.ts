@@ -20,7 +20,7 @@ const scanned = new Set<string>();
 const measured = new Set<string>();
 
 type Violation = { id: string; impact: string | null; help: string; nodes: number; targets: string[] };
-type Walk = { focusables: number; walked: number; wrapped: boolean; invisible: string[]; obscured: string[]; trapped: string | null; positiveTabIndex: string[] };
+type Walk = { focusables: number; walked: number; wrapped: boolean; guardStops: number; invisible: string[]; obscured: string[]; trapped: string | null; positiveTabIndex: string[] };
 type Static = { h1: number; skipLink: boolean; liveRegions: number; boundaries: string[]; statusesWithoutText: string[] };
 type Motion = { moving: string[] };
 type Forced = { walked: number; lost: string[]; optedOut: string[] };
@@ -193,6 +193,7 @@ async function walkFocus(page: Page): Promise<Walk> {
     let wrapped = false;
     let trapped: string | null = null;
     let walked = 0;
+    let guardStops = 0;
 
     try {
         for (let step = 0; step < 60; step += 1) {
@@ -202,6 +203,14 @@ async function walkFocus(page: Page): Promise<Walk> {
 
                 if (active === null || active === document.body || active === document.documentElement) {
                     return null;
+                }
+
+                // The focus's own transitions run to their end before the ring is read: a field group's halo fades in over the
+                // fast duration, and a reading at once would see the shadow at rest.
+                for (const animation of document.getAnimations()) {
+                    if (animation instanceof CSSTransition) {
+                        animation.finish();
+                    }
                 }
 
                 const element = active as HTMLElement;
@@ -245,8 +254,16 @@ async function walkFocus(page: Page): Promise<Walk> {
                 });
                 const name = `${element.tagName.toLowerCase()}${element.getAttribute('data-slot') !== null ? `[data-slot=${element.getAttribute('data-slot') ?? ''}]` : ''} «${(element.getAttribute('aria-label') ?? element.textContent).replace(/\s+/g, ' ').trim().slice(0, 40)}»`;
 
-                return { mark: element.dataset.a11yWalk, name, ring, covered, inDialog: element.closest('[role="dialog"], [role="alertdialog"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"]') !== null };
+                return { mark: element.dataset.a11yWalk, name, ring, covered, guard: element.hasAttribute('data-base-ui-focus-guard'), inDialog: element.closest('[role="dialog"], [role="alertdialog"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"]') !== null };
             }, step);
+
+            // A modal's hidden focus guard where the Tab rested — its loop's last control disabled —: recorded apart, never a
+            // control of the page's walk.
+            if (reading?.guard === true) {
+                guardStops += 1;
+
+                continue;
+            }
 
             if (reading === null) {
                 wrapped = seen.length > 0;
@@ -292,7 +309,7 @@ async function walkFocus(page: Page): Promise<Walk> {
         });
     }
 
-    return { focusables, walked, wrapped, invisible: [...new Set(invisible)].slice(0, 12), obscured: [...new Set(obscured)].slice(0, 12), trapped, positiveTabIndex };
+    return { focusables, walked, wrapped, guardStops, invisible: [...new Set(invisible)].slice(0, 12), obscured: [...new Set(obscured)].slice(0, 12), trapped, positiveTabIndex };
 }
 
 /**
@@ -305,9 +322,9 @@ async function startAtTop(page: Page): Promise<void> {
         const start = document.createElement('span');
         start.id = 'a11y-walk-start';
         start.tabIndex = -1;
-        // An open modal holds the focus (§15): the walk starts at its top, never outside it, which would take the focus
-        // out of the dialog's loop and walk the background behind it.
-        const modals = Array.from(document.querySelectorAll('[role="dialog"], [role="alertdialog"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"]')).filter((element) => element.getClientRects().length > 0);
+        // An open modal, menu or list holds the focus (§15): the walk starts at its top, never outside it, which would take
+        // the focus out of its loop and walk the background behind it.
+        const modals = Array.from(document.querySelectorAll('[role="dialog"], [role="alertdialog"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"], [role="menu"], [role="listbox"]')).filter((element) => element.getClientRects().length > 0);
         const modal = modals[modals.length - 1];
         (modal ?? document.body).prepend(start);
         start.focus({ preventScroll: true });
@@ -369,7 +386,7 @@ async function forcedColours(page: Page): Promise<Forced> {
             const reading = await page.evaluate(() => {
                 const active = document.activeElement;
 
-                if (active === null || active === document.body || active === document.documentElement) {
+                if (active === null || active === document.body || active === document.documentElement || active.hasAttribute('data-base-ui-focus-guard')) {
                     return null;
                 }
 
