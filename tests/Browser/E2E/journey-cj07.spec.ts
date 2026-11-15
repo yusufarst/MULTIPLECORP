@@ -144,6 +144,13 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         await page.goto(`/gudang/barang-keluar?perusahaan=${run.company}`);
         await expect(page.getByRole('heading', { name: 'Barang Keluar', exact: true })).toBeVisible();
         await expect(page.locator('#konten')).toContainText(run.goods);
+        // DIR-079 CA-07 on PG-007 *Pekerjaan* (TASK-065 criterion 7): the four units reserved for the project stand among the
+        // goods work as ready to dispatch (QS-24).
+        await page.goto(`/pekerjaan?perusahaan=${run.company}`);
+        await expect(page.getByRole('heading', { name: 'Pekerjaan', level: 1 })).toBeVisible();
+        const ready = page.getByRole('region', { name: 'Barang siap dikeluarkan' });
+        await expect(ready).toContainText(run.goods);
+        await expect(ready).toContainText(/4\b.*siap dikeluarkan/);
         await page.goto(`/gudang/barang-keluar/${run.project}`);
         await expect(page.getByRole('heading', { name: 'Keluarkan Barang', exact: true })).toBeVisible();
         await field.focus();
