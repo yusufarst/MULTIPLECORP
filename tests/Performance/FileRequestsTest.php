@@ -80,16 +80,12 @@ it('renders an issued version to READY on the real renderer, its time recorded f
 
     expect($attempt->refresh()->state)->toBe('READY');
 
-    // TASK-068: its preview against QB-16's two data statements beyond the envelope, none a write (RV-06). It reads the file,
-    // the rendition's version for the access decision and the same join again for the file's name: a count above the budget
-    // is criterion 9's recorded miss, left to the Owner's decision on the query or the budget, never loosened here.
+    // TASK-068: its preview within QB-16 as APPR-037 amended it — three data statements beyond the envelope: the file, the
+    // rendition's version for the access decision and its number for the file's name —, none a write (RV-06).
     $preview = FileObject::query()->findOrFail($attempt->file_object_id)->public_id;
     $owner = Authorization::owner();
     $statements = QueryBudget::statements(fn () => $this->actingAs($owner)->get("/berkas/{$preview}/tampil")->assertOk());
 
-    expect(array_values(array_filter($statements, fn (string $sql): bool => preg_match('/^(insert|update|delete)\b/i', $sql) === 1)))->toBe([]);
-
-    if (count($statements) > 2) {
-        $this->markTestIncomplete('QB-16 MISS: a rendition preview reads '.count($statements).' data statements beyond the envelope against 2 — recorded for the Owner\'s decision (TASK-068 criterion 9).');
-    }
+    expect(count($statements))->toBeLessThanOrEqual(3)
+        ->and(array_values(array_filter($statements, fn (string $sql): bool => preg_match('/^(insert|update|delete)\b/i', $sql) === 1)))->toBe([]);
 });

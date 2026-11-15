@@ -20,6 +20,8 @@ Amendment: on 2026-11-15 the Owner approved, under [APPR-035](../00-governance/D
 
 Amendment: on 2026-11-15 the Owner approved, under [APPR-036](../00-governance/DECISION_LOG.md#dir-120-and-appr-036--qb-09s-first-response-amended-2026-11-15) (DIR-120; TASK_PLAN Change 25), QB-09's first response — PG-043, the invoice detail — amended from eight data statements to the seventeen of the invoice's own reads it was measured to make, the shell's one company-list read every page pays on top, constant with the rows shown; the 400 ms staging time, constant counts, N+1 prevention and data correctness unchanged, the panels read at once rather than deferred unless staging evidence shows deferring them necessary.
 
+Amendment: on 2026-11-15 the Owner approved, under [APPR-037](../00-governance/DECISION_LOG.md#dir-122-and-appr-037--qb-16s-rendition-preview-amended-2026-11-15) (DIR-122; TASK_PLAN Change 26), QB-16's rendition preview amended from two data statements beyond the envelope to the three it was measured to make — the file, the rendition's version for the access decision and its number for the file's name —, constant with the rows; a thumbnail and a download keep their two, the 100 ms staging time and the no-write rule unchanged.
+
 ## Source and version evidence
 
 Read on 2026-09-30 from current official documentation; versions are evidence, not pins (DEP-07). Facts marked *source* or *old* are P8 verification items (HO-16, HO-20).
@@ -125,7 +127,7 @@ Every authenticated request pays an **envelope** before its own queries: the ses
 | QB-13 | Command of retry class A | about 40 statements: a constant plus one per lock class and one per guard table touched, once the multi-row lock form of LR-05 is verified (HO-13) — otherwise one per locked row, still independent of table size (GU-01) — and never one per row read | — | 500 ms for a reference command of ten lines |
 | QB-14 | Command of retry class B | statements proportional to the rows it must change, set-based wherever the posting rules allow | — | 2 s at 1x |
 | QB-15 | Export job | keyed chunks, bounded memory | — | 60 s per 100,000 rows |
-| QB-16 | File request — thumbnail, preview, download | ≤ 2; a thumbnail of an S0 product image needs only authentication, so its envelope is the session read and the account row (three queries in all) | — | 100 ms before the stream starts; no session write for a thumbnail or a preview, one for a download (RV-06) |
+| QB-16 | File request — thumbnail, preview, download | ≤ 2, a rendition's preview ≤ 3 (APPR-037); a thumbnail of an S0 product image needs only authentication, so its envelope is the session read and the account row (three queries in all) | — | 100 ms before the stream starts; no session write for a thumbnail or a preview, one for a download (RV-06) |
 | QB-17 | Rendition: issue to READY (JB-01) | — | — | 30 s at 1x with the workers of SZ-02 |
 
 ## 7. Dashboards, reports and exports
