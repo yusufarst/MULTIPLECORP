@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 95
 
 DONE: 76
-READY: 1
-IN_PROGRESS: 1
+READY: 0
+IN_PROGRESS: 2
 BLOCKED: 4
 VERIFYING: 0
 TODO: 13
@@ -28,8 +28,8 @@ Progress:
 76 / 95
 Percentage: 80.0 %
 
-CURRENT TASK: none in progress — TASK-065 — UI/UX consistency gate, the responsive matrix and the anti-slop audit DONE on its branch `task/TASK-065-ui-consistency-gate`, its record in its final commit (DIR-103), its pull request squash-merged by the executor once that head's fresh CI passes; its fourteen findings GF-01–GF-14 for the Owner's decision ([gate record](../08-testing/evidence/TASK-065_UI_GATE_RECORD.md)); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
-NEXT READY TASK: TASK-066 READY (DIR-112); TASK-069 waits on TASK-066, TASK-070 on TASK-066 and TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
+CURRENT TASK: TASK-066 — Accessibility — WCAG 2.2 AA across every page IN_PROGRESS on its branch `task/TASK-066-accessibility`; TASK-065 DONE and merged as `161bb64` (pull request #90); TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
+NEXT READY TASK: none READY: TASK-069 waits on TASK-066, TASK-070 on TASK-066 and TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
 LAST TASK PLAN CHANGE: Change 27 of 2026-11-15 — TASK-065 narrowed for the initial release, the responsive matrix in full on Chromium and at three widths on WebKit, findings recorded for the Owner, the Owner's APPR-038; TASK-065 DONE; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -214,7 +214,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 090, 091, 092 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 093, 094, 095 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
-| [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
+| [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | IN_PROGRESS | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
 | [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
 | [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | TODO | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
