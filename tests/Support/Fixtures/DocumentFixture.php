@@ -5,8 +5,11 @@ namespace Tests\Support\Fixtures;
 use App\Modules\DOC\Actions\SaveDocumentDraft;
 use App\Modules\DOC\Data\DocumentSubject;
 use App\Modules\DOC\Jobs\RenderDocument;
+use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentRendition;
 use App\Modules\DOC\Models\DocumentVersion;
+use App\Modules\DOC\Queries\DocumentDetail;
+use App\Modules\DOC\Services\MustacheTemplates;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Models\NumberingScheme;
@@ -17,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Symfony\Component\Process\Process;
 use Tests\Support\Documents\SyntheticSubjects;
 use Throwable;
 
@@ -66,6 +70,27 @@ final class DocumentFixture
         $document = DB::table('documents')->where('id', $outcome->resultId)->value('public_id');
 
         return response()->json(['document' => $document, 'outcome' => $outcome->kind]);
+    }
+
+    /**
+     * TASK-065 (TEST_STRATEGY §9's tolerance; D-DS-23): the draft's paper exactly as PG-036 composes it for the viewer
+     * (DocumentDetail), issued instead — unmarked and numbered, as DocumentIssuing composes it — and laid out by the
+     * renderer's engine with its bundled assets: the page count and each block's box in millimetres. Nothing is written.
+     */
+    public static function layout(Request $request): JsonResponse
+    {
+        $document = Document::query()->where('public_id', (string) $request->query('dokumen'))->firstOrFail();
+        $detail = app(DocumentDetail::class)->of((int) $request->user()?->getAuthIdentifier(), $document);
+        $draft = is_array($detail['draft'] ?? null) ? $detail['draft'] : [];
+        $paper = is_array($draft['paper'] ?? null) ? $draft['paper'] : abort(404, 'The document has no draft paper.');
+        $year = substr(CarbonImmutable::now('Asia/Jakarta')->toDateString(), 0, 4);
+        $issued = [...$paper, 'draft' => false, 'number' => 'UJI/'.substr($document->document_type_code, 4)."/{$year}/0001"];
+        $html = MustacheTemplates::document(MustacheTemplates::render($document->document_type_code, $issued));
+        $process = new Process([config()->string('files.renderer.python'), base_path('tests/Support/Documents/layout.py'), config()->string('files.renderer.assets')],
+            null, ['HOME' => sys_get_temp_dir(), 'XDG_CACHE_HOME' => sys_get_temp_dir(), 'LANG' => 'C.UTF-8'], $html, 120);
+        $process->mustRun();
+
+        return response()->json(json_decode($process->getOutput(), true, flags: JSON_THROW_ON_ERROR));
     }
 
     /** The current version's latest attempt rendered now (`state` READY) or failed with its attempt counted (FAILED). */
