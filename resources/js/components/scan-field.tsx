@@ -44,6 +44,7 @@ export function ScanField({
             {dock && <div aria-hidden className="h-18 md:hidden" />}
             <div
                 data-slot="scan-field"
+                data-docked={dock ? '' : undefined}
                 className={cn(
                     'flex min-w-0 flex-col gap-2 bg-surface',
                     dock && 'max-md:fixed max-md:inset-x-0 max-md:bottom-[calc(var(--m-action-bar-h)+var(--safe-bottom))] max-md:z-(--z-bar) max-md:border-t max-md:border-border max-md:px-m-gutter max-md:py-3',

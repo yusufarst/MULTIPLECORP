@@ -172,8 +172,17 @@ async function walkFocus(page: Page): Promise<Walk> {
     const positiveTabIndex = await page.evaluate(() =>
         Array.from(document.querySelectorAll('[tabindex]')).filter((element) => Number(element.getAttribute('tabindex')) > 0).map((element) => element.outerHTML.slice(0, 100)),
     );
-    // Each focusable's shadow at rest, so a focus halo is told from a control's permanent shadow (`shadow-xs`).
+    // Each focusable's shadow at rest, so a focus halo is told from a control's permanent shadow (`shadow-xs`) — read with the
+    // focus taken off a field the page focused on its own (a scan field, a dialog's first input) and its transitions ended.
     const focusables = await page.evaluate(() => {
+        (document.activeElement as HTMLElement | null)?.blur();
+
+        for (const animation of document.getAnimations()) {
+            if (animation instanceof CSSTransition) {
+                animation.finish();
+            }
+        }
+
         const candidates = Array.from(document.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, [tabindex]')).filter((element) => element.tabIndex >= 0 && !element.hasAttribute('disabled') && element.getClientRects().length > 0);
 
         // The control and its two nearest ancestors: a field's ring may be its group's (`input-group`'s halo on focus within).

@@ -39,10 +39,14 @@ export function ActionBar({
         }
 
         const root = document.documentElement;
-        // Fixed on the phone, the region and the bottom bar beneath it cover the viewport's foot from its top edge down.
+        // Fixed on the phone, the region and the bottom bar beneath it cover the viewport's foot from its top edge down — from
+        // a docked scan field's top where one floats above it (scan-field.tsx), so a focused control never rests behind the
+        // dock (WCAG 2.4.11; TASK-066).
         const cover = () => {
             const fixed = getComputedStyle(element).position === 'fixed';
-            const covered = fixed ? window.innerHeight - element.getBoundingClientRect().top : element.offsetHeight;
+            const dock = fixed ? document.querySelector<HTMLElement>('[data-slot="scan-field"][data-docked]') : null;
+            const top = Math.min(element.getBoundingClientRect().top, dock !== null && getComputedStyle(dock).position === 'fixed' ? dock.getBoundingClientRect().top : Number.POSITIVE_INFINITY);
+            const covered = fixed ? window.innerHeight - top : element.offsetHeight;
             root.style.scrollPaddingBottom = `${String(Math.max(element.offsetHeight, Math.round(covered)))}px`;
             setFloating(fixed ? element.offsetHeight : 0);
         };
