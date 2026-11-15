@@ -23,7 +23,7 @@ type Violation = { id: string; impact: string | null; help: string; nodes: numbe
 type Walk = { focusables: number; walked: number; wrapped: boolean; invisible: string[]; obscured: string[]; trapped: string | null; positiveTabIndex: string[] };
 type Static = { h1: number; skipLink: boolean; liveRegions: number; boundaries: string[]; statusesWithoutText: string[] };
 type Motion = { moving: string[] };
-type Forced = { focused: string | null; ringLost: boolean | null; optedOut: string[] };
+type Forced = { walked: number; lost: string[]; optedOut: string[] };
 
 /** The audit of one page state at the current width, in the audit's language. */
 export async function accessibility(page: Page, where: string): Promise<void> {
@@ -169,9 +169,16 @@ async function walkFocus(page: Page): Promise<Walk> {
     const positiveTabIndex = await page.evaluate(() =>
         Array.from(document.querySelectorAll('[tabindex]')).filter((element) => Number(element.getAttribute('tabindex')) > 0).map((element) => element.outerHTML.slice(0, 100)),
     );
-    const focusables = await page.evaluate(() =>
-        Array.from(document.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, [tabindex]')).filter((element) => element.tabIndex >= 0 && !element.hasAttribute('disabled') && element.getClientRects().length > 0).length,
-    );
+    // Each focusable's shadow at rest, so a focus halo is told from a control's permanent shadow (`shadow-xs`).
+    const focusables = await page.evaluate(() => {
+        const candidates = Array.from(document.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, [tabindex]')).filter((element) => element.tabIndex >= 0 && !element.hasAttribute('disabled') && element.getClientRects().length > 0);
+
+        for (const element of candidates) {
+            element.dataset.a11yRest = getComputedStyle(element).boxShadow;
+        }
+
+        return candidates.length;
+    });
     await startAtTop(page);
 
     const invisible: string[] = [];
@@ -194,7 +201,15 @@ async function walkFocus(page: Page): Promise<Walk> {
                 const element = active as HTMLElement;
                 element.dataset.a11yWalk ??= String(index);
                 const style = getComputedStyle(element);
-                const ring = (style.outlineStyle !== 'none' && Number.parseFloat(style.outlineWidth) >= 2) || /\b\d+(\.\d+)?px\b/.test(style.boxShadow.replace(/rgba?\([^)]*\)/g, ''));
+                // The ring: §15's 2 px outline, or a halo the focus adds — a shadow layer, visible and spread at least 2 px, that the
+                // control did not carry at rest. A permanent shadow, or a transparent placeholder layer, is no ring.
+                const halo = style.boxShadow !== (element.dataset.a11yRest ?? 'none') && style.boxShadow.split(/,(?![^(]*\))/).some((layer) => {
+                    const colour = /rgba?\(([^)]*)\)/.exec(layer)?.[1]?.split(',').map((part) => Number.parseFloat(part)) ?? [];
+                    const lengths = layer.replace(/rgba?\([^)]*\)/g, '').match(/-?[\d.]+px/g)?.map((length) => Number.parseFloat(length)) ?? [];
+
+                    return (colour[3] ?? 1) > 0 && (lengths[3] ?? 0) >= 2;
+                });
+                const ring = (style.outlineStyle !== 'none' && Number.parseFloat(style.outlineWidth) >= 2) || halo;
                 const box = element.getBoundingClientRect();
                 // Wholly hidden: every probe point of the element answered by a fixed or sticky region that is not its own.
                 const points: [number, number][] = [[box.left + 2, box.top + 2], [box.right - 2, box.top + 2], [box.left + 2, box.bottom - 2], [box.right - 2, box.bottom - 2], [box.left + box.width / 2, box.top + box.height / 2]];
@@ -256,8 +271,9 @@ async function walkFocus(page: Page): Promise<Walk> {
         await page.evaluate(() => {
             (document.activeElement as HTMLElement | null)?.blur();
             document.getElementById('a11y-walk-start')?.remove();
-            for (const element of Array.from(document.querySelectorAll<HTMLElement>('[data-a11y-walk]'))) {
+            for (const element of Array.from(document.querySelectorAll<HTMLElement>('[data-a11y-walk], [data-a11y-rest]'))) {
                 delete element.dataset.a11yWalk;
+                delete element.dataset.a11yRest;
             }
             window.scrollTo(0, 0);
         });
@@ -315,28 +331,63 @@ async function reducedMotion(page: Page): Promise<Motion> {
     }
 }
 
-/** Forced colours: the focus ring kept on a focused control, and the elements that opt out of the system's colours. */
+/**
+ * Forced colours: the page's controls walked by Tab as in normal colours — up to 30 —, each one whose ring is lost, the
+ * system dropping every box shadow so only an outline stays; and the elements that opt out of the system's colours.
+ */
 async function forcedColours(page: Page): Promise<Forced> {
     await page.emulateMedia({ forcedColors: 'active' });
+    const lost: string[] = [];
+    let walked = 0;
 
     try {
         await startAtTop(page);
-        await page.keyboard.press('Tab');
 
-        return await page.evaluate(() => {
-            document.getElementById('a11y-walk-start')?.remove();
-            const active = document.activeElement;
-            // Read now: a computed style is live, and the blur below would take the ring away.
-            const ringLost = active === null || active === document.body ? null : getComputedStyle(active).outlineStyle === 'none';
-            const optedOut = Array.from(document.body.querySelectorAll('*'))
+        for (let step = 0; step < 30; step += 1) {
+            await page.keyboard.press('Tab');
+            // Read at once: a computed style is live.
+            const reading = await page.evaluate(() => {
+                const active = document.activeElement;
+
+                if (active === null || active === document.body || active === document.documentElement) {
+                    return null;
+                }
+
+                const style = getComputedStyle(active);
+
+                return {
+                    name: `${active.tagName.toLowerCase()}${active.getAttribute('data-slot') !== null ? `[data-slot=${active.getAttribute('data-slot') ?? ''}]` : ''} «${(active.getAttribute('aria-label') ?? active.textContent).replace(/\s+/g, ' ').trim().slice(0, 40)}»`,
+                    ringLost: style.outlineStyle === 'none' || Number.parseFloat(style.outlineWidth) < 1,
+                };
+            });
+
+            if (reading === null) {
+                if (walked > 0) {
+                    break;
+                }
+
+                continue;
+            }
+
+            walked += 1;
+
+            if (reading.ringLost) {
+                lost.push(reading.name);
+            }
+        }
+
+        const optedOut = await page.evaluate(() =>
+            Array.from(document.body.querySelectorAll('*'))
                 .filter((element) => element.getClientRects().length > 0 && getComputedStyle(element).getPropertyValue('forced-color-adjust') === 'none')
-                .map((element) => `${element.tagName.toLowerCase()}.${(element.getAttribute('class') ?? '').split(/\s+/).slice(0, 3).join('.')}`);
-            const focused = active === null || active === document.body ? null : `${active.tagName.toLowerCase()} «${(active.getAttribute('aria-label') ?? active.textContent).replace(/\s+/g, ' ').trim().slice(0, 40)}»`;
-            (document.activeElement as HTMLElement | null)?.blur();
+                .map((element) => `${element.tagName.toLowerCase()}.${(element.getAttribute('class') ?? '').split(/\s+/).slice(0, 3).join('.')}`),
+        );
 
-            return { focused, ringLost, optedOut: [...new Set(optedOut)].slice(0, 12) };
-        });
+        return { walked, lost: [...new Set(lost)].slice(0, 12), optedOut: [...new Set(optedOut)].slice(0, 12) };
     } finally {
+        await page.evaluate(() => {
+            (document.activeElement as HTMLElement | null)?.blur();
+            document.getElementById('a11y-walk-start')?.remove();
+        });
         await page.emulateMedia({ forcedColors: null });
         await page.evaluate(() => {
             window.scrollTo(0, 0);
