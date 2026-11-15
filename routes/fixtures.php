@@ -142,6 +142,8 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     // its rendition rendered or failed as the absent queue worker would, before the issuing pages exist.
     Route::post('__fixtures/dokumen', [DocumentFixture::class, 'draft'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dokumen/rendisi', [DocumentFixture::class, 'rendition'])->withoutMiddleware(PreventRequestForgery::class);
+    // TL-11 (TASK-065; TEST_STRATEGY §9's tolerance): the draft's paper issued instead and laid out by the renderer's engine.
+    Route::get('__fixtures/dokumen/tata-letak', [DocumentFixture::class, 'layout']);
 
     // TL-09–TL-12 (TASK-031): two correction cases of the run's company, one closable and one carrying a residual.
     Route::post('__fixtures/kasus', [CaseFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);

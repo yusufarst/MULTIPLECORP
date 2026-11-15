@@ -426,6 +426,8 @@ AICWDF §25 makes a dead interaction a release blocker. The contracts are counte
 
 ## 9. The UI/UX consistency gate
 
+Amendment: on 2026-11-15 the Owner approved, under [APPR-038](../00-governance/DECISION_LOG.md#dir-123-and-appr-038--task-065-narrowed-for-the-initial-release-2026-11-15) (DIR-123; TASK_PLAN Change 27), TASK-065's narrowing: for the initial release, the responsive matrix runs at all ten band edges on Chromium and at 390, 768 and 1,280 CSS px on WebKit, the other WebKit widths NOT TESTED, never PASS; every measured check stays — the tokens, one primary action and no duplicate, the states, the touch targets, the mandated copy, the composer and preview, the CD-06 screens —; the gate records come from one visit per page, reusing the localization audit's page visits; SLOP-01–SLOP-45 are reviewed on the built screens with screenshots as their evidence; and each finding is recorded with its evidence for the Owner's decision rather than opening a defect Task, the plan being frozen at 95.
+
 Every UI Task answers AICWDF §27's twenty-one items on the built screens, never on the prototype or a reference render (DESIGN_SYSTEM Annex A): each item **PASS**, **FAIL** or a count, the optional states **N/A** only with their reason, and nothing recorded as passed that was not judged. A measured item is checked by the browser suite; a reviewed item is judged by the reviewer against the named rule and confirmed by the Owner at UAT.
 
 | §27 item | How it is judged | Rule |

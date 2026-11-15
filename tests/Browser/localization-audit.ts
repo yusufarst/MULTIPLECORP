@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
 
+import { gate } from './ui-gate';
+
 // TL-10 (TASK-067; LOCALIZATION §3.4, §3.6, §3.7; TEST_STRATEGY §10): the page as rendered — the shell, `#konten` and an
 // open dialog — in the language asked for: no key shown as itself, no unfilled placeholder, no control without a name,
 // on an English page no Indonesian interface string other than §3.4's values, names and document type names, no
@@ -679,6 +681,12 @@ export async function auditPage(page: Page, language: Language, where: string, {
 
     const other: Language = language === 'id' ? 'en' : 'id';
     const desk = await audit(page, language, where);
+
+    // TASK-065's gate on the same visit, once per page and engine in the default language (APPR-038).
+    if (language === 'id') {
+        await gate(page, where);
+    }
+
     const small = phone ? await atPhone(page, () => audit(page, language, where)) : null;
     // The switch reloads the page's deferred groups (PT-19): the other language is read once they are back as they were.
     const loading = page.locator('[data-region-state="loading"]');

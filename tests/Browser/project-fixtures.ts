@@ -8,11 +8,11 @@ import { numberingCompany, ownerSignedIn } from './numbering-fixtures';
 
 export type ProjectRun = { company: string; code: string; client: string; unit: string; contact: string; goods: string; service: string; project: string | null; number: string | null };
 
-export async function projectRun(page: Page, run: string, options: { numbered?: boolean; project?: boolean; draft?: boolean; locale?: 'id' | 'en' } = {}): Promise<ProjectRun> {
+export async function projectRun(page: Page, run: string, options: { numbered?: boolean; project?: boolean; draft?: boolean; locale?: 'id' | 'en'; overdue?: boolean; blocked?: boolean } = {}): Promise<ProjectRun> {
     await ownerSignedIn(page, run, options.locale ?? 'id');
     const company = await numberingCompany(page, `${String(new Date().getFullYear())}-01-01`);
     const response = await page.request.post('/__fixtures/proyek', {
-        data: { company, numbered: options.numbered ?? true, project: options.project ?? false, draft: options.draft ?? false },
+        data: { company, numbered: options.numbered ?? true, project: options.project ?? false, draft: options.draft ?? false, overdue: options.overdue ?? false, blocked: options.blocked ?? false },
     });
 
     if (!response.ok()) {

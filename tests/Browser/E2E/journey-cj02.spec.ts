@@ -47,12 +47,14 @@ test('CJ-02: a project bought from two suppliers on one demand, one purchase wit
         await chooseSupplier(page, supplier);
         await row.getByRole('textbox', { name: 'Jumlah' }).fill(quantity);
         await row.getByRole('textbox', { name: 'Harga' }).fill('90000');
+        // DIR-079 CA-09 (TASK-065 criterion 7): no business number before the save; the PURCHASE scheme's number at the save.
+        await expect(content).not.toContainText('UJI/BELI/');
         await page.getByRole('button', { name: 'Simpan Pembelian' }).click();
         await page.waitForURL(UUID);
 
         const id = new URL(page.url()).pathname.split('/').pop() ?? '';
         await expect(page.getByText('Belum ada uang keluar dan belum ada barang masuk.')).toBeVisible();
-        await expect(content).toContainText('UJI/BELI/');
+        await expect(content).toContainText(new RegExp(`UJI/BELI/${year}/\\d{4}`));
         await expect(content).toContainText(supplier);
         await expect(content).toContainText('Belum ada penerimaan.');
         await expect(page.locator('[data-line="1"]')).toContainText('Untuk item proyek no. 1');

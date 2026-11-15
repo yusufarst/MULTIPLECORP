@@ -2,6 +2,7 @@
 
 namespace Tests\Support\Fixtures;
 
+use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Models\Project;
@@ -9,6 +10,7 @@ use App\Support\BusinessDate;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Tests\Support\Authorization;
 use Tests\Support\Numbering;
 use Tests\Support\Projects;
@@ -66,6 +68,16 @@ final class ProjectFixture
             }
 
             $project = Project::query()->where('company_id', $company->id)->latest('id')->first();
+        }
+
+        // TASK-065's CD-06 screens (DIR-079): the project's one governing deadline three days past, so QS-23 lists it for the
+        // Owner (CA-10), and an open correction case on it, a blocker of its journey shown on its PG-010 row (CA-06).
+        if ($project !== null && $request->boolean('overdue')) {
+            DB::table('projects')->where('id', $project->id)->update(['deadline' => CarbonImmutable::parse(BusinessDate::today())->subDays(3)->toDateString()]);
+        }
+
+        if ($project !== null && $request->boolean('blocked')) {
+            CorrectionCase::factory()->create(['company_id' => $company->id, 'project_id' => $project->id, 'case_kind' => 'SALES_RETURN', 'reason' => 'Klien mengembalikan 1 unit rusak.']);
         }
 
         return response()->json([
