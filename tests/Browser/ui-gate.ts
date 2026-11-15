@@ -118,8 +118,10 @@ export async function gate(page: Page, where: string): Promise<void> {
     }
 
     let targets: { name: string; width: number; height: number }[] | null = null;
+    // The coarse pointer is read once per page, at its first visited place; a later place of the same page points to it.
+    const coarse = engine === 'chromium' && !touched.has(`${id} coarse`);
 
-    if (engine === 'chromium' && !touched.has(`${id} coarse`)) {
+    if (coarse) {
         touched.add(`${id} coarse`);
         targets = await attempt('coarse targets', () => coarseTargets(page));
     }
@@ -157,7 +159,7 @@ export async function gate(page: Page, where: string): Promise<void> {
             result: scrolls.length > 0 || clipped.length > 0 ? 'FAIL' : unmeasured.length > 0 || unspaced.length > 0 ? 'NOT TESTED' : 'PASS',
             detail: `${widths.map((reading) => String(reading.width)).join(', ')} px measured on ${engine}${engine === 'webkit' ? ' — the other band edges NOT TESTED (APPR-038)' : ''}${unmeasured.length > 0 ? `; ${unmeasured.join(', ')} px not measured (errors)` : ''}${unspaced.length > 0 ? `; 1.4.12's spacing not applied at ${unspaced.join(', ')} px, the copy unjudged there` : ''}; ${String(scrolls.length)} widths with horizontal scrolling, ${String(clipped.length)} with mandated copy cut under 1.4.12's text spacing`,
         },
-        { item: 'Adaptive', result: small === null ? 'NOT TESTED' : small.length === 0 ? 'PASS' : 'FAIL', detail: small === null ? (engine === 'webkit' ? 'the coarse pointer measured on Chromium' : untested('coarse pointer')) : `${String(small.length)} controls below 44 px under a coarse pointer at 390 px` },
+        { item: 'Adaptive', result: small === null ? 'NOT TESTED' : small.length === 0 ? 'PASS' : 'FAIL', detail: small === null ? (engine === 'webkit' ? 'the coarse pointer measured on Chromium' : coarse ? untested('coarse pointer') : `the coarse pointer measured at ${id}'s first visited place`) :`${String(small.length)} controls below 44 px under a coarse pointer at 390 px` },
         states === null
             ? { item: 'Loading state', result: 'NOT TESTED', detail: untested('state') }
             : { item: 'Loading state', result: states.loading > 0 ? 'FAIL' : 'PASS', detail: states.loading > 0 ? `${String(states.loading)} regions still loading when the visit had settled` : 'no region left loading once the visit settled; each region\'s own spinner is its module\'s TL-08/TL-09 test' },
@@ -286,7 +288,8 @@ function measureTokens(declared: Record<string, string>): Tokens {
         size: new Set(tokens.filter((name) => /^--(text|m)-/.test(name) && !/line-height|letter-spacing|weight|tracking/.test(name)).map((name) => px(resolved('font-size', name))).filter((value): value is number => value !== null && value !== 1.234)),
         weight: new Set(tokens.filter((name) => name.startsWith('--font-weight-') || /weight/.test(name)).map((name) => resolved('font-weight', name)).filter((value) => value !== '')),
         radius: new Set(tokens.filter((name) => name.startsWith('--radius')).map((name) => px(resolved('border-top-left-radius', name))).filter((value): value is number => value !== null)),
-        shadow: new Set(tokens.map((name) => layers(resolved('box-shadow', name)).join(', ')).filter((value) => value !== '')),
+        // A token's elevation without its ring layers, as an element's is read below — `--shadow-modal` carries a 1 px ring.
+        shadow: new Set(tokens.map((name) => layers(resolved('box-shadow', name)).filter((layer) => !/\s0px 0px 0px [\d.]+px( inset)?$/.test(layer)).join(', ')).filter((value) => value !== '')),
         // Every length of the token file, the phone's `--m-` set included: a card's `p-m-card` is `--m-card-pad`.
         spacing: new Set(tokens.filter((name) => !/radius|text|font|weight|leading|tracking|line-height|letter-spacing|dur|ease|z-|shadow|color|brand/.test(name)).map((name) => px(resolved('padding-top', name))).filter((value): value is number => value !== null)),
         motion: new Set(tokens.filter((name) => /dur/.test(name)).map((name) => resolved('transition-duration', name)).filter((value) => value !== '')),

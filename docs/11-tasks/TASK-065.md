@@ -8,7 +8,7 @@ Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-
 
 Amendment: on 2026-11-15 the Owner approved, under [APPR-038](../00-governance/DECISION_LOG.md#dir-123-and-appr-038--task-065-narrowed-for-the-initial-release-2026-11-15) (DIR-123; TASK_PLAN Change 27), this Task's narrowing: for the initial release, the responsive matrix runs at all ten band edges on Chromium and at 390, 768 and 1,280 CSS px on WebKit, the other WebKit widths NOT TESTED, never PASS; every measured check stays — the tokens, one primary action and no duplicate, the states, the touch targets, the mandated copy, the composer and preview, the CD-06 screens —; the gate records come from one visit per page, reusing the localization audit's page visits; SLOP-01–SLOP-45 are reviewed on the built screens with screenshots as their evidence; and each finding is recorded with its evidence for the Owner's decision rather than opening a defect Task, the plan being frozen at 95. The lines below read as amended.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -242,32 +242,33 @@ DEFINITION_OF_DONE's UI/UX dimension asks every UI Task to answer AICWDF §27's 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint on the suite's code and Pint on its fixtures in this head's CI (TL-01)
+- [x] Typecheck: TypeScript over the browser suite and PHPStan over the application, unchanged, in this head's CI (TL-02)
+- [x] Relevant automated tests: the gate (`tests/Browser/ui-gate.ts`) on every page's localization visit, `tests/Browser/Responsive/composer-tolerance.spec.ts` with `tests/Support/Documents/layout.py`, `tests/Browser/E2E/cd06-screens.spec.ts` and CJ-02's and CJ-07's added checks — the [gate record](../08-testing/evidence/TASK-065_UI_GATE_RECORD.md) §§2–4
+- [x] Authorization: N/A — the pages render as the personas each visit signs in; the denial suites are TASK-069's
+- [x] Route integrity: N/A — no route added or changed; one fixture route of the local environment, `__fixtures/dokumen/tata-letak`; the crawl is TASK-069's
+- [x] Interaction behavior: the primary-action and duplicate-action counts on every page (§3 of the gate record)
+- [x] Browser E2E if required: the e2e layer PASS in this head's CI with CD-06's screens
+- [x] Responsive/adaptive if required: the ten band edges on Chromium and three on WebKit on every page (TL-11; APPR-038), a coarse pointer's targets at 390 px — FAIL on 32 pages recorded as GF-02 and GF-03
+- [x] Visual breathing room/density if UI: spacing measured PASS on every record; density reviewed (§6 of the gate record)
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: synthetic data only; the layout fixture lays out a paper in the renderer's engine and writes nothing; no secret or credential in the evidence (DOD-21)
+- [x] Database safety review: no schema change, no migration; the fixtures write synthetic rows of the local stack only
+- [x] Final diff review: Codex's review of pull request #90 (`dd4c44a`), its two P2 findings fixed in `9c29187` and answered (DIR-096's bounded loop)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): `TL-09 E2E: PASS`, `TL-10 Localization: PASS` with the gate's records, `TL-11 Responsive: PASS` with the composer's comparison, `TL-12 Accessibility: PASS` — Evidence: `8bb6ada`, CI ubuntu-24.04 run 43685052334, `sh scripts/verify.sh browser-<layer>`; every other job of that run PASS, TL-15 included; this record's head proven by its own fresh CI before the merge (DIR-103)
+- Build result: TL-13 PASS in the same run
+- Route evidence: N/A — no application route added or changed
+- Interaction evidence: the primary-action and duplicate-action counts per page in the gate records; no INT- contract built
+- Browser evidence: `E2E: PASS — Evidence: 8bb6ada, run 43685052334` — CD-06's screens and the gate on the localization visits ([gate record](../08-testing/evidence/TASK-065_UI_GATE_RECORD.md))
+- Localization evidence: N/A — no user-facing copy; the layout in Indonesian on every page at every band edge
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the project's Playwright and the image's WeasyPrint, nothing installed or paid
+- Files changed: `tests/Browser/ui-gate.ts` new and `tests/Browser/localization-audit.ts`; `tests/Browser/Responsive/composer-tolerance.spec.ts` and `tests/Browser/E2E/cd06-screens.spec.ts` new; `tests/Browser/E2E/journey-cj02.spec.ts`, `journey-cj07.spec.ts` and `tests/Browser/project-fixtures.ts`; `tests/Support/Documents/layout.py` new, `tests/Support/Fixtures/DocumentFixture.php`, `ProjectFixture.php` and `routes/fixtures.php`; the gate record `docs/08-testing/evidence/TASK-065_UI_GATE_RECORD.md` new; APPR-038's amendments of this file and TEST_STRATEGY §9, TASK_PLAN and DECISION_LOG with the source transcript; CURRENT_HANDOFF
+- Commit SHA: pull request #90's squash commit on `main`, the Owner's identity, no AI attribution
+- Notes: criteria 1–9 met as amended, each with its result in the [gate record](../08-testing/evidence/TASK-065_UI_GATE_RECORD.md). **1** — every one of the 65 pages has its record, 85 per engine for the pages visited in several states, the twenty-one items each PASS, FAIL, a count, N/A with its reason, NOT TESTED with its reason or ELSEWHERE for TASK-066's and TASK-067's items. **2** — the computed tokens equal the token file's on every record but three dialogs whose `--shadow-modal` the reader read without its ring, corrected in this record's commit (§2). **3** — one primary action per region on every record; one duplicated action, PG-056's (GF-04). **4** — all ten band edges on Chromium and three on WebKit on every page, no horizontal page scroll outside a table frame; a coarse pointer's targets below 44 px on 32 pages (GF-02, GF-03). **5** — no mandated copy cut under 1.4.12 at any width. **6** — the composer's checks PASS but its tolerance: DOC-09 FAIL by up to 12.67 mm, its two causes named (GF-01), the other layouts NOT TESTED. **7** — CA-06–CA-10 and CB-03 PASS on the application; CB-01 and CB-02 NOT RUN, CJ-16 staging only until TASK-081. **8** — SLOP-01–SLOP-45 reviewed on the screenshots of every page, the dashboard's UXS-43 audit CJ-22's: 35 PASS, 6 FINDING, 3 REVIEW, 1 N/A. **9** — fourteen findings GF-01–GF-14 with page, item, evidence and proposed minimum fix for the Owner's decision; no token, pattern, rule or page changed
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
