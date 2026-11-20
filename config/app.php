@@ -57,6 +57,9 @@ return [
     // SECURITY WS-11 (TASK-072): the proxy in front of MULTIPLECORP — its address or network, comma-separated — and the
     // domains the Host header may name; none configured trusts no proxy and the application URL's host alone.
     'trusted_proxies' => array_values(array_filter(array_map('trim', explode(',', (string) env('APP_TRUSTED_PROXIES', ''))))),
+    // WS-08's first stage on staging: the Content-Security-Policy sent report-only, its reports to ROUTE-278 (TASK-072).
+    'csp_report_only' => (bool) env('CSP_REPORT_ONLY', false),
+
     'trusted_hosts' => array_values(array_filter(array_map('trim', explode(',', (string) env('APP_TRUSTED_HOSTS', ''))))),
 
     /*

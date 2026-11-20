@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
 use App\Support\CorrelationId;
+use App\Support\Database\Timeouts;
 use App\Support\Guards\Families;
 use App\Support\Guards\Reconciler;
 use Illuminate\Console\Command;
@@ -37,7 +38,7 @@ class ReconcileGuards extends Command
                 try {
                     $differences = [...$differences, ...DB::transaction(function () use ($reconciler, $family): array {
                         DB::statement('set transaction isolation level repeatable read read only');
-                        DB::statement("set local statement_timeout = '300s'");
+                        Timeouts::apply(Timeouts::RECONCILIATION);
 
                         return $reconciler->differences(DB::connection(), $family);
                     })];
@@ -60,7 +61,7 @@ class ReconcileGuards extends Command
             try {
                 $differences = [...$differences, ...DB::transaction(function () use ($reconciler, $verification): array {
                     DB::statement('set transaction isolation level repeatable read read only');
-                    DB::statement("set local statement_timeout = '300s'");
+                    Timeouts::apply(Timeouts::RECONCILIATION);
 
                     return $reconciler->violations(DB::connection(), $verification);
                 })];

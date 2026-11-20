@@ -37,7 +37,7 @@ esac
 headers=$(curl -sS -D - -o /dev/null "$url/masuk")
 body404=$(curl -sS "$url/alamat-yang-tidak-ada-$(date +%s)")
 plain=$(curl -sS -o /dev/null -w '%{http_code} %{redirect_url}' "http://$host/masuk")
-health=$(curl -sS -w ' %{http_code}' "$url/up")
+health=$(curl -sS -w ' %{http_code}' "$url/kesehatan")
 google=$(curl -sS -D - -o /dev/null "$url/masuk/google")
 header() { printf '%s\n' "$headers" | grep -i "^$1:" | head -n 1; }
 

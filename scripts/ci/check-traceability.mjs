@@ -14,8 +14,6 @@ import { join, relative, resolve } from 'node:path';
 
 /** The rows held open, each with the reason TASK-069's security record gives and the Task that closes it. */
 export const OPEN = {
-    'INT-277': 'TASK-072\'s health check: registered at /up where ROUTE-277 writes /kesehatan, its 503 answer untested (TASK-069 record F-01)',
-    'INT-278': 'staging only and not built — the CSP report route of TASK-072 (ROUTE-278; TASK-069 record F-01)',
 };
 
 const WIDTH = { SM: 2, H8: 2, DP: 2, W4: 2, OD: 2, TM: 2, M: 2, INT: 3, NAV: 3 };

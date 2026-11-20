@@ -6,6 +6,7 @@ use App\Modules\IAM\Data\Authority;
 use App\Modules\Reporting\Reports\Filters;
 use App\Modules\Reporting\Reports\Report;
 use App\Modules\Reporting\Reports\Reports;
+use App\Support\Database\Timeouts;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Carbon\CarbonImmutable;
@@ -53,6 +54,7 @@ final class RequestExport
         $context = ExportContext::of($report, $viewer, $filters);
         $now = CarbonImmutable::now();
         $id = DB::transaction(function () use ($viewer, $report, $filters, $format, $context, $now): ?string {
+            Timeouts::apply(Timeouts::BOOKKEEPING);
             DB::table('users')->where('id', $viewer->userId)->lockForUpdate()->value('id');
             $running = DB::table('export_requests')->where('requested_by', $viewer->userId)
                 ->where(fn (Builder $open) => $open->where('state', 'PENDING')->orWhere(fn (Builder $live) => $live->where('state', 'RUNNING')->where('claimed_at', '>', $now->subMinutes(ExportSweep::STALE_MINUTES))))

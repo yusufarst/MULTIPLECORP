@@ -135,6 +135,10 @@ result $? "PHP accepts the largest upload a purpose allows"
 user=$(compose exec -T app php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo Illuminate\Support\Facades\DB::scalar("select current_user");' 2>/dev/null || true)
 [ "$user" = check_runtime ]
 result $? "the application connects as the runtime role ($user)"
+# HO-21: the runtime's login defaults to TX-06's 5 s statement timeout and the 15 s idle-in-transaction backstop.
+timeouts=$(compose exec -T app php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo Illuminate\Support\Facades\DB::scalar("show statement_timeout"), " ", Illuminate\Support\Facades\DB::scalar("show idle_in_transaction_session_timeout");' 2>/dev/null || true)
+[ "$timeouts" = '5s 15s' ]
+result $? "the runtime's sessions default to HO-21's 5 s statement and 15 s idle timeouts ($timeouts)"
 # SX-03: every process runs on the framework's caches made from its own environment.
 for service in app worker-1 worker-2 scheduler; do
     expect "$service runs on the cached configuration" compose exec -T "$service" test -f bootstrap/cache/config.php
@@ -171,7 +175,7 @@ refuse "the request log holds no credential token or callback query" sh -c "dock
 compose exec -T app php artisan down --no-interaction > /dev/null
 [ "$(status_of -H "Host: $host" http://web:8080/masuk)" = 503 ]
 result $? "the maintenance mode refuses a page"
-[ "$(status_of -H "Host: $host" http://web:8080/up)" = 200 ]
+[ "$(status_of -H "Host: $host" http://web:8080/kesehatan)" = 200 ]
 result $? "the health check answers through the maintenance mode"
 compose exec -T app php artisan up --no-interaction > /dev/null
 [ "$(status_of -H "Host: $host" http://web:8080/masuk)" = 200 ]

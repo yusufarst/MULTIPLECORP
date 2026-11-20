@@ -69,7 +69,17 @@ SQL
 
 echo "provision-roles: the roles of DATABASE §28 are in place"
 
+# HO-21 (TASK-072; CONCURRENCY_IDEMPOTENCY TX-06 and its backstops): on staging and production the runtime's login
+# defaults to TX-06's 5 s statement timeout, which page reads rely on, and the 15 s idle-in-transaction backstop; every
+# longer class raises its own bounds by SET LOCAL (the command envelope; App\Support\Database\Timeouts). Local and CI
+# keep the server's defaults, so a loaded test runner never trips a production bound; TL-05's deployment check reads
+# them on the stack.
 if [ "${DB_ROLES_FOR_TESTS:-yes}" = no ]; then
+    psql -v ON_ERROR_STOP=1 -q -v runtime_login="$DB_USERNAME" <<'SQL'
+SELECT format('ALTER ROLE %I SET statement_timeout = %L', :'runtime_login', '5s') \gexec
+SELECT format('ALTER ROLE %I SET idle_in_transaction_session_timeout = %L', :'runtime_login', '15s') \gexec
+SQL
+    echo "provision-roles: the runtime login's timeouts of HO-21 are in place"
     exit 0
 fi
 

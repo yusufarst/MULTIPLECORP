@@ -2,7 +2,8 @@
 
 // SECURITY_TEST_MATRIX SM-13 and DP-10 (TASK-069; PERMISSIONS_MATRIX §11 DP-10; CP-04): the application caches no
 // business record. Its cache store holds the limiters' counts — keyed by account and address (AU-05; WS-12; the
-// limiters of the authentication steps, the step-up, search, scanning, uploads and exports) — and the scheduler's
+// limiters of the authentication steps, the step-up, search, scanning, uploads and exports, and on staging the CSP
+// report's count per address, ROUTE-278) — and the scheduler's
 // heartbeats, which name a task and a time and nothing of a company, so no company's data can reach another account
 // through a cache key. A cache added later fails this test until its key-isolation case is written beside it.
 
@@ -25,6 +26,7 @@ function cacheUsers(): array
 
 it('reaches the cache store for the limiters and the heartbeats alone (DP-10; CP-04)', function () {
     expect(cacheUsers())->toBe([
+        'Http/Controllers/RecordCspReport.php',
         'Modules/IAM/Authentication/AuthenticationServiceProvider.php',
         'Modules/IAM/Authentication/LoginThrottle.php',
         'Modules/IAM/Authentication/SecondFactorLimit.php',

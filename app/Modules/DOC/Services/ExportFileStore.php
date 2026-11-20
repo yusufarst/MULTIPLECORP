@@ -6,6 +6,7 @@ use App\Modules\DOC\Contracts\ExportFiles;
 use App\Modules\DOC\Data\Download;
 use App\Modules\DOC\Enums\FilePurpose;
 use App\Modules\DOC\Models\FileObject;
+use App\Support\Database\Timeouts;
 use Closure;
 use Illuminate\Support\Facades\DB;
 use LogicException;
@@ -39,6 +40,7 @@ final class ExportFileStore implements ExportFiles
 
         try {
             $attached = DB::transaction(function () use ($key, $path, $mimeType, $requesterId, $attach): bool {
+                Timeouts::apply(Timeouts::BOOKKEEPING);
                 $file = $this->store->register($key, [
                     'purpose' => FilePurpose::Export->value,
                     'mime_type' => $mimeType,

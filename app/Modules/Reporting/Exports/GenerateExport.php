@@ -90,7 +90,7 @@ final class GenerateExport extends PlatformJob
         File::ensureDirectoryExists($directory, 0700);
 
         try {
-            $path = Snapshot::read(function () use ($report, $viewer, $keys, $format, $directory, $at, $files): ?string {
+            $path = Snapshot::read(job: true, read: function () use ($report, $viewer, $keys, $format, $directory, $at, $files): ?string {
                 // The request's own day, so an export asked before midnight and run after it ages receivables as the page did.
                 $day = is_string($keys['hari'] ?? null) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $keys['hari']) === 1 ? $keys['hari'] : BusinessDate::today();
                 $filters = Filters::of($viewer, $keys, $day);

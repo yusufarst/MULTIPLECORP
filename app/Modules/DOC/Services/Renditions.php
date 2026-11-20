@@ -6,6 +6,7 @@ use App\Modules\DOC\Enums\FilePurpose;
 use App\Modules\DOC\Models\DocumentRendition;
 use App\Support\Command\LockPosition;
 use App\Support\Command\LockSet;
+use App\Support\Database\Timeouts;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +41,7 @@ final class Renditions
     public function claim(int $renditionId): ?DocumentRendition
     {
         return DB::transaction(function (ConnectionInterface $connection) use ($renditionId): ?DocumentRendition {
+            Timeouts::apply(Timeouts::BOOKKEEPING, $connection);
             $attempt = DocumentRendition::query()->find($renditionId);
 
             if ($attempt === null || ! $this->lockDocument($connection, $attempt->document_version_id, [])) {
@@ -90,6 +92,7 @@ final class Renditions
     public function fail(DocumentRendition $attempt, string $summary): void
     {
         DB::transaction(function (ConnectionInterface $connection) use ($attempt, $summary): void {
+            Timeouts::apply(Timeouts::BOOKKEEPING, $connection);
             $this->lockDocument($connection, $attempt->document_version_id, []);
             $failed = DocumentRendition::query()->whereKey($attempt->id)->where('state', 'RENDERING')
                 ->update(['state' => 'FAILED', 'error_summary' => mb_substr($summary, 0, 500), 'updated_at' => CarbonImmutable::now()]);
@@ -145,6 +148,7 @@ final class Renditions
     private function finishStep(DocumentRendition $attempt, string $pdf, string $rendererVersion, int $companyId, string $key, array &$projects): bool
     {
         return DB::transaction(function (ConnectionInterface $connection) use ($attempt, $pdf, $rendererVersion, $companyId, $key, &$projects): bool {
+            Timeouts::apply(Timeouts::BOOKKEEPING, $connection);
             $this->lockDocument($connection, $attempt->document_version_id, $projects);
             $required = $this->projectsOf($attempt->document_version_id);
 

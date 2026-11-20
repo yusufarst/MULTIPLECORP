@@ -146,7 +146,7 @@ services:
       public:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null --header \"Host: $${MULTIPLECORP_HOST}\" http://127.0.0.1:8080/up"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null --header \"Host: $${MULTIPLECORP_HOST}\" http://127.0.0.1:8080/kesehatan"]
       interval: 30s
       timeout: 5s
       retries: 3
