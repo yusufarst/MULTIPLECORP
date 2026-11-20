@@ -1,0 +1,88 @@
+Owner's confirmation received in session during execution, 2026-11-21 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received; the hosting provider's name and its panel's product name replaced by [the hosting provider] and [panel] under INFRASTRUCTURE §9, which keeps them out of this repository. No secret, address, host name, path or account in it.
+
+MULTIPLECORP — FINAL OWNER CONFIRMATION: CLOSE TASK-071 AND RESUME RELEASE EXECUTION
+TASK
+Finalize TASK-071 using the Owner's latest explicit confirmation and all previously collected operator evidence.
+The Owner wants immediate progress toward production, without repeated investigations, unnecessary test cycles, or new Tasks.
+READ
+
+* AGENTS.md and applicable repository instructions
+* TASK-071 and TASK_PLAN
+* INFRASTRUCTURE §1, §8–9
+* RELEASE_PLAN GLC-24
+* OPERATOR_INPUT_REQUEST and CURRENT_HANDOFF
+* Existing DIR-129/DIR-130 decisions
+* Local reconciliation branch `task/TASK-071-final-reconciliation`, including commits `cf77de9` and `3a848d9`
+
+Reuse existing evidence. Do not repeat completed inspections.
+GOAL
+Resolve OPI-29, close TASK-071 when its actual acceptance criteria are satisfied, and immediately resume the release dependency chain.
+DO
+1. Record the Owner's final AI-access confirmation.
+The Owner explicitly confirms:
+
+* No [the hosting provider] Connector/MCP integration has ever been installed or connected to Claude Code, Cursor, or another external AI application.
+* Only the built-in [the hosting provider] [panel] Agent was previously used, for reading VPS status.
+* The [the hosting provider] API panel shows zero API tokens.
+* The provider reported no detected persistent administrative access created by its Agent.
+* No external AI integration is authorized to administer the VPS or access production data.
+
+Distinguish Owner attestation, provider statements, and verified technical evidence. Do not claim that the built-in Agent is disabled.
+Keep the existing INF-01, INF-08 and GLC-24 restrictions. If the built-in Agent's remaining reach requires separate Owner/client acceptance before production data, retain that requirement explicitly. Do not invent client approval.
+2. Finalize the OPI-29 anti-DDoS record.
+The provider confirms that VPS network-level anti-DDoS protection operates automatically without a manual ON/OFF switch.
+The Events page reports no detected attacks.
+Record the feature as provider-confirmed automatic protection. Do not claim that a live mitigation test occurred or rely on it as the application's sole security control.
+3. Preserve previously confirmed operator evidence.
+Do not repeat OPI-02, OPI-03, OPI-05, OPI-21, OPI-22, OPI-26, OPI-27 or OPI-30 inspections.
+Preserve the approved provisional resource allocations and operating windows, the zero-cost email notification decision, the restricted backup directory and the existing provider inventory.
+Do not present provisional capacity limits as measured application usage.
+4. Finish the existing reconciliation.
+
+* Inspect the current local reconciliation branch and preserve its completed work.
+* Reconcile against the latest `main`.
+* Avoid duplicate decisions, records or documentation edits.
+* Apply the smallest necessary changes.
+* Preserve the frozen total of 95 Tasks.
+* Keep private host details, account identifiers, credentials, IP addresses and backup paths out of Git.
+
+5. Evaluate TASK-071 acceptance criteria once.
+If all criteria are genuinely met, mark TASK-071 DONE, update the canonical Task plan and handoff, then complete the existing authorized PR/CI/merge workflow.
+If a criterion still requires measured second-application usage, verified Agent restriction, or separate client acceptance, report the exact unmet requirement. Do not manufacture evidence or bypass it.
+6. Resume actual implementation.
+Once TASK-071 is legitimately DONE:
+
+* Immediately continue TASK-072 from the latest merged `main`.
+* Reuse its existing implementation, tests and release documentation.
+* Do not reimplement completed functionality.
+* Continue through the authorized deployment dependency chain toward staging, backup/restore, UAT and production readiness.
+* Keep production deployment and real-data use under explicit Owner authorization.
+
+Do not start new investigations or planning loops unless a concrete material blocker requires them.
+VERIFY
+
+* Run mandatory repository checks once on the final relevant head.
+* Fix material failures with a targeted correction.
+* Avoid redundant full local test suites and unnecessary CI restarts.
+* Preserve mandatory security, data-integrity and release gates.
+* Merge only with the required valid evidence.
+
+STOP IF
+
+* A genuinely mandatory operator or client approval remains missing.
+* An operation requires unauthorized VPS access.
+* The second application's configuration or data would be affected.
+* Production secrets or real data could be exposed.
+* A required production safety gate cannot be satisfied.
+
+Do not turn non-blocking findings into new Tasks or artificial holds.
+UPDATE
+Report concisely:
+
+1. TASK-071: DONE or exact remaining blocker.
+2. Final OPI-29 evidence classification.
+3. PR/CI/merge status.
+4. Updated DONE/95 count.
+5. Next executable Task.
+
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.

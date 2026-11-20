@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 95
 
-DONE: 79
+DONE: 80
 READY: 0
 IN_PROGRESS: 1
-BLOCKED: 3
+BLOCKED: 2
 VERIFYING: 0
 TODO: 12
 SUPERSEDED: 0
 
 Progress:
-79 / 95
-Percentage: 83.2 %
+80 / 95
+Percentage: 84.2 %
 
-CURRENT TASK: none in progress — TASK-070 — Full release regression and the device UAT's preparation DONE on its branch `task/TASK-070-release-regression`, its record in its final commit (DIR-127), its pull request squash-merged by the executor once that head's CI passes; TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
-NEXT READY TASK: none READY: TASK-072's DONE, TASK-074–TASK-087 and the operator's Tasks wait on TASK-071, which waits on OPI-29 — anti-DDoS's enabled state and the operator's review of AI access (DIR-130; OPERATOR_INPUT_REQUEST)
+CURRENT TASK: TASK-072 — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards IN_PROGRESS, its two parts merged (APPR-033); TASK-071 — The operator's inputs before staging DONE on the Owner's operator record (DIR-129, DIR-130), its record in its final commit, its pull request squash-merged by the executor once that head's CI passes
+NEXT READY TASK: none READY: TASK-072 IN_PROGRESS — TASK-074, TASK-075, TASK-077 and TASK-078 wait on its DONE, and the later Tasks on them
 LAST TASK PLAN CHANGE: Change 29 of 2026-11-15, recorded 2026-11-20 — TASK-069 proved through the existing suites with its gaps filled, small defects fixed minimally inside it, the Owner's APPR-040; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -119,7 +119,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-068](TASK-068.md) — Performance targets and query budgets in CI
 - [x] [TASK-069](TASK-069.md) — Security test matrix, route integrity and zero dead interactions
 - [x] [TASK-070](TASK-070.md) — Full release regression and the device UAT's preparation
-- [ ] [TASK-071](TASK-071.md) — The operator's inputs before staging
+- [x] [TASK-071](TASK-071.md) — The operator's inputs before staging
 - [ ] [TASK-072](TASK-072.md) — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
 - [x] [TASK-073](TASK-073.md) — Release process — branch protection, release tags, the release record and integrity report
 - [ ] [TASK-074](TASK-074.md) — Backup tooling, the off-server copy and the drill procedures
@@ -219,7 +219,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
 | [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | DONE | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
 | [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | DONE | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
-| [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-29 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
+| [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | DONE | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | IN_PROGRESS | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
 | [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | DONE | 003, 004 | 084 | NO | AGENT | NONE | NO |
 | [TASK-074](TASK-074.md) | Backup tooling, the off-server copy and the drill procedures | Release · Release | HIGH | TODO | 013, 018, 021, 022, 029, 072 | 075, 076, 079, 081, 084 | NO | AGENT | NONE | NO |
