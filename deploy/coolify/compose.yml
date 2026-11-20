@@ -29,6 +29,8 @@ x-app: &app
     APP_KEY: ${APP_KEY:?set APP_KEY}
     APP_TRUSTED_PROXIES: ${APP_TRUSTED_PROXIES:?set APP_TRUSTED_PROXIES}
     APP_TRUSTED_HOSTS: ${APP_TRUSTED_HOSTS:?set APP_TRUSTED_HOSTS}
+    # WS-08's report-only stage on staging (TASK-072): `true` there first, `false` on production.
+    CSP_REPORT_ONLY: ${CSP_REPORT_ONLY:-false}
     # The maintenance flag in the shared `storage` volume, read by every web process (H9-14).
     APP_MAINTENANCE_DRIVER: file
     LOG_CHANNEL: stack

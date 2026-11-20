@@ -66,6 +66,7 @@ APP_TRUSTED_PROXIES=192.0.2.1
 APP_TRUSTED_HOSTS=$host
 MULTIPLECORP_HOST=$host
 MULTIPLECORP_HSTS=max-age=300
+CSP_REPORT_ONLY=true
 DB_DATABASE=multiplecorp
 DB_SUPERUSER=check_superuser
 DB_SUPERUSER_PASSWORD=$(secret)
@@ -135,6 +136,11 @@ result $? "PHP accepts the largest upload a purpose allows"
 user=$(compose exec -T app php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo Illuminate\Support\Facades\DB::scalar("select current_user");' 2>/dev/null || true)
 [ "$user" = check_runtime ]
 result $? "the application connects as the runtime role ($user)"
+# WS-08's staging stage: CSP_REPORT_ONLY reaches every process's cached configuration (on production it changes no header).
+for service in app worker-1 worker-2 scheduler; do
+    [ "$(compose exec -T "$service" php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(IlluminateContractsConsoleKernel::class)->bootstrap(); echo var_export(config("app.csp_report_only"), true);' 2>/dev/null | tr -d '')" = true ]
+    result $? "$service reads CSP_REPORT_ONLY from its environment"
+done
 # HO-21: the runtime's login defaults to TX-06's 5 s statement timeout and the 15 s idle-in-transaction backstop.
 timeouts=$(compose exec -T app php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo Illuminate\Support\Facades\DB::scalar("show statement_timeout"), " ", Illuminate\Support\Facades\DB::scalar("show idle_in_transaction_session_timeout");' 2>/dev/null || true)
 [ "$timeouts" = '5s 15s' ]
