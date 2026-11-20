@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on OPI-02, OPI-27, OPI-29
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -239,32 +239,32 @@ In PC-4 none of these inputs was available: the client had not given the operato
 
 **TEST CHECKLIST:**
 
-- [ ] Lint — N/A: no code in this Task
-- [ ] Typecheck — N/A: no code in this Task
-- [ ] Relevant automated tests — N/A: no code; the operator's record of each input — OPI-02, OPI-03, OPI-05, OPI-21's staging part, OPI-22, OPI-26, OPI-27, OPI-29, OPI-30 — stands in their place
-- [ ] Authorization — the client's grant recorded by role (OPI-26); no access given to an agent (INF-01)
-- [ ] Route integrity — N/A: no route
-- [ ] Interaction behavior — N/A: no interaction
-- [ ] Browser E2E if required — N/A: no page
-- [ ] Responsive/adaptive if required — N/A: no page
-- [ ] Visual breathing room/density if UI — N/A: no page
-- [ ] Production build — N/A: no build
-- [ ] Security checks if required — the secret-like scan of the changed rows passed (SM-15); OPI-30 and the channel's token kept outside the repository
-- [ ] Database safety review — no database read or changed; the host and the panel read only
-- [ ] Final diff review — only the input rows of INFRASTRUCTURE §9, BACKUP_RECOVERY §7 and RELEASE_PLAN §9 changed, each a fact by role or figure
+- [x] Lint — N/A: no code in this Task
+- [x] Typecheck — N/A: no code in this Task
+- [x] Relevant automated tests — N/A: no code; the operator's record of each input — OPI-02, OPI-03, OPI-05, OPI-21's staging part, OPI-22, OPI-26, OPI-27, OPI-29, OPI-30 — stands in their place
+- [x] Authorization — the client's grant recorded by role (OPI-26); no access given to an agent (INF-01)
+- [x] Route integrity — N/A: no route
+- [x] Interaction behavior — N/A: no interaction
+- [x] Browser E2E if required — N/A: no page
+- [x] Responsive/adaptive if required — N/A: no page
+- [x] Visual breathing room/density if UI — N/A: no page
+- [x] Production build — N/A: no build
+- [x] Security checks if required — the secret-like scan of the changed rows passed (SM-15); OPI-30 and the channel's token kept outside the repository
+- [x] Database safety review — no database read or changed; the host and the panel read only
+- [x] Final diff review — only the input rows of INFRASTRUCTURE §9, BACKUP_RECOVERY §7 and RELEASE_PLAN §9 changed, each a fact by role or figure — with OPI-05's COST_POLICY §4C.4 record (criterion 6) and the governance, plan and handoff records
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: the operator's record of each input — the input, where it was read, by role, and the fact recorded —, kept outside the repository without secrets and summarized here in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form; only recorded evidence passes (DIR-083 OE-14)
+- Test outputs: the operator's record of each input, in TEST_STRATEGY §16's form — the input, where it was read, by role, and the fact recorded —: OPI-26 VERIFIED, the client's grant to the Owner as the operator, the panel and the browser console (2026-11-13, DIR-115); OPI-03 VERIFIED, the host's services and the shared Nginx proxy read on the host (DIR-115); OPI-02 VERIFIED, the operating system, CPU, memory and disk measured on the host and the monthly bandwidth reporting read on the panel (DIR-115; [DIR-130](../00-governance/DECISION_LOG.md#dir-130--the-owners-final-task-071-reconciliation-2026-11-21)); OPI-21's staging part, U₀ and the free space measured (DIR-115; DIR-129); OPI-27, no application deployed at the measurement, with the Owner's provisional planning ceilings and windows (DIR-130); OPI-29, each provider feature from the panel, the provider's statements and the Owner's attestation (DIR-130); OPI-30 kept in the operator's private record and OPI-22 recorded by role, its path kept (DIR-129); OPI-05 approved with its COST_POLICY §4C.4 record (DIR-129). The secret-like scan TL-14 (SM-15) ran in the Verify job of this record's own head, its run cited in the squash commit's message; only recorded evidence passes (DIR-083 OE-14)
 - Build result: N/A — no build in this Task
 - Route evidence: N/A — no route added or changed
 - Interaction evidence: N/A — no INT- contract in this Task
 - Browser evidence: N/A — no journey in this Task
 - Localization evidence: N/A — no page in this Task
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20); OPI-05's COST_POLICY §4C.4 record
-- Files changed: the input rows of INFRASTRUCTURE §9 and BACKUP_RECOVERY §7, and RELEASE_PLAN §9's table that restates them — nothing else
-- Commit SHA: the commit that records them, under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); an input not available named as owed, never as a PASS; the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3), made on the operator's record and never on an agent's claim (TASK_PLAN §2)
+- Files changed: the input rows of INFRASTRUCTURE §9 and BACKUP_RECOVERY §7 and RELEASE_PLAN §9's table that restates them; COST_POLICY's inventory row and §4C.4 record (OPI-05, criterion 6); the governance records DIR-129 and DIR-130 with their sources; OPERATOR_INPUT_REQUEST's records; this file, TASK-075's STATUS line, TASK_PLAN and CURRENT_HANDOFF
+- Commit SHA: pull request #94's squash commit `4ce17b9` and this record's squash commit, under the Owner's identity, with no AI attribution
+- Notes: each non-applicable item with its reason (DOD-03). Recorded by the executor on the Owner's record as the operator and its directives (DIR-121, DIR-129, DIR-130), never on an agent's claim; no agent accessed the VPS, the panel, the DNS or the second application. Owed elsewhere, never a PASS here: GLC-24 — the provider backup's and the built-in AI agent's reach accepted by the Owner with the client, or turned off, before production data (TASK-078, TASK-084), the agent not recorded as disabled —; OPI-05's delivery test (TASK-080, TASK-081); OPI-27's actual durations and overlap, and K measured for GLC-05 (TASK-079, TASK-087); OPI-23's final approval (GLC-22); OPI-28's second factor, OPI-32's destination and DEP-05 (TASK-084, TASK-081); an independent SSH key login and root-access hardening, separate security work (DIR-115). The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

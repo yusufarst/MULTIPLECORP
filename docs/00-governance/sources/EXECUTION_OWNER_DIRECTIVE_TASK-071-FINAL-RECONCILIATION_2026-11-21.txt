@@ -1,0 +1,32 @@
+Owner's directive received in session during execution, 2026-11-21 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received; the hosting provider's name replaced by [the hosting provider] under INFRASTRUCTURE §9, which keeps it out of this repository. No secret, address, host name, path or account in it. The screenshots it refers to are the Owner's, held outside the repository; their content is recorded here as the Owner states it.
+
+MULTIPLECORP — FINAL TASK-071 OPERATOR INPUT RECONCILIATION
+TASK
+Minimize remaining TASK-071 blockers using existing Owner evidence. Avoid repeated operator inspections and unnecessary CI cycles.
+READ
+TASK-071, INFRASTRUCTURE §9, BACKUP_RECOVERY §7, OPERATOR_INPUT_REQUEST, DIR-129, and the merged PR #94.
+GOAL
+Close every operator input already supported by evidence and isolate only genuinely missing decisions so release execution can resume.
+DO
+
+1. OPI-02: Reuse the Owner's earlier [the hosting provider] screenshot showing bandwidth usage against a 16 TB allowance, labeled "Bulan ini". Record the observed monthly usage-reporting period without inventing additional billing terms. Do not request the same screenshot again.
+2. OPI-29: Reconcile the Owner's provider screenshots:
+   * Weekly automatic backup: ACTIVE.
+   * Provider firewall: zero rules configured.
+   * Malware scanner: NOT INSTALLED.
+   * Anti-DDoS: no detected events; distinguish this from the protection's enabled state.
+   * [the hosting provider] Agent: previously used to read VPS status; do not falsely classify AI/automation as OFF.
+   * Record any unresolved capability or access-scope question accurately under INF-08/GLC-24.
+3. OPI-27: Reuse evidence showing no deployed application workload at the previous measurement. Do not mistake current zero utilization for a future capacity reservation. Identify precisely which resource allocations and non-overlapping operational windows the Owner must still establish for the second application.
+4. Preserve all verified OPI-05, OPI-22, OPI-26, OPI-03 and OPI-30 records. Never request them again unless concrete evidence is invalidated.
+5. Do not alter the VPS, firewall, DNS, credentials, Docker, or the second application.
+6. Do not generate new Tasks or change the frozen Task count of 95.
+7. Avoid another documentation-only PR or CI cycle while mandatory operator evidence remains missing. Consolidate the final authorized reconciliation into one change when ready.
+
+VERIFY
+Classify each input as VERIFIED, PARTIAL or PENDING, supported by actual evidence. Never turn an unknown into PASS.
+STOP IF
+OPI-27's resource reservations or maintenance/deployment/backup windows remain unapproved, or the security scope of [the hosting provider] Agent requires Owner acceptance.
+UPDATE
+Report only the remaining human decisions, their recommended safe defaults if applicable, and which release Tasks become READY afterward.
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.
