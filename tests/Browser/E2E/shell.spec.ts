@@ -5,6 +5,7 @@ import { expect, type Page, test } from '@playwright/test';
 // rail, the skip link and the *Pintasan* help, the phone's bottom bar and *Lainnya* —; the search type-ahead with
 // the term only in the request body; and the re-authentication in place and the step-up against a stub of the
 // sign-in, the unsent input kept and the pending `command_id` replayed rather than run twice.
+// TASK-069 traceability: INT-011 — the step-up asked with a status, never a redirect, and the same command sent after the password (IP-10).
 
 const VISIT = 15_000;
 let runs = 0;

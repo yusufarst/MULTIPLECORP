@@ -7,6 +7,7 @@ import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
 // SKU and base unit; an alternate unit as an exact multiple; an internal barcode from the sequence and its label printed
 // by the browser, writing nothing; a manufacturer code of another product refused at its field; the serial policy
 // switched while no stock is on hand; a purchase default changed forward with its history; an image attached.
+// TASK-069 traceability: NAV-056 — PG-056, a product created and saved to its record.
 
 const NAME = /^Nama\W*\(wajib\)/;
 

@@ -8,7 +8,7 @@ Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-
 
 Amendment: on 2026-11-15 the Owner approved, under [APPR-040](../00-governance/DECISION_LOG.md#dir-126-and-appr-040--task-069-proved-through-the-existing-suites-its-gaps-filled-2026-11-15) (DIR-126; TASK_PLAN Change 29), this Task's approach for the initial release: the security matrix is proved through the existing suites with a traceability register — each SM, H8, W4, TM, DP and OD row and each race case mapped to the passing test that proves it, a row without one written here (criterion 1) —, and what does not exist yet is built: a crawl of every registered route, a check that every interaction and navigation contract has its test and every route its contract, AICWDF §25's nine counts, SM-05's reconciliation after the authorization and concurrency suites, the missing race and SM-02 cases, and the staging-only cases as scripts recorded NOT RUN until the operator's evidence (criterion 11); the counts follow the current registers — 220 routes and 176 interaction contracts (criteria 6 and 7) —; small defects are fixed minimally inside this Task as APPR-039 did for TASK-066, every other defect recorded with its evidence for the Owner's decision (criterion 12); no control, case expectation or accepted residual weakened. The lines below read as amended.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -256,32 +256,33 @@ Company isolation and default-deny on the server are invariant 2 of EXECUTION_CO
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint on the suites' code and the one application change, in this head's CI (TL-01)
+- [x] Typecheck: PHPStan over the application with `bootstrap/app.php`'s change, TypeScript over the browser suite, in this head's CI (TL-02)
+- [x] Relevant automated tests: the traceability check over every register; `RouteContractsTest`, `RouteCrawlTest`, `RouteDeclarationsTest` (TL-07); `RouteDenialsTest` and `AuthorityReconciliationTest` (TL-06); SM-05's reconciliation after every Authorization and Integration test; `OpeningCorrectionRoutesTest`, the M-44 cases, the DP-11 case and `CacheUseTest` — the [security record](../08-testing/evidence/TASK-069_SECURITY_RECORD.md)
+- [x] Authorization: TL-06 — every capability route refused to an Admin without its capability and admitted with it (SM-04), the existing suites' SM-01, SM-04 and SM-25 cases, the reconciliation after each
+- [x] Route integrity: TL-07 — SM-02's audit, the contract register one to one, the declarations' behaviour and the crawl of every registered route
+- [x] Interaction behavior: TL-08 — 174 of the 176 INT- contracts and the 65 NAV- contracts each with its passing test, the two others TASK-072's (F-01)
+- [x] Browser E2E if required: the journeys and the specifications naming their contracts in the e2e layer of this head's CI; PG-005's "Kembali" added
+- [x] Responsive/adaptive if required: N/A — no page in this Task
+- [x] Visual breathing room/density if UI: N/A — no page in this Task
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: TL-14's gates with their self-tests; synthetic data only, no secret in a fixture or in the evidence (DOD-21)
+- [x] Database safety review: no schema change, no migration; the suites' writes inside their tests' transactions
+- [x] Final diff review: the pull request's Codex review (DIR-096), its findings and their disposition in the squash commit's message
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): this head's CI run, every check by name — `TL-06 Authorization`, `TL-07 Route integrity`, `TL-08 Interaction`, `TL-08 Contract and security traceability (TASK-069)`, `TL-05 Integration`, `TL-04 Feature`, `TL-03 Architecture (SM-03)`, TL-14's gates and the browser layers —, the run cited in the squash commit's message (DIR-127)
+- Build result: TL-13 PASS in the same run
+- Route evidence: no route added or changed; every registered route audited, held to its contract and crawled — `storage/logs/verify/route-crawl.json` in the run's `verify-evidence` artifact
+- Interaction evidence: the traceability check's register in the same artifact; `OpeningCorrectionRoutesTest` for INT-213 and INT-214
+- Browser evidence: `E2E: PASS` in the same run, `access-denied.spec.ts`'s "Kembali" among it
+- Localization evidence: N/A — no user-facing copy added or changed
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the project's Pest, Playwright and Node, nothing installed or paid
+- Files changed: `scripts/ci/check-traceability.mjs`, `scripts/staging/security-cases.sh` new and `scripts/verify.sh`; `tests/Support/RouteContracts.php`, `RouteCrawl.php`, `CrawlWorld.php`, `AuthorityReconciliation.php` new and `DataPaths.php`; `tests/Routes/RouteContractsTest.php`, `RouteCrawlTest.php`, `RouteDeclarationsTest.php`, `tests/Authorization/RouteDenialsTest.php`, `AuthorityReconciliationTest.php`, `tests/Feature/Import/OpeningCorrectionRoutesTest.php`, `tests/Architecture/CacheUseTest.php` new; `tests/Pest.php`; cases added to `TwoFactorTest`, `TwoFactorRacesTest`, `HomePagesTest` and `access-denied.spec.ts`; the seeded OWNER_ONLY grants of `CapabilityClassesTest`, `LogPagesAccessTest` and `ReceivablesAccessTest` revoked at their end; the contracts named in the headers of the tests that prove them; F-02's minimal fix in `bootstrap/app.php` (APPR-040); the [security record](../08-testing/evidence/TASK-069_SECURITY_RECORD.md); the DONE updates
+- Commit SHA: the pull request's squash commit on `main`, the Owner's identity, no AI attribution
+- Notes: criteria 1–12 as APPR-040 amended them, each with its result in the [security record](../08-testing/evidence/TASK-069_SECURITY_RECORD.md). **1** — every SM, H8, DP, W4, OD, TM and race row and every INT- and NAV- contract mapped to its passing test by the traceability check, the two INT- rows without one held open as TASK-072's (F-01). **2** — SM-01 and SM-23 through the existing suites, every capability route refused at the server (§2). **3** — every W4 row and capability class with its positive and denial case at its routes, OD-01–OD-15 in the authorization suite, SM-05's reconciliation after every authorization and concurrency test returning no row. **4** — every threat and every data path with its proving tests. **5** — no refused request at a capability route writes a command or an audit event. **6** — the audit, the register one to one and the crawl, with ROUTE-277's path held open (F-01). **7** — 174 of 176 INT- and 65 of 65 NAV- contracts with their passing tests, the two others TASK-072's. **8** — the nine counts 0 (§3). **9** — the race cases, M-24 and M-44 completed; SM-21's end-of-recovery race against TT-F30's atomic end, GAP-050 OPEN. **10** — SM-15's gates with their fixtures in the Verify job. **11** — the staging cases written and NOT RUN. **12** — F-01 and F-03 for the Owner's decision, F-02 fixed minimally; no control, case expectation or accepted residual changed.
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

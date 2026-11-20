@@ -24,6 +24,7 @@ use Tests\Support\TwoFactor;
 // answer for every failing code, the expiry and "Kembali" —, AU-19's recovery codes after a password only, AU-18's
 // enrolment-only session reaching PG-004 alone and its confirmation, and AU-05's second-factor limit with its
 // cooldown, escalation and durable floor — acceptance criteria 1, 3, 4 and 6.
+// TASK-069 traceability: NAV-004 — the enrolment-only session reaching PG-004 alone, every other page sent to it.
 
 uses(RefreshDatabase::class);
 
@@ -170,6 +171,22 @@ it('starts the account-wide cooldown at the fifth failed code, across addresses,
     // The cooldown ends; the account was never locked.
     $this->travel(61)->seconds();
     $this->postJson('/masuk/verifikasi', ['code' => TwoFactor::code()])->assertOk();
+});
+
+it('refuses a recovery code during the cooldown unevaluated, so the code still serves once it ends (M-44; AU-05; AU-19)', function () {
+    foreach (range(1, SecondFactorLimit::THRESHOLD) as $attempt) {
+        signInWithPassword();
+        $this->withServerVariables(['REMOTE_ADDR' => "10.0.1.{$attempt}"])->postJson('/masuk/verifikasi', ['code' => '000000'])->assertStatus(422);
+        $this->get('/masuk');
+    }
+
+    signInWithPassword();
+    $this->withServerVariables(['REMOTE_ADDR' => '10.0.1.9'])->postJson('/masuk/verifikasi/pemulihan', ['recovery_code' => TwoFactor::CODES[2]])->assertStatus(429);
+    expect(auth()->check())->toBeFalse();
+
+    $this->travel(61)->seconds();
+    $this->withServerVariables(['REMOTE_ADDR' => '10.0.1.9'])->postJson('/masuk/verifikasi/pemulihan', ['recovery_code' => TwoFactor::CODES[2]])->assertOk()
+        ->assertJsonPath('signed_in', true);
 });
 
 it('doubles the cooldown at the next breach within 24 hours, and a success resets nothing (AU-05)', function () {

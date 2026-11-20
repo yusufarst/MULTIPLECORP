@@ -108,6 +108,22 @@ it('reads no row of a company outside the scope, and hides the project part with
         ->and($masked['rows'][0] ?? [])->toMatchArray(['value' => '3', 'ref' => null, 'href' => null]);
 });
 
+it('drops a company\'s signal once the account\'s grant on it is revoked (DP-11; SM-13; CS-07; TASK-069)', function () {
+    $mine = ReservationWorld::make();
+    $theirs = ReservationWorld::make($mine);
+    $theirs->project(['WAREHOUSE'], '7');
+    $mine->project(['WAREHOUSE'], '3');
+    $both = Authorization::admin([$mine->company->id, $theirs->company->id], ['stock.view', 'projects.view'])->id;
+
+    expect(array_column(app(QS01UnreservedDemand::class)->read(homeContext($both))['rows'] ?? [], 'value'))->toEqualCanonicalizing(['3', '7']);
+
+    DB::table('user_company_grants')->where('user_id', $both)->where('company_id', $theirs->company->id)->update(['revoked_at' => now()]);
+    Authorization::forget();
+    $read = app(QS01UnreservedDemand::class)->read(homeContext($both));
+
+    expect(array_column($read['rows'] ?? [], 'value'))->toBe(['3'])->and(array_column($read['counts'] ?? [], 'company'))->toBe([$mine->company->code]);
+});
+
 it('keeps QS-23 the Owner\'s alone and lists an ACTIVE project past its deadline (DIR-077 CA-10; PJ-13)', function () {
     $world = ReservationWorld::make();
     $project = $world->project(['WAREHOUSE'], '1');

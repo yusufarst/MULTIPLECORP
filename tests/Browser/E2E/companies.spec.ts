@@ -9,6 +9,7 @@ import { signedIn, stepUp } from '../account-fixtures';
 // real routes — a company created, its legal data saved, a bank account added behind the step-up and changed by a new
 // one with the old one deactivated, its logo set from an upload, its readiness list following each step —; then on
 // PG-062 a tax type, its rate version, and an overlapping one refused at its field.
+// TASK-069 traceability: NAV-059 and NAV-062 — PG-059 with each change and the step-up answered in place, PG-062 with its tax versions.
 
 /** A 4×4 PNG of one random colour, so no run's upload repeats another's. */
 function logo(): Buffer {

@@ -21,6 +21,7 @@ use Tests\Support\RefreshDatabase;
 // and an Owner-only address alike, a record in scope without the capability as forbidden, and an error with its
 // reference code and nothing else (IP-21; AZ-11; WS-10) —; a background request that never writes the session
 // (RV-06; RB-05) and the absolute deadline in a header outside the page data (AU-08).
+// TASK-069 traceability: NAV-005 — PG-005 answering an unknown, an out-of-scope, an Owner-only and a forbidden address, in the shell (IP-21).
 
 uses(RefreshDatabase::class);
 

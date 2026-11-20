@@ -91,6 +91,10 @@ it('never gives an Admin a write-off or its supersession, however asked, a repla
     expect($this->actingAs($admin)->post("/keuangan/invoice/{$this->public}/cabut-penghapusan", ['command_id' => (string) Str::uuid(), 'penghapusan' => RowHandle::of('receivable_writeoffs', $writeoff), 'pembayaran' => InvoiceWorld::recovery($this->invoice, '1000')->public_id, 'jumlah' => '1000', 'alasan' => 'Uang kembali', 'tanggal' => $this->today])->status())->toBeIn([403, 404]);
     $this->actingAs($admin)->get("/keuangan/invoice/{$this->public}")->assertInertia(fn (AssertableInertia $page) => $page->where('can.write_off', false)->where('can.recover', false)->where('credit', null)->has('recoveries', 0));
     $this->actingAs($owner)->get("/keuangan/invoice/{$this->public}")->assertInertia(fn (AssertableInertia $page) => $page->where('can.write_off', true)->where('can.recover', true));
+
+    // The seeded OWNER_ONLY grants revoked, so SM-05's reconciliation after this test finds none (TASK-069).
+    Authorization::revoke($granted, 'receivables.write_off');
+    Authorization::revoke($granted, 'writeoff.supersede');
 });
 
 it('answers another company\'s invoice as unknown on every command, writing nothing, its row never listed (SM-01; CS-03; PJ-23; AZ-11)', function () {

@@ -6,6 +6,7 @@ import { documentDraft, rendition } from '../document-fixtures';
 // beside the live preview marked "DRAF — belum terbit" without a number —, issued through its confirmation into a
 // number and a pending PDF, rendered into the inline rendition with "Unduh" and "Cetak" under FL-07's inline profile,
 // a failed rendition shown with MSG-08 and no re-issue; then voided with its reason, the number kept.
+// TASK-069 traceability: NAV-035 — PG-035 opened with its filters in the address, a document opened from it.
 
 function stamp(): string {
     return `${String(Date.now()).slice(-6)}${String(Math.floor(Math.random() * 100))}`;

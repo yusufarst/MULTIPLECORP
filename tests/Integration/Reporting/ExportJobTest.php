@@ -33,6 +33,7 @@ use Tests\Support\RefreshDatabase;
 // snapshot, the file a private EXPORT file of its own request whose content equals the page's rows, typed and
 // neutralized, in Indonesian —; a revocation before or after generation withholding it; the download an ordinary
 // request authorized at request time; another account's identifier and file answering as not found; the sweep.
+// TASK-069 traceability: INT-283 — the export requested and generated, its limits answered (ROUTE-283); INT-284 — its download by the requester alone, authorized at request time (ROUTE-284); DP-09 — the queued export of a revoked or deactivated requester withheld.
 
 uses(RefreshDatabase::class);
 

@@ -27,6 +27,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -118,6 +120,15 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         // One answer for a missing and an out-of-scope record, naming neither (AZ-11; CS-04; WS-10).
         $exceptions->map(ModelNotFoundException::class, fn () => new NotFoundHttpException);
+
+        // An address only the GET fallback resolves — an unknown one, or a command's naming a malformed record — answers
+        // PG-005's not found to every method, as to GET; a 405 stays a registered route's own answer to another of its
+        // methods (AZ-11; IP-21; TEST_STRATEGY §8; TASK-069 F-02).
+        $exceptions->map(MethodNotAllowedHttpException::class, function (MethodNotAllowedHttpException $exception): HttpException {
+            $allow = $exception->getHeaders()['Allow'] ?? '';
+
+            return array_diff(array_map('trim', explode(',', is_string($allow) ? $allow : '')), ['GET', 'HEAD']) === [] ? new NotFoundHttpException : $exception;
+        });
 
         // No secret and no credential-link token is flashed back after a validation error (AU-12; WS-10).
         $exceptions->dontFlash(['token', 'password', 'password_confirmation', 'current_password']);

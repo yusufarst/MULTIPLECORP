@@ -26,6 +26,7 @@ use Tests\Support\ReturnWorld;
 // with the lines' figures and no receiving or dispatch control, a confirmation answering on PG-011, each refusal in place
 // with its figure, the reversal and the returns in place, the direct shipment's *Surat Jalan* drafted from the recorded
 // facts and issued through ROUTE-216 with no stock, cash or obligation changed; a wholly reversed confirmation has none.
+// TASK-069 traceability: INT-216 — PG-032's "Terbitkan Surat Jalan" (DOC-03) for a confirmed direct shipment (ROUTE-216).
 
 uses(RefreshDatabase::class);
 

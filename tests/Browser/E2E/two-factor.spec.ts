@@ -6,6 +6,7 @@ import { expect, type Page, test } from '@playwright/test';
 // password with the generic code answer, the recovery code into the enrolment-only session and its new device, and
 // the enrolment of an Owner without TOTP — each against the real routes of PG-001, PG-002 and PG-004, with synthetic
 // accounts from the account fixture (routes/fixtures.php). The codes come from the test's own authenticator.
+// TASK-069 traceability: NAV-004 — PG-004 in the enrolment-only session, the landing page after the recovery codes are shown once.
 
 type Account = { email: string; password: string; secret?: string; recovery_codes?: string[] };
 

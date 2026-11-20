@@ -40,6 +40,11 @@ it('enforces each capability by its class', function (string $code) {
         ->and(Gate::forUser($ungranted)->allows($code, $this->company->id))->toBeFalse()
         ->and(Gate::forUser($admin)->allows($code, $this->company->id))->toBe(! CapabilityCatalogue::isOwnerOnly($code))
         ->and(Gate::forUser($admin)->allows($code, Company::factory()->create()->id))->toBeFalse();
+
+    // A seeded OWNER_ONLY grant revoked, so SM-05's reconciliation after this test finds none (TASK-069).
+    foreach (array_filter(withPrerequisites($code), CapabilityCatalogue::isOwnerOnly(...)) as $ownerOnly) {
+        Authorization::revoke($admin, $ownerOnly);
+    }
 })->with(CapabilityCatalogue::codes());
 
 it('confers no ADM_PLUS capability through another (RG-08)', function () {
@@ -80,4 +85,8 @@ it('finds an OWNER_ONLY capability outside the OWNER role in the OD-16 reconcili
 
     expect($reconcile())->toHaveCount(1)
         ->and(Gate::forUser($admin)->allows('projects.force_complete'))->toBeFalse();
+
+    // The seeded anomaly revoked, so SM-05's reconciliation after this test finds none (TASK-069).
+    Authorization::revoke($admin, 'projects.force_complete');
+    expect($reconcile())->toBe([]);
 });
