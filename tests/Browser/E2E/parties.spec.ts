@@ -7,6 +7,7 @@ import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
 // return with the form's input kept; a supplier the same from the purchase form's —; then PG-054 search-first: a client
 // with a unit and its address, a duplicate name answered with the list and created with a reason, a taken unit name
 // refused at its field, an archive saying what continues; and PG-055: a supplier created, edited and archived.
+// TASK-069 traceability: NAV-054 and NAV-055 — PG-054 and PG-055, each record created, cancelled back to its form's origin and saved to its record.
 
 // The required name's label reads "Nama", its marker and "(wajib)"; "Nama unit" and "Nama PIC" are other fields.
 const NAME = /^Nama\W*\(wajib\)/;

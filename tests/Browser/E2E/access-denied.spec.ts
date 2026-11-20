@@ -5,6 +5,7 @@ import { signedIn } from '../account-fixtures';
 // TL-09 (TASK-095; D8; IP-21; AZ-11; WS-07): an address the account's capability refuses answers PG-005 inside the shell —
 // the account's hints and its language —, rendered without a page error, alike an unknown address; a guest is still sent to
 // sign-in; the Owner still opens the page. The refusal and its status are the route's own, unchanged.
+// TASK-069 traceability: NAV-005 — PG-005 for a refused and an unknown address alike, and its "Kembali" from a first document to the landing page (NV-01; IP-21).
 
 const VISIT = 15_000;
 
@@ -32,6 +33,11 @@ test('answers an address the account cannot open with PG-005 in the shell, rende
     await expect(system).toBeVisible({ timeout: VISIT });
     expect(await faceOf()).toBe(face);
     expect(errors, 'no page error').toEqual([]);
+
+    // "Kembali" on a first document returns to the landing page, never through the browser's history (NAV-005; NV-01).
+    await system.getByRole('button', { name: 'Kembali' }).click();
+    await expect(page).toHaveURL(/\/(pekerjaan|beranda)$/, { timeout: VISIT });
+    await expect(system).toBeHidden();
 
     // A guest's document request for it is still sent to sign-in.
     await page.context().clearCookies();

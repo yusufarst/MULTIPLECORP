@@ -1,0 +1,125 @@
+Owner directive received in session during execution, 2026-11-20 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received. It lifts the execution HOLD the Owner ordered on 2026-11-15 after TASK-066's merge.
+
+MULTIPLECORP — OWNER DIRECTIVE: RESUME FAST EXECUTION
+TASK
+Resume MULTIPLECORP execution immediately.
+The Owner explicitly lifts the previous execution HOLD.
+The Owner's target is Sunday, November 22, 2026, for production readiness and public availability, subject to mandatory production safety requirements.
+Implement a streamlined execution and retry policy through the existing repository CHANGE_CONTROL process.
+READ
+
+* AGENTS.md
+* EXECUTION_CONTEXT
+* CURRENT_HANDOFF
+* TASK_PLAN
+* AGENT_OPERATING_MODEL
+* CHANGE_CONTROL
+* RELEASE_PLAN and DIR-111–116
+* Applicable CI and testing contracts
+* TASK-069 and APPR-040
+* Latest GitHub and CI state
+
+GOAL
+Complete the remaining authorized MULTIPLECORP work as quickly as possible.
+Eliminate redundant testing, repeated analysis, excessive review cycles, unnecessary waiting, and avoidable token consumption.
+DO
+1. Resume execution
+
+* Remove the previous execution HOLD.
+* Verify the latest repository state.
+* Resume from TASK-069, the next READY Task.
+* Preserve the frozen total of 95 Tasks.
+* Do not repeat completed work.
+
+2. Update execution rules
+Record this Owner directive in the existing decision log and amend the relevant execution/testing rules.
+Apply the following policy:
+PASS RULE
+
+* Implement the required scope.
+* Run targeted checks cheaply before CI when useful.
+* Run the mandatory full CI once on the final candidate HEAD.
+* If all mandatory checks PASS, complete the approved merge procedure and immediately proceed to the next READY Task.
+* Do not repeat already passing tests without a material code change.
+
+FAIL RULE
+
+* Diagnose the actual failure using existing logs and artifacts.
+* Apply one targeted corrective batch.
+* Retest once.
+* If the required checks PASS, proceed normally.
+* If they still FAIL, record the exact failure and evidence, leave the Task BLOCKED or VERIFYING, and move to the next independent READY Task.
+* Never mark a failed or unverified Task DONE.
+* Never merge a HEAD with failing mandatory checks.
+* Do not automatically initiate a third testing cycle.
+* Do not reopen the failed Task without an actual dependency, release necessity, or Owner authorization.
+
+NO REDUNDANT WORK
+
+* Reuse existing valid evidence.
+* No duplicate full CI for the same HEAD.
+* No repeated independent reviews unless binding governance requires them.
+* No artificial checkpoints or long progress reports.
+* No new Tasks, agents, or parallel branches without authorization.
+* Do not turn small failures into broad refactoring.
+* Avoid running expensive tests locally when equivalent mandatory CI evidence already exists.
+
+3. Apply the policy without sacrificing production safety
+Do not disable required CI gates, suppress failures, weaken security or data-integrity checks, or bypass release approval.
+A failed mandatory release criterion remains a production NO-GO until resolved.
+Moving to an independent Task is allowed for execution efficiency; it is not permission to release defective or unverified code.
+4. Prioritize production readiness
+Use the critical path toward production readiness instead of maximizing testing activity.
+Prioritize:
+
+* Remaining implementation and release-critical defects.
+* TASK-071 operator requirements.
+* TASK-072 completion dependencies.
+* Staging deployment preparation.
+* Verified backup and restore.
+* Required security and data-integrity checks.
+* UAT and release GO/NO-GO.
+
+Reuse the existing Coolify, Docker, Nginx, and Cloudflare decisions.
+Do not introduce paid services without Owner authorization.
+Do not access the VPS, handle production secrets, deploy, or perform destructive operations without the existing specific Owner authorization.
+If full production readiness by November 22 is impossible, report the precise blockers and distinguish a safe synthetic-data staging launch from an approved production launch.
+5. Minimize governance overhead
+
+* Record the Owner directive and its source in CHANGE_CONTROL.
+* Update only affected canonical execution rules.
+* Combine documentation changes with the next authorized TASK-069 commit.
+* Avoid a standalone governance PR or extra CI run.
+* Preserve historical decisions.
+* No additional Owner approval request for this already authorized execution policy.
+
+VERIFY
+Confirm that:
+
+* The previous HOLD is lifted.
+* The retry policy is recorded consistently.
+* Required CI and release safety gates remain intact.
+* No new Task has been created.
+* The next authorized Task is underway.
+
+STOP IF
+
+* An operation needs specific production access or deployment approval.
+* A confirmed P0/P1 release-critical issue requires Owner intervention.
+* No independent READY Task remains after the retry limit.
+* Mandatory release GO conditions cannot be satisfied.
+
+For non-blocking failures, record them and continue eligible work.
+UPDATE
+Report only:
+
+* DONE / 95.
+* Active Task.
+* PR and CI status.
+* PASS/FAIL and retry count.
+* Actual release blockers.
+* Next concrete action.
+
+Avoid repetitive progress messages, long analyses, and unnecessary questions.
+COMMUNICATION RULE
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.

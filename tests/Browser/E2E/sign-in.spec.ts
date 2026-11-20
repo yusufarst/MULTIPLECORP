@@ -4,6 +4,7 @@ import { expect, type Page, test } from '@playwright/test';
 // routes of PG-001 and PG-003 on the local stack, with a synthetic account and its reset link from the account
 // fixture (routes/fixtures.php) — the generic answer of AU-04, the token taken out of the address (AU-12), the
 // password set once, the session ended by "Keluar" with MSG-35 (INT-018).
+// TASK-069 traceability: NAV-003 — PG-003 reached by the credential link only, the token taken out of the address, PG-001 after the password is set.
 
 type Account = { email: string; password: string; token: string };
 

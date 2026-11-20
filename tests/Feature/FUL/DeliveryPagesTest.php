@@ -18,6 +18,7 @@ use Tests\Support\RefreshDatabase;
 use Tests\Support\StockWorld;
 
 // TL-04, TL-06, TL-07, TL-14 (TASK-045; ROUTE-030; ROUTE-031; ROUTE-201–ROUTE-204; NAV-030; NAV-031; AZ-01; SM-01; SM-04): PG-030 and PG-031 by their capabilities, a recorded delivery answering on PG-030, each command's control present only with its capability, DOC-08's and DOC-10's drafts only from recorded facts; another company's shipment unknown.
+// TASK-069 traceability: INT-202 — PG-031's "Terbitkan" for DOC-08 and DOC-10, its draft first and PG-036 after (ROUTE-202).
 
 uses(RefreshDatabase::class);
 

@@ -22,6 +22,7 @@ use Tests\Support\RefreshDatabase;
 // profile with the local list, the personal-text rule and the breached-password range check skipped and recorded
 // when it cannot answer; the identity step's audit event in its own transaction, a rollback leaving neither it nor
 // the security event (RG-11; CI-09; LG-01) — acceptance criteria 3, 4 and 8.
+// TASK-069 traceability: INT-106 — the password set from the link's token once, its profile's answers at the field, an expired, revoked or unknown link answered alike (ROUTE-106; AU-12).
 
 uses(RefreshDatabase::class);
 

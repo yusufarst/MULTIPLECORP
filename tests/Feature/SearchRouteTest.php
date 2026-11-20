@@ -11,6 +11,7 @@ use Tests\Support\RefreshDatabase;
 // TL-04 (TASK-016; acceptance criteria 2–4): ROUTE-281 `Reporting Search` — every active account, the term in the
 // request body and never in the address, at most 100 characters, a JSON answer outside any page state, and
 // WS-12's search limiter answering the 61st search in a minute with MSG-20 (TM-43).
+// TASK-069 traceability: INT-281 — the search request with its term in the body only, its length answered at the field, a guest refused (ROUTE-281).
 
 uses(RefreshDatabase::class);
 

@@ -130,7 +130,7 @@ it('stamps the session with the digest of the hash its rehash wrote, never one r
         ->and(Hash::needsRehash($written->password))->toBeFalse();
 });
 
-it('locks the account before the link and sets one password from two submissions of one link (D-CC-03; H6-11; SM-07)', function () {
+it('locks the account before the link and sets one password from two submissions of one link, the other answered generically (M-24; D-CC-03; H6-11; SM-07)', function () {
     $owner = User::factory()->create();
     $links = app(CredentialLinks::class);
     $token = $links->issue($this->user, 'RESET', $owner->id);

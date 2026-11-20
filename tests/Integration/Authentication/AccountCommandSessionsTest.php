@@ -120,4 +120,8 @@ it('answers a command_id reused by another account as a CONFLICT disclosing noth
     DB::table('users')->where('id', $other->id)->update(['is_active' => false]);
     auth()->forgetGuards();
     $this->actingAs(User::query()->findOrFail($other->id))->withSession([RequireStepUp::CONFIRMED_AT => time()])->post($path, ['command_id' => $commandId])->assertRedirect('/masuk');
+
+    // The role taken directly above, past the application's own role change, given back: the OWNER_ONLY event the Owner
+    // wrote stays an Owner's, so SM-05's reconciliation after this test finds none (TASK-069).
+    DB::table('user_roles')->where('user_id', $this->owner->id)->update(['role_id' => DB::table('roles')->where('code', 'OWNER')->where('is_builtin', true)->value('id')]);
 });

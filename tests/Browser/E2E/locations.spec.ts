@@ -5,6 +5,7 @@ import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
 // TL-09 (TASK-028; J-MD-05; CJ-19; criteria 2–4): racks and minimum stock against the real routes — a rack created, a
 // duplicate code refused at its field, the rack renamed and deactivated; a product's minimum set in base units from the
 // lookup and changed from its row.
+// TASK-069 traceability: NAV-057 — PG-057, a rack created, a refused code answered in place, the rack renamed in its row.
 
 function stamp(): string {
     return `${String(Date.now()).slice(-6)}${String(Math.floor(Math.random() * 100))}`;

@@ -5,6 +5,7 @@ import { correctionCases } from '../case-fixtures';
 // TL-09 (TASK-031; ROUTE-040, ROUTE-271; SF-CASE; criteria 2, 4): PG-040 lists the run's cases — a closable sales
 // return and a payment correction still carrying an unresolved deduction —; "Tutup Kasus" is offered only for the
 // first and closes it with its outcome; the second names its residual and offers no closure.
+// TASK-069 traceability: NAV-040 — PG-040 listing the cases, "Tutup Kasus" closing one in place.
 
 test('closes a case without residual and keeps one with a residual open (J-DOC; SF-CASE; C-46)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });

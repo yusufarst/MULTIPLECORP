@@ -407,6 +407,8 @@ Critical UI journeys run in a real browser driven by automation — Playwright, 
 
 ## 8. Route, navigation and interaction integrity
 
+Amendment: on 2026-11-15 the Owner approved, under [APPR-040](../00-governance/DECISION_LOG.md#dir-126-and-appr-040--task-069-proved-through-the-existing-suites-its-gaps-filled-2026-11-15) (DIR-126; TASK_PLAN Change 29), that the counts below follow the current registers — 220 routes in ROUTE_CONTRACTS and 176 interaction contracts in INTERACTION_CONTRACTS, the 65 navigation contracts unchanged —, read by the script from the registers themselves rather than from a number written here.
+
 AICWDF §25 makes a dead interaction a release blocker. The contracts are counted by script: **210 routes** in ROUTE_CONTRACTS, each with its declaration (STM SM-02), **165 interaction contracts** in INTERACTION_CONTRACTS and **65 navigation contracts** in NAVIGATION_CONTRACTS.
 
 - **Routes** — STM SM-02's audit, and a route crawl that requests every route as an actor allowed to use it and asserts its contract's method, status and answer: a command route refuses GET, a page answers 200, a file route streams with its header profile, and nothing answers an unexpected 404, 405 or 500. A route added without a contract, or a contract without its route, fails (GAP-035).

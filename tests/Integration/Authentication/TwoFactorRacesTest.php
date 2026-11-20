@@ -93,6 +93,37 @@ it('lets a burst of concurrent submissions take no more than five places in the 
         ->and(fn () => $limit->take($this->user->id, $request))->toThrow(SecondFactorRefused::class);
 });
 
+it('counts codes from many client addresses across every code-accepting step in the account\'s one count: five places, one breach, then the cooldown (M-44; AU-05; H6-07)', function () {
+    $limit = app(SecondFactorLimit::class);
+    $steps = [
+        [SecondFactorLimit::PATH_PASSWORD, Request::create('/masuk/verifikasi', 'POST', server: ['REMOTE_ADDR' => '10.0.0.1'])],
+        [SecondFactorLimit::PATH_PASSWORD, Request::create('/masuk/verifikasi/pemulihan', 'POST', server: ['REMOTE_ADDR' => '10.0.0.2'])],
+        [SecondFactorLimit::PATH_GOOGLE, Request::create('/masuk/verifikasi', 'POST', server: ['REMOTE_ADDR' => '192.0.2.7'])],
+        [SecondFactorLimit::PATH_SESSION_STEP, Request::create('/masuk/verifikasi', 'POST', server: ['REMOTE_ADDR' => '2001:db8::1'])],
+        [SecondFactorLimit::PATH_SESSION_STEP, Request::create('/masuk/verifikasi', 'POST', server: ['REMOTE_ADDR' => '198.51.100.9'])],
+        [SecondFactorLimit::PATH_GOOGLE, Request::create('/masuk/verifikasi', 'POST', server: ['REMOTE_ADDR' => '203.0.113.4'])],
+    ];
+    $places = [];
+    $refused = 0;
+
+    foreach ($steps as [, $request]) {
+        try {
+            $places[] = $limit->take($this->user->id, $request);
+        } catch (SecondFactorRefused) {
+            $refused++;
+        }
+    }
+
+    // At most five codes evaluated in the window, whichever address and step sent them.
+    expect($places)->toHaveCount(SecondFactorLimit::THRESHOLD)->and($refused)->toBe(1);
+
+    $breaches = array_map(fn ($place, $step) => $limit->failed($place, $step[0], $step[1]), $places, array_slice($steps, 0, count($places)));
+
+    expect(array_values(array_filter($breaches)))->toHaveCount(1)
+        ->and(DB::table('security_events')->where('event_kind', 'TWO_FACTOR_COOLDOWN_STARTED')->count())->toBe(1)
+        ->and(fn () => $limit->take($this->user->id, $steps[5][1]))->toThrow(SecondFactorRefused::class);
+});
+
 it('refuses every covered step when the limiter store cannot be reached — fail closed (AU-05; H6-07)', function () {
     config(['cache.default' => 'redis', 'database.redis.cache.port' => 1, 'database.redis.default.port' => 1]);
     app('cache')->forgetDriver('redis');

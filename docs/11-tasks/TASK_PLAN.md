@@ -16,21 +16,21 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 95
 
-DONE: 77
+DONE: 78
 READY: 1
 IN_PROGRESS: 1
 BLOCKED: 4
 VERIFYING: 0
-TODO: 12
+TODO: 11
 SUPERSEDED: 0
 
 Progress:
-77 / 95
-Percentage: 81.1 %
+78 / 95
+Percentage: 82.1 %
 
-CURRENT TASK: none in progress — TASK-066 — Accessibility — WCAG 2.2 AA across every page DONE on its branch `task/TASK-066-accessibility`, its record in its final commit (DIR-103), its pull request squash-merged by the executor once that head's fresh CI passes; TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
-NEXT READY TASK: TASK-069 READY (DIR-112); TASK-070 waits on TASK-069; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
-LAST TASK PLAN CHANGE: Change 28 of 2026-11-15 — TASK-066 narrowed for the initial release, the AA violations it finds and the 44 px targets of GF-02 and GF-03 fixed minimally inside it, the Owner's APPR-039; TASK-066 DONE; no new Task
+CURRENT TASK: none in progress — TASK-069 — Security test matrix, route integrity and zero dead interactions DONE on its branch `task/TASK-069-security-integrity` as APPR-040 shaped it, its record in its final commit (DIR-127), its pull request squash-merged by the executor once that head's CI passes; TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
+NEXT READY TASK: TASK-070 READY, TASK-062–TASK-069 DONE; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks wait on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
+LAST TASK PLAN CHANGE: Change 29 of 2026-11-15, recorded 2026-11-20 — TASK-069 proved through the existing suites with its gaps filled, small defects fixed minimally inside it, the Owner's APPR-040; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -117,7 +117,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-066](TASK-066.md) — Accessibility — WCAG 2.2 AA across every page
 - [x] [TASK-067](TASK-067.md) — Localization completeness and the per-page copy lists
 - [x] [TASK-068](TASK-068.md) — Performance targets and query budgets in CI
-- [ ] [TASK-069](TASK-069.md) — Security test matrix, route integrity and zero dead interactions
+- [x] [TASK-069](TASK-069.md) — Security test matrix, route integrity and zero dead interactions
 - [ ] [TASK-070](TASK-070.md) — Full release regression and the device UAT's preparation
 - [ ] [TASK-071](TASK-071.md) — The operator's inputs before staging
 - [ ] [TASK-072](TASK-072.md) — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
@@ -217,8 +217,8 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
 | [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
-| [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | READY | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
-| [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
+| [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | DONE | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
+| [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | READY | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
 | [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-26 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | IN_PROGRESS | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
 | [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | DONE | 003, 004 | 084 | NO | AGENT | NONE | NO |
@@ -327,6 +327,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 27, 2026-11-15 (the Owner's narrowing of TASK-065 — [APPR-038](../00-governance/DECISION_LOG.md#dir-123-and-appr-038--task-065-narrowed-for-the-initial-release-2026-11-15), DIR-123 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-065's matrix of ten widths on two engines for 65 pages — about 1,300 renders on each — with its audit would cost hours of runner time for each iteration, and its findings would open defect Tasks the frozen plan has no place for. *Change:* for the initial release, the responsive matrix runs at all ten band edges on Chromium and at 390, 768 and 1,280 CSS px on WebKit, the other WebKit widths NOT TESTED, never PASS; every measured check stays — the tokens, one primary action and no duplicate, the states, the touch targets, the mandated copy, the composer and preview, the CD-06 screens —; the gate records come from one visit per page, reusing the localization audit's page visits; SLOP-01–SLOP-45 are reviewed on the built screens with screenshots as their evidence; and each finding is recorded with its evidence for the Owner's decision rather than opening a defect Task, the plan being frozen at 95; TASK-065's scope and criteria 4, 8 and 9, and TEST_STRATEGY §9, amended to read so. No measured check, token, pattern or rule is removed or loosened. *Affected Tasks:* TASK-065. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-065 IN_PROGRESS; DONE 75, READY 0, IN_PROGRESS 2, BLOCKED 4, TODO 14. *Scope change:* none. *Approval:* APPR-038, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 **Change 28, 2026-11-15 (the Owner's narrowing of TASK-066 with its minimal fixes — [APPR-039](../00-governance/DECISION_LOG.md#dir-125-and-appr-039--task-066-narrowed-with-its-minimal-fixes-2026-11-15), DIR-125 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-066 asked the 22 critical journeys by keyboard alone, a screen-reader script for each and each defect sent to its owning Task, which the frozen plan has no place for, and its criteria 1 and 4 need the AA violations and TASK-065's 44 px targets (GF-02, GF-03) fixed. *Change:* for the initial release, the engine and the measured checks on every page state through the localization audit's visits; the keyboard-only runs over the interaction patterns, UXS-41's quotation, the scans and every page's focus walk; representative screen-reader scripts NOT RUN until TASK-086; the AA violations and the 44 px targets fixed minimally inside TASK-066's pull request as APPR-032 did for TASK-067, every other defect recorded for the Owner; TASK-066's scope and criteria 1, 4, 7, 10 and 11, and TEST_STRATEGY §11, amended to read so. No WCAG 2.2 AA criterion, rule or token loosened. *Affected Tasks:* TASK-066. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-066 IN_PROGRESS; DONE 76, READY 0, IN_PROGRESS 2, BLOCKED 4, TODO 13. *Scope change:* none. *Approval:* APPR-039, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
+
+**Change 29, 2026-11-15, recorded 2026-11-20 (the Owner's approach for TASK-069 — [APPR-040](../00-governance/DECISION_LOG.md#dir-126-and-appr-040--task-069-proved-through-the-existing-suites-its-gaps-filled-2026-11-15), DIR-126 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-069 asked each element of every H8 row, threat and data path as a case of its own and each defect sent to a new defect Task, which the frozen plan has no place for, while most of the matrix is already proved across the module suites; the registers hold 220 routes and 176 interaction contracts where its criteria say 210 and 165. *Change:* the matrix proved through the existing suites with a traceability register, its gaps filled — the route crawl, the contract-coverage check, the nine counts, SM-05's reconciliation, the missing race and SM-02 cases, the staging scripts NOT RUN —, the counts at the current registers, small defects fixed minimally inside TASK-069, the rest recorded for the Owner; TASK-069's criteria 1, 6, 7, 11 and 12 and TEST_STRATEGY §8 amended to read so. No control, case expectation or accepted residual weakened. *Affected Tasks:* TASK-069. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-069 IN_PROGRESS; DONE 77, READY 0, IN_PROGRESS 2, BLOCKED 4, TODO 12. *Scope change:* none. *Approval:* APPR-040, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 ## 8. Owner questions
 

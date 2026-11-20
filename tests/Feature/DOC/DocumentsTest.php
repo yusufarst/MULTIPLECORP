@@ -36,6 +36,7 @@ use Tests\Support\RefreshDatabase;
 // a replay answered from the record; C-10, C-54, a refused precondition and a stale draft each refused with nothing
 // written; a revision NEW_NUMBER or BASE_SUFFIX; a void with its reason handed to the participants; the list and the
 // rendition by family.
+// TASK-069 traceability: INT-225 — the issued rendition inline under FL-07's RENDITION profile, another family's viewer answered as not found (ROUTE-225); NAV-035 — PG-035's filters in the address (IP-18).
 
 uses(RefreshDatabase::class);
 

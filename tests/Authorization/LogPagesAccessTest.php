@@ -35,6 +35,11 @@ it('answers an Admin\'s request for either page exactly as an unknown page (OD-1
 
     $this->actingAs($this->owner)->get('/aktivitas/riwayat')->assertOk();
     $this->actingAs($this->owner)->get('/aktivitas/log-keamanan')->assertOk();
+
+    // The seeded OWNER_ONLY grants revoked, so SM-05's reconciliation after this test finds none (TASK-069).
+    foreach (['users.manage', 'permissions.manage', 'companies.manage'] as $code) {
+        Authorization::revoke($admin, $code);
+    }
 });
 
 it('carries no raw identifier, address, provider subject or forbidden key on either page (LG-03; PJ-17; PJ-21; criterion 4)', function () {

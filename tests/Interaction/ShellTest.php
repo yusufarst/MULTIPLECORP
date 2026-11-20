@@ -19,6 +19,7 @@ use Tests\Support\RefreshDatabase;
 // INT-010's session ended answered 401 in place; and a command refused at its in-command re-authorization after
 // its company grant was revoked, answered on the open page as IP-21 shows it (SQ-22; architecture challenge 8a;
 // acceptance criterion 10). The entries' own rules are the frontend's (`tests/Frontend/shell.test.ts`).
+// TASK-069 traceability: INT-011 — the step-up dialog's password confirmation of the account itself, another account's e-mail and a wrong password refused (ROUTE-109; IP-10).
 
 uses(RefreshDatabase::class);
 
