@@ -242,7 +242,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 
 - [x] Lint: ESLint over the two release scripts in this head's CI (TL-01)
 - [x] Typecheck: N/A — no TypeScript or PHP changed; the scripts are Node modules checked by their self-tests
-- [x] Relevant automated tests: `coverage-trace.mjs --self-test` and its run in the Verify job; the full regression of every layer in this head's CI
+- [x] Relevant automated tests: `coverage-trace.mjs --self-test` and its run in the Verify job — an entry proven only by a test naming it, a DONE Task's evidence verified in its contract —; the full regression of every layer in this head's CI
 - [x] Authorization: TL-06 in the regression (TASK-069's suites)
 - [x] Route integrity: TL-07 in the regression — the crawl of every route
 - [x] Interaction behavior: TL-08 in the regression
