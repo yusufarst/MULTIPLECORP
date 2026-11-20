@@ -197,3 +197,23 @@ The Owner's reconciled checklist and its answers of 2026-11-15 ([DIR-121](../00-
 | DEP-05 | OUTSTANDING | — | the data steward's sanitized structures, counts, control totals and cutover boundary; legacy data never assumed empty |
 
 **Effect:** TASK-071 stays BLOCKED on OPI-22, OPI-29, OPI-30 and OPI-05 (and its partial inputs); TASK-084's OPI-04, OPI-28 and OPI-32 stay open as above. INFRASTRUCTURE §9, BACKUP_RECOVERY §7 and RELEASE_PLAN §9 remain the operator's records to update (§2 step 9); where they recommend Telegram, this record supersedes the recommendation.
+
+## Received from the Owner as operator — 2026-11-21 (TASK-071 reconciled)
+
+The Owner's directive of 2026-11-21 ([DIR-129](../00-governance/DECISION_LOG.md#dir-129--the-owners-task-071-reconciliation-2026-11-21); [source](../00-governance/sources/EXECUTION_OWNER_DIRECTIVE_TASK-071-RECONCILIATION_2026-11-21.txt)), recorded by role and figure only; INFRASTRUCTURE §9, BACKUP_RECOVERY §7 and RELEASE_PLAN §9 now hold each input's recorded fact. Nothing verified earlier is asked again. The executor never accessed the VPS, the DNS, Email Routing or the second application.
+
+| Input | Status | Recorded (non-sensitive) | Still owed |
+|---|---|---|---|
+| OPI-26, OPI-03 | VERIFIED (2026-11-13) | unchanged; Coolify not observed, approved as the target (APPR-033) | — |
+| OPI-05 | OWNER APPROVED — delivery PENDING | e-mail to the Owner's phone inbox through the existing Cloudflare Email Service, verified destination addresses only, Rp0; Telegram declined; neutral messages; the in-app floor kept; COST_POLICY §4C.4 record written | its set-up and end-to-end delivery test — TASK-080, TASK-081 |
+| OPI-22 | RECORDED | MULTIPLECORP's own backup directory, apart from the second application's; owner and group the superuser, permission 700; the path kept privately | no backup generated or restore verified yet (TASK-079, TASK-080, GLC-20) |
+| OPI-30 | RECORDED — kept | the production domain and the staging name selected, kept privately; the staging name's DNS record created | the TLS certificates, issued on the host with TASK-078 |
+| OPI-21 (staging part) | RECORDED | U₀ 799 MiB and free 192 GiB of about 193 GiB, measured 2026-11-13, K 0 with no application deployed; space measured again with OPI-22 | DB, F, L and D after the opening import (GLC-05) |
+| OPI-02 | PARTIAL | the operating system, CPU, memory and disk measured (DIR-115) | **the bandwidth allowance's accounting period**, read on the panel |
+| OPI-27 | PARTIAL | no application deployed — zero workload, no capacity figure (DIR-115) | **both applications' pre-staging resource reservations and the second application's backup, maintenance and deployment windows** |
+| OPI-29 | PARTIAL | the provider's backup, firewall, anti-DDoS, malware-scanner and AI/automation features inspected on the panel; none relied on | **whether each is active or off**; GLC-24's confirmation before production data |
+| OPI-04 | ANSWERED | Cloudflare (DIR-121) | its proxy mode and live state when staging needs them (TASK-078) |
+| OPI-28, OPI-31 | ANSWERED — Owner-declared | the Owner alone administers the host and the provider account | OPI-28's second factor (TASK-084) |
+| OPI-32 | OUTSTANDING | no paid off-server storage approved; Rp0 preferred | the destination, encrypted, keys apart, custodian, restore test (TASK-084) |
+
+**Effect:** TASK-071 stays BLOCKED on OPI-02's bandwidth period, OPI-27 and OPI-29's feature states (its criteria 2 and 4); TASK-075 is no longer blocked on OPI-05 and stays TODO on TASK-071, TASK-072 and TASK-074; no Task becomes READY.

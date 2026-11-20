@@ -1,0 +1,74 @@
+Owner's directive received in session during execution, 2026-11-21 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received; the hosting provider's name replaced by [the hosting provider] under INFRASTRUCTURE §9, which keeps it out of this repository. No secret, address, host name, path or account in it.
+
+MULTIPLECORP — OWNER DIRECTIVE: COMPLETE TASK-071 OPERATOR RECONCILIATION
+TASK
+Immediately reconcile TASK-071 with the Owner's confirmed decisions and existing operator evidence.
+Do not repeat inspections already completed.
+READ
+
+* TASK-071
+* TASK_PLAN
+* OPERATOR_INPUT_REQUEST
+* INFRASTRUCTURE §9
+* BACKUP_RECOVERY §7
+* COST_POLICY §4C.4
+* Existing Owner approvals and verified operator records
+
+GOAL
+Unblock the remaining release Tasks as quickly as possible, without falsely marking incomplete operator inputs as VERIFIED.
+DO
+
+1. Record the newly approved OPI-05 decision:
+   * Notification channel: email to the Owner's phone inbox.
+   * Additional recurring cost: Rp0.
+   * Telegram: explicitly rejected.
+   * Preferred provider: existing Cloudflare Email Service.
+   * Limit sending to verified destination addresses under the applicable free plan.
+   * Keep neutral alert messages without sensitive business data.
+   * Preserve the in-app notification fallback.
+2. Record the applicable free-tier limitations, dependency risks, and exit strategy under COST_POLICY §4C.4.
+3. Mark the OPI-05 channel decision as OWNER APPROVED, with technical delivery verification PENDING. Do not claim an email was sent or received.
+4. Leave email setup and actual delivery testing to TASK-080/TASK-081, as required by the existing contracts. Do not implement them prematurely.
+5. Reuse the existing OPI-22 operator evidence:
+   * A dedicated MULTIPLECORP backup directory exists.
+   * Ownership: root:root.
+   * Permission: 700.
+   * Local filesystem space was measured.
+   * Do not repeat disk inspection.
+   * Do not record the actual private path in the repository.
+   * Do not claim backup generation or restore verification has passed.
+6. Reconcile other existing Owner evidence:
+   * OPI-04: Cloudflare.
+   * OPI-26: operator access previously reported VERIFIED; retain its valid source evidence.
+   * OPI-03: reuse previously verified service inventory, without assuming services not observed.
+   * OPI-29: [the hosting provider] backup, firewall, anti-DDoS, malware scanner and AI/automation availability were inspected.
+   * OPI-30: production and staging hostnames selected; staging DNS record created.
+   * OPI-28 and OPI-31: Owner-only administration.
+   * OPI-32: no paid off-server storage approved.
+7. Reconcile OPI-02 and OPI-21 using the existing measured VPS storage evidence.
+8. Check OPI-27 and any other remaining TASK-071 criterion against existing evidence. Do not invent the second application's resource usage or maintenance windows.
+9. Update only the affected canonical records and Task status, following the existing CHANGE_CONTROL rules. Use the smallest possible documentation change.
+10. If all TASK-071 criteria are genuinely supported, mark it DONE and resume the authorized release dependency chain.
+11. If any required evidence is missing, keep TASK-071 BLOCKED and report exactly what the human operator must provide. Do not request already verified information again.
+12. No new Tasks, unnecessary CI runs, repeated audits, or additional planning cycles.
+
+VERIFY
+
+* Previously verified inputs remain preserved.
+* No sensitive paths, hostnames, credentials, IP addresses or account identifiers enter Git.
+* OPI-05 is recorded as approved, not delivery-tested.
+* All Task status changes are evidence-based.
+* No changes to the VPS, DNS, Email Routing, or the second application.
+
+STOP IF
+A required human-only operator input remains unavailable or an operation would require unauthorized infrastructure access.
+UPDATE
+Report only:
+
+* TASK-071 status.
+* Inputs confirmed.
+* Inputs still missing.
+* Tasks now unblocked.
+* One next operator action.
+
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.
