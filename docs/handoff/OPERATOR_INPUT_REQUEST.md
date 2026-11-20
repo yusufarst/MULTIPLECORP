@@ -217,3 +217,15 @@ The Owner's directive of 2026-11-21 ([DIR-129](../00-governance/DECISION_LOG.md#
 | OPI-32 | OUTSTANDING | no paid off-server storage approved; Rp0 preferred | the destination, encrypted, keys apart, custodian, restore test (TASK-084) |
 
 **Effect:** TASK-071 stays BLOCKED on OPI-02's bandwidth period, OPI-27 and OPI-29's feature states (its criteria 2 and 4); TASK-075 is no longer blocked on OPI-05 and stays TODO on TASK-071, TASK-072 and TASK-074; no Task becomes READY.
+
+## The Owner's final reconciliation — 2026-11-21 (TASK-071)
+
+The Owner's directive and decisions of 2026-11-21 ([DIR-130](../00-governance/DECISION_LOG.md#dir-130--the-owners-final-task-071-reconciliation-2026-11-21)), from the Owner's screenshots of the panel, recorded by role only. Every input recorded under DIR-115 and DIR-129 stands and is not asked again.
+
+| Input | Status | Recorded (non-sensitive) | Still owed |
+|---|---|---|---|
+| OPI-02 | VERIFIED | bandwidth reported per month ("Bulan ini") against the 16 TB allowance; the measured figures of DIR-115 | — |
+| OPI-27 | RECORDED — provisional | no application deployed at the measurement; the Owner's planning ceilings — the second application at most 5 GiB memory, 2 vCPU, 50 GiB disk with its backups, 50 % of the monthly bandwidth; MULTIPLECORP within its Compose limits, about 3.9 GiB; about 2 GiB for the system; staging capped on its own —; windows: the second application's backup 01:00 WIB, `ReconcileGuards` 02:00 WIB, MULTIPLECORP's backup 03:00 WIB, maintenance and deployments separate and coordinated | the actual durations and overlap, verified before operational readiness (TASK-079, TASK-081) |
+| OPI-29 | PARTIAL | weekly provider backup active, kept as whole-VPS disaster protection only; provider firewall without rules; malware scanner not installed; anti-DDoS without detected events; the provider's AI agent available, not authorized for the VPS or production data, its use for the VPS stopped | **anti-DDoS's enabled state** (criterion 4); **the operator's review that no AI agent or connector holds access to the VPS or the panel, revoked where possible** (criterion 1); GLC-24's acceptance with the client before production data |
+
+**Effect:** TASK-071 stays BLOCKED on OPI-29's two items; its DONE, with TASK_PLAN's update, follows in this same change once they are recorded.

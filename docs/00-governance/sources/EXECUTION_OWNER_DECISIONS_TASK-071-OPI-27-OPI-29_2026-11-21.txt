@@ -1,0 +1,47 @@
+Owner's decisions received in session during execution, 2026-11-21 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received; the hosting provider's name replaced by [the hosting provider] under INFRASTRUCTURE §9, which keeps it out of this repository. No secret, address, host name, path or account in it.
+
+MULTIPLECORP — OWNER RESPONSE TO FOUR PENDING DECISIONS
+TASK
+Finalize the four pending OPI-27 and OPI-29 decisions using the following Owner-approved planning defaults and corrections.
+READ
+TASK-071, INFRASTRUCTURE §8–9, the existing local commit `cf77de9`, and the prior four recommendations.
+GOAL
+Complete TASK-071 as soon as its actual acceptance criteria are met, then resume the release sequence without unnecessary repetition.
+DO
+1. OPI-27 — Resource allocation
+Accept the proposed provisional planning limits:
+
+* MULTIPLECORP production: existing Compose limits, approximately 3.9 GiB RAM.
+* Second application: planning ceiling of 5 GiB RAM, 2 vCPU, 50 GiB disk including local backups, and 50% of monthly bandwidth.
+* Reserve approximately 2 GiB RAM for the operating system and shared infrastructure.
+
+These are planning ceilings, not measured consumption or guaranteed capacity reservations.
+Staging must be capped independently and must not exhaust host headroom while production applications are operating.
+Do not modify the second application's configuration without separate authorization.
+2. OPI-27 — Operational windows
+Accept the proposed provisional windows:
+
+* Second application backup: 01:00 WIB.
+* MULTIPLECORP reconciliation: 02:00 WIB.
+* MULTIPLECORP backup: 03:00 WIB.
+* Maintenance and deployments must use separate, coordinated windows.
+
+Actual duration and overlap must be verified before claiming operational readiness.
+3. OPI-29 — Provider AI Agent
+Do not authorize [the hosting provider] Agent or external AI connectors to administer the VPS or access production data.
+The Agent was previously used to retrieve VPS status. Stop using it for VPS operations.
+Any enabled administrative access must be reviewed and revoked by the human operator where possible.
+Do not mark it DISABLED without verification. Preserve the Owner/client approval boundary required by INF-08 and GLC-24.
+4. OPI-29 — Provider backup and anti-DDoS
+Keep [the hosting provider]'s existing weekly backup enabled as whole-VPS disaster protection.
+Do not treat it as an independent application backup or as satisfying the off-server backup requirements.
+For anti-DDoS, record that no events were detected and the enabled state remains unverified. Do not rely on an unknown provider feature.
+VERIFY
+Reconcile with the existing canonical contracts. Do not invent measured resource use, provider feature states, or completed security controls.
+Reuse existing evidence for OPI-02, OPI-03, OPI-05, OPI-22, OPI-26 and OPI-30.
+STOP IF
+A mandatory TASK-071 acceptance criterion still lacks evidence. Report only that exact missing item and do not falsely mark TASK-071 DONE.
+UPDATE
+Consolidate the authorized reconciliation into one change, use the mandatory repository checks only, and resume TASK-072 immediately when TASK-071 legitimately becomes DONE.
+Do not modify the VPS, DNS, firewall, credentials, or the second application.
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.
