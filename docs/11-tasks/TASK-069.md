@@ -6,7 +6,9 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+Amendment: on 2026-11-15 the Owner approved, under [APPR-040](../00-governance/DECISION_LOG.md#dir-126-and-appr-040--task-069-proved-through-the-existing-suites-its-gaps-filled-2026-11-15) (DIR-126; TASK_PLAN Change 29), this Task's approach for the initial release: the security matrix is proved through the existing suites with a traceability register — each SM, H8, W4, TM, DP and OD row and each race case mapped to the passing test that proves it, a row without one written here (criterion 1) —, and what does not exist yet is built: a crawl of every registered route, a check that every interaction and navigation contract has its test and every route its contract, AICWDF §25's nine counts, SM-05's reconciliation after the authorization and concurrency suites, the missing race and SM-02 cases, and the staging-only cases as scripts recorded NOT RUN until the operator's evidence (criterion 11); the counts follow the current registers — 220 routes and 176 interaction contracts (criteria 6 and 7) —; small defects are fixed minimally inside this Task as APPR-039 did for TASK-066, every other defect recorded with its evidence for the Owner's decision (criterion 12); no control, case expectation or accepted residual weakened. The lines below read as amended.
+
+**STATUS:** IN_PROGRESS
 
 **RISK CLASS:** HIGH
 
