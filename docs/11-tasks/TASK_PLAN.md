@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 95
 
-DONE: 78
-READY: 1
+DONE: 79
+READY: 0
 IN_PROGRESS: 1
 BLOCKED: 4
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 11
 SUPERSEDED: 0
 
 Progress:
-78 / 95
-Percentage: 82.1 %
+79 / 95
+Percentage: 83.2 %
 
-CURRENT TASK: none in progress — TASK-069 — Security test matrix, route integrity and zero dead interactions DONE on its branch `task/TASK-069-security-integrity` as APPR-040 shaped it, its record in its final commit (DIR-127), its pull request squash-merged by the executor once that head's CI passes; TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
-NEXT READY TASK: TASK-070 READY, TASK-062–TASK-069 DONE; TASK-072's DONE, TASK-074–TASK-077 and the operator's Tasks wait on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
+CURRENT TASK: none in progress — TASK-070 — Full release regression and the device UAT's preparation DONE on its branch `task/TASK-070-release-regression`, its record in its final commit (DIR-127), its pull request squash-merged by the executor once that head's CI passes; TASK-072 IN_PROGRESS alongside TASK-071 (APPR-033), its two parts merged
+NEXT READY TASK: none READY: TASK-072's DONE, TASK-074–TASK-087 and the operator's Tasks wait on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
 LAST TASK PLAN CHANGE: Change 29 of 2026-11-15, recorded 2026-11-20 — TASK-069 proved through the existing suites with its gaps filled, small defects fixed minimally inside it, the Owner's APPR-040; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -118,7 +118,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-067](TASK-067.md) — Localization completeness and the per-page copy lists
 - [x] [TASK-068](TASK-068.md) — Performance targets and query budgets in CI
 - [x] [TASK-069](TASK-069.md) — Security test matrix, route integrity and zero dead interactions
-- [ ] [TASK-070](TASK-070.md) — Full release regression and the device UAT's preparation
+- [x] [TASK-070](TASK-070.md) — Full release regression and the device UAT's preparation
 - [ ] [TASK-071](TASK-071.md) — The operator's inputs before staging
 - [ ] [TASK-072](TASK-072.md) — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
 - [x] [TASK-073](TASK-073.md) — Release process — branch protection, release tags, the release record and integrity report
@@ -218,7 +218,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
 | [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
 | [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | DONE | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
-| [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | READY | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
+| [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | DONE | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
 | [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-26 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | IN_PROGRESS | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
 | [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | DONE | 003, 004 | 084 | NO | AGENT | NONE | NO |
