@@ -138,7 +138,7 @@ user=$(compose exec -T app php -r 'require "vendor/autoload.php"; $app = require
 result $? "the application connects as the runtime role ($user)"
 # WS-08's staging stage: CSP_REPORT_ONLY reaches every process's cached configuration (on production it changes no header).
 for service in app worker-1 worker-2 scheduler; do
-    [ "$(compose exec -T "$service" php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(IlluminateContractsConsoleKernel::class)->bootstrap(); echo var_export(config("app.csp_report_only"), true);' 2>/dev/null | tr -d '')" = true ]
+    [ "$(compose exec -T "$service" php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo var_export(config("app.csp_report_only"), true);' 2>/dev/null | tr -d '\r')" = true ]
     result $? "$service reads CSP_REPORT_ONLY from its environment"
 done
 # HO-21: the runtime's login defaults to TX-06's 5 s statement timeout and the 15 s idle-in-transaction backstop.
