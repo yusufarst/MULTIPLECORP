@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\ParallelTesting;
+use Tests\Support\AuthorityReconciliation;
 use Tests\Support\TestDatabase;
 
 abstract class TestCase extends BaseTestCase
@@ -56,7 +57,15 @@ abstract class TestCase extends BaseTestCase
             TestDatabase::assertIsolated((string) config("{$connection}.driver"), (string) config("{$connection}.database"), (string) config("{$migration}.database"));
         }
 
-        return parent::setUpTraits();
+        $uses = parent::setUpTraits();
+
+        // SECURITY_TEST_MATRIX SM-05 (TASK-069): each command's request observed from the test's first statement — its
+        // file's beforeEach included —, for the OD-16 reconciliation after it (tests/Pest.php).
+        if ($this->usesDatabaseTrait()) {
+            AuthorityReconciliation::observe();
+        }
+
+        return $uses;
     }
 
     private function usesDatabaseTrait(): bool

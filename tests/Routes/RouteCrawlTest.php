@@ -46,6 +46,7 @@ it('answers a command to an unknown address, or naming a malformed record, as th
     $this->actingAs($owner)->post('/alamat-yang-tidak-ada')->assertNotFound();
     $this->actingAs($owner)->post('/keuangan/pembayaran/bukan-pengenal/terapkan', ['command_id' => '00000000-0000-7000-8000-000000000000'])->assertNotFound();
     $this->actingAs($owner)->put('/cari')->assertStatus(405);
+    $this->actingAs($owner)->post('/aktivitas/riwayat')->assertStatus(405);
 });
 
 it('counts a page answering 500 and a route answering GET as a command as unexpected', function () {

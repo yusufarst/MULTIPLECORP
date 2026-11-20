@@ -6,7 +6,8 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)->in('Unit', 'Architecture', 'Feature', 'Routes', 'Interaction', 'Performance');
 
-// SECURITY_TEST_MATRIX SM-05 (TASK-069): the OD-16 reconciliation returns no row after every authorization test.
+// SECURITY_TEST_MATRIX SM-05 (TASK-069): the OD-16 reconciliation returns no row after every authorization test, each
+// command judged by the capability its request was observed to exercise (TestCase::setUpTraits).
 pest()->extend(TestCase::class)->afterEach(function () {
     AuthorityReconciliation::assertNone(self::$__filename, $this);
 })->in('Authorization');

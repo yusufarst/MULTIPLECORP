@@ -126,8 +126,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // methods (AZ-11; IP-21; TEST_STRATEGY §8; TASK-069 F-02).
         $exceptions->map(MethodNotAllowedHttpException::class, function (MethodNotAllowedHttpException $exception): HttpException {
             $allow = $exception->getHeaders()['Allow'] ?? '';
+            $onlyGet = array_diff(array_map('trim', explode(',', is_string($allow) ? $allow : '')), ['GET', 'HEAD']) === [];
 
-            return array_diff(array_map('trim', explode(',', is_string($allow) ? $allow : '')), ['GET', 'HEAD']) === [] ? new NotFoundHttpException : $exception;
+            return $onlyGet && Route::getRoutes()->match(Request::create(request()->getPathInfo()))->isFallback ? new NotFoundHttpException : $exception;
         });
 
         // No secret and no credential-link token is flashed back after a validation error (AU-12; WS-10).

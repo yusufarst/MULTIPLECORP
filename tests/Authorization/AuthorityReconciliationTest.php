@@ -1,20 +1,24 @@
 <?php
 
+use App\Http\Middleware\RequireStepUp;
 use App\Modules\IAM\Models\Role;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\CommandLog;
 use App\Modules\ORG\Models\Company;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Tests\Support\AuthorityReconciliation;
 use Tests\Support\Authorization;
 use Tests\Support\RefreshDatabase;
+use Tests\Support\TwoFactor;
 
 // TL-06 (TASK-069; SECURITY_TEST_MATRIX SM-05; H8-05; PERMISSIONS_MATRIX OD-16, AZ-10, RG-02; HO-15; criterion 3): the
 // OD-16 reconciliation that runs after every authorization and integration test (tests/Pest.php) finds a seeded
 // anomaly of each kind — an OWNER_ONLY capability in a user grant and in another role's capabilities, an OWNER_ONLY
 // event by an account without the OWNER role, a committed command's event recorded below the class its capability
-// carries —, the first two also security-logged as AUTHORIZATION_ANOMALY by the resolver (EffectiveCapabilitiesTest
+// carries, judged by the capability its request was observed to exercise whatever form the command takes, F-04's
+// consequences alone held open —, the first two also security-logged as AUTHORIZATION_ANOMALY by the resolver (EffectiveCapabilitiesTest
 // holds the resolver's side); a refused command's SYSTEM record with a human actor is no anomaly (ST-03; SQ-23). Each
 // seed is rolled back to its savepoint, so the reconciliation after the test is clean.
 
@@ -76,6 +80,34 @@ it('finds a committed command\'s event recorded below the class of the capabilit
 
     expect(AuthorityReconciliation::capabilities())->toHaveKey('PRJ.CancelProject', 'projects.cancel')
         ->and($anomalies)->toBe(["AUTHORITY_CLASS_BELOW_EXERCISED: audit event {$event->id} PRJ.ProjectCancelled recorded ADM, its command PRJ.CancelProject exercising projects.cancel (ADM_PLUS)"]);
+});
+
+it('judges a command whose module service is told its capability by the capability its request exercised — IAM.CreateUser, users.manage — and finds its event recorded below it (AZ-10)', function () {
+    $owner = TwoFactor::enrol(Authorization::owner());
+    $this->actingAs($owner)->withSession([RequireStepUp::CONFIRMED_AT => time()])
+        ->post('/pengaturan/pengguna', ['command_id' => (string) Str::uuid(), 'name' => 'Dewi Uji', 'email' => 'dewi@contoh.test'])->assertRedirect();
+    $created = DB::table('audit_events')->where('action', 'IAM.UserCreated')->sole();
+
+    expect(AuthorityReconciliation::capabilities())->not->toHaveKey('IAM.CreateUser')
+        ->and(AuthorityReconciliation::exercised((string) $created->command_id, 'IAM.CreateUser'))->toBe('users.manage')
+        ->and(AuthorityReconciliation::anomalies())->toBe([]);
+
+    $anomalies = ($this->seeded)(function () use ($owner, $created, &$event): void {
+        $event = AuditEvent::factory()->create(['actor_user_id' => $owner->id, 'action' => 'IAM.UserCreated', 'authority_class' => 'ADM', 'command_id' => $created->command_id]);
+    });
+
+    expect($anomalies)->toBe(["AUTHORITY_CLASS_BELOW_EXERCISED: audit event {$event->id} IAM.UserCreated recorded ADM, its command IAM.CreateUser exercising users.manage (OWNER_ONLY)"]);
+});
+
+it('holds open only F-04\'s consequences at their own class, any other event below its command\'s class still found (AZ-10)', function () {
+    $anomalies = ($this->seeded)(function () use (&$event): void {
+        $command = CommandLog::factory()->create(['command_type' => 'PRJ.CancelProject', 'actor_user_id' => $this->admin->id, 'company_id' => $this->company->id]);
+        AuditEvent::factory()->create(['actor_user_id' => $this->admin->id, 'company_id' => $this->company->id, 'action' => 'PRJ.ProjectRevalidated', 'authority_class' => 'SYSTEM', 'command_id' => $command->command_id]);
+        $event = AuditEvent::factory()->create(['actor_user_id' => $this->admin->id, 'company_id' => $this->company->id, 'action' => 'PRJ.ProjectRevalidated', 'authority_class' => 'ADM', 'command_id' => $command->command_id]);
+    });
+
+    expect(AuthorityReconciliation::DERIVED)->toHaveKey('PRJ.ProjectRevalidated', 'SYSTEM')
+        ->and($anomalies)->toBe(["AUTHORITY_CLASS_BELOW_EXERCISED: audit event {$event->id} PRJ.ProjectRevalidated recorded ADM, its command PRJ.CancelProject exercising projects.cancel (ADM_PLUS)"]);
 });
 
 it('reads a refused command\'s SYSTEM record with a human actor as a refusal, not an anomaly (HO-15; ST-03; SQ-23)', function () {
