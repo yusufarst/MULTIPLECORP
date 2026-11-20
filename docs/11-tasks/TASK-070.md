@@ -6,7 +6,9 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+Amendment: on 2026-11-20, under [DIR-128](../00-governance/DECISION_LOG.md#dir-128--the-owners-code-first-directive-2026-11-20), the Owner's code-first directive, criterion 1's local run of the verification command is replaced by the release candidate's fresh CI run, which runs the same command on a clean runner; every other criterion is unchanged.
+
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -204,7 +206,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 
 **ACCEPTANCE CRITERIA:**
 
-1. One release candidate passes Layer 3 in fresh CI — every journey CJ-01–CJ-22 but CJ-16 on the phone and the desktop, the major roles, every route, the core forms, the critical integrations, every SECURITY_TEST_MATRIX case and the release-critical checks CI can run —, after passing the verification command locally (TEST_STRATEGY §3; TS-10).
+1. One release candidate passes Layer 3 in fresh CI — every journey CJ-01–CJ-22 but CJ-16 on the phone and the desktop, the major roles, every route, the core forms, the critical integrations, every SECURITY_TEST_MATRIX case and the release-critical checks CI can run —, the verification command run by that fresh CI on a clean runner (TEST_STRATEGY §3; TS-10; DIR-128).
 2. Every layer TL-01–TL-16 each Task required passes on the release candidate, `ReconcileGuards` reports no difference after the run, and no valid test was weakened, skipped or deleted (TS-06; TS-11; DOD-05).
 3. The release integrity report's inputs exist for TASKS, ROUTES, INTERACTIONS, CRITICAL JOURNEYS, UI/UX, BROWSER, BUILD, SECURITY and PERFORMANCE, each with its evidence and none reporting a planned check as run (RELEASE_PLAN §11; TS-08).
 4. Every FEATURE_COVERAGE_MATRIX entry mapped to a Task traces to its acceptance criteria and passing tests, and every disposition has its reason; no hole is left unexplained (GAP-024; TEST_STRATEGY §5).
@@ -238,32 +240,33 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint over the two release scripts in this head's CI (TL-01)
+- [x] Typecheck: N/A — no TypeScript or PHP changed; the scripts are Node modules checked by their self-tests
+- [x] Relevant automated tests: `coverage-trace.mjs --self-test` and its run in the Verify job; the full regression of every layer in this head's CI
+- [x] Authorization: TL-06 in the regression (TASK-069's suites)
+- [x] Route integrity: TL-07 in the regression — the crawl of every route
+- [x] Interaction behavior: TL-08 in the regression
+- [x] Browser E2E if required: CJ-01–CJ-22 but CJ-16 on Chromium and WebKit in the regression (TL-09); CJ-16 in the staging runbook
+- [x] Responsive/adaptive if required: TL-11 in the regression
+- [x] Visual breathing room/density if UI: N/A — no page changed; TASK-065's gate joined (§5 of the [record](../08-testing/evidence/TASK-070_RELEASE_REGRESSION_RECORD.md))
+- [x] Production build: TL-13 in the regression
+- [x] Security checks if required: TL-14's gates in the regression; synthetic data only, no secret in the records (DOD-21)
+- [x] Database safety review: no schema change, no migration, no database touched
+- [x] Final diff review: the pull request's Codex review (DIR-096), its findings in the squash commit's message
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): CI run 44763287325 on `ccdc3ee`, whose tree is the release candidate's code, every job PASS; this head's run, the same layers with the coverage traceability, cited in the squash commit's message (DIR-127)
+- Build result: TL-13 PASS in both runs
+- Route evidence: N/A — no route added or changed; every route crawled in the regression (TASK-069)
+- Interaction evidence: N/A — no control added; every INT- contract's test in the regression (TL-08)
+- Browser evidence: `E2E: PASS — Evidence: run 44763287325`; the journeys' console and network captures in its artifacts
+- Localization evidence: N/A — no copy added
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — Node's built-ins only
+- Files changed: `scripts/release/coverage-trace.mjs` new and `scripts/verify.sh`; [STAGING_LAYER3_RUNBOOK](../10-release/STAGING_LAYER3_RUNBOOK.md) and [UAT_PREPARATION](../10-release/UAT_PREPARATION.md) new; TASK-065's gate record joined; the [regression record](../08-testing/evidence/TASK-070_RELEASE_REGRESSION_RECORD.md); DIR-128 with its source and AGENT_OPERATING_MODEL's line; the DONE updates
+- Commit SHA: the pull request's squash commit on `main`, the Owner's identity, no AI attribution
+- Notes: criteria 1–10 as DIR-128 amended criterion 1, each with its result in the [regression record](../08-testing/evidence/TASK-070_RELEASE_REGRESSION_RECORD.md) §8. The release stays NO-GO: TASKS reads FAIL until TASK-071's operator inputs unblock TASK-072 and TASK-074–TASK-087; the staging checks S-01–S-10 and the UAT are NOT RUN until the operator and the validators run them.
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

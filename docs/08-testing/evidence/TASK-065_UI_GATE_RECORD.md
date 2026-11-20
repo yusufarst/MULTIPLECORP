@@ -28,14 +28,14 @@ Each page's record holds AICWDF §27's twenty-one items. A page visited in sever
 | Design system consistency | PASS 82, FAIL 3 | PASS 82, FAIL 3 | The three are PG-011's two dialogs and PG-020's: `--shadow-modal` less its ring layer (`tokens.css`), the reader's asymmetry corrected in this record's commit (§2). No other value outside the tokens on any page |
 | Primary action clear | PASS 85 | PASS 85 | At most one primary action in every region |
 | Unnecessary duplicate actions: 0 | PASS 84, FAIL 1 | PASS 84, FAIL 1 | PG-056: *Ubah Harga* three times in one section (GF-04) |
-| Back action clear; navigation contract valid | ELSEWHERE | ELSEWHERE | TEST_STRATEGY §8's NAV- tests (TL-09) |
-| Indonesian default; plain Indonesian; English available; missing translations: 0; language switch | ELSEWHERE | ELSEWHERE | TASK-067, entered by TASK-070 |
+| Back action clear; navigation contract valid | ELSEWHERE | ELSEWHERE | TEST_STRATEGY §8's NAV- tests (TL-09), all 65 NAV- contracts with their passing tests ([TASK-069](TASK-069_SECURITY_RECORD.md)) |
+| Indonesian default; plain Indonesian; English available; missing translations: 0; language switch | PASS 85 | PASS 85 | TASK-067's audit of every page state in both languages — missing translations 0, no Indonesian interface string on an English page, the same structure in both, the switch keeping the page and its input ([TASK-067](../../11-tasks/TASK-067.md) criteria 1–5) —, entered by TASK-070 |
 | Mobile-first | PASS 85 | PASS 85 | The phone composition at 320 and 390 px (WebKit 390) without horizontal page scrolling outside a table frame |
 | Responsive | PASS 85 | PASS 85 | All ten band edges on Chromium, three on WebKit; no horizontal page scroll outside a table frame and no mandated copy cut under 1.4.12 at any width. The review found cuts outside D-DS-18's four kinds of copy (GF-06, GF-07) |
 | Adaptive | PASS 35, FAIL 32, NOT TESTED 18 | Chromium's | The 18 are later states of a page already measured at its first; the 32 FAIL are 32 pages with controls below 44 px under a coarse pointer at 390 px (GF-02, GF-03) |
 | Loading, empty and error states | Loading PASS 85; Empty PASS 31, FAIL 1, NOT TESTED 53; Error NOT TESTED 85 | Loading PASS 85; Empty PASS 29, FAIL 1, NOT TESTED 55 | No region left loading once a visit settled; every empty state shown is one sentence with at most one action, but PG-005's, whose icon, larger than 24 px, the reader counts as a picture (GF-08; SLOP-23 REVIEW); an empty state where the data had none and the error states are NOT TESTED (§8) |
 | Destructive action safety | ELSEWHERE | ELSEWHERE | IP-08's confirmation with each INT- contract (TL-08) |
-| Accessibility critical checks | ELSEWHERE | ELSEWHERE | TASK-066, entered by TASK-070 |
+| Accessibility critical checks | PASS 85 | PASS 85 | TASK-066's audit — no WCAG 2.2 AA violation in 334 state readings of the 65 pages on both engines and widths, the keyboard's ring and walk, focus not obscured, 44 px targets under a coarse pointer after GF-02 and GF-03's fixes ([accessibility record](TASK-066_ACCESSIBILITY_RECORD.md)) —, entered by TASK-070 |
 | Visual breathing room | PASS 85 | PASS 85 | Every padding and gap a token |
 | Content density appropriate | REVIEW 85 | REVIEW 85 | §6 |
 

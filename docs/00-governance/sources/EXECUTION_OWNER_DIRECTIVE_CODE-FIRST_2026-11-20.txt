@@ -1,0 +1,137 @@
+Owner directive received in session during execution, 2026-11-20 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received, with the Owner's request in the same message that the work interrupted by the workstation's shutdown continue without starting over.
+
+MULTIPLECORP — URGENT OWNER DIRECTIVE: CODE FIRST, MINIMUM TESTING, MAXIMUM EXECUTION
+TASK
+Immediately prioritize direct implementation and completion of all remaining authorized MULTIPLECORP Tasks.
+This directive supersedes previous instructions encouraging prolonged local testing, repeated analysis, unnecessary cleanup, or excessive verification cycles.
+OWNER PRIORITY
+The Owner is extremely frustrated with the slow execution, repeated testing, excessive token consumption, and lack of visible Task completion.
+The Owner wants the remaining application code completed as quickly as possible.
+STOP WASTING TIME. FINISH THE APPLICATION.
+Target: November 22, 2026, subject to mandatory production safety and Owner-controlled deployment.
+READ
+Use the existing repository context, TASK_PLAN, current Task contracts, approved Owner decisions, and latest GitHub evidence.
+Do not reread the entire documentation unless necessary.
+GOAL
+Maximize actual code implementation, completed Tasks, and merged PRs while minimizing unnecessary AI token consumption.
+DO
+1. IMMEDIATELY STOP NONESSENTIAL WORK
+
+* Stop optional local testing and repeated full-suite execution.
+* Stop disk inventories and cleanup investigations.
+* Stop unnecessary research, exploratory agents, background analysis, and redundant watchers.
+* Stop producing lengthy progress reports.
+* Do not restart Docker merely to perform optional tests.
+* Do not disturb other projects or shared infrastructure.
+
+Preserve all existing work and mandatory CI processes.
+2. FINISH TASK-069
+Current verified GitHub state:
+
+* PR #92 is OPEN.
+* HEAD: `ccdc3ee`.
+* Mandatory CI is already running.
+* Performance and deployment jobs have passed.
+* Other required checks are still running.
+
+Do not repeat previous investigations.
+Use the existing CI results.
+If all mandatory checks pass, complete the authorized merge immediately.
+If a check fails:
+
+* Read the exact failure.
+* Make one focused corrective batch.
+* Run the required CI retry once.
+* If the failure persists, document it and leave TASK-069 unresolved.
+* Continue another independent READY Task when repository rules allow.
+
+Never falsely mark a failed Task DONE or merge a commit that has not satisfied mandatory gates.
+3. CODE FIRST — NO OPTIONAL LOCAL TESTING
+From now on:
+
+* Prioritize writing production code.
+* Do not run full local test suites.
+* Do not run repeated local browser tests.
+* Do not perform large-scale performance benchmarks.
+* Do not regenerate test fixtures unnecessarily.
+* Use existing validated evidence.
+* Rely on mandatory GitHub CI for final verification.
+* Do not introduce new tests unless essential for a verified defect, security requirement, or acceptance criterion.
+* Do not disable existing required tests or conceal failures.
+
+For each Task, aim for one implementation batch, one final CI run, and an immediate merge when eligible.
+4. AUTOMATIC TASK CONTINUATION
+After a Task is genuinely DONE:
+
+1. Complete its required repository record.
+2. Merge through the existing authorized process.
+3. Update the progress counter.
+4. Immediately begin the next independent READY Task.
+5. Continue automatically without asking the Owner for routine permission.
+
+Do not restart planning from zero for each Task.
+Preserve the frozen total of 95 Tasks.
+5. STRICT TOKEN EFFICIENCY
+
+* Prefer direct code edits over lengthy reasoning reports.
+* Reuse existing functions, components, fixtures, and tools.
+* Avoid unnecessary subagents.
+* Avoid repeatedly reading the same files.
+* Do not produce extensive explanations of every command.
+* Avoid extra review loops beyond binding requirements.
+* Do not add artificial checkpoints.
+* Batch related corrections into one commit when practical.
+* Never interpret an unverified assumption as a passing check.
+
+6. RELEASE PRIORITY
+Move as quickly as possible toward production readiness.
+Prioritize resolving the real release dependencies:
+
+* Remaining implementation.
+* TASK-071 operator requirements.
+* Staging readiness.
+* Database and migration safety.
+* Backup and restore.
+* Required security and business-critical checks.
+* UAT and production configuration.
+* Final Owner GO/NO-GO.
+
+Do not deploy, handle production secrets, or modify shared VPS infrastructure without specific authorization.
+If the November 22 target cannot be met safely, report only the concrete release blockers and continue eligible implementation.
+7. FAILURE POLICY
+Use the Owner-approved limited-retry execution policy:
+
+* First required CI PASS: proceed.
+* First FAIL: one targeted corrective batch and one retry.
+* Second FAIL: record the exact failure, preserve the work, and move to an independent READY Task if available.
+* No automatic third retry.
+* Failed or unverified Tasks remain unresolved.
+* Mandatory release failures remain NO-GO.
+
+8. DO NOT CREATE ADDITIONAL WORK
+
+* No new Tasks outside the frozen 95.
+* No speculative refactoring.
+* No unnecessary UI redesign.
+* No additional performance or browser matrices.
+* No repeated documentation audits.
+* No extra infrastructure tooling.
+* No disk cleanup unless insufficient space actually blocks execution.
+
+VERIFY
+Use existing mandatory CI and repository evidence. Do not fabricate results or silently weaken acceptance criteria.
+STOP IF
+A security, data-integrity, production-safety, or authorization issue prevents the requested operation. Record the issue and continue eligible independent work instead.
+UPDATE
+Keep Owner reports extremely brief:
+
+* DONE / 95
+* Active Task
+* Code completed
+* PR/CI status
+* Actual blocker
+* Next Task
+
+The Owner wants finished software, not repeated process reports.
+COMMUNICATION RULE
+All responses, progress reports, findings, blockers, questions, and communications to the Owner MUST be written entirely in Bahasa Indonesia.

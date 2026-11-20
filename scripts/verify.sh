@@ -98,6 +98,8 @@ local_layers() {
     slot 'TL-08 Interaction' tests/Interaction '*Test.php' 'the first Task with an INT- contract' $(suite Interaction)
     # TASK-069: every INT- and NAV- contract and every security matrix row mapped to the tests proving it (TEST_STRATEGY §8; APPR-040).
     check 'TL-08 Contract and security traceability (TASK-069)' $node_run sh -c 'node scripts/ci/check-traceability.mjs --self-test && node scripts/ci/check-traceability.mjs'
+    # TASK-070: every FEATURE_COVERAGE_MATRIX entry traced to its DONE Tasks or reported open with the Task it waits on (GAP-024).
+    check 'Release coverage traceability (TASK-070; GAP-024)' $node_run sh -c 'node scripts/release/coverage-trace.mjs --self-test && node scripts/release/coverage-trace.mjs'
     check 'TL-13 Frontend build' $node_run npm run build
     check 'TL-14 Secret-like scan (SX-06)' $node_run sh -c 'sh scripts/ci/scan-secrets.sh --self-test && sh scripts/ci/scan-secrets.sh'
     check 'TL-14 PHP dependency audit' $php_run sh -c 'sh scripts/ci/audit-dependencies.sh php --self-test && sh scripts/ci/audit-dependencies.sh php'
