@@ -202,7 +202,7 @@ Every item is true, with its evidence, before go-live is recorded (CUT-07); each
 | Input, as P9 defines it | What it decides | Recorded — PC-4, then the operator's records (DIR-115, DIR-121, DIR-129) | Needed before |
 | --- | --- | --- | --- |
 | OPI-01 | the named operator and an alternate (GAP-013; DIR-079 CB-14) | the Owner is the operator; the alternate not yet named — P9Q-14 decided: named before go-live (DIR-083 OE-03; GLC-21) | go-live |
-| OPI-02 | the VPS's measured free disk, usage, operating system and bandwidth period | PARTIAL — the operating system, CPU, memory and disk measured (DIR-115); the bandwidth allowance's accounting period owed | staging |
+| OPI-02 | the VPS's measured free disk, usage, operating system and bandwidth period | VERIFIED — the operating system, CPU, memory and disk measured; bandwidth reported per month against the 16 TB allowance on the panel (DIR-115; DIR-130) | staging |
 | OPI-03 | Docker Compose, or Coolify if the VPS already runs it (DIR-079 CB-05) | VERIFIED — Docker Engine, Docker Compose, host Nginx as the shared proxy, UFW; Coolify not observed, approved as the target (APPR-033) | staging |
 | OPI-04 | DNS at the current provider, or the edge proxy with WS-11's trusted proxy (DIR-079 CB-08) | answered: Cloudflare; its proxy mode and live state checked when staging needs them (DIR-121) | go-live |
 | OPI-05 | the zero-cost push channel, tested by the failure drill (DIR-079 CB-06) | OWNER APPROVED: e-mail to the Owner's phone inbox through the existing Cloudflare Email Service, only to verified addresses, Rp0, its COST_POLICY §4C.4 record written; delivery verification PENDING (TASK-080, TASK-081; DIR-129) | go-live |
@@ -219,7 +219,7 @@ Every item is true, with its evidence, before go-live is recorded (CUT-07); each
 | OPI-26 | the client's grant of access to the VPS for the operator | VERIFIED — granted to the Owner as the operator (DIR-115) | staging |
 | OPI-27 | the second production application's measured use and its own windows (INFRASTRUCTURE INF-07) | PARTIAL — no application deployed (DIR-115); both applications' reservations and the second application's windows owed | staging |
 | OPI-28 | the provider account's holder and its second factor (GAP-018) | the Owner alone holds it (DIR-121); its second factor owed | go-live |
-| OPI-29 | the plan's provider-side features, verified, and those able to act on the host confirmed off (INFRASTRUCTURE INF-08) | PARTIAL — the provider's features inspected on the panel (DIR-129); whether each is active or off owed; none relied on | staging; before production data for the confirmation (GLC-24) |
+| OPI-29 | the plan's provider-side features, verified, and those able to act on the host confirmed off (INFRASTRUCTURE INF-08) | PARTIAL — weekly provider backup active, provider firewall without rules, malware scanner not installed, anti-DDoS's enabled state not shown, the provider's AI agent available and used (DIR-130); the agent's and the backup's reach owed for GLC-24; none relied on | staging; before production data for the confirmation (GLC-24) |
 | OPI-30 | the application's domain and staging's name, kept outside the repository (INFRASTRUCTURE §2) | recorded, kept outside the repository; the staging name's DNS record created (DIR-129) | staging |
 | OPI-31 | every holder of administrative access to the host or the provider account, by role (GAP-041; GAP-018) | answered: the Owner alone, Owner-declared (DIR-121) | go-live |
 
