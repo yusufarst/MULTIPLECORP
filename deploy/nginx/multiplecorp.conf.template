@@ -1,6 +1,7 @@
 # MULTIPLECORP's own Nginx site for staging and production (TASK-072; SECURITY WS-06, WS-08, H9-02, LG-04, H8-20;
 # INFRASTRUCTURE §2; DIR-117): behind Coolify's proxy, which terminates TLS and redirects plain HTTP to HTTPS for the
-# application's domain; this site listens only on the stack's own network. The static security headers of WS-08 are
+# application's domain; this site listens only on the stack's own network. It reaches php-fpm at `app.internal`, php-fpm's
+# address on the stack's `internal` network, the only address php-fpm listens on (H9-09). The static security headers of WS-08 are
 # the local stack's (docker/nginx/default.conf); HSTS follows WS-06's stages through the environment variable
 # MULTIPLECORP_HSTS (`max-age=300`, then one week, then one year with includeSubDomains once every subdomain serves
 # HTTPS), which the Nginx image substitutes into this template when the container starts. Version banners off. The login endpoint's proxy rate limit bounds its total concurrency (H9-02; TM-50; TM-58).
@@ -65,7 +66,7 @@ server {
         limit_req zone=multiplecorp_login_total burst=30 nodelay;
         limit_req_status 429;
         include /etc/nginx/fastcgi_params;
-        fastcgi_pass app:9000;
+        fastcgi_pass app.internal:9000;
         fastcgi_param SCRIPT_FILENAME $realpath_root/index.php;
         fastcgi_param HTTPS on;
         fastcgi_hide_header X-Powered-By;
@@ -77,7 +78,7 @@ server {
     location ~ ^/(masuk/google/callback|atur-kata-sandi|reset-kata-sandi|verifikasi-email)(/|$) {
         error_log /dev/stderr crit;
         include /etc/nginx/fastcgi_params;
-        fastcgi_pass app:9000;
+        fastcgi_pass app.internal:9000;
         fastcgi_param SCRIPT_FILENAME $realpath_root/index.php;
         fastcgi_param HTTPS on;
         fastcgi_hide_header X-Powered-By;
@@ -86,7 +87,7 @@ server {
 
     location = /index.php {
         include /etc/nginx/fastcgi_params;
-        fastcgi_pass app:9000;
+        fastcgi_pass app.internal:9000;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param HTTPS on;
         fastcgi_hide_header X-Powered-By;

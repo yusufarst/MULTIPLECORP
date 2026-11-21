@@ -1,0 +1,6 @@
+# MULTIPLECORP's own Nginx for staging and production (TASK-072; INFRASTRUCTURE §2; TASK-078's staging findings): the
+# site template is built into the image, so the stack mounts nothing from the repository. Coolify resolves a relative bind
+# mount against its own resource directory, never against the compose file's (docs/09-operations/COOLIFY_DEPLOYMENT.md §3).
+# The Nginx image substitutes the MULTIPLECORP_* variables into the template when the container starts.
+FROM nginx:1.30.6-alpine3.24@sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5
+COPY deploy/nginx/multiplecorp.conf.template /etc/nginx/templates/default.conf.template

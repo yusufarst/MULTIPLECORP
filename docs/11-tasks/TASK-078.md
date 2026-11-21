@@ -1,12 +1,12 @@
 # TASK-078 — Staging stack, the two applications' isolation and the provider features
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-11-22 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** IN_PROGRESS
 
 **RISK CLASS:** HIGH
 
@@ -260,6 +260,34 @@ Staging is the only place where the VPS's own hardware, TLS and the operator's c
 - Files changed: none in the application; this file's evidence summary only
 - Commit SHA: the commit that records the summary, under the Owner's identity, with no AI attribution
 - Notes: each non-applicable item with its reason (DOD-03); GLC-19 completed for the backup and restore drill by TASK-081's record; the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3), made on the operator's record and never on an agent's claim (TASK_PLAN §2)
+
+**OPERATOR RECORD:**
+
+The operator's work, recorded from the Owner's evidence only, without a secret, host name, address or path (TEST_STRATEGY §16).
+
+*2026-11-22 — staging's first deployment and its findings.* The operator deployed staging through Coolify v4.7.6 from `main` at `7104790`: `/kesehatan` answered OK, and PostgreSQL, Valkey, the migration and the application ran. `php artisan ops:smoke` passed its database, queue, renditions and disk lines. The four daily scheduler lines had no success yet, as on any stack younger than a day, and the backups were NOT CHECKED until TASK-074's tooling runs there (TASK-081), so it exited 1. Three findings came back to TASK-072's definition through the executor feedback loop ([AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop)), each traced in Coolify's own source at its tag `v4.7.6`:
+
+| Finding | Its cause in Coolify v4.7.6 | The fix in the definition | State |
+| --- | --- | --- | --- |
+| (a) Coolify's resource network on `db` and `cache`; the operator's manual disconnection is undone by the next deployment | The application parser attaches every service to every network of the file and to the resource's own network, which `coolify-proxy` joins (`bootstrap/helpers/parsers.php`); only a service with `network_mode` is left alone | PostgreSQL, Valkey and php-fpm listen only on their address on `internal` — `db.internal`, `cache.internal`, `app.internal` — and refuse a connection from any other network; the processes connect by those names (H9-09). TL-05 proves it with Coolify's attachment and variables reproduced | No other container can connect to them: FIXED. The attachment stays, so `db` and `cache` keep a route out through the resource's network, against [COOLIFY_DEPLOYMENT §3](../09-operations/COOLIFY_DEPLOYMENT.md#3-isolation-of-the-two-applications-inf-07)'s "no outbound route": **BLOCKED** on the Owner's decision below |
+| (b) `DB_SUPERUSER`, `DB_SUPERUSER_PASSWORD`, `DB_MIGRATION_USERNAME`, `DB_MIGRATION_PASSWORD`, `DB_ADMIN_USERNAME` and `DB_ADMIN_PASSWORD` in the `app` container | The deployment job gives every service `env_file: .env`, which holds every variable of the resource (`app/Jobs/ApplicationDeploymentJob.php`; upstream issue #7655, open and on hold, with #8219 its duplicate). A variable therefore reaches every container whatever the file declares, and an entrypoint's `unset` would leave it in `docker inspect` | The six are no resource variables. They are files in the operator's credentials directory, mounted read-only into `db`, `db-roles` and `migrate` alone and read there by Docker's `_FILE` convention, so they are in no container's configuration. TL-05 proves that no container's `docker inspect` holds their passwords, with every variable given to every service as Coolify gives it | FIXED in the definition; the operator's steps below |
+| (c) The roles script of `db-roles` and the Nginx site template not found, patched on the host | A relative bind mount resolves against Coolify's resource directory, not the compose file's, and `../` leaves that directory | Both are built into their images (`docker/postgres/Dockerfile.roles`, `docker/nginx/Dockerfile.production`). Nothing is mounted from the repository, and *Preserve repository during deployment* is no longer needed | FIXED |
+
+Found while proving these fixes, on a slow first start: `db`'s health check went through the local socket, so the image's first initialization, whose temporary server listens there alone, already counted as up, and `db-roles` could connect before PostgreSQL listened on TCP. The check now asks `db.internal` itself, with a start period for that initialization.
+
+**The operator's steps before the next deployment** ([COOLIFY_DEPLOYMENT §5](../09-operations/COOLIFY_DEPLOYMENT.md#5-staging)):
+
+1. Make staging's credentials directory on the VPS from the password manager, with the six values the staging database already has, owned as §5 sets out.
+2. In the resource, set `MULTIPLECORP_CREDENTIALS_DIR` and delete the six variables. *Preserve repository during deployment* can be turned off; *Connect to predefined network* and *Raw Compose Deployment* stay off.
+3. Remove the host patches made for (c); disconnect nothing by hand.
+4. Deploy the merge commit of this fix, then make §5's checks after a deployment: `docker inspect` and `env` without the six; no answer from `db`, `cache` or `app` on the resource's own network; `/kesehatan` and `ops:smoke` as above.
+
+**The Owner's decision (BLOCKED).** Coolify v4.7.6 offers a compose file no way to keep `db` and `cache` off its resource network. Their listeners refuse every connection there, but both keep a route out. Every service, `web`, `db` and `cache` included, also receives the runtime's own secrets — `APP_KEY`, `DB_PASSWORD`, `REDIS_PASSWORD`, `SECURITY_LOG_HMAC_KEY` and `GOOGLE_CLIENT_SECRET` — with every other variable. The options:
+
+- (1) Accept both as a recorded residual risk, with the listener binding as the control.
+- (2) Coolify's *Raw Compose Deployment*, in which Coolify adds no variable and no network. This restores Docker Compose's own semantics and the approved isolation whole. The proxy's routing and certificate labels then belong in the definition, matched to the installed proxy and proven on staging, which changes how §5 routes the domain. It is not done here.
+
+Upstream, #7655 on the variables is open and on hold. #12187, which asks for an opt-in internal resource network, is closed, yet v4.7.6 still creates the resource network with a route out (`docker network create --attachable`). Production data waits on this decision.
 
 **SAFE NEXT TASK:**
 

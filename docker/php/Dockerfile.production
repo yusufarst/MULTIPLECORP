@@ -41,6 +41,7 @@ RUN set -eux; \
         echo 'pm.min_spare_servers = ${PHP_FPM_MIN_SPARE}'; \
         echo 'pm.max_spare_servers = ${PHP_FPM_MAX_SPARE}'; \
         echo 'clear_env = no'; \
+        echo 'listen = ${PHP_FPM_LISTEN}'; \
     } > /usr/local/etc/php-fpm.d/zz-multiplecorp.conf; \
     php -m | grep -qx pdo_pgsql; \
     php -m | grep -qx gd; \
@@ -48,7 +49,9 @@ RUN set -eux; \
     weasyprint --version; \
     pg_dump --version | grep -q " 18\."
 # php-fpm's pool size is configuration, its values from TASK-079's measurement (SZ-01–SZ-04); these are the defaults.
-ENV PHP_FPM_PM=dynamic PHP_FPM_MAX_CHILDREN=10 PHP_FPM_START_SERVERS=3 PHP_FPM_MIN_SPARE=2 PHP_FPM_MAX_SPARE=5
+# So is its address: port 9000 on every interface by default, and on staging and production its address on the stack's
+# `internal` network alone (deploy/coolify/compose.yml; H9-09).
+ENV PHP_FPM_PM=dynamic PHP_FPM_MAX_CHILDREN=10 PHP_FPM_START_SERVERS=3 PHP_FPM_MIN_SPARE=2 PHP_FPM_MAX_SPARE=5 PHP_FPM_LISTEN=9000
 
 WORKDIR /var/www/html
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer

@@ -1,0 +1,3 @@
+# The roles image's build context (docker/postgres/Dockerfile.roles): the roles script alone.
+*
+!docker/postgres/provision-roles.sh

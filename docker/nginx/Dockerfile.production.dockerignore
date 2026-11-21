@@ -1,0 +1,3 @@
+# The site image's build context (docker/nginx/Dockerfile.production): the site template alone.
+*
+!deploy/nginx/multiplecorp.conf.template

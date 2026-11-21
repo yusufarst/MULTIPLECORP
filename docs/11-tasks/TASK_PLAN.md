@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 95
 
 DONE: 85
-READY: 1
-IN_PROGRESS: 0
+READY: 0
+IN_PROGRESS: 1
 BLOCKED: 2
 VERIFYING: 0
 TODO: 7
@@ -28,8 +28,8 @@ Progress:
 85 / 95
 Percentage: 89.5 %
 
-CURRENT TASK: none in progress — TASK-076 — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation DONE on its branch `task/TASK-076`, its record in its final commit (DIR-127), its pull request squash-merged by the executor once that head's CI passes
-NEXT READY TASK: TASK-078 — Staging stack, the two applications' isolation and the provider features READY, the human operator's; no AGENT Task is READY until the operator's staging work (TASK-078, TASK-080) and the Owner's inputs unblock the rest
+CURRENT TASK: TASK-078 — Staging stack, the two applications' isolation and the provider features IN_PROGRESS, the human operator's: staging deployed on 2026-11-22, its three findings fixed in the deployment definition, the Owner's decision on Coolify's network attachment and variables open (TASK-078's OPERATOR RECORD)
+NEXT READY TASK: none — no AGENT Task is READY until the operator's staging work (TASK-078, TASK-080) and the Owner's inputs unblock the rest
 LAST TASK PLAN CHANGE: Change 29 of 2026-11-15, recorded 2026-11-20 — TASK-069 proved through the existing suites with its gaps filled, small defects fixed minimally inside it, the Owner's APPR-040; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -226,7 +226,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-075](TASK-075.md) | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | DONE | 010, 013, 022, 058, 071, 072, 074 | 080 | NO | AGENT | NONE | NO |
 | [TASK-076](TASK-076.md) | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | Release · Release | HIGH | DONE | 013, 020, 021, 074 | 081, 083 | NO | AGENT | NONE | NO |
 | [TASK-077](TASK-077.md) | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | Release · Release | HIGH | DONE | 021, 057, 072 | 081, 087 | NO | AGENT | NONE | NO |
-| [TASK-078](TASK-078.md) | Staging stack, the two applications' isolation and the provider features | Operations · Operations | HIGH | READY | 071, 072 | 079, 080, 081, 082, 086 | NO | HUMAN OPERATOR | NONE | NO |
+| [TASK-078](TASK-078.md) | Staging stack, the two applications' isolation and the provider features | Operations · Operations | HIGH | IN_PROGRESS | 071, 072 | 079, 080, 081, 082, 086 | NO | HUMAN OPERATOR | NONE | NO |
 | [TASK-079](TASK-079.md) | Staging measurements — capacity, Argon2id, durations and the disk budget | Operations · Operations | HIGH | TODO | 068, 074, 078 | 084 | NO | HUMAN OPERATOR | NONE | NO |
 | [TASK-080](TASK-080.md) | Alert channel adopted and monitoring live | Operations · Operations | HIGH | TODO | 075, 078 | 081, 083 | NO | HUMAN OPERATOR | NONE | NO |
 | [TASK-081](TASK-081.md) | Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal | Operations · Operations | HIGH | BLOCKED — DEP-05 | 064, 070, 074, 076, 077, 078, 080 | 084 | NO | HUMAN OPERATOR | NONE | NO |

@@ -264,10 +264,13 @@ jobs:
         if: always()
         run: docker compose down -v
 
-  # TL-05 on the deployment definition (TASK-072): deploy/coolify/compose.yml started with throwaway values generated on
-  # the runner and checked as Coolify's proxy reaches it — private and authenticated stores, no migration, superuser or
-  # administration credential in a running process, the headers, the trusted host and proxy, the request log, the
-  # maintenance mode and Valkey's keys across restarts. It deploys nothing anywhere (RL-01).
+  # TL-05 on the deployment definition (TASK-072; TASK-078's staging findings): deploy/coolify/compose.yml started as
+  # Coolify v4.7.6 starts it — every service given every resource variable and attached to every network — with throwaway
+  # values and credential files generated on the runner, and checked as Coolify's proxy reaches it: the stores and php-fpm
+  # listening on the internal network alone, private and authenticated, no migration, superuser or administration
+  # credential in any container's configuration or running process, nothing mounted from the repository, the headers, the
+  # trusted host and proxy, the request log, the maintenance mode and Valkey's keys across restarts. It deploys nothing
+  # anywhere (RL-01).
   deployment-definition:
     name: Deployment definition — TL-05 on the Coolify stack
     runs-on: ubuntu-24.04
@@ -296,7 +299,7 @@ jobs:
 
       - name: Stack logs
         if: failure()
-        run: docker compose -p mcdeploy -f deploy/coolify/compose.yml --env-file "${RUNNER_TEMP}/mcdeploy.env" logs --no-color
+        run: sh scripts/ci/check-deployment.sh logs
 
       - name: Keep the evidence
         if: always()
