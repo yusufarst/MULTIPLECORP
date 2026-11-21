@@ -37,8 +37,8 @@ use App\Modules\INV\Services\ReceivingSubjects;
 use App\Modules\INV\Services\ReservationLifecycle;
 use App\Modules\INV\Services\ReservationObligations;
 use App\Modules\INV\Services\ReservationPredicate;
+use App\Modules\ORG\Services\FileGoLive;
 use App\Modules\ORG\Services\NumberingGoLive;
-use App\Modules\ORG\Services\UnrecordedGoLive;
 use App\Modules\PRJ\Contracts\CompletionPredicateProvider;
 use App\Modules\PRJ\Contracts\ProjectLifecycleParticipant;
 use App\Modules\PRJ\Contracts\ProjectPartProvider;
@@ -76,8 +76,9 @@ class AppServiceProvider extends ServiceProvider
         // Memoized for one request or job only, never across them (PERMISSIONS_MATRIX AZ-03; SECURITY EN-02).
         $this->app->scoped(EffectiveCapabilities::class);
 
-        // Go-live is not recorded until TASK-077 binds the store P11Q-04 defines (NM-03; DIR-085 OF-04; TASK-021).
-        $this->app->bindIf(NumberingGoLive::class, UnrecordedGoLive::class);
+        // Go-live's store of INFRASTRUCTURE §4.2 (DIR-101): one file on the private storage, created once by the operator's
+        // command (TASK-077); until it exists go-live is not recorded (NM-03).
+        $this->app->bindIf(NumberingGoLive::class, fn (): NumberingGoLive => FileGoLive::configured());
 
         // FL-08's renderer (DIR-099 C1) and the layouts' one template set, which the composer reads too (TASK-022; TASK-029).
         $this->app->bindIf(DocumentRenderer::class, WeasyPrintRenderer::class);

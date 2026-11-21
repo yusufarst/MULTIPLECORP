@@ -9907,6 +9907,12 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "activity.action.ORG.NumberingGoLiveRecorded": {
+            "task": "TASK-077",
+            "source": "HO-32; PRQ-07; INFRASTRUCTURE §4.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "activity.action.ORG.NumberingRaised": {
             "task": "TASK-061",
             "source": "BR-XC-01; LG-01; PT-18",

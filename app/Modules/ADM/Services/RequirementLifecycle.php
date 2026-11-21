@@ -58,7 +58,7 @@ final class RequirementLifecycle implements ProjectLifecycleParticipant
         ]);
         $this->audit->record(
             action: 'ADM.DefaultInvoiceItemAdded',
-            authorityClass: AuthorityClass::Adm,
+            authorityClass: AuthorityClass::exercisedBy(AuthorityClass::Adm, $context->request->capability),
             actorUserId: $context->request->actorUserId,
             companyId: (int) Row::text($project, 'company_id'),
             entityType: 'project',
