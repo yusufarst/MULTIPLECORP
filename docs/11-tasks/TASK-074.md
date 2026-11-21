@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -249,32 +249,32 @@ CAP-16 requires operational readiness on the existing VPS with multiple recovery
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint — TL-01: Pint
+- [x] Typecheck — TL-02: PHPStan at its maximum level
+- [x] Relevant automated tests — TL-03: the status, retention, cleanup and disk-pressure rules, the files' archive and the copy's encryption (`tests/Unit/Backup`); TL-04: the commands registered for the console and refused outside one (`tests/Feature/Backup`); TL-05: TEST_STRATEGY §15's tooling cases on real PostgreSQL with the server's own dump and restore tools (`tests/Integration/Backup`)
+- [x] Authorization — N/A — no route; the files' permissions asserted instead (SX-07): directories 0700, files 0600
+- [x] Route integrity — N/A — no route added or changed
+- [x] Interaction behavior — N/A — no INT- contract in this Task
+- [x] Browser E2E if required — N/A — no page
+- [x] Responsive/adaptive if required — N/A — no page
+- [x] Visual breathing room/density if UI — N/A — no page
+- [x] Production build — TL-13, and both images built with PostgreSQL 18's client tools, the server's major version (HO-30)
+- [x] Security checks if required — no key, password or secret in a manifest, a log or a record; the copy encrypted to a public key whose secret half is never on the VPS, opened only with it, a truncated or altered copy refused; the files' permissions; SM-15's secret scan (TL-14)
+- [x] Database safety review — no schema change; the dump and the restore under the login the operator gives to the run alone — the owner role's —, never the runtime's or the migrations' connection (H9-01), restore verification under the administration role; a restore only into a new, empty database and a new directory, never the live ones, in one transaction
+- [x] Final diff review — every changed file inside the IN SCOPE areas
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs: the layers of TEST_STRATEGY §16 on this record's own head in one CI run, cited in the squash commit's message — Verify (TL-01–TL-08, TL-13, TL-14), the four browser layers and their aggregate, Performance and migration (TL-15, TL-16) and the Deployment definition (TL-05 on the Coolify stack). Criterion by criterion: (1) a run writes one generation — the custom-format dump, consistent at its snapshot, and the bytes of every file row the dump itself holds, each checked against its row's size and SHA-256, exports left out — and a manifest written last whose checksums verify; (2) a file row without its bytes fails the run, its generation left incomplete; a changed byte is CORRUPT, a manifest-less run INCOMPLETE, an absent one MISSING, no verified backup or copy within 26 hours STALE, and a run at the critical disk level without the space SKIPPED, each alerted and never successful; (3) cleanup removes only the verified generations the retention lets expire, after the new one verified, never the newest verified, an unverified, the latest pre-deployment or a kept pre-import generation, and a failed cleanup stops with every kept generation in place; (4) the manifest names the key-register entry, never a key, and the restore refuses an installed key that does not open the restored second-factor secrets, and a generation paired with a leaked key; (5) only a verified generation is copied, each file encrypted to the copy's public key, its checksums read back at the destination before the copy counts; a failed copy is alerted and deletes no generation; a copy brought back with the secret key verifies, a changed one is refused; (6) the restore goes only into a new, empty database and a new directory, reconciles rows and bytes, renders an owed rendition again from its issued payload with its number unchanged, reads `ReconcileGuards`' families and leaves the live state untouched; (7) the restore's record holds the recovery point, the elapsed time against the 4-hour RTO and the recovery point's age against the 24-hour RPO, the reconciliation, the guards and whether it is usable, and [BACKUP_RESTORE](../09-operations/runbooks/BACKUP_RESTORE.md) §5 covers each case of BACKUP_RECOVERY §5; (8) generations, copies and records are kept `0700`/`0600` in a directory mounted into the operator's one-off container alone and opened on the VPS only by the operator account, and every path the tooling touches is MULTIPLECORP's own
+- Build result: TL-13's production configuration check; both PHP images built with `postgresql18-client` 18.7, checked at build by `pg_dump --version`
+- Route evidence: N/A — operator tooling only; no web route reaches a backup (SX-07)
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: N/A — no page
+- Localization evidence: N/A — no user-facing copy; operator messages in English
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20) — PostgreSQL's client tools and PHP's libsodium, free and open-source, and a destination already held (OPI-32)
+- Files changed: `config/backup.php`; `app/Support/Backup/` — the manifest and status, the generations' verification, the retention and disk-pressure rules, the run and cleanup, the files' archive, the copy's encryption, the off-server copy and its fetch, the restore and its reconciliation; the commands `backup:run`, `backup:status`, `backup:copy`, `backup:fetch`, `backup:copy-keys` and `backup:restore`; `docker/php/Dockerfile` and `Dockerfile.production` with PostgreSQL 18's client; their tests; the runbook [BACKUP_RESTORE](../09-operations/runbooks/BACKUP_RESTORE.md) and COOLIFY_DEPLOYMENT §6 step 2's command; TOOLCHAIN; and this record with TASK_PLAN and CURRENT_HANDOFF
+- Commit SHA: this record's squash commit, under the Owner's identity, with no AI attribution
+- Notes: each non-applicable item with its reason (DOD-03). The tooling is the application's own commands, started by the operator in a one-off container of its image as the image's own user — the only account that reads and writes the private files, so a restored tree is the runtime's own —, the backup directory mounted into that container alone, never into the web, worker or scheduler containers, with the dump's and the restore's login — the owner role's — given to that run alone and never through the migrations' connection (H9-01), the guards read under the administration role (INFRASTRUCTURE §4.4); the generation's files are the file rows the dump itself holds, read from it; the dump and restore tools are PostgreSQL 18's (HO-30), checked against the server's major version at each run. The restore needs a database the superuser created for it — the trusted extensions are created by the tooling, any other the operator creates first —, and renders an owed rendition through JB-01's own job, given by the console so that the support layer depends on no module's job. No backup, copy, restore or drill ran on staging or production: those are the operator's (TASK-079, TASK-081, TASK-084, TASK-087). The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
