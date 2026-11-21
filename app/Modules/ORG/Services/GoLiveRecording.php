@@ -20,6 +20,9 @@ final class GoLiveRecording
 {
     public const ACTION = 'ORG.NumberingGoLiveRecorded';
 
+    /** The advisory lock every recording and repair holds from its first read to its commit, so two runs never both write. */
+    private const LOCK = 2_026_112_077;
+
     public function __construct(private readonly AuditRecorder $audit) {}
 
     /** @return array{outcome: 'RECORDED'|'REPAIRED', day: string} */
@@ -27,6 +30,17 @@ final class GoLiveRecording
     {
         OperatorIdentity::ensureConsole();
         $store ??= FileGoLive::configured();
+
+        return DB::transaction(function () use ($day, $operator, $store): array {
+            DB::select('select pg_advisory_xact_lock(?)', [self::LOCK]);
+
+            return $this->underLock($day, $operator, $store);
+        });
+    }
+
+    /** @return array{outcome: 'RECORDED'|'REPAIRED', day: string} */
+    private function underLock(?string $day, OperatorIdentity $operator, FileGoLive $store): array
+    {
         $recorded = DB::table('audit_events')->where('action', self::ACTION)->exists();
 
         if (is_file($store->path())) {
@@ -93,13 +107,13 @@ final class GoLiveRecording
 
     private function event(string $day, OperatorIdentity $operator, bool $repaired): void
     {
-        DB::transaction(fn () => $this->audit->record(
+        $this->audit->record(
             action: self::ACTION,
             authorityClass: AuthorityClass::System,
             actorUserId: null,
             companyId: null,
             entityType: 'numbering_go_live',
             metadata: ['operator' => $operator->toArray(), 'go_live' => $day, 'repaired' => $repaired],
-        ));
+        );
     }
 }

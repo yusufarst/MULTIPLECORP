@@ -38,7 +38,7 @@ class GenerateRehearsalBatches extends Command
                 self::counts($data['rows'] ?? null),
                 array_values(array_filter(is_array($data['companies'] ?? null) ? $data['companies'] : [], 'is_string')),
                 is_string($data['cutoff'] ?? null) ? $data['cutoff'] : '',
-                is_array($data['seeds'] ?? null) ? self::counts($data['seeds']) : ['PROJECT' => 0, 'PURCHASE' => 0],
+                self::seeds($data['seeds'] ?? null),
             );
         } catch (JsonException|InvalidArgumentException $refused) {
             $this->error($refused->getMessage());
@@ -56,6 +56,35 @@ class GenerateRehearsalBatches extends Command
         $this->info(count($files).' synthetic batch file(s) written; upload each as an import source in this order (IMP-03).');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * The plan's seeds: `{"PROJECT": 120}` for the cutoff's year, or each row as the schemes period it —
+     * `[{"company": "CTH", "type": "PROJECT", "period": "2025-12", "last": 120}]`.
+     *
+     * @return array<string, int>|list<array{company: string, type: string, period: string, last: int}>
+     */
+    private static function seeds(mixed $values): array
+    {
+        if (! is_array($values)) {
+            return ['PROJECT' => 0, 'PURCHASE' => 0];
+        }
+
+        if (! array_is_list($values)) {
+            return self::counts($values);
+        }
+
+        $rows = [];
+
+        foreach ($values as $seed) {
+            if (! is_array($seed) || ! is_string($seed['company'] ?? null) || ! is_string($seed['type'] ?? null) || ! is_string($seed['period'] ?? null) || ! is_int($seed['last'] ?? null)) {
+                throw new InvalidArgumentException('Each seed names its company, type, period and last number.');
+            }
+
+            $rows[] = ['company' => $seed['company'], 'type' => $seed['type'], 'period' => $seed['period'], 'last' => $seed['last']];
+        }
+
+        return $rows;
     }
 
     /** @return array<string, int> */

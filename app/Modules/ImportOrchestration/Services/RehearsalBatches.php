@@ -23,7 +23,9 @@ final class RehearsalBatches
     /**
      * @param  array<string, int>  $counts  rows per kind (OPEN_PROJECT: projects, each with two lines)
      * @param  list<string>  $companies  the batch scope's company codes
-     * @param  array<string, int>  $seeds  the last legacy number per numbered type, for the cutoff's year
+     *                                   The seeds are the last legacy number per numbered type for the cutoff's year, or each seed row with the period its
+     *                                   company's scheme uses — a MONTH scheme's `2025-12` (IMP-07).
+     * @param  array<string, int>|list<array{company: string, type: string, period: string, last: int}>  $seeds
      * @return array<string, string> file name => CSV, in IMP-03's order
      */
     public static function generate(array $counts, array $companies, string $cutoff, array $seeds = ['PROJECT' => 0, 'PURCHASE' => 0]): array
@@ -67,7 +69,7 @@ final class RehearsalBatches
             }
 
             // An even part size keeps an open project's two lines together.
-            foreach (array_chunk($rows, max(2, self::MAXIMUM_ROWS - 2 * count($companies) * max(1, count($seeds)))) as $part => $chunk) {
+            foreach (array_chunk($rows, max(2, self::MAXIMUM_ROWS - 2 * count(self::seedRows($seeds, $companies, $year)))) as $part => $chunk) {
                 $files[sprintf('%02d-%s-%02d.csv', $step, $kind, $part + 1)] = self::csv($chunk, $companies, $year, $seeds);
             }
         }
@@ -109,14 +111,12 @@ final class RehearsalBatches
      *
      * @param  list<array<string, string>>  $rows
      * @param  list<string>  $companies
-     * @param  array<string, int>  $seeds
+     * @param  array<string, int>|list<array{company: string, type: string, period: string, last: int}>  $seeds
      */
     private static function csv(array $rows, array $companies, string $year, array $seeds): string
     {
-        foreach ($companies as $company) {
-            foreach ($seeds as $type => $last) {
-                $rows[] = ['id' => '', 'perusahaan' => $company, 'nomor_jenis' => $type, 'nomor_periode' => $year, 'nomor_terakhir' => (string) $last];
-            }
+        foreach (self::seedRows($seeds, $companies, $year) as $seed) {
+            $rows[] = $seed;
         }
 
         $columns = ['id'];
@@ -141,6 +141,30 @@ final class RehearsalBatches
         }
 
         return implode("\n", $lines)."\n";
+    }
+
+    /**
+     * @param  array<string, int>|list<array{company: string, type: string, period: string, last: int}>  $seeds
+     * @param  list<string>  $companies
+     * @return list<array<string, string>>
+     */
+    private static function seedRows(array $seeds, array $companies, string $year): array
+    {
+        $rows = [];
+
+        foreach ($seeds as $type => $seed) {
+            if (is_array($seed)) {
+                $rows[] = ['id' => '', 'perusahaan' => $seed['company'], 'nomor_jenis' => $seed['type'], 'nomor_periode' => $seed['period'], 'nomor_terakhir' => (string) $seed['last']];
+
+                continue;
+            }
+
+            foreach ($companies as $company) {
+                $rows[] = ['id' => '', 'perusahaan' => $company, 'nomor_jenis' => (string) $type, 'nomor_periode' => $year, 'nomor_terakhir' => (string) $seed];
+            }
+        }
+
+        return $rows;
     }
 
     private static function cell(string $value): string

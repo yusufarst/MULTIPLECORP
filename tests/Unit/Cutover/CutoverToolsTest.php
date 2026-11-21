@@ -65,6 +65,17 @@ it('splits a kind over SourceTable\'s 30,000 rows and refuses a cited kind witho
         ->and(fn () => RehearsalBatches::generate(['PRODUCT' => 5], [], '2025-12-31'))->toThrow(InvalidArgumentException::class);
 });
 
+it('writes each seed row with the period its company\'s scheme uses, a monthly one included (IMP-07; NM-03)', function () {
+    $files = RehearsalBatches::generate(['PRODUCT' => 2], ['CTH', 'LAT'], '2025-12-31', [
+        ['company' => 'CTH', 'type' => 'PROJECT', 'period' => '2025-12', 'last' => 9],
+        ['company' => 'LAT', 'type' => 'PROJECT', 'period' => '2025', 'last' => 40],
+    ]);
+    $seeds = array_values(array_filter(rehearsalRows($files['01-PRODUCT-01.csv']), fn (array $row): bool => $row['nomor_jenis'] !== ''));
+
+    expect(array_map(fn (array $row): string => "{$row['perusahaan']}|{$row['nomor_jenis']}|{$row['nomor_periode']}|{$row['nomor_terakhir']}", $seeds))
+        ->toBe(['CTH|PROJECT|2025-12|9', 'LAT|PROJECT|2025|40']);
+});
+
 it('reads go-live only as a real Y-m-d day, and a missing file as unrecorded (NM-03)', function () {
     expect(FileGoLive::valid('2026-02-01'))->toBe('2026-02-01')
         ->and(FileGoLive::valid('2026-02-30'))->toBeNull()
