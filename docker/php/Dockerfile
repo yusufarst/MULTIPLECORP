@@ -9,8 +9,9 @@ FROM php:8.5.11-fpm-alpine3.24@sha256:fa01fb1645cd0fc566a5f146b099adace33b906571
 # zip, read by the structural inspection of office packages (FL-02, FL-06); WeasyPrint, the renderer of FL-08,
 # from Alpine's own package, run by the application as an external process, with DejaVu as the system fallback
 # font Pango needs — a document sets its own bundled fonts (FL-08).
+# TASK-074 (HO-30): PostgreSQL 18's client tools, the server's major version, for the operator's backup tooling.
 RUN set -eux; \
-    apk add --no-cache libpq unzip libjpeg-turbo libpng libwebp libzip weasyprint=68.1-r1 font-dejavu=2.37-r6; \
+    apk add --no-cache libpq unzip libjpeg-turbo libpng libwebp libzip weasyprint=68.1-r1 font-dejavu=2.37-r6 postgresql18-client=18.7-r0; \
     apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libpq-dev libjpeg-turbo-dev libpng-dev libwebp-dev libzip-dev; \
     docker-php-ext-configure gd --with-jpeg --with-webp; \
     docker-php-ext-install -j"$(nproc)" pdo_pgsql gd zip; \
@@ -21,7 +22,8 @@ RUN set -eux; \
     php -m | grep -qx pdo_pgsql; \
     php -m | grep -qx gd; \
     php -m | grep -qx zip; \
-    weasyprint --version
+    weasyprint --version; \
+    pg_dump --version | grep -q " 18\."
 
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 

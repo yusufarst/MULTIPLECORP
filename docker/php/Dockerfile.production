@@ -15,9 +15,10 @@ COPY . .
 RUN npm run build
 
 FROM php:8.5.11-fpm-alpine3.24@sha256:fa01fb1645cd0fc566a5f146b099adace33b906571f972f71f2182a7c12d1cd7
-# The extensions and the renderer of docker/php/Dockerfile (TASK-022; DIR-099), and production's php.ini.
+# The extensions, the renderer and the PostgreSQL client of docker/php/Dockerfile (TASK-022; DIR-099; TASK-074), and
+# production's php.ini.
 RUN set -eux; \
-    apk add --no-cache libpq unzip libjpeg-turbo libpng libwebp libzip weasyprint=68.1-r1 font-dejavu=2.37-r6; \
+    apk add --no-cache libpq unzip libjpeg-turbo libpng libwebp libzip weasyprint=68.1-r1 font-dejavu=2.37-r6 postgresql18-client=18.7-r0; \
     apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libpq-dev libjpeg-turbo-dev libpng-dev libwebp-dev libzip-dev; \
     docker-php-ext-configure gd --with-jpeg --with-webp; \
     docker-php-ext-install -j"$(nproc)" pdo_pgsql gd zip; \
@@ -44,7 +45,8 @@ RUN set -eux; \
     php -m | grep -qx pdo_pgsql; \
     php -m | grep -qx gd; \
     php -m | grep -qx zip; \
-    weasyprint --version
+    weasyprint --version; \
+    pg_dump --version | grep -q " 18\."
 # php-fpm's pool size is configuration, its values from TASK-079's measurement (SZ-01–SZ-04); these are the defaults.
 ENV PHP_FPM_PM=dynamic PHP_FPM_MAX_CHILDREN=10 PHP_FPM_START_SERVERS=3 PHP_FPM_MIN_SPARE=2 PHP_FPM_MAX_SPARE=5
 
