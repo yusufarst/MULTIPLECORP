@@ -197,7 +197,7 @@ previous_release_layer() {
         ! grep -Eiq "exception|SQLSTATE" storage/smoke.txt'
 }
 
-# TASK-072: deploy/coolify/compose.yml started with throwaway values and checked as Coolify's proxy reaches it.
+# TASK-072: deploy/coolify/compose.yml started as Coolify starts it, with throwaway values, and checked as Coolify's proxy reaches it.
 deployment_layers() {
     case $environment in
         CI*) check 'TL-05 Deployment definition (TASK-072)' sh scripts/ci/check-deployment.sh ;;

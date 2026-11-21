@@ -1,15 +1,29 @@
 # MULTIPLECORP's deployment definition for Coolify's Docker Compose deployment (TASK-072; INFRASTRUCTURE §2, §4; DIR-117,
 # APPR-033): one Coolify resource per environment — staging and production — in MULTIPLECORP's own Coolify project, never
 # sharing a network, a volume, a database, a cache or a secret with the second application (INF-07). Placeholder values
-# only (PRQ-01): every secret and setting comes from the resource's environment variables in Coolify, named in
-# deploy/coolify/production.env.example. Deployed by hand from a verified `main` commit or release tag; Coolify's automatic
-# deployment stays off (docs/09-operations/COOLIFY_DEPLOYMENT.md). The maintenance mode is the operator's runbook step before
-# a deployment; the expand-only migrations and the catalogue sync are the one-shot `migrate` service, which every process of
+# only (PRQ-01): every setting comes from the resource's environment variables in Coolify, named in
+# deploy/coolify/production.env.example, and the superuser, migration and administration logins from the operator's
+# credentials directory. Deployed by hand from a verified `main` commit or release tag; Coolify's automatic deployment
+# stays off (docs/09-operations/COOLIFY_DEPLOYMENT.md). The maintenance mode is the operator's runbook step before a
+# deployment; the expand-only migrations and the catalogue sync are the one-shot `migrate` service, which every process of
 # the release waits on (INFRASTRUCTURE §5).
 #
-# Networks: `edge` is the stack's own network, the one Coolify's proxy joins to reach `web` (the resource's "Connect to
-# predefined network" stays off); `internal` holds the database and the cache, no published port, no proxy, no other
-# application; `egress` gives the application processes their outbound HTTPS and nothing else. Limits: each service's CPU and memory come from the environment, their values from TASK-079's measurement.
+# Networks as declared: `edge` for the proxy to reach `web` (the resource's "Connect to predefined network" stays off);
+# `internal` holds the database and the cache, no published port, no proxy, no other application; `egress` gives the
+# application processes their outbound HTTPS and nothing else. Limits: each service's CPU and memory come from the
+# environment, their values from TASK-079's measurement.
+#
+# What Coolify v4.7.6 changes in this file when it deploys it, and how the definition holds against each change (TASK-078's
+# staging findings; COOLIFY_DEPLOYMENT §3):
+# - It gives every service every variable of the resource (`env_file: .env`). So the superuser, migration and
+#   administration logins are no resource variables: they are files in the operator's credentials directory
+#   (MULTIPLECORP_CREDENTIALS_DIR), mounted read-only into `db`, `db-roles` and `migrate` alone and read there by Docker's
+#   `_FILE` convention, so no container's configuration holds them (INFRASTRUCTURE §4.4).
+# - It attaches every service to every network of this file and to the resource's own network, which its proxy joins. So
+#   PostgreSQL, Valkey and php-fpm listen only on their address on `internal` — `db.internal`, `cache.internal` and
+#   `app.internal`, names no other network carries —, and the processes reach them by those names (H9-09).
+# - It resolves a relative bind mount against its own resource directory. So the site template and the roles script are
+#   built into their images, and nothing is mounted from the repository.
 name: multiplecorp
 
 x-app: &app
@@ -49,7 +63,8 @@ x-app: &app
     REDIS_PORT: "6379"
     MAIL_MAILER: log
     DB_CONNECTION: pgsql
-    DB_HOST: db
+    # The database and the cache by their names on `internal`, the only addresses they listen on (H9-09).
+    DB_HOST: db.internal
     DB_PORT: "5432"
     DB_DATABASE: ${DB_DATABASE:?set DB_DATABASE}
     DB_USERNAME: ${DB_USERNAME:?set DB_USERNAME}
@@ -57,7 +72,7 @@ x-app: &app
     # The administration credential is in no running process: the operator gives it to `guards:maintain` alone, for its
     # run (INFRASTRUCTURE §4.4; EN-07; docs/09-operations/COOLIFY_DEPLOYMENT.md §6).
     REDIS_CLIENT: predis
-    REDIS_HOST: cache
+    REDIS_HOST: cache.internal
     REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
     SESSION_DRIVER: database
     QUEUE_CONNECTION: redis
@@ -80,15 +95,30 @@ x-app: &app
 services:
   # INFRASTRUCTURE §5 step 4, once per deployment and before any process of the release starts: expand-only migrations
   # through the migration/owner connection — its credentials in this service alone, never in a running process (§4.4;
-  # H9-01) —, then the catalogue sync under the runtime role (DIR-094). A failure stops the deployment.
+  # H9-01) —, then the catalogue sync under the runtime role (DIR-094). A failure stops the deployment. The migration
+  # login is read from its files for this run alone, never in the container's configuration, and the configuration the
+  # entrypoint cached without it is cleared so the run reads it.
   migrate:
     <<: *app
     restart: "no"
-    command: ["sh", "-c", "php artisan migrate --database=migration --force --no-interaction && php artisan authorization:sync-catalogue --no-interaction"]
-    environment:
-      <<: *app-environment
-      DB_MIGRATION_USERNAME: ${DB_MIGRATION_USERNAME:?set DB_MIGRATION_USERNAME}
-      DB_MIGRATION_PASSWORD: ${DB_MIGRATION_PASSWORD:?set DB_MIGRATION_PASSWORD}
+    command:
+      - sh
+      - -c
+      - >-
+        DB_MIGRATION_USERNAME=$$(cat /run/multiplecorp/migration/username) &&
+        DB_MIGRATION_PASSWORD=$$(cat /run/multiplecorp/migration/password) &&
+        export DB_MIGRATION_USERNAME DB_MIGRATION_PASSWORD &&
+        php artisan config:clear --no-interaction > /dev/null &&
+        php artisan migrate --database=migration --force --no-interaction &&
+        php artisan authorization:sync-catalogue --no-interaction
+    volumes:
+      - storage:/var/www/html/storage
+      - type: bind
+        source: ${MULTIPLECORP_CREDENTIALS_DIR}/migration
+        target: /run/multiplecorp/migration
+        read_only: true
+        bind:
+          create_host_path: false
     depends_on:
       db-roles:
         condition: service_completed_successfully
@@ -96,9 +126,16 @@ services:
         condition: service_healthy
 
 
-  # The web processes: php-fpm, reached only by `web`.
+  # The web processes: php-fpm, reached only by `web`, at its address on `internal` alone (H9-09).
   app:
     <<: *app
+    environment:
+      <<: *app-environment
+      PHP_FPM_LISTEN: app.internal:9000
+    networks:
+      internal:
+        aliases: [app.internal]
+      egress: {}
     healthcheck:
       test: ["CMD-SHELL", "php-fpm -t"]
       interval: 30s
@@ -128,12 +165,15 @@ services:
       resources:
         limits: { cpus: "${SCHEDULER_CPUS:-0.25}", memory: "${SCHEDULER_MEMORY:-256M}" }
 
-  # MULTIPLECORP's own Nginx: the site file, behind Coolify's proxy, which terminates TLS (deploy/nginx/multiplecorp.conf.template).
+  # MULTIPLECORP's own Nginx: the site file built into its image (docker/nginx/Dockerfile.production;
+  # deploy/nginx/multiplecorp.conf.template), behind Coolify's proxy, which terminates TLS.
   web:
-    image: nginx:1.30.6-alpine3.24@sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5
+    build:
+      context: ../..
+      dockerfile: docker/nginx/Dockerfile.production
+    image: multiplecorp-web:${APP_ENV:?set APP_ENV}-${MULTIPLECORP_RELEASE:?set MULTIPLECORP_RELEASE}
     restart: unless-stopped
     volumes:
-      - ../nginx/multiplecorp.conf.template:/etc/nginx/templates/default.conf.template:ro
       - public:/var/www/html/public:ro
     environment:
       MULTIPLECORP_HSTS: ${MULTIPLECORP_HSTS:-max-age=300}
@@ -165,45 +205,81 @@ services:
       - public:/srv/public
     depends_on: {}
 
+  # PostgreSQL on its address on `internal` alone (H9-09). Its superuser's name and password come from the operator's
+  # credentials directory, read by the image's own `_FILE` convention.
   db:
     image: postgres:18.6-alpine3.24@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
     restart: unless-stopped
-    command: ["postgres", "-c", "max_locks_per_transaction=2048", "-c", "shared_preload_libraries=pg_stat_statements,auto_explain"]
+    command: ["postgres", "-c", "max_locks_per_transaction=2048", "-c", "shared_preload_libraries=pg_stat_statements,auto_explain", "-c", "listen_addresses=db.internal"]
     environment:
       POSTGRES_DB: ${DB_DATABASE:?set DB_DATABASE}
-      POSTGRES_USER: ${DB_SUPERUSER:?set DB_SUPERUSER}
-      POSTGRES_PASSWORD: ${DB_SUPERUSER_PASSWORD:?set DB_SUPERUSER_PASSWORD}
+      POSTGRES_USER_FILE: /run/multiplecorp/superuser/username
+      POSTGRES_PASSWORD_FILE: /run/multiplecorp/superuser/password
     volumes:
       - db-data:/var/lib/postgresql
-    networks: [internal]
+      - type: bind
+        source: ${MULTIPLECORP_CREDENTIALS_DIR}/superuser
+        target: /run/multiplecorp/superuser
+        read_only: true
+        bind:
+          create_host_path: false
+    networks:
+      internal:
+        aliases: [db.internal]
+    # Healthy once it answers where its clients connect, on `db.internal`: the image's first initialization runs a
+    # server on the local socket alone, which a check through the socket would already count as up.
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      test: ["CMD-SHELL", "pg_isready -h db.internal -U \"$$(cat /run/multiplecorp/superuser/username)\" -d \"$$POSTGRES_DB\""]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 120s
     deploy:
       resources:
         limits: { cpus: "${DB_CPUS:-1.0}", memory: "${DB_MEMORY:-1536M}" }
 
-  # The roles of DATABASE §28 (INFRASTRUCTURE §4.4), kept on every deployment by the same script as the local stack.
+  # The roles of DATABASE §28 (INFRASTRUCTURE §4.4), kept on every deployment by the same script as the local stack, built
+  # into its image (docker/postgres/Dockerfile.roles). The superuser, migration and administration logins come from the
+  # operator's credentials directory, read by the script's `_FILE` convention.
   db-roles:
-    image: postgres:18.6-alpine3.24@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+    build:
+      context: ../..
+      dockerfile: docker/postgres/Dockerfile.roles
+    image: multiplecorp-db-roles:${APP_ENV:?set APP_ENV}-${MULTIPLECORP_RELEASE:?set MULTIPLECORP_RELEASE}
     restart: "no"
     volumes:
-      - ../../docker/postgres:/opt/postgres:ro
+      - type: bind
+        source: ${MULTIPLECORP_CREDENTIALS_DIR}/superuser
+        target: /run/multiplecorp/superuser
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${MULTIPLECORP_CREDENTIALS_DIR}/migration
+        target: /run/multiplecorp/migration
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${MULTIPLECORP_CREDENTIALS_DIR}/admin
+        target: /run/multiplecorp/admin
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
-      PGHOST: db
+      PGHOST: db.internal
       PGDATABASE: ${DB_DATABASE}
-      PGUSER: ${DB_SUPERUSER}
-      PGPASSWORD: ${DB_SUPERUSER_PASSWORD}
       DB_DATABASE: ${DB_DATABASE}
-      DB_SUPERUSER: ${DB_SUPERUSER}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_MIGRATION_USERNAME: ${DB_MIGRATION_USERNAME:?set DB_MIGRATION_USERNAME}
-      DB_MIGRATION_PASSWORD: ${DB_MIGRATION_PASSWORD:?set DB_MIGRATION_PASSWORD}
-      DB_ADMIN_USERNAME: ${DB_ADMIN_USERNAME:?set DB_ADMIN_USERNAME}
-      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD:?set DB_ADMIN_PASSWORD}
+      # The directory the files above come from: the deployment stops at once when it is not set.
+      MULTIPLECORP_CREDENTIALS_DIR: ${MULTIPLECORP_CREDENTIALS_DIR:?set MULTIPLECORP_CREDENTIALS_DIR}
+      DB_SUPERUSER_FILE: /run/multiplecorp/superuser/username
+      DB_SUPERUSER_PASSWORD_FILE: /run/multiplecorp/superuser/password
+      DB_MIGRATION_USERNAME_FILE: /run/multiplecorp/migration/username
+      DB_MIGRATION_PASSWORD_FILE: /run/multiplecorp/migration/password
+      DB_ADMIN_USERNAME_FILE: /run/multiplecorp/admin/username
+      DB_ADMIN_PASSWORD_FILE: /run/multiplecorp/admin/password
       # Production's roles: no CREATEDB for the migration login and no test extension (the local and CI stacks' only).
       DB_ROLES_FOR_TESTS: "no"
     command: ["sh", "/opt/postgres/provision-roles.sh"]
@@ -212,17 +288,22 @@ services:
       db:
         condition: service_healthy
 
-  # Valkey with authentication, never evicting (H9-09; SZ-09), its data kept across restarts so limiter and lock keys survive (HO-23).
+  # Valkey on its address on `internal` and on loopback alone (H9-09), that address found from its name there when it
+  # starts; the image's own init and entrypoint still start it, as its own user. With authentication, never evicting (H9-09;
+  # SZ-09), its data kept across restarts so limiter and lock keys survive (HO-23).
   cache:
     image: valkey/valkey:9.1.2-alpine3.24@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11
     restart: unless-stopped
+    entrypoint: ["tini", "--", "sh", "-c", "address=$$(getent hosts cache.internal | cut -d ' ' -f 1 | head -n 1) && [ -n \"$$address\" ] && exec docker-entrypoint.sh valkey-server --bind \"$$address\" 127.0.0.1 \"$$@\"", "cache"]
     # A memory ceiling below the container's limit, so a full store refuses writes instead of being killed (SZ-09).
-    command: ["valkey-server", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}", "--maxmemory", "${CACHE_MAXMEMORY:-192mb}", "--maxmemory-policy", "noeviction", "--appendonly", "yes"]
+    command: ["--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}", "--maxmemory", "${CACHE_MAXMEMORY:-192mb}", "--maxmemory-policy", "noeviction", "--appendonly", "yes"]
     environment:
       VALKEYCLI_AUTH: ${REDIS_PASSWORD}
     volumes:
       - cache-data:/data
-    networks: [internal]
+    networks:
+      internal:
+        aliases: [cache.internal]
     healthcheck:
       test: ["CMD-SHELL", "valkey-cli ping | grep -qx PONG"]
       interval: 10s

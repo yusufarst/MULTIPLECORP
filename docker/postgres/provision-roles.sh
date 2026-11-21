@@ -21,6 +21,28 @@ case ${DB_ROLES_FOR_TESTS:-yes} in
     *) echo "provision-roles: DB_ROLES_FOR_TESTS is yes or no" >&2; exit 1 ;;
 esac
 
+# Staging and production give the superuser, migration and administration logins as files, by Docker's `_FILE`
+# convention — NAME_FILE names the file that holds NAME —, so none is in any container's configuration
+# (deploy/coolify/compose.yml; TASK-078's staging findings). Read as the server's image reads POSTGRES_PASSWORD_FILE: the
+# whole file, its trailing newlines dropped. The superuser's login is then also psql's, unless PGUSER or PGPASSWORD is given.
+for name in DB_SUPERUSER DB_SUPERUSER_PASSWORD DB_MIGRATION_USERNAME DB_MIGRATION_PASSWORD DB_ADMIN_USERNAME DB_ADMIN_PASSWORD; do
+    eval "file=\${${name}_FILE:-}"
+    if [ -n "$file" ]; then
+        if [ ! -r "$file" ]; then
+            echo "provision-roles: ${name}_FILE names no readable file" >&2
+            exit 1
+        fi
+        value=$(cat "$file")
+        export "$name=$value"
+    fi
+done
+if [ -n "${DB_SUPERUSER_FILE:-}" ] && [ -z "${PGUSER:-}" ]; then
+    export PGUSER="$DB_SUPERUSER"
+fi
+if [ -n "${DB_SUPERUSER_PASSWORD_FILE:-}" ] && [ -z "${PGPASSWORD:-}" ]; then
+    export PGPASSWORD="$DB_SUPERUSER_PASSWORD"
+fi
+
 for name in DB_DATABASE DB_SUPERUSER DB_USERNAME DB_PASSWORD DB_MIGRATION_USERNAME DB_MIGRATION_PASSWORD DB_ADMIN_USERNAME DB_ADMIN_PASSWORD; do
     eval "value=\${$name:-}"
     if [ -z "$value" ]; then
