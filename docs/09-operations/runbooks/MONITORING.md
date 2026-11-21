@@ -31,7 +31,7 @@ The framework's logs themselves stay on the VPS (LG-05). A failed delivery is lo
 
 Each row is a signal TASK-081's failure drill can raise on staging.
 
-**The heartbeat.** `ops:heartbeat` runs every five minutes. The name it sends is `Heartbeat: <signal> failing (INFRASTRUCTURE §6).`
+**The heartbeat.** `ops:heartbeat` runs every five minutes, from two places: the scheduler, and a watchdog the scheduler does not run. The watchdog is the operator's host cron entry: `*/5 * * * *`, starting a one-off container of MULTIPLECORP's image that runs `php artisan ops:heartbeat`, as the backup tooling's entries do ([BACKUP_RESTORE §1](BACKUP_RESTORE.md#1-the-tooling-and-its-configuration)). With the watchdog, a stopped scheduler still raises its stale `scheduler <task>` signals. The two runs share one throttle, so a failing signal is sent once per window. A probe that cannot read, such as the database refusing connections or the queue or store down, raises its signal as `unavailable`, and the other probes are still read. The name it sends is `Heartbeat: <signal> failing (INFRASTRUCTURE §6).`
 
 | Signal | Raised when | How the drill raises it |
 | --- | --- | --- |

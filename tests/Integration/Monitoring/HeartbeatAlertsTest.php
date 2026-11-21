@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Tests\Support\RefreshDatabase;
 
@@ -48,6 +49,19 @@ it('raises nothing while every heartbeat signal passes (criterion 1)', function 
 
     $this->artisan('ops:heartbeat')->doesntExpectOutputToContain('FAIL')->expectsOutputToContain('every signal passes')->assertExitCode(0);
     expect(alertSubjects())->toBe([]);
+});
+
+it('raises a probe that cannot read as its signal unavailable and still reads the others (Codex on #99)', function () {
+    foreach (array_keys(Heartbeat::TASKS) as $task) {
+        (Heartbeat::stamp($task))();
+    }
+
+    config(['monitoring.heartbeat.disk_warn_pct' => 101, 'monitoring.heartbeat.disk_critical_pct' => 101]);
+    Queue::shouldReceive('size')->andThrow(new RuntimeException('the queue store is down'));
+
+    $this->artisan('ops:heartbeat')->expectsOutputToContain('FAIL queue — unavailable: RuntimeException')->assertExitCode(0);
+
+    expect(alertSubjects())->toBe(['MULTIPLECORP alert: Heartbeat: queue failing (INFRASTRUCTURE §6).']);
 });
 
 it('raises each seeded heartbeat fault as its alert (criterion 1; GAP-013; BK-11)', function () {

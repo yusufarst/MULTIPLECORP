@@ -6,8 +6,10 @@ use App\Modules\DOC\Models\DocumentRendition;
 use App\Modules\DOC\Services\Renditions;
 use App\Support\Heartbeat;
 use Carbon\CarbonImmutable;
+use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Throwable;
 
 /**
  * The business heartbeat of INFRASTRUCTURE §6 (GAP-013; HO-25; PRQ-03), read-only and off the request path: database
@@ -31,41 +33,63 @@ final class HeartbeatSignals
             $signals[] = ['signal' => $signal, 'pass' => $pass, 'detail' => $detail];
         };
 
-        $used = $count(DB::scalar('select count(*) from pg_stat_activity where datname = current_database()'));
-        $max = $count(DB::scalar("select setting::int from pg_settings where name = 'max_connections'"));
-        $add('database', $max > 0 && $used <= (int) floor($max * 0.8), "connections {$used} of {$max}");
+        // Each probe on its own: one that cannot read — the database refusing connections, the queue or the store down —
+        // is its signal failing as unavailable, and the others are still read (Codex on #99).
+        $probe = function (string $signal, Closure $read) use ($add): void {
+            try {
+                $read();
+            } catch (Throwable $failure) {
+                $add($signal, false, 'unavailable: '.class_basename($failure));
+            }
+        };
 
-        $backlog = Queue::size();
-        $add('queue', $backlog <= ($limits['queue_max'] ?? 1000), "{$backlog} jobs waiting");
+        $probe('database', function () use ($count, $add): void {
+            $used = $count(DB::scalar('select count(*) from pg_stat_activity where datname = current_database()'));
+            $max = $count(DB::scalar("select setting::int from pg_settings where name = 'max_connections'"));
+            $add('database', $max > 0 && $used <= (int) floor($max * 0.8), "connections {$used} of {$max}");
+        });
 
-        // The oldest waiting job's age: a stalled worker shows here before the backlog grows.
-        $oldest = Queue::creationTimeOfOldestPendingJob();
-        $waited = $oldest === null ? 0 : max(0, $now->getTimestamp() - $oldest);
-        $add('oldest job', $waited <= ($limits['oldest_minutes'] ?? 15) * 60, $oldest === null ? 'no job waiting' : intdiv($waited, 60).' minutes waiting');
+        $probe('queue', function () use ($add, $limits, $now): void {
+            $backlog = Queue::size();
+            $add('queue', $backlog <= ($limits['queue_max'] ?? 1000), "{$backlog} jobs waiting");
 
-        $recentFailures = DB::table('failed_jobs')->where('failed_at', '>=', $now->subDay())->count();
-        $add('failed jobs', $recentFailures === 0, "{$recentFailures} in the last 24 hours");
+            // The oldest waiting job's age: a stalled worker shows here before the backlog grows.
+            $oldest = Queue::creationTimeOfOldestPendingJob();
+            $waited = $oldest === null ? 0 : max(0, $now->getTimestamp() - $oldest);
+            $add('oldest job', $waited <= ($limits['oldest_minutes'] ?? 15) * 60, $oldest === null ? 'no job waiting' : intdiv($waited, 60).' minutes waiting');
+        });
 
-        $latest = 'attempt_no = (select max(x.attempt_no) from document_renditions x where x.document_version_id = document_renditions.document_version_id)';
-        $owed = DocumentRendition::query()->whereIn('state', ['PENDING', 'RENDERING'])->where('recorded_at', '<=', $now->subMinutes($limits['owed_minutes'] ?? 15))->whereRaw($latest)->count();
-        $add('renditions', $owed === 0, "{$owed} owed for more than ".($limits['owed_minutes'] ?? 15).' minutes');
+        $probe('failed jobs', function () use ($add, $now): void {
+            $recentFailures = DB::table('failed_jobs')->where('failed_at', '>=', $now->subDay())->count();
+            $add('failed jobs', $recentFailures === 0, "{$recentFailures} in the last 24 hours");
+        });
 
-        // A rendition FAILED after its five attempts waits for the operator (JB-01; GAP-007).
-        $exhausted = DocumentRendition::query()->where('state', 'FAILED')->where('attempt_no', '>=', Renditions::attempts())->whereRaw($latest)->count();
-        $add('renditions exhausted', $exhausted === 0, "{$exhausted} failed after their last attempt");
+        $probe('renditions', function () use ($add, $limits, $now): void {
+            $latest = 'attempt_no = (select max(x.attempt_no) from document_renditions x where x.document_version_id = document_renditions.document_version_id)';
+            $owed = DocumentRendition::query()->whereIn('state', ['PENDING', 'RENDERING'])->where('recorded_at', '<=', $now->subMinutes($limits['owed_minutes'] ?? 15))->whereRaw($latest)->count();
+            $add('renditions', $owed === 0, "{$owed} owed for more than ".($limits['owed_minutes'] ?? 15).' minutes');
+
+            // A rendition FAILED after its five attempts waits for the operator (JB-01; GAP-007).
+            $exhausted = DocumentRendition::query()->where('state', 'FAILED')->where('attempt_no', '>=', Renditions::attempts())->whereRaw($latest)->count();
+            $add('renditions exhausted', $exhausted === 0, "{$exhausted} failed after their last attempt");
+        });
 
         foreach (Heartbeat::TASKS as $task => $minutes) {
-            $last = Heartbeat::last($task);
-            $add("scheduler {$task}", $last !== null && $last->greaterThanOrEqualTo($now->subMinutes($minutes)), $last === null ? 'no success recorded' : 'last success '.$last->toIso8601String());
+            $probe("scheduler {$task}", function () use ($add, $task, $minutes, $now): void {
+                $last = Heartbeat::last($task);
+                $add("scheduler {$task}", $last !== null && $last->greaterThanOrEqualTo($now->subMinutes($minutes)), $last === null ? 'no success recorded' : 'last success '.$last->toIso8601String());
+            });
         }
 
-        // Whole percent, rounded down, so a fraction never passes a threshold (ARCHITECTURE §19: no float cast).
-        $free = disk_free_space(storage_path());
-        $total = disk_total_space(storage_path());
-        $freePct = $free !== false && $total !== false && $total > 0 ? (int) floor($free * 100 / $total) : 0;
-        $usedPct = 100 - $freePct;
-        $add('disk', $freePct >= ($limits['disk_min_pct'] ?? 0)
-            && $usedPct < ($limits['disk_warn_pct'] ?? 101), "{$freePct}% free".($usedPct >= ($limits['disk_critical_pct'] ?? 101) ? ', at its critical level' : ($usedPct >= ($limits['disk_warn_pct'] ?? 101) ? ', at its warning level' : '')));
+        $probe('disk', function () use ($add, $limits): void {
+            // Whole percent, rounded down, so a fraction never passes a threshold (ARCHITECTURE §19: no float cast).
+            $free = disk_free_space(storage_path());
+            $total = disk_total_space(storage_path());
+            $freePct = $free !== false && $total !== false && $total > 0 ? (int) floor($free * 100 / $total) : 0;
+            $usedPct = 100 - $freePct;
+            $add('disk', $freePct >= ($limits['disk_min_pct'] ?? 0)
+                && $usedPct < ($limits['disk_warn_pct'] ?? 101), "{$freePct}% free".($usedPct >= ($limits['disk_critical_pct'] ?? 101) ? ', at its critical level' : ($usedPct >= ($limits['disk_warn_pct'] ?? 101) ? ', at its warning level' : '')));
+        });
 
         return $signals;
     }
