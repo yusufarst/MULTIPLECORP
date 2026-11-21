@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HealthCheck;
+use App\Http\Controllers\RecordCspReport;
 use App\Http\Middleware\AssignCorrelationId;
 use App\Http\Middleware\DeclareAccess;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -38,8 +39,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // production, where only ROUTE_CONTRACTS' routes exist. They keep no session — nothing is stored before
         // sign-in (INT-001) — so they need no database, which the browser job's stack does not migrate.
         then: function (): void {
-            // EN-03's minimal health check, outside the web group: no session, no cookie, no internals (SX-03; TASK-072).
-            Route::get('/up', HealthCheck::class)->middleware('access:none,health')->name('health');
+            // EN-03's minimal health check, ROUTE-277, outside the web group: no session, no cookie, no internals (SX-03;
+            // TASK-072). On staging only, ROUTE-278's CSP report endpoint (WS-08).
+            Route::get('/kesehatan', HealthCheck::class)->middleware('access:none,health')->name('health');
+
+            if (app()->environment('staging')) {
+                RecordCspReport::register();
+            }
 
             if (app()->environment('local')) {
                 Route::group([], base_path('routes/fixtures.php'));
@@ -55,7 +61,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // The health check answers through the maintenance mode, as the framework's own health route does, so that the
         // stack's health checks and the operator's verification see the processes up while every other request is refused
         // (TASK-072; H9-14).
-        $middleware->preventRequestsDuringMaintenance(except: ['up']);
+        $middleware->preventRequestsDuringMaintenance(except: ['kesehatan']);
 
         // Global, so that error pages carry the policy too (SECURITY WS-08).
         $middleware->prepend(SecurityHeaders::class);

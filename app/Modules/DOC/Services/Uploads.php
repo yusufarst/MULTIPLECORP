@@ -4,6 +4,7 @@ namespace App\Modules\DOC\Services;
 
 use App\Modules\DOC\Enums\FilePurpose;
 use App\Modules\DOC\Models\FileObject;
+use App\Support\Database\Timeouts;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,7 @@ final class Uploads
 
         try {
             $file = DB::transaction(function () use ($key, $purpose, $inspected, $bytes, $companyId, $uploaderId, $clientName): FileObject {
+                Timeouts::apply(Timeouts::BOOKKEEPING);
                 // WS-12's bounds from durable rows, in the upload's own short transaction (H6-07).
                 $this->budget->claim($uploaderId, strlen($bytes));
 

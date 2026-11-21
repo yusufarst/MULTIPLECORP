@@ -9,6 +9,7 @@ use App\Modules\ImportOrchestration\Services\Batches;
 use App\Modules\ImportOrchestration\Services\BatchRows;
 use App\Modules\ImportOrchestration\Services\Preparation;
 use App\Modules\ImportOrchestration\Services\RowRunner;
+use App\Support\Database\Timeouts;
 use App\Support\Jobs\PlatformJob;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -61,6 +62,8 @@ final class ValidateImportBatch extends PlatformJob implements ShouldBeUnique
         DB::beginTransaction();
 
         try {
+            Timeouts::apply(Timeouts::DRIVEN);
+
             foreach ($candidates as $row) {
                 // A twin committed since the preparation — another batch's same row or the same seed — keeps the row from the commit (C-47; UXS-19).
                 $twin = $this->twin($row, $batch);

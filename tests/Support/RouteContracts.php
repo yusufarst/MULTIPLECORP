@@ -20,7 +20,6 @@ final class RouteContracts
      * fails, and so does a listed one that is gone.
      */
     public const OPEN = [
-        'ROUTE-277' => 'GET up',
     ];
 
     /**

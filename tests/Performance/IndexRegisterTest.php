@@ -186,6 +186,11 @@ function seedIndexRegister(Connection $owner): void
             (select array_agg(id order by id) from client_organizations) as clients,
             (select array_agg(id order by id) from suppliers) as suppliers,
             (select array_agg(id order by id) from products) as products;
+        -- GF-14: each table is analysed once filled, before a later statement joins it. Autovacuum, woken by the dead
+        -- rows of an earlier rolled-back test, counts none of this transaction's rows, so a table it vacuums meanwhile
+        -- is planned as empty and two such tables are joined row by row — 20,000 × 20,000 index scans, past the CI
+        -- job's limit. ANALYZE counts them, and holds its lock until the rollback, so autovacuum skips the table.
+        analyze correction_cases, products;
 
         -- The first company holds one row in a hundred, as one company among many does (PF-13, PF-41).
         insert into projects (company_id, project_number, period_key, sequence_no, client_organization_id, channel, state, title, deadline)
@@ -193,6 +198,7 @@ function seedIndexRegister(Connection $owner): void
                 m.clients[1 + g % 20000], 'REGULAR', (array['ACTIVE', 'ACTIVE', 'ACTIVE', 'COMPLETED_NORMAL', 'COMPLETED_NORMAL', 'COMPLETED_NORMAL', 'COMPLETED_NORMAL', 'CANCELLED', 'DRAFT', 'COMPLETED_FORCED'])[1 + g % 10],
                 'Pengadaan Contoh ' || g, date '2026-11-01' + g % 60
             from generate_series(1, 20000) g, seed_companies c, seed_masters m;
+        analyze projects;
         insert into project_lines (project_id, company_id, line_no, kind, product_id, quantity_scale, description, entered_qty, entered_unit_id, ratio_to_base, qty_base, fulfillment_mode)
             select p.id, p.company_id, 1, 'GOODS', pr.id, 0, 'Barang contoh', 10, pr.base_unit_id, 1, 10, 'WAREHOUSE'
             from projects p, seed_masters m, lateral (select id, base_unit_id from products where id = m.products[1 + p.sequence_no % 20000]) pr;
@@ -205,6 +211,7 @@ function seedIndexRegister(Connection $owner): void
             select c.ids[case when g % 100 = 0 then 1 else 2 + g % 9 end], 'CTH/PO/' || g, '2026', g, m.suppliers[1 + g % 20000], '{}',
                 date '2026-10-01' - g % 300, case when g % 25 = 0 then 'OPEN' else 'CLOSED' end
             from generate_series(1, 20000) g, seed_companies c, seed_masters m;
+        analyze project_lines, purchases;
         insert into purchase_lines (purchase_id, company_id, line_no, kind, product_id, quantity_scale, delivery_mode, entered_qty, entered_unit_id, ratio_to_base, qty_base, unit_price, line_value, description)
             select p.id, p.company_id, 1, 'GOODS', pr.id, 0, 'WAREHOUSE', 10, pr.base_unit_id, 1, 10, 100000, 1000000, 'Barang contoh dibeli'
             from purchases p, seed_masters m, lateral (select id, base_unit_id from products where id = m.products[1 + p.sequence_no % 20000]) pr;
@@ -212,6 +219,7 @@ function seedIndexRegister(Connection $owner): void
             select l.id, 10, case when l.id % 50 = 0 then 0 else 10 end, 1000000, case when l.id % 50 = 0 then 0 else 1000000 end from purchase_lines l;
         insert into locations (code, name) select 'RAK-' || g, 'Rak ' || g from generate_series(1, 50) g;
         create temporary table seed_locations on commit drop as select array_agg(id order by id) as ids from locations;
+        analyze purchase_lines;
         -- A receipt, its lot and its ledger entry per purchase line, and one loss per lot.
         with m as (
             insert into stock_movements (movement_type, business_date, company_id, supplier_delivery_reference)
@@ -225,6 +233,7 @@ function seedIndexRegister(Connection $owner): void
                 acquired_qty_base, business_date)
             select 'LOT-' || r.id, r.product_id, r.quantity_scale, r.company_id, 'RECEIPT', r.id, 10, r.entered_unit_id, 1, 10, date '2026-10-01' - (r.id % 300)::int
             from receiving_lines r;
+        analyze stock_movements, receiving_lines, inventory_lots;
         insert into stock_movement_entries (stock_movement_id, movement_type, product_id, quantity_scale, location_id, condition, lot_id, qty_delta_base)
             select r.stock_movement_id, 'RECEIPT', l.product_id, l.quantity_scale, s.ids[1 + l.id % 50], 'USABLE', l.id, 10
             from inventory_lots l join receiving_lines r on r.id = l.receiving_line_id, seed_locations s;
@@ -241,6 +250,7 @@ function seedIndexRegister(Connection $owner): void
         insert into cost_attributions (cost_class, cause, amount, stock_consumption_id, lot_id, source_company_id, bearer_company_id, business_date)
             select 'LOSS', 'INITIAL', 100000, c.id, c.lot_id, c.source_company_id, c.bearer_company_id, date '2026-10-01' - (c.id % 300)::int from stock_consumptions c;
         insert into stock_movements (movement_type, business_date, company_id) select 'RESTORATION', '2026-10-02', c from unnest((select ids from seed_companies)) c;
+        analyze stock_consumptions;
         insert into stock_restorations (stock_movement_id, stock_consumption_id, source_company_id, product_id, quantity_scale, entered_qty, entered_unit_id, ratio_to_base,
                 qty_base, kind, returned_condition)
             select (select m.id from stock_movements m where m.movement_type = 'RESTORATION' and m.company_id = c.source_company_id), c.id, c.source_company_id,
@@ -278,6 +288,7 @@ function seedIndexRegister(Connection $owner): void
         insert into invoices (company_id, project_id, client_organization_id, state) select p.company_id, p.id, p.client_organization_id, 'ISSUED' from projects p;
         insert into invoice_billing_acts (invoice_id, billed_at, due_date, kind, decided_by)
             select i.id, date '2026-10-01' - (i.id % 300)::int, date '2026-11-01' - (i.id % 300)::int, 'BILLING', s.ids[1 + i.id % 200] from invoices i, seed_users s;
+        analyze invoices, invoice_billing_acts;
         insert into invoice_balances (invoice_id, company_id, gross_value, sales_value, output_tax_value, applied_amount, current_billing_act_id, current_due_date)
             select i.id, i.company_id, 1110000, 1000000, 110000, case when i.id % 10 = 0 then 1110000 else 0 end, a.id, a.due_date
             from invoices i join invoice_billing_acts a on a.invoice_id = i.id;
@@ -306,12 +317,14 @@ function seedIndexRegister(Connection $owner): void
             select 'COMPANY', c.ids[case when g % 100 = 0 then 1 else 2 + g % 9 end], case when g % 2 = 0 then 'BANK_STATEMENT' else 'CLIENT_ORDER' end, 'Penerbit Contoh', 'REF-' || g,
                 '2026-10-01', 'penerbit contoh|' || g, 1000000
             from generate_series(1, 20000) g, seed_companies c;
+        analyze company_bank_accounts, evidence_documents;
         insert into bank_statement_lines (company_id, company_bank_account_id, statement_evidence_id, statement_evidence_type, business_date, amount, line_reference)
             select e.company_id, a.id, e.id, 'BANK_STATEMENT', '2026-10-01', 1500000, 'TRX-' || e.id
             from evidence_documents e join company_bank_accounts a on a.company_id = e.company_id
             where e.evidence_type = 'BANK_STATEMENT';
         insert into evidence_balances (bank_statement_line_id, proven_amount, cited_amount)
             select l.id, l.amount, case when l.id % 50 = 0 then 0 else l.amount end from bank_statement_lines l;
+        analyze bank_statement_lines;
         -- A payment per invoice from its client, cited by a statement line but in fifty, without proof in a hundred, applied to
         -- its invoice — reallocated in five —, each with its source guard (C-13; C-14).
         insert into payments (company_id, client_organization_id, business_date, amount, method, company_bank_account_id, bank_statement_line_id, unevidenced_reason, reference)
@@ -334,12 +347,17 @@ function seedIndexRegister(Connection $owner): void
             from generate_series(1, 20000) g, seed_companies c;
         -- A delivery of each dispatched line, on its project (C-30).
         insert into deliveries (company_id, project_id, business_date, recipient_name) select distinct d.company_id, d.project_id, date '2026-10-03', 'Penerima Contoh' from dispatch_lines d;
+        analyze dispatch_lines, deliveries;
         insert into delivery_lines (delivery_id, company_id, project_line_id, product_id, quantity_scale, dispatch_line_id, entered_qty, entered_unit_id, ratio_to_base, qty_base)
             select v.id, d.company_id, d.project_line_id, d.product_id, d.quantity_scale, d.id, d.entered_qty, d.entered_unit_id, d.ratio_to_base, d.qty_base
             from dispatch_lines d join deliveries v on v.project_id = d.project_id;
         insert into evidence_links (evidence_document_id, evidence_scope, company_id, role, correction_case_id)
             select e.id, 'COMPANY', e.company_id, 'PRIMARY_PROOF', k.id
             from evidence_documents e, lateral (select id from correction_cases where company_id = e.company_id order by id limit 1 offset (e.id % 100)) k;
+        -- The GIN indexes' pending lists merged, as autovacuum merges them on a live table: every scan reads a pending
+        -- list whole, and with this seed's rows left in it the trigram indexes cost more than a sequential scan (GF-14).
+        select gin_clean_pending_list(c.oid) from pg_class c join pg_am a on a.oid = c.relam
+            where a.amname = 'gin' and c.relnamespace = 'public'::regnamespace;
         analyze;
         set local enable_seqscan = off;
         SQL);

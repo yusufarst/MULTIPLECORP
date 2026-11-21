@@ -33,7 +33,10 @@ class SecurityHeaders
             return $response;
         }
 
-        $response->headers->set('Content-Security-Policy', self::policy($nonce));
+        // On staging the policy runs first in report-only mode, its reports to ROUTE-278, then enforced (WS-08; TASK-072).
+        $staging = app()->environment('staging');
+        $header = $staging && config()->boolean('app.csp_report_only') ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+        $response->headers->set($header, self::policy($nonce).($staging ? '; report-uri /laporan-csp' : ''));
         $response->headers->set('Cache-Control', 'no-store');
 
         return $response;
