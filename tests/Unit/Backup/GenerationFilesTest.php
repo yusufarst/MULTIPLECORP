@@ -56,6 +56,11 @@ it('verifies a complete generation and reports an incomplete, corrupt or missing
 
     file_put_contents($path.'/'.Manifest::FILE, '{"format": 1, "parts": [');
     expect(Generations::verify($path)['status'])->toBe(GenerationStatus::Corrupt);
+
+    // Valid JSON with a damaged time is corrupt too, never an error that would stop the fallback to an older generation.
+    file_put_contents($path.'/'.Manifest::FILE, json_encode(['format' => 1, 'generation' => basename($path), 'kind' => 'daily', 'created_at' => 'kemarin sore',
+        'recovery_point' => '2026-13-45', 'commit' => 'abc1234', 'postgresql' => '18.6', 'key_register_entry' => 'K-2026-1', 'parts' => []]));
+    expect(Generations::verify($path)['status'])->toBe(GenerationStatus::Corrupt);
 });
 
 it('lists generations newest first by their names and keeps the manifest free of any key (BKR-08)', function () {

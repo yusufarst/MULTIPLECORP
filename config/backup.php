@@ -4,7 +4,8 @@
 // the operator sets on the VPS (TASK-084): no path, key or destination of a real environment is in the repository.
 return [
 
-    // `<BACKUP_DIR>`: MULTIPLECORP's own directory of generations, readable by the operator account alone (SX-07).
+    // `<BACKUP_DIR>`: MULTIPLECORP's own directory of generations, mounted into the operator's one-off container alone,
+    // never into the web, worker or scheduler containers (SX-07).
     'directory' => env('BACKUP_DIR', storage_path('backups')),
 
     // The deployed commit a generation is named by (BK-01); the deployment sets it.

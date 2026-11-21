@@ -4,6 +4,7 @@ namespace App\Support\Backup;
 
 use Carbon\CarbonImmutable;
 use JsonException;
+use Throwable;
 
 /**
  * A generation's manifest (BK-07; BKR-02; BKR-08): its identifier, kind, time, recovery point and commit, each part's
@@ -68,7 +69,15 @@ final readonly class Manifest
             }
         }
 
-        return new self($data['generation'], $data['kind'], CarbonImmutable::parse($data['created_at']), CarbonImmutable::parse($data['recovery_point']),
+        // A damaged time is a damaged manifest: the generation reads CORRUPT and the fallback to an older one still works.
+        try {
+            $createdAt = CarbonImmutable::parse($data['created_at']);
+            $recoveryPoint = CarbonImmutable::parse($data['recovery_point']);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return new self($data['generation'], $data['kind'], $createdAt, $recoveryPoint,
             $data['commit'], $data['postgresql'], $data['key_register_entry'], $parts, is_int($data['file_count'] ?? null) ? $data['file_count'] : 0);
     }
 

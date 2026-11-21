@@ -6,7 +6,17 @@ Written by [TASK-074](../../11-tasks/TASK-074.md): the operator's procedures for
 
 ## 1. The tooling and its configuration
 
-The commands are the application's own. They run in a one-off container of MULTIPLECORP's image under the **operator account** (`--user <operator uid>`), with `<BACKUP_DIR>` mounted. They refuse to run outside a console (SX-04).
+The commands are the application's own. They refuse to run outside a console (SX-04). The **operator** starts each one in a one-off container of MULTIPLECORP's image, on the stack's internal network, with the `storage` volume and `<BACKUP_DIR>` mounted.
+
+The container runs as the image's own user, with the image's own entrypoint. That user is the only account that can read and write the private files, which are stored owner-only (`visibility: private`, `0600`). The image's entrypoint caches the framework for that user before the command runs, so no operator-specific entrypoint or writable framework directory is needed.
+
+The web runtime is kept away from the backups in three ways:
+
+- `<BACKUP_DIR>` is mounted into the tooling's one-off container alone, never into the web, worker or scheduler containers, and never into the second application's.
+- On the VPS it sits under a directory that only the operator account can open (`0700`). The mounted directory itself is writable by the image's user.
+- Generations are `0700` and their files `0600` (SX-07).
+
+A restore therefore writes the restored files as the runtime's own: no ownership change is needed before the stack uses them.
 
 | Command | What it does |
 | --- | --- |
@@ -60,7 +70,7 @@ The commands are the application's own. They run in a one-off container of MULTI
 
 1. **Stop writes.** Put MULTIPLECORP in maintenance mode and stop its queue workers and scheduler. The second application keeps running, untouched.
 2. **Choose the recovery point with the Owner**, and check it with `backup:status`. If the chosen generation is corrupt or missing, `backup:restore` refuses it and names the next older verified generation. `--fallback` takes that one.
-3. **Prepare the target.** As PostgreSQL's superuser, create a new empty database owned by the owner role in MULTIPLECORP's own instance: `createdb -O <owner role> <new database>`. Create `pg_stat_statements` in it if the dump lists it. The tooling creates the trusted extensions itself and refuses the rest with this instruction. Choose a new files' directory.
+3. **Prepare the target.** As PostgreSQL's superuser, create a new empty database owned by the owner role in MULTIPLECORP's own instance: `createdb -O <owner role> <new database>`. Create `pg_stat_statements` in it if the dump lists it. The tooling creates the trusted extensions itself and refuses the rest with this instruction. Choose a new files' directory on the `storage` volume, beside the live one and never inside it, for example `storage/app/files-restored-<date>`.
 4. **Install the paired key.** Set the generation's paired `APP_KEY` (its register entry is in the manifest and the restore's record) in the environment of the one-off container. A leaked key is never installed: that is Scenario B (INFRASTRUCTURE §7.3 step 5; TASK-076).
 5. **Run** `backup:restore <generation> --database=<new database> --files-root=<new directory> --operator="<name>"`. It does five things:
    - It restores the dump into the new database in one transaction and extracts the files into the new directory. It never goes over the live ones (BKR-05).
@@ -68,7 +78,7 @@ The commands are the application's own. They run in a one-off container of MULTI
    - It reconciles: every file row has its bytes and every byte file has its row. Each issued version without a rendition is rendered again from its issued payload, never reissued or renumbered (GAP-007).
    - It runs `ReconcileGuards`' read. A difference is reported, never repaired (HO-28).
    - It writes the record `<BACKUP_DIR>/restores/<time>-<generation>.json`, which holds no secret.
-6. **Check the critical records with the Owner** against the business's papers. If the restore is accepted, point the stack's database and `FILES_ROOT` at the restored ones (`<files-root>/files`). Restart the workers and the scheduler, so that owed work resumes from its durable rows (JB-02; JB-09). Then follow §4 step 7: the Owner's numbering raise before any numbered type issues again (DIR-083 OE-11).
+6. **Check the critical records with the Owner** against the business's papers. If the restore is accepted, point the stack's database and `FILES_ROOT` at the restored ones (`<files-root>/files`). The restored tree is already the runtime's own, written by the image's user with the files' private permissions, so the web and worker processes can read the restored files and write new ones. Restart the workers and the scheduler, so that owed work resumes from its durable rows (JB-02; JB-09). Then follow §4 step 7: the Owner's numbering raise before any numbered type issues again (DIR-083 OE-11).
 
 ## 5. The drills (BACKUP_RECOVERY §5; AC-18; AC-19)
 
