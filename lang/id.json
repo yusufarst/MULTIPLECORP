@@ -2548,6 +2548,7 @@
     "activity.action.ORG.CompanyDeactivated": "Menonaktifkan perusahaan",
     "activity.action.ORG.CompanyUpdated": "Mengubah data perusahaan",
     "activity.action.ORG.IdentityAssetReplaced": "Mengganti logo, cap atau tanda tangan perusahaan",
+    "activity.action.ORG.NumberingGoLiveRecorded": "Mencatat go-live penomoran",
     "activity.action.ORG.NumberingRaised": "Menaikkan nomor berikutnya",
     "activity.action.ORG.NumberingSchemeConfigured": "Mengatur format penomoran",
     "activity.action.ORG.NumberingSeeded": "Menetapkan nomor awal",

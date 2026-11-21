@@ -105,7 +105,7 @@ final class PurchaseRecords
         $lineIds = $this->insertLines($context, $id, $entry->companyId, $lines, 0);
         $this->attributeNonStock($context, $id, $entry->projectId, $lines, $lineIds, $entry->businessDate);
         $this->recordCharges($context, $id, $entry->companyId, $entry->charges, $entry->businessDate);
-        $this->audit->record(action: 'PUR.PurchaseRecorded', authorityClass: AuthorityClass::Adm, actorUserId: $actor, companyId: $entry->companyId, entityType: 'purchase', entityId: $id, entityPublicId: self::publicId($id), reason: null, commandId: $commandId,
+        $this->audit->record(action: 'PUR.PurchaseRecorded', authorityClass: AuthorityClass::exercisedBy(AuthorityClass::Adm, $context->request->capability), actorUserId: $actor, companyId: $entry->companyId, entityType: 'purchase', entityId: $id, entityPublicId: self::publicId($id), reason: null, commandId: $commandId,
             change: AuditChange::created(['number' => $number->formatted, 'supplier' => Row::text($supplier, 'name'), 'lines' => count($lines), 'charges' => count($entry->charges)]), metadata: ['business_date' => $entry->businessDate]);
 
         return $id;

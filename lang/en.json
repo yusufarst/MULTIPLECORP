@@ -2548,6 +2548,7 @@
     "activity.action.ORG.CompanyDeactivated": "Deactivated a company",
     "activity.action.ORG.CompanyUpdated": "Updated a company",
     "activity.action.ORG.IdentityAssetReplaced": "Replaced a company identity asset",
+    "activity.action.ORG.NumberingGoLiveRecorded": "Recorded go-live for numbering",
     "activity.action.ORG.NumberingRaised": "Raised the next number",
     "activity.action.ORG.NumberingSchemeConfigured": "Configured a numbering scheme",
     "activity.action.ORG.NumberingSeeded": "Set the starting number",

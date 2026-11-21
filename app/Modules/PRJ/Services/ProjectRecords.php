@@ -505,7 +505,7 @@ final class ProjectRecords
     {
         $this->audit->record(
             action: $action,
-            authorityClass: AuthorityClass::Adm,
+            authorityClass: AuthorityClass::exercisedBy(AuthorityClass::Adm, $context->request->capability),
             actorUserId: $context->request->actorUserId,
             companyId: $companyId,
             entityType: 'project',

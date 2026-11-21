@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -240,32 +240,32 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint — TL-01: Pint
+- [x] Typecheck — TL-02: PHPStan at its maximum level
+- [x] Relevant automated tests — TL-03: the rehearsal generator's shape from counts, go-live's day and a plan's shape (`tests/Unit/Cutover`); TL-04: the go-live command once, its repair, its refusals and the allocator reading its file (`tests/Feature/Cutover`); TL-05: the generated batches committed through TASK-057's import, go-live recorded after them and the refresh on the imported data (`tests/Integration/Cutover`), with OD-16's reconciliation after it
+- [x] Authorization — TL-06: no route reaches the go-live command, the generator or the refresh; each refuses outside a console; AZ-10 — the opening project's and purchase's events record the import commit's OWNER_ONLY class
+- [x] Route integrity — N/A — no route added or changed
+- [x] Interaction behavior — N/A — no INT- contract in this Task
+- [x] Browser E2E if required — N/A — no page
+- [x] Responsive/adaptive if required — N/A — no page
+- [x] Visual breathing room/density if UI — N/A — no page
+- [x] Production build — TL-13
+- [x] Security checks if required — SM-15's secret scan (TL-14); the refresh prints the plans' shapes alone — nodes, indexes, relations scanned in full —, never a condition or a value; the generator writes invented values only
+- [x] Database safety review — no schema change; go-live in its file on the private storage, never in the database, so a database restore leaves it; the refresh sends `ANALYZE` and `EXPLAIN` only, under the owner's login given to the run
+- [x] Final diff review — every changed file inside the IN SCOPE areas, AZ-10's correction at the four events the import commit records
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
+- Test outputs: the layers of TEST_STRATEGY §16 on this record's own head in one CI run, cited in the squash commit's message — Verify (TL-01–TL-08, TL-13, TL-14), the four browser layers and their aggregate, Performance and migration (TL-15, TL-16) and the Deployment definition. Criterion by criterion: (1) `numbering:go-live` runs only from a console, records go-live once and refuses a second recording, which writes nothing, and no route reaches it; (2) until its file exists the allocator reads go-live as unrecorded — so the numbering command neither starts nor seeds, TASK-021's tests of NM-03 unchanged — and once recorded it reads the day; (3) the command refuses while any batch is neither committed nor aborted, and [CUTOVER](../09-operations/runbooks/CUTOVER.md) §3 puts it after every commit, the reconciliation and the production restore drill (CUT-07; GLC-04; 14b); (4) `ops:post-import-refresh` sends `ANALYZE` and `EXPLAIN` only and reports every registered hot query's plan by its shape, never a value; (5) `import:rehearsal-batches` writes FX-09-shaped batches from counts alone, which pass TASK-057's own validation and commit in IMP-03's order with their seed rows, and CUTOVER §2 yields the commit's duration, the chunk size within JB-07's timeout and the freeze's length with OPI-25's durations; (6) CUTOVER §3 orders CUT-01–CUT-08 with each step's people, the freeze announced in advance and no delta batch, and §4 the rollback decisions of RBK-01–RBK-06; (7) no runbook, procedure or tool holds real legacy data, a secret or a host detail; (8) under P11Q-04 (a) (DIR-101), the command keeps the setting in INFRASTRUCTURE §4.2's file and writes `ORG.NumberingGoLiveRecorded` with the operator's identity and no application actor, once; a run that finds the file and no event writes the event from the file, a run that finds both is refused and writes nothing (F3)
+- Build result: TL-13's production configuration check
+- Route evidence: N/A — no route added or changed; no route reaches the commands (`tests/Feature/Cutover`)
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: N/A — no page
+- Localization evidence: the activity label of `ORG.NumberingGoLiveRecorded` in both languages; console output for the operator in English
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Files changed: the go-live store `FileGoLive`, its recording `GoLiveRecording` and `numbering:go-live`, `config/numbering.php` and its binding; the rehearsal generator `RehearsalBatches` and `import:rehearsal-batches`; the post-import refresh and `ops:post-import-refresh`, with PERFORMANCE §12's register moved to `App\Support\Performance\HotQueries`, which TL-15's test reads; AZ-10's `AuthorityClass::exercisedBy` at the project's, the confirmation's, the default invoice item's and the purchase's events; the activity label; their tests; the runbook [CUTOVER](../09-operations/runbooks/CUTOVER.md); TOOLCHAIN; and this record with TASK_PLAN and CURRENT_HANDOFF
+- Commit SHA: this record's squash commit, under the Owner's identity, with no AI attribution
+- Notes: each non-applicable item with its reason (DOD-03). The integration test of the generated batches found that an opening project's and an opening purchase's import commit recorded their events — the project created, activated and confirmed, its default invoice item, the purchase recorded — as ADM under the Owner's `import.commit` (OWNER_ONLY), which OD-16's reconciliation reports below the exercised class (AZ-10); those four records now take the higher of their own class and the command's, so the Admin's own commands still record ADM, and TASK-069's F-04 consequences keep their own classes as it holds them. The rehearsal itself — on staging at the data steward's counts — is the operator's (TASK-081); opening credits and archive items cite uploaded files and are rehearsed by hand. The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

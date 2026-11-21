@@ -176,7 +176,7 @@ final class CommercialConfirmation
         $pins = DB::table('confirmation_line_pins')->where('commercial_confirmation_id', $confirmation)->count();
         $this->audit->record(
             action: $supersedes !== null ? 'PRJ.ConfirmationSuperseded' : ($earlier !== null ? 'PRJ.ProjectReconfirmed' : 'PRJ.ProjectConfirmed'),
-            authorityClass: AuthorityClass::Adm,
+            authorityClass: AuthorityClass::exercisedBy(AuthorityClass::Adm, $context->request->capability),
             actorUserId: $actor,
             companyId: $companyId,
             entityType: 'project',
