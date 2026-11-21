@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -241,32 +241,32 @@ A successful HTTP health check can hide stalled business processing — missing 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint — TL-01: Pint
+- [x] Typecheck — TL-02: PHPStan at its maximum level
+- [x] Relevant automated tests — TL-03: each record's alert classification and the message's redaction (`tests/Unit/Monitoring`); TL-04: the delivery adapter against a simulated channel, a failed delivery logged, the forwarding once per signal (`tests/Feature/Monitoring`); TL-05: seeded faults on real PostgreSQL each raising its alert, a healthy heartbeat raising none, a slow statement logged without values, the monthly report (`tests/Integration/Monitoring`); TASK-072's smoke checks on the shared reader
+- [x] Authorization — no route added: the commands, the logs and the monitoring reach no application account; the route audit unchanged
+- [x] Route integrity — N/A — no route added or changed
+- [x] Interaction behavior — N/A — no INT- contract in this Task
+- [x] Browser E2E if required — N/A — no page
+- [x] Responsive/adaptive if required — N/A — no page
+- [x] Visual breathing room/density if UI — N/A — no page
+- [x] Production build — TL-13
+- [x] Security checks if required — SM-15's secret scan (TL-14); each message a neutral signal name — no context value, address, long number, token, S3 or S4 value —, the token only as the bearer header; logs never leave the VPS
+- [x] Database safety review — no schema change; the readers are bounded read-only statements off the request path
+- [x] Final diff review — every changed file inside the IN SCOPE areas
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs: the layers of TEST_STRATEGY §16 on this record's own head in one CI run, cited in the squash commit's message — Verify (TL-01–TL-08, TL-13, TL-14), the four browser layers and their aggregate, Performance and migration (TL-15, TL-16) and the Deployment definition. Criterion by criterion: (1) `ops:heartbeat`, every five minutes, raises each failing heartbeat signal — a failed job, an owed and an exhausted rendition, a scheduled task without its success, `ReconcileGuards` and the purges a day apart, connections, the disk at its lowered warning level — and a healthy heartbeat raises none; a backup older than 26 hours is the backup tooling's `backup:status` alert; (2) a failed, stale or skipped backup, a failed cleanup and a failed or missing copy are each a `Backup alert (BK-10)` the alert channel sends; (3) a deadlock, a reconciliation difference, an unverified guard family, a missing guard and a FAILED access change each alert, and a statement slower than 500 ms is logged with its text and never its values; (4) LG-07's and H9-15's alert records reach the recipients as neutral signal names — the operator, the Owner, the alternate once named —, the in-app notice staying the Owner's floor; (5) [MONITORING](../09-operations/runbooks/MONITORING.md) §5 holds the uptime check's configuration — `/kesehatan` from outside, its failure alerting by its own e-mail — for TASK-080 to adopt after its COST_POLICY §4C.4 record; (6) no component sends error data or logs off the VPS — the channel carries a signal name only —, and the log viewer is Coolify's own view, through the operator's access, with no application route; (7) `ops:statement-report`, monthly, lists the heaviest normalized statements and the largest tables, marking for a measured review any past half of its threshold and changing nothing
+- Build result: TL-13's production configuration check
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: N/A — no page
+- Localization evidence: N/A — no user-facing copy; alerts are neutral signal names
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20) — OPI-05's channel recorded in COST_POLICY §4C.4 by TASK-071; the uptime check's record is TASK-080's before adoption
+- Files changed: `config/monitoring.php`, the `alerts` log channel in every stack; `App\Support\Monitoring\` — the alert classification, the delivery adapter, the log handler, the heartbeat's reader and the statement statistics; `ops:heartbeat` and `ops:statement-report` with their schedule entries; `ops:smoke` on the shared reader; the slow-statement log; the cache-use list; their tests; the runbook [MONITORING](../09-operations/runbooks/MONITORING.md); TOOLCHAIN; and this record with TASK_PLAN and CURRENT_HANDOFF
+- Commit SHA: this record's squash commit, under the Owner's identity, with no AI attribution
+- Notes: each non-applicable item with its reason (DOD-03). The channel's endpoint is configuration the operator sets from the Cloudflare account's own documentation, its delivery tested live in TASK-080; unset, nothing is sent and the floors stand (DIR-079 CB-06). Backups are read where they live — the backup tooling's status in the operator's container (TASK-074) —, so the heartbeat of the web and worker processes reports them NOT CHECKED, never a pass. The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

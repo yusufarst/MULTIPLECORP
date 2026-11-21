@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 95
 
-DONE: 83
-READY: 3
+DONE: 84
+READY: 2
 IN_PROGRESS: 0
 BLOCKED: 2
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 7
 SUPERSEDED: 0
 
 Progress:
-83 / 95
-Percentage: 87.4 %
+84 / 95
+Percentage: 88.4 %
 
-CURRENT TASK: none in progress — TASK-077 — Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure DONE on its branch `task/TASK-077`, its record in its final commit (DIR-127), its pull request squash-merged by the executor once that head's CI passes
-NEXT READY TASK: TASK-075 — Monitoring — the business heartbeat, alerts and the uptime check READY; TASK-076 READY after it (PARALLEL SAFE: NO for one executor); TASK-078, the human operator's staging stack, READY
+CURRENT TASK: none in progress — TASK-075 — Monitoring — the business heartbeat, alerts and the uptime check DONE on its branch `task/TASK-075`, its record in its final commit (DIR-127), its pull request squash-merged by the executor once that head's CI passes
+NEXT READY TASK: TASK-076 — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation READY; TASK-078, the human operator's staging stack, READY
 LAST TASK PLAN CHANGE: Change 29 of 2026-11-15, recorded 2026-11-20 — TASK-069 proved through the existing suites with its gaps filled, small defects fixed minimally inside it, the Owner's APPR-040; no new Task
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -123,7 +123,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-072](TASK-072.md) — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
 - [x] [TASK-073](TASK-073.md) — Release process — branch protection, release tags, the release record and integrity report
 - [x] [TASK-074](TASK-074.md) — Backup tooling, the off-server copy and the drill procedures
-- [ ] [TASK-075](TASK-075.md) — Monitoring — the business heartbeat, alerts and the uptime check
+- [x] [TASK-075](TASK-075.md) — Monitoring — the business heartbeat, alerts and the uptime check
 - [ ] [TASK-076](TASK-076.md) — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
 - [x] [TASK-077](TASK-077.md) — Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure
 - [ ] [TASK-078](TASK-078.md) — Staging stack, the two applications' isolation and the provider features
@@ -223,7 +223,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | DONE | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
 | [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | DONE | 003, 004 | 084 | NO | AGENT | NONE | NO |
 | [TASK-074](TASK-074.md) | Backup tooling, the off-server copy and the drill procedures | Release · Release | HIGH | DONE | 013, 018, 021, 022, 029, 072 | 075, 076, 079, 081, 084 | NO | AGENT | NONE | NO |
-| [TASK-075](TASK-075.md) | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | READY | 010, 013, 022, 058, 071, 072, 074 | 080 | NO | AGENT | NONE | NO |
+| [TASK-075](TASK-075.md) | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | DONE | 010, 013, 022, 058, 071, 072, 074 | 080 | NO | AGENT | NONE | NO |
 | [TASK-076](TASK-076.md) | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | Release · Release | HIGH | READY | 013, 020, 021, 074 | 081, 083 | NO | AGENT | NONE | NO |
 | [TASK-077](TASK-077.md) | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | Release · Release | HIGH | DONE | 021, 057, 072 | 081, 087 | NO | AGENT | NONE | NO |
 | [TASK-078](TASK-078.md) | Staging stack, the two applications' isolation and the provider features | Operations · Operations | HIGH | READY | 071, 072 | 079, 080, 081, 082, 086 | NO | HUMAN OPERATOR | NONE | NO |
