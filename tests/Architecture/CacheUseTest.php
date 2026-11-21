@@ -4,7 +4,7 @@
 // business record. Its cache store holds the limiters' counts — keyed by account and address (AU-05; WS-12; the
 // limiters of the authentication steps, the step-up, search, scanning, uploads and exports, and on staging the CSP
 // report's count per address, ROUTE-278) — and the scheduler's
-// heartbeats, which name a task and a time and nothing of a company, so no company's data can reach another account
+// heartbeats and the alerts' throttle (TASK-075), which name a task, a time or a signal and nothing of a company, so no company's data can reach another account
 // through a cache key. A cache added later fails this test until its key-isolation case is written beside it.
 
 /** The application files that reach the cache store, directly or through the rate limiter. */
@@ -34,5 +34,6 @@ it('reaches the cache store for the limiters and the heartbeats alone (DP-10; CP
         'Modules/IAM/Http/Controllers/ConfirmPasswordController.php',
         'Providers/AppServiceProvider.php',
         'Support/Heartbeat.php',
+        'Support/Monitoring/AlertForwarder.php',
     ]);
 });

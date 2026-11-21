@@ -57,9 +57,11 @@ use App\Support\Localization\Locales;
 use App\Support\Status\StatusRead;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
@@ -140,6 +142,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // SZ-06 (TASK-075; HO-25): a statement slower than its bound is logged with its text and never its values.
+        DB::listen(function (QueryExecuted $query): void {
+            if ($query->time >= config()->integer('monitoring.slow_statement_ms')) {
+                Log::warning('A statement was slower than its bound (SZ-06).', ['sql' => mb_substr($query->sql, 0, 500), 'ms' => (int) $query->time, 'connection' => $query->connectionName]);
+            }
+        });
+
         // WS-11 (TASK-072): only the proxy in front of MULTIPLECORP is trusted for the client's address and scheme; none
         // configured trusts none, as before.
         $proxies = config('app.trusted_proxies');

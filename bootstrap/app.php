@@ -122,6 +122,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('queue:prune-failed', ['--hours' => 336])->daily()->withoutOverlapping(30)->onSuccess(Heartbeat::stamp('queue:prune-failed'));
         // The credential-link store's own purge (SECURITY AU-11; H9-04).
         $schedule->command('credential-links:purge')->daily()->withoutOverlapping(30)->onSuccess(Heartbeat::stamp('credential-links:purge'));
+        // TASK-075: the heartbeat's alert rules every five minutes — also run by the operator's host cron, so a stopped
+        // scheduler is still seen (MONITORING §2) —, and PFM-18's monthly statement report (INFRASTRUCTURE §6).
+        $schedule->command('ops:heartbeat')->everyFiveMinutes()->withoutOverlapping(10);
+        $schedule->command('ops:statement-report')->monthlyOn(1, '04:00')->timezone('Asia/Jakarta')->withoutOverlapping(60);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // One answer for a missing and an out-of-scope record, naming neither (AZ-11; CS-04; WS-10).

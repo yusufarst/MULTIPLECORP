@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\Logging\StructuredLog;
+use App\Support\Monitoring\AlertForwarder;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -55,7 +56,8 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'daily')),
+            // TASK-075: the alerts channel in every stack, so each alert reaches OPI-05's channel (INFRASTRUCTURE §6).
+            'channels' => array_values(array_unique([...explode(',', (string) env('LOG_STACK', 'daily')), 'alerts'])),
             'ignore_exceptions' => false,
         ],
 
@@ -69,6 +71,13 @@ return [
             'replace_placeholders' => true,
             'permission' => 0600,
             'tap' => [StructuredLog::class],
+        ],
+
+        // TASK-075 (INFRASTRUCTURE §6; LG-07; BK-10; HO-25): the alerts, sent as neutral signal names through OPI-05's channel.
+        'alerts' => [
+            'driver' => 'monolog',
+            'handler' => AlertForwarder::class,
+            'level' => 'warning',
         ],
 
         'daily' => [

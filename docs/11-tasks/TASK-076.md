@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -240,32 +240,32 @@ AU-14, AU-21 and AU-25 leave their human procedures to P9 (H9-07, H9-14), which 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint — N/A — no code; the documentation gates (links, anchors, plan) in TL-01's job
+- [x] Typecheck — N/A — no code
+- [x] Relevant automated tests — N/A — no domain logic, route, command or job (the commands' tests are TASK-020's, TASK-021's and TASK-074's); the plan, link and secret checks run on the runbooks
+- [x] Authorization — N/A — no route; every command the runbooks use refuses outside a console (H9-03; SX-04)
+- [x] Route integrity — N/A — no route added or changed
+- [x] Interaction behavior — N/A — no INT- contract in this Task
+- [x] Browser E2E if required — N/A — no page
+- [x] Responsive/adaptive if required — N/A — no page
+- [x] Visual breathing room/density if UI — N/A — no page
+- [x] Production build — N/A — no code; TL-13 unchanged
+- [x] Security checks if required — SM-15's secret scan (TL-14); no runbook or form holds a token, key, password, link, real name or contact detail
+- [x] Database safety review — N/A — no schema or data path
+- [x] Final diff review — every changed file inside the IN SCOPE areas
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: N/A — no code in this Task
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
+- Test outputs: the layers of TEST_STRATEGY §16 on this record's own head in one CI run, cited in the squash commit's message — the documentation gates and SM-15's secret scan in Verify, every other layer unchanged. Criterion by criterion: (1) every step of [OWNER_RECOVERY](../09-operations/runbooks/OWNER_RECOVERY.md), [KEY_COMPROMISE](../09-operations/runbooks/KEY_COMPROMISE.md), [POST_INCIDENT_RECOVERY](../09-operations/runbooks/POST_INCIDENT_RECOVERY.md), [KEY_ROTATION](../09-operations/runbooks/KEY_ROTATION.md), [RESTORE](../09-operations/runbooks/RESTORE.md) and [ROLLBACK](../09-operations/runbooks/ROLLBACK.md) names its source step — INFRASTRUCTURE §7.1–§7.4, BACKUP_RECOVERY §4 or an RBK- rule —, the source winning where they differ, and no step adds a path, authority, role, bypass or rule; (2) KEY_COMPROMISE records the alarm first, the window's start once, the inventory, every key and affected secret rotated before the command, the maintenance mode confirmed on every process, AU-21's protocol and the mode lifted only after the closing sweep; (3) POST_INCIDENT_RECOVERY keeps restoration, recovery and review in that order, shows each restored Owner with the removal it reversed, keeps a disputed change unvalidated until the governance named in advance settles it, and holds TASK-083's slot; (4) its Scenario B uses only a backup or snapshot independently verified as predating the compromise, an off-server copy proving nothing by existing, stops for the Owner's decision outside the application when none exists, and takes the host out of service with the client told; (5) on a trusted state a halt goes first to the Owner's incident decision outside the application with the client, and no step creates or guesses an Owner or gives OWNER authority to the operator or the client; (6) RESTORE keeps every numbered issue stopped until the Owner's raise is recorded and run once for the recovery, and records the lost facts again under new numbers with the papers' numbers in the private record; (7) KEY_ROTATION retires an old key only when the re-encrypted count equals the enrolled accounts, and names the rotation after the first Owner's set-up and the yearly one; (8) every runbook acts on MULTIPLECORP alone, and the forms — [INCIDENT_RECORD](../09-operations/runbooks/forms/INCIDENT_RECORD.md), [OWNER_CONTACT_RECORD](../09-operations/runbooks/forms/OWNER_CONTACT_RECORD.md), [KEY_REGISTER](../09-operations/runbooks/forms/KEY_REGISTER.md) — hold fields only, their filled copies outside the repository and the VPS
+- Build result: N/A — no code
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: N/A — no page
+- Localization evidence: N/A — operator documentation in English
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Files changed: the six runbooks and the three blank forms under `docs/09-operations/runbooks/`, and this record with TASK_PLAN and CURRENT_HANDOFF
+- Commit SHA: this record's squash commit, under the Owner's identity, with no AI attribution
+- Notes: each non-applicable item with its reason (DOD-03). The runbooks are rehearsed on staging by TASK-081 and, for Scenario B, H9-14's recovery test (GLC-26); P9Q-15's governance is recorded in POST_INCIDENT_RECOVERY's slot by TASK-083. The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
