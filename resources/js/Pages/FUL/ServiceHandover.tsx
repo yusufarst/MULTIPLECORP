@@ -5,7 +5,7 @@
 // each with its reversal lines — "Balikkan" with its reason (IP-09; CM-27) — and its BAST, the screen's second command
 // (IP-19): "Terbitkan BAST" creates its draft from the recorded facts, or finds the one an earlier press left, and issues it
 // in place after its confirmation (INT-221; INT-222; IP-08). No stock screen is ever involved (FS-05).
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { RotateCcw, Send } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -109,7 +109,7 @@ function Recorded({ handover, previewing, onPreview, onReverse, onIssue, prepari
                 <ul role="list" className="flex flex-wrap gap-3">
                     {handover.evidence.map((item) => (
                         <li key={item.id}>
-                            <a href={`/dokumen/bukti?bukti=${item.id}`} className="text-body text-accent-link underline underline-offset-2">{t(evidenceName(item.type))}</a>
+                            <Link href={`/dokumen/bukti?bukti=${item.id}`} className="text-body text-accent-link underline underline-offset-2">{t(evidenceName(item.type))}</Link>
                         </li>
                     ))}
                 </ul>
@@ -118,7 +118,7 @@ function Recorded({ handover, previewing, onPreview, onReverse, onIssue, prepari
                 <span className="text-body text-text-secondary">
                     {bast?.issued != null ? t('handover.bast.issued', { nomor: bast.issued }) : bast?.draft != null ? t('handover.bast.draft') : t('handover.bast.none')}
                 </span>
-                {bast !== null && <a href={`/dokumen/${bast.document}`} className="text-body text-accent-link underline underline-offset-2">{t('handover.bast.open')}</a>}
+                {bast !== null && <Link href={`/dokumen/${bast.document}`} className="text-body text-accent-link underline underline-offset-2">{t('handover.bast.open')}</Link>}
                 {!previewing && standing(handover).length > 0 && bast?.issued == null && (
                     <Button variant="ghost" size="sm" onClick={onPreview}>{t('handover.action.preview_bast')}</Button>
                 )}
@@ -179,6 +179,8 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
 
             return false;
         });
+        // A departure that did not happen — refused or interrupted — leaves the guard on again (ER-06).
+        const settled = router.on('finish', () => { departing.current = false; });
         const unload = (event: BeforeUnloadEvent) => {
             if (dirty && !departing.current) event.preventDefault();
         };
@@ -186,6 +188,7 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
 
         return () => {
             off();
+            settled();
             window.removeEventListener('beforeunload', unload);
         };
     }, [dirty]);

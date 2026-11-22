@@ -257,7 +257,10 @@ final class EvidenceController extends Controller
             $pairs[$key] = $value;
         }
 
-        return $pairs === [] ? $path : $path.'?'.http_build_query($pairs, '', '&', PHP_QUERY_RFC3986);
+        $address = $pairs === [] ? $path : $path.'?'.http_build_query($pairs, '', '&', PHP_QUERY_RFC3986);
+
+        // Re-escaping can lengthen a value (`+` as `%20`): the address sent back keeps the same bound.
+        return strlen($address) > self::RETURN_BOUND ? null : $address;
     }
 
     private function refusal(Outcome $outcome): string

@@ -145,6 +145,8 @@ export default function ClientReturn({ page, today }: Props) {
 
             return false;
         });
+        // A departure that did not happen — refused or interrupted — leaves the guard on again (ER-06).
+        const settled = router.on('finish', () => { departing.current = false; });
         const unload = (event: BeforeUnloadEvent) => {
             if (dirty && !departing.current) event.preventDefault();
         };
@@ -152,6 +154,7 @@ export default function ClientReturn({ page, today }: Props) {
 
         return () => {
             off();
+            settled();
             window.removeEventListener('beforeunload', unload);
         };
     }, [dirty]);
@@ -166,7 +169,7 @@ export default function ClientReturn({ page, today }: Props) {
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_034.title')} crumbs={[{ label: project.number, href: `/proyek/${project.id}` }]} />
                 <section data-slot="return-project" className="flex min-w-0 flex-col gap-1 text-body">
-                    <p><a className="font-medium underline" href={`/proyek/${project.id}`}>{project.title}</a>{' · '}<Code>{project.number}</Code></p>
+                    <p><Link className="font-medium underline" href={`/proyek/${project.id}`}>{project.title}</Link>{' · '}<Code>{project.number}</Code></p>
                     {project.client !== null && <p className="text-text-secondary">{project.client}</p>}
                     <p className="text-text-secondary">{t('returns_client.keeps_delivery')}</p>
                 </section>

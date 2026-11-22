@@ -107,7 +107,7 @@ export default function Invoices({ branches, branch, number, rows, more, can }: 
                 <p className="sr-only" aria-live="polite" aria-atomic="true">{unmatched ? t('messages.msg_25', { kode: sent }) : ''}</p>
                 {shown.length === 0 ? (
                     unmatched ? (
-                        <RegionNoMatch term={sent} text={t('messages.msg_25', { kode: sent })} clearLabel={t('actions.reset')} onClear={reset} />
+                        <RegionNoMatch term={sent} text={t('messages.msg_25', { kode: sent })} announce={false} clearLabel={t('actions.reset')} onClear={reset} />
                     ) : (
                         <RegionEmpty text={branches.length === 0 ? t('invoices.list.empty_scope') : t('invoices.list.empty')} />
                     )

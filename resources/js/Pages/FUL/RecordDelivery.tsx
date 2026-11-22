@@ -105,6 +105,8 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
     const againWarned = sent !== null && again.answer?.kind === 'REJECTED' && againMatches.length > 0;
     // Every field of the form; a recorded delivery answers on PG-030, so nothing is left to ask about.
     const dirty = Object.values(quantities).some((value) => value !== '') || recipient !== '' || condition !== '' || discrepancy || inspector !== '' || result !== '' || proof !== '' || date.chosen || duplicateReason !== '';
+    // A command that answers on another page — a paper's draft on PG-036 — leaves the form too: MSG-35 first (NV-02; ER-06).
+    const leaveThen = (go: () => void) => { if (dirty) setLeaving(() => go); else go(); };
 
     // A visit away with unsent input asks first (MSG-35; NV-02); background reads do not.
     useEffect(() => {
@@ -120,6 +122,8 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
 
             return false;
         });
+        // A departure that did not happen — refused or interrupted — leaves the guard on again (ER-06).
+        const settled = router.on('finish', () => { departing.current = false; });
         const unload = (event: BeforeUnloadEvent) => {
             if (dirty && !departing.current) event.preventDefault();
         };
@@ -127,6 +131,7 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
 
         return () => {
             off();
+            settled();
             window.removeEventListener('beforeunload', unload);
         };
     }, [dirty]);
@@ -159,7 +164,7 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_031.title')} />
                 <section data-slot="delivery-shipment" className="flex min-w-0 flex-col gap-1 text-body">
-                    <p><a className="font-medium underline" href={`/proyek/${shipment.project.id}`}>{shipment.project.title}</a>{' · '}<Code>{shipment.project.number}</Code></p>
+                    <p><Link className="font-medium underline" href={`/proyek/${shipment.project.id}`}>{shipment.project.title}</Link>{' · '}<Code>{shipment.project.number}</Code></p>
                     <p className="text-text-secondary">{shipment.client ?? ''}{shipment.client === null ? '' : ' · '}{t('deliveries.shipped_on')} <DateText value={shipment.date} /></p>
                     <p className="text-text-secondary">{t('deliveries.no_stock')}</p>
                 </section>
@@ -262,14 +267,14 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                                         ))}
                                     </ul>
                                     {delivery.papers.map((paper) => (
-                                        <a key={paper.id} className="self-start underline" href={`/dokumen/${paper.id}`}>{`${t(paper.type === 'DOC-10' ? 'documents.doc_10' : 'documents.doc_08')}${paper.number === null ? '' : ` ${paper.number}`}`}</a>
+                                        <Link key={paper.id} className="self-start underline" href={`/dokumen/${paper.id}`}>{`${t(paper.type === 'DOC-10' ? 'documents.doc_10' : 'documents.doc_08')}${paper.number === null ? '' : ` ${paper.number}`}`}</Link>
                                     ))}
                                     {delivery.papers.some((paper) => paper.number !== null && (delivery.corrected || paper.substituted)) && <p className="text-caption text-text-secondary">{t('deliveries.revise_paper')}</p>}
                                     {can.issue && (
                                         <div className="flex flex-wrap gap-2">
                                             {(delivery.inspected ? (['DOC-08', 'DOC-10'] as const) : (['DOC-08'] as const)).map((type) => (
                                                 <Button key={type} variant="outline" size="sm" pending={prepare.pending} disabled={prepare.frozen}
-                                                    onClick={() => { prepare.submit({ jenis: type, subjek: { delivery_id: delivery.id } }); }}>
+                                                    onClick={() => { leaveThen(() => { prepare.submit({ jenis: type, subjek: { delivery_id: delivery.id } }); }); }}>
                                                     {t('deliveries.action.issue', { dokumen: t(type === 'DOC-10' ? 'documents.doc_10' : 'documents.doc_08') })}
                                                 </Button>
                                             ))}

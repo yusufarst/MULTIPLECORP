@@ -8,7 +8,7 @@
 // (NV-02; TASK-096).
 import type { FormDataConvertible } from '@inertiajs/core';
 import { Link, router } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { type BusinessDate, BusinessDateControl } from '@/components/date-field';
@@ -69,6 +69,9 @@ export default function DirectShipment({ page, today }: Props) {
     const purchases = page.lines.reduce<Purchase[]>((all, line) => (line.purchase.open && !all.some((one) => one.id === line.purchase.id) ? [...all, line.purchase] : all), []);
     const [purchase, setPurchase] = useState(purchases[0]?.id ?? '');
     const [opened] = useState(purchase);
+    // Each in-place upload described by the field it fills, the two buttons sharing one label (ER-06).
+    const proofHint = useId();
+    const clientHint = useId();
     const [quantities, setQuantities] = useState<Record<string, string>>({});
     const [serials, setSerials] = useState<Record<string, string>>({});
     const [reference, setReference] = useState('');
@@ -106,6 +109,8 @@ export default function DirectShipment({ page, today }: Props) {
     const answer = reverse.answer ?? returned.answer ?? prepare.answer;
     // Every field of the confirmation; a confirmed shipment answers on PG-011, so nothing is left to ask about.
     const dirty = purchase !== opened || Object.values(quantities).some((value) => value !== '') || Object.values(serials).some((value) => value.trim() !== '') || reference !== '' || proof !== '' || replacing !== '' || delivered || recipient !== '' || clientProof !== '' || condition !== '' || date.chosen;
+    // A command that answers on another page — a paper's draft on PG-036 — leaves the form too: MSG-35 first (NV-02; ER-06).
+    const leaveThen = (go: () => void) => { if (dirty) setLeaving(() => go); else go(); };
 
     // A visit away with unsent input asks first (MSG-35; NV-02); background reads do not.
     useEffect(() => {
@@ -121,6 +126,8 @@ export default function DirectShipment({ page, today }: Props) {
 
             return false;
         });
+        // A departure that did not happen — refused or interrupted — leaves the guard on again (ER-06).
+        const settled = router.on('finish', () => { departing.current = false; });
         const unload = (event: BeforeUnloadEvent) => {
             if (dirty && !departing.current) event.preventDefault();
         };
@@ -128,6 +135,7 @@ export default function DirectShipment({ page, today }: Props) {
 
         return () => {
             off();
+            settled();
             window.removeEventListener('beforeunload', unload);
         };
     }, [dirty]);
@@ -164,7 +172,7 @@ export default function DirectShipment({ page, today }: Props) {
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_032.title')} crumbs={[{ label: project.number, href: `/proyek/${project.id}` }]} />
                 <section data-slot="dropship-project" className="flex min-w-0 flex-col gap-1 text-body">
-                    <p><a className="font-medium underline" href={`/proyek/${project.id}`}>{project.title}</a>{' · '}<Code>{project.number}</Code></p>
+                    <p><Link className="font-medium underline" href={`/proyek/${project.id}`}>{project.title}</Link>{' · '}<Code>{project.number}</Code></p>
                     {project.client !== null && <p className="text-text-secondary">{project.client}</p>}
                     <p className="text-text-secondary">{t('dropship.no_warehouse')}</p>
                 </section>
@@ -198,7 +206,7 @@ export default function DirectShipment({ page, today }: Props) {
                     {page.lines_more !== null && (
                         <div className="flex flex-wrap items-center gap-2">
                             <span className="text-caption text-text-secondary">{t('deliveries.list.more')}</span>
-                            <a className="text-body underline" href={`${base}?${new URLSearchParams({ baris: page.lines_more }).toString()}`}>{t('actions.load_more')}</a>
+                            <Link className="text-body underline" href={`${base}?${new URLSearchParams({ baris: page.lines_more }).toString()}`}>{t('actions.load_more')}</Link>
                         </div>
                     )}
                 </section>
@@ -248,7 +256,7 @@ export default function DirectShipment({ page, today }: Props) {
                                 </NativeSelect>
                             )}
                         </FormField>
-                        {page.upload !== null && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading('proof'); }}>{t('payments.action.upload_proof')}</Button>}
+                        {page.upload !== null && <><span id={proofHint} hidden>{t('dropship.field.proof')}</span><Button variant="outline" size="sm" className="self-start" aria-describedby={proofHint} onClick={() => { setUploading('proof'); }}>{t('payments.action.upload_proof')}</Button></>}
                         <label className="flex min-h-floor items-center gap-2 text-body">
                             <Checkbox checked={delivered} onCheckedChange={(checked) => { setDelivered(checked); }} />
                             <span>{t('dropship.field.delivered')}</span>
@@ -266,7 +274,7 @@ export default function DirectShipment({ page, today }: Props) {
                                         </NativeSelect>
                                     )}
                                 </FormField>
-                                {page.upload !== null && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading('client'); }}>{t('payments.action.upload_proof')}</Button>}
+                                {page.upload !== null && <><span id={clientHint} hidden>{t('dropship.field.client_proof')}</span><Button variant="outline" size="sm" className="self-start" aria-describedby={clientHint} onClick={() => { setUploading('client'); }}>{t('payments.action.upload_proof')}</Button></>}
                                 <FormField label={t('deliveries.field.condition')} error={confirm.errors.kondisi}>
                                     {(control) => <Textarea {...control} value={condition} maxLength={500} onChange={(event) => { setCondition(event.target.value); }} />}
                                 </FormField>
@@ -307,15 +315,15 @@ export default function DirectShipment({ page, today }: Props) {
                                                     {`${t(`dropship.kind.${correction.kind}` as TranslationKey)} · ${correction.quantity}`}
                                                     {/* A supplier return's outcome is recorded on its case at PG-028 (ROUTE-177). */}
                                                     {correction.case !== null && correction.kind === 'DROPSHIP_SUPPLIER_RETURN'
-                                                        ? <>{' · '}<a className="underline" href={`/gudang/retur-pemasok?kasus=${correction.case}`}>{t('dropship.case_link')}</a></>
+                                                        ? <>{' · '}<Link className="underline" href={`/gudang/retur-pemasok?kasus=${correction.case}`}>{t('dropship.case_link')}</Link></>
                                                         : (correction.case === null ? '' : ` · ${correction.case}`)}
                                                 </li>
                                             ))}
                                         </ul>
                                     )}
-                                    {confirmation.document !== null && <a className="self-start underline" href={`/dokumen/${confirmation.document.id}`}>{`${t('documents.doc_03')}${confirmation.document.number === null ? '' : ` ${confirmation.document.number}`}`}</a>}
+                                    {confirmation.document !== null && <Link className="self-start underline" href={`/dokumen/${confirmation.document.id}`}>{`${t('documents.doc_03')}${confirmation.document.number === null ? '' : ` ${confirmation.document.number}`}`}</Link>}
                                     <div className="flex flex-wrap gap-2">
-                                        {can.issue && confirmation.standing && <Button variant="outline" size="sm" pending={prepare.pending} disabled={prepare.frozen} onClick={() => { prepare.submit({ jenis: 'DOC-03', subjek: { dropship_confirmation_id: confirmation.id } }); }}>{t('dropship.action.note')}</Button>}
+                                        {can.issue && confirmation.standing && <Button variant="outline" size="sm" pending={prepare.pending} disabled={prepare.frozen} onClick={() => { leaveThen(() => { prepare.submit({ jenis: 'DOC-03', subjek: { dropship_confirmation_id: confirmation.id } }); }); }}>{t('dropship.action.note')}</Button>}
                                         {can.reverse && confirmation.standing && <Button variant="ghost" size="sm" onClick={() => { startCorrection(confirmation, 'reverse'); }}>{t('dropship.action.reverse')}</Button>}
                                         {can.return && confirmation.standing && <Button variant="ghost" size="sm" onClick={() => { startCorrection(confirmation, 'return'); }}>{t('dropship.action.return')}</Button>}
                                     </div>
@@ -326,7 +334,7 @@ export default function DirectShipment({ page, today }: Props) {
                     {page.confirmations_more !== null && (
                         <div className="flex flex-wrap items-center gap-2">
                             <span className="text-caption text-text-secondary">{t('deliveries.list.more')}</span>
-                            <a className="text-body underline" href={`${base}?${new URLSearchParams({ konfirmasi: page.confirmations_more }).toString()}`}>{t('actions.load_more')}</a>
+                            <Link className="text-body underline" href={`${base}?${new URLSearchParams({ konfirmasi: page.confirmations_more }).toString()}`}>{t('actions.load_more')}</Link>
                         </div>
                     )}
                 </section>

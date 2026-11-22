@@ -20,13 +20,12 @@ import { RegionEmpty, RegionLoading } from '@/components/region-state';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Code, DateText, DateTimeText, Money } from '@/components/values';
+import { Code, DateText, DateTimeText, Money, Quantity } from '@/components/values';
 import { type Checklist, ChecklistSection } from '@/features/adm/checklist';
 import { typeName } from '@/features/doc/labels';
 import { type Fulfilment, FulfilmentSection } from '@/features/prj/fulfilment';
 import { type Failed, isFailed, ItemText, type Journey as JourneyShape, predicateName, stageName } from '@/features/prj/journey';
 import AppShell from '@/layouts/AppShell';
-import { quantity } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
@@ -320,9 +319,12 @@ export default function Journey({ project, journey, financial, can, return_href:
                                         </div>
                                         {/* Each line still to come at its own unit, never one figure across products or units (CALC-03; TASK-096). */}
                                         {purchase.remaining.length > 0 && (
-                                            <ul role="list" className="flex min-w-0 flex-col gap-0.5 text-caption text-text-secondary">
-                                                {purchase.remaining.map((line, index) => <li key={`${purchase.id}-${String(index)}`} className="min-w-0">{`${line.description} · ${t('purchases.project.remaining', { sisa: quantity(line.quantity, line.unit) })}`}</li>)}
-                                            </ul>
+                                            <div className="flex min-w-0 flex-col gap-0.5 text-caption text-text-secondary">
+                                                <span>{t('pages.pg_016.remaining')}</span>
+                                                <ul role="list" className="flex min-w-0 flex-col gap-0.5">
+                                                    {purchase.remaining.map((line, index) => <li key={`${purchase.id}-${String(index)}`} className="min-w-0">{line.description}{' · '}<Quantity value={line.quantity} unit={line.unit} /></li>)}
+                                                </ul>
+                                            </div>
                                         )}
                                     </li>
                                 ))}

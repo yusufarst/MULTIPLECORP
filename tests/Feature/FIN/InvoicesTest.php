@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\DOC\Jobs\RenderDocument;
+use App\Modules\FIN\Queries\InvoiceList;
 use App\Modules\IAM\Models\User;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Support\BusinessDate;
@@ -560,4 +561,11 @@ it('answers another company\'s number exactly as a fictitious one, the term sent
         ->and($answer($number))->toBe($answer('UJI/INV/9999/9999'))
         ->and($answer($number)['rows'])->toBe([]);
     $this->actingAs($this->actor)->get('/keuangan/invoice?nomor='.urlencode($number))->assertInertia(fn (AssertableInertia $page) => $page->where('number', $number)->has('rows', 0));
+});
+
+it('gives an account with no company in scope no branch, a lookup there never answered as a company\'s, and the route refuses it before the page (PT-19; IP-17; TASK-096)', function () {
+    $alone = Authorization::admin([], ['finance.view']);
+
+    expect(app(InvoiceList::class)->screen($alone->id, null, null, 'UJI/INV/0001'))->toMatchArray(['branches' => [], 'branch' => null, 'rows' => [], 'more' => null, 'number' => 'UJI/INV/0001']);
+    $this->actingAs($alone)->get('/keuangan/invoice?nomor=UJI%2FINV%2F0001')->assertForbidden();
 });

@@ -3317,7 +3317,6 @@
     "receiving.list.reload": "Muat Ulang",
     "receiving.list.empty": "Tidak ada barang yang menunggu diterima.",
     "receiving.list.no_lines": "Pembelian ini tidak punya baris yang diterima di gudang.",
-    "receiving.list.open_lines": ":count baris belum diterima",
     "receiving.field.purchase": "Pembelian",
     "receiving.field.supplier": "Pemasok",
     "receiving.field.project": "Proyek",
@@ -4351,5 +4350,6 @@
     "pages.pg_008.col_since": "Sejak",
     "pages.pg_008.conditions_empty": "Tidak ada kondisi yang masih terbuka.",
     "pages.pg_008.empty": "Tidak ada aktivitas dalam jangka ini.",
-    "pages.pg_008.all_companies": "Semua perusahaan"
+    "pages.pg_008.all_companies": "Semua perusahaan",
+    "receiving.list.open_lines": ":count baris belum diterima"
 }

@@ -179,7 +179,7 @@ export default function CustomerCredit({ page }: Props) {
                 {page.more !== null && <Button variant="outline" className="self-start" render={<a href={`/keuangan/kredit-pelanggan?${new URLSearchParams({ ...(page.branch === null ? {} : { cabang: page.branch }), setelah: page.more }).toString()}`} />}>{t('actions.load_more')}</Button>}
             </div>
             <ConfirmCommand
-                open={acting?.kind === 'refund' && !refund.unknown}
+                open={acting?.kind === 'refund' && !refund.unknown && !uploading}
                 onOpenChange={(next) => { if (!next) setActing(null); }}
                 title={t('actions.refund')}
                 consequence={t('credit.confirm.refund')}
@@ -246,7 +246,8 @@ export default function CustomerCredit({ page }: Props) {
                 reason={{ value: reason, onChange: setReason, error: hold.errors.alasan ?? null }}
                 onConfirm={() => { hold.submit({ alasan: reason }); }}
             />
-            {/* Over the refund's dialog, as PG-024's correction keeps its own (IP-16; NV-04). */}
+            {/* As PG-024's correction does: the refund's dialog steps aside while its proof is registered — it would cover the sheet —
+                and comes back with what was typed, Escape closing the sheet alone (IP-16; NV-04; ER-06). */}
             {uploading && refunding?.upload != null && <ProofSheet open onOpenChange={setUploading} company={refunding.upload.company} types={refunding.upload.types} today={page.today} back={`${window.location.pathname}${window.location.search}`} onRegistered={(id) => { setProof(id); setUploading(false); }} />}
         </AppShell>
     );

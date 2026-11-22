@@ -112,6 +112,16 @@ test('PG-048: the refund\'s transfer proof registered over its dialog, which kee
     await group.locator('[data-slot="credit-source"]').first().getByRole('button', { name: 'Kembalikan Dana' }).click();
     const refunding = page.getByRole('alertdialog');
     await refunding.getByLabel('Alasan').fill('Klien meminta dana kembali');
+
+    // Escape closes the sheet alone: the refund's dialog, aside while the sheet is open, comes back with what was typed.
+    await refunding.getByRole('button', { name: 'Unggah Bukti' }).click();
+    const sheet = page.getByRole('dialog', { name: 'Unggah Dokumen' });
+    await expect(sheet).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(sheet).toHaveCount(0);
+    await expect(refunding).toBeVisible();
+    await expect(refunding.getByLabel('Alasan')).toHaveValue('Klien meminta dana kembali');
+
     await refunding.getByRole('button', { name: 'Unggah Bukti' }).click();
     await register(page, { name: 'transfer.pdf', mimeType: 'application/pdf', buffer: uniquePdf() }, 'Bank Uji 096');
 
@@ -161,7 +171,8 @@ test('PG-029: pool evidence registered in place for a pending case\'s resolution
     const share = row.locator('[data-slot="case-lot"]').filter({ hasText: run.lot }).first().getByLabel(/Jumlah dari/);
     await share.fill('1');
     await row.getByRole('button', { name: 'Tambah Bukti' }).click();
-    await register(admin, { name: 'catatan-gudang.pdf', mimeType: 'application/pdf', buffer: uniquePdf() }, 'Gudang Uji 096', { pool: true });
+    // Pool evidence has no company: an issuer of this run's own, as Chromium and WebKit share one database.
+    await register(admin, { name: 'catatan-gudang.pdf', mimeType: 'application/pdf', buffer: uniquePdf() }, `Gudang Uji ${String(Date.now())}`, { pool: true });
 
     await expect(admin).toHaveURL(/\/gudang\/selisih-temuan/);
     await expect(share).toHaveValue('1');

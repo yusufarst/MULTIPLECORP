@@ -89,7 +89,7 @@ test.describe('on the phone with a coarse pointer', () => {
     });
 });
 
-for (const width of [767, 768, 1280]) {
+for (const width of [320, 767, 768, 1280]) {
     test(`keeps one primary action at ${String(width)} px — the bar below 768 px, the page header from it (PT-03; §11)`, async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 900 });
         const run = await projectRun(page, `utama-lebar-${String(width)}-${String(Date.now())}`, { project: true });
@@ -100,6 +100,10 @@ for (const width of [767, 768, 1280]) {
         await expect(page.getByRole('link', { name: 'Buat Proyek' }).locator('visible=true')).toHaveCount(1);
         await expect(bar(page, 'Proyek')).toHaveCount(width < 768 ? 1 : 0);
         await expect(header(page).getByRole('link', { name: 'Buat Proyek' })).toBeVisible({ visible: width >= 768 });
+
+        await page.goto(`/proyek/${run.project ?? ''}`);
+        await expect(page.getByRole('link', { name: /^Buat dan terbitkan penawaran/ }).locator('visible=true')).toHaveCount(1);
+        await expect(bar(page, 'Perjalanan Proyek')).toHaveCount(width < 768 ? 1 : 0);
 
         await page.goto('/keuangan/pembayaran');
         await expect(page.getByRole('button', { name: 'Catat Pembayaran' }).locator('visible=true')).toHaveCount(1);
