@@ -60,7 +60,8 @@ final class ClientReturns
         $viewer = $this->capabilities->for($viewerId);
         $company = $project->companyId;
         $cost = $viewer->allows('cost.view', $company);
-        $header = DB::table('projects as p')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')->where('p.id', $project->id)->first(['p.public_id', 'p.project_number', 'p.title', 'p.state', 'o.name as client']);
+        $types = array_values(array_intersect(Deliveries::EVIDENCE, EvidenceTypes::choosable($viewer, $company)));
+        $header = DB::table('projects as p')->join('companies as co', 'co.id', '=', 'p.company_id')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')->where('p.id', $project->id)->first(['p.public_id', 'p.project_number', 'p.title', 'p.state', 'o.name as client', 'co.public_id as company']);
 
         if ($header === null) {
             return null;
@@ -73,9 +74,11 @@ final class ClientReturns
             'racks' => array_values(array_map(fn (object $row): array => ['id' => RowHandle::of('locations', (int) Row::text($row, 'id')), 'code' => Row::text($row, 'code'), 'name' => Row::text($row, 'name')],
                 DB::table('locations')->where('is_active', true)->orderBy('code')->get(['id', 'code', 'name'])->all())),
             'proofs' => self::proofs($viewer, $company),
+            // IP-16 in place: the proof types the viewer may register for the project's company (PJ-08; TASK-096).
+            'upload' => $types === [] ? null : ['company' => Row::text($header, 'company'), 'types' => $types],
             'can' => [
                 'record' => $viewer->allows('sales_return.record', $company), 'reverse' => $viewer->allows('stock.reverse', $company), 'reserve' => $viewer->allows('stock.reserve', $company),
-                'close' => $viewer->allows('cases.close', $company), 'cost' => $cost, 'upload' => $viewer->allows('evidence.upload', $company),
+                'close' => $viewer->allows('cases.close', $company), 'cost' => $cost,
             ],
         ];
     }

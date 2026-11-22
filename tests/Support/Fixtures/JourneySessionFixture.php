@@ -38,6 +38,7 @@ final class JourneySessionFixture
     /** The capabilities a journey's Admin holds, by profile: viewing projects, or the quotation's cycle with its money. */
     private const PROFILES = [
         'view' => ['projects.view'],
+        'manage' => ['projects.view', 'projects.manage'],
         'quotation' => ['projects.view', 'quotation.manage', 'finance.view', 'projects.confirm'],
     ];
 
@@ -77,7 +78,7 @@ final class JourneySessionFixture
         $profile = self::PROFILES[(string) $request->input('profile')] ?? null;
 
         if (! $user instanceof User || ! $company instanceof Company || $profile === null) {
-            return response()->json(['error' => 'an account, a company and a profile (view, quotation) are required'], 422);
+            return response()->json(['error' => 'an account, a company and a profile (view, manage, quotation) are required'], 422);
         }
 
         if (! DB::table('user_company_grants')->where('user_id', $user->id)->where('company_id', $company->id)->whereNull('revoked_at')->exists()) {

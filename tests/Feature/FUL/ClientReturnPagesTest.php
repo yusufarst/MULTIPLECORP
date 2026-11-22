@@ -141,3 +141,10 @@ it('shows a restoration\'s contra only with `cost.view` (SM-25; PJ-05)', functio
 
     $this->actingAs($blind)->get($this->page)->assertInertia(fn (AssertableInertia $page) => $page->where('page.can.cost', false)->missing('page.cases.0.restorations.0.contra')->where('page.cases.0.restorations.0.quantity', '1'));
 });
+
+it('offers PG-034\'s in-place upload with the proof types the viewer may register for the project\'s company, none without evidence.upload (IP-16; PJ-08; TASK-096)', function () {
+    $uploader = ReceivingWorld::actor($this->company, [...ClientReturnWorld::CAPABILITIES, 'evidence.upload']);
+
+    $this->actingAs($uploader)->get($this->page)->assertInertia(fn (AssertableInertia $page) => $page->where('page.upload', ['company' => $this->company->public_id, 'types' => ['DELIVERY_PROOF', 'OTHER']]));
+    $this->actingAs($this->actor)->get($this->page)->assertInertia(fn (AssertableInertia $page) => $page->where('page.upload', null));
+});

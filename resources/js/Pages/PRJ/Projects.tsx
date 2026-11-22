@@ -7,6 +7,7 @@ import { router, usePage } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
+import { ActionBar } from '@/components/action-bar';
 import { CompanyFilter, CompanyTag } from '@/components/company';
 import { DataList, ListContinuation } from '@/components/data-list';
 import { FormField } from '@/components/form';
@@ -186,6 +187,13 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
                     </>
                 )}
             </div>
+            {/* On the phone "Buat Proyek" sits in the bottom action bar, as PG-014's primary action does (PT-03; J-PRJ-01; TASK-096); not while
+                the empty list offers it, one primary action per area (C1A-2). */}
+            {create !== undefined && !(shown.length === 0 && filter.status === null) && (
+                <ActionBar label={t('pages.pg_010.title')} className="md:hidden">
+                    {create}
+                </ActionBar>
+            )}
         </AppShell>
     );
 }

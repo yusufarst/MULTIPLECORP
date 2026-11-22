@@ -36,14 +36,14 @@ final class Deliveries
         private readonly EffectiveCapabilities $capabilities,
     ) {}
 
-    /** @return array{record: bool, close: bool, lost: bool, correct: bool, issue: bool, upload: bool} */
+    /** @return array{record: bool, close: bool, lost: bool, correct: bool, issue: bool} */
     public function can(int $viewerId): array
     {
         $viewer = $this->capabilities->for($viewerId);
 
         return [
             'record' => $viewer->has('delivery.record'), 'close' => $viewer->has('delivery.close'), 'lost' => $viewer->has('delivery.close') && $viewer->has('stock.adjust'),
-            'correct' => $viewer->has('fulfillment.correct'), 'issue' => $viewer->has('documents.issue'), 'upload' => $viewer->has('evidence.upload'),
+            'correct' => $viewer->has('fulfillment.correct'), 'issue' => $viewer->has('documents.issue'),
         ];
     }
 
@@ -113,14 +113,16 @@ final class Deliveries
 
         $viewer = $this->capabilities->for($viewerId);
         $company = $found['project']->companyId;
-        $header = DB::table('stock_movements as m')->join('projects as p', 'p.id', '=', 'm.project_id')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')
-            ->where('m.id', $found['movement'])->first(['m.public_id', 'm.business_date', 'p.public_id as project', 'p.project_number', 'p.title', 'o.name as client']);
+        $header = DB::table('stock_movements as m')->join('projects as p', 'p.id', '=', 'm.project_id')->join('companies as co', 'co.id', '=', 'p.company_id')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')
+            ->where('m.id', $found['movement'])->first(['m.public_id', 'm.business_date', 'p.public_id as project', 'p.project_number', 'p.title', 'o.name as client', 'co.public_id as company']);
 
         if ($header === null) {
             return null;
         }
 
         [$lines, $internal] = $this->lines($found['movement']);
+        // IP-16 in place: the proof types the viewer may register for the shipment's company (PJ-08; TASK-096).
+        $types = array_values(array_intersect(self::EVIDENCE, EvidenceTypes::choosable($viewer, $company)));
 
         return [
             'id' => Row::text($header, 'public_id'), 'date' => Row::text($header, 'business_date'),
@@ -129,6 +131,7 @@ final class Deliveries
             'deliveries' => $this->deliveries($viewer, $company, $internal),
             'closures' => $this->closures(array_keys($internal)),
             'proofs' => self::proofs($viewer, $company),
+            'upload' => $types === [] ? null : ['company' => Row::text($header, 'company'), 'types' => $types],
         ];
     }
 

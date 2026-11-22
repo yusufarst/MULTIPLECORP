@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
 use Tests\Support\Projects;
+use Tests\Support\PurchaseWorld;
 use Tests\Support\ReceivingWorld;
 use Tests\Support\RefreshDatabase;
 
@@ -266,7 +267,7 @@ it('lists open warehouse remainders per company on PG-021, none of another compa
     $response->assertInertia(fn ($page) => $page->component('INV/ReceivingWorklist', false)->has('groups', 1)->where('groups.0.code', $this->company->code)->etc());
     $rows = app(ReceivingQueries::class)->worklist($this->actor->id, $this->company->id, null);
 
-    expect($rows['rows'][0]['number'])->toBe($this->purchase->purchase_number)->and($rows['rows'][0]['remaining'])->toBe('100.000')->and($rows['rows'][0])->not->toHaveKey('value');
+    expect($rows['rows'][0]['number'])->toBe($this->purchase->purchase_number)->and($rows['rows'][0]['lines'])->toBe(1)->and($rows['rows'][0])->not->toHaveKey('remaining')->and($rows['rows'][0])->not->toHaveKey('value');
 
     $other = InvoiceWorld::make();
     $stranger = ReceivingWorld::actor($other->company);
@@ -413,4 +414,16 @@ it('reads every open group under one deferred prop, a reload of one group answer
 
     $open = $this->actingAs($grant)->get("/gudang/barang-masuk?tutup={$other->public_id}", $headers)->assertOk()->json('props.worklists');
     expect(array_keys($open))->toBe([$this->company->public_id]);
+});
+
+it('counts a purchase\'s open lines on PG-021, never one figure across products or units (CALC-03; DESIGN_SYSTEM §16; TASK-096)', function () {
+    $other = Projects::product();
+    $this->actingAs(PurchaseWorld::actor($this->company))->post('/pembelian', PurchaseWorld::payload(PurchaseWorld::supplier(), [PurchaseWorld::line($this->goods, '4', '100'), PurchaseWorld::line($other, '6', '100')], ['perusahaan' => $this->company->public_id]));
+    $two = PurchaseWorld::latest($this->company->id);
+    $rows = collect(app(ReceivingQueries::class)->worklist($this->actor->id, $this->company->id, null)['rows'])->keyBy('id');
+
+    expect($two->id)->not->toBe($this->purchase->id)
+        ->and($rows[$two->public_id]['lines'])->toBe(2)
+        ->and($rows[$two->public_id])->not->toHaveKey('remaining')
+        ->and($rows[$this->purchase->public_id]['lines'])->toBe(1);
 });

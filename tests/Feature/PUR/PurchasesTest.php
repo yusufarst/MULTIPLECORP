@@ -474,7 +474,7 @@ it('reads PG-015 one company at a time and PG-011\'s Pengadaan through PUR, abse
     $purchase = PurchaseWorld::latest($this->company->id);
 
     $this->actingAs($this->actor)->get('/pembelian')->assertInertia(fn ($page) => $page->component('PUR/Purchases', false)->where('rows.0.number', $purchase->purchase_number)->where('rows.0.project', $project->project_number)->where('rows.0.state', 'OPEN')->etc());
-    $this->actingAs($this->actor)->get("/proyek/{$project->public_id}")->assertInertia(fn ($page) => $page->where('parts.procurement.purchases.0.number', $purchase->purchase_number)->where('parts.procurement.purchases.0.remaining', '4.000')->etc());
+    $this->actingAs($this->actor)->get("/proyek/{$project->public_id}")->assertInertia(fn ($page) => $page->where('parts.procurement.purchases.0.number', $purchase->purchase_number)->where('parts.procurement.purchases.0.remaining.0.quantity', '4.000')->where('parts.procurement.purchases.0.remaining.0.unit', $this->goods['base']->code)->has('parts.procurement.purchases.0.remaining', 1)->etc());
 
     $blind = User::query()->findOrFail(Authorization::admin([$this->company->id], ['projects.view'])->id);
     $this->actingAs($blind)->get("/proyek/{$project->public_id}")->assertInertia(fn ($page) => $page->where('parts', [])->etc());
@@ -668,4 +668,20 @@ it('keeps a corrected basis through a later amount correction and amendment (CM-
     ]];
     $this->actingAs($this->actor)->put("/pembelian/{$purchase->public_id}", $body);
     expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()))->and($share($a))->toBe('1500.00')->and($share($b))->toBe('500.00');
+});
+
+it('shows PG-011\'s remainders per line at each product\'s unit, nothing for a cancelled purchase (CALC-03; DESIGN_SYSTEM §16; TASK-096)', function () {
+    $project = $this->world->project(['WAREHOUSE'], '5');
+    $other = Projects::product();
+    $this->actingAs($this->actor)->post('/pembelian', PurchaseWorld::payload($this->supplier, [PurchaseWorld::line($this->goods, '4', '100'), PurchaseWorld::line($other, '6', '100')], ['proyek' => $project->public_id]));
+    $purchase = PurchaseWorld::latest($this->company->id);
+    $remaining = fn (): array => $this->actingAs($this->actor)->get("/proyek/{$project->public_id}")->viewData('page')['props']['parts']['procurement']['purchases'][0]['remaining'];
+    $lines = $remaining();
+
+    expect(array_column($lines, 'quantity'))->toBe(['4.000', '6.000'])
+        ->and(array_column($lines, 'unit'))->toBe([$this->goods['base']->code, $other['base']->code])
+        ->and(array_filter(array_column($lines, 'description'), fn (string $text): bool => $text !== ''))->toHaveCount(2);
+
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/batalkan", reasoned($this));
+    expect($purchase->fresh()->state)->toBe('CANCELLED')->and($remaining())->toBe([]);
 });

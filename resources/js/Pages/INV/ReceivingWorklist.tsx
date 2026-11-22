@@ -15,16 +15,12 @@ import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
 
 type Group = { id: string; code: string; name: string };
-type Row = { id: string; number: string; supplier: string; project: string | null; date: string; lines: number; remaining: string; href: string };
+type Row = { id: string; number: string; supplier: string; project: string | null; date: string; lines: number; href: string };
 type Page = { rows: Row[]; more: string | null } | { failed: true };
 type Props = { groups: Group[]; companies: Group[]; chosen: string | null; closed: string[] };
 
-function quantity(value: string): string {
-    return value.includes('.') ? value.replace(/\.?0+$/, '') : value;
-}
-
 function GroupRows({ group }: { group: Group }) {
-    const { t } = useTranslation();
+    const { t, tc } = useTranslation();
     // One prop for every group: a reload of one group answers that group alone, the others keep what they have.
     const fresh = (usePage().props as unknown as { worklists?: Record<string, Page | undefined> }).worklists?.[group.id];
     const [shown, setShown] = useState<Row[]>([]);
@@ -72,9 +68,10 @@ function GroupRows({ group }: { group: Group }) {
                     { key: 'supplier', header: t('receiving.field.supplier'), cell: (row) => row.supplier },
                     { key: 'project', header: t('receiving.field.project'), priority: 'low', cell: (row) => (row.project === null ? '—' : <Code>{row.project}</Code>) },
                     { key: 'date', header: t('receiving.field.date'), priority: 'low', cell: (row) => <DateText value={row.date} /> },
-                    { key: 'remaining', header: t('pages.pg_016.remaining'), numeric: true, cell: (row) => quantity(row.remaining) },
+                    // The open lines counted, never one figure across products or units (CALC-03; DESIGN_SYSTEM §16; TASK-096).
+                    { key: 'lines', header: t('pages.pg_016.remaining'), cell: (row) => tc('receiving.list.open_lines', row.lines) },
                 ]}
-                dense={(row) => ({ title: row.number, secondary: row.supplier, status: quantity(row.remaining) })}
+                dense={(row) => ({ title: row.number, secondary: row.supplier, status: tc('receiving.list.open_lines', row.lines) })}
             />
             <ListContinuation state={page.more === null ? 'end' : 'more'} loading={appending} onLoadMore={loadMore} onReload={loadMore} />
         </>

@@ -364,3 +364,12 @@ it('answers on PG-036 when the request names no page, or another page, to come b
     $this->actingAs($this->actor)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-08', 'subjek' => ['service_handover_id' => $handover->public_id], 'kembali' => 'https://contoh.test/lain'])
         ->assertRedirect('/dokumen/'.DB::table('documents')->where('service_handover_id', $handover->handover)->value('public_id'));
 });
+
+it('offers PG-033\'s in-place upload with the evidence types the viewer may register for the project\'s company, none without evidence.view (IP-16; PJ-08; TASK-096)', function () {
+    $blind = User::query()->findOrFail(Authorization::admin([$this->world->company->id], HandoverWorld::CAPABILITIES)->id);
+    Authorization::revoke($blind, 'evidence.view');
+    $page = "/proyek/{$this->project->public_id}/serah-terima";
+
+    $this->actingAs($this->actor)->get($page)->assertInertia(fn (AssertableInertia $inertia) => $inertia->where('upload', ['company' => $this->world->company->public_id, 'types' => ['DELIVERY_PROOF', 'OTHER']]));
+    $this->actingAs($blind)->get($page)->assertInertia(fn (AssertableInertia $inertia) => $inertia->where('upload', null));
+});

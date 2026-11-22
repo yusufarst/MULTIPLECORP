@@ -31,13 +31,13 @@ export function RegionEmpty({ text, action }: { text: ReactNode; action?: ReactN
     );
 }
 
-/** A search or filter that matches nothing says so, names the term and offers clearing it (FA-22; PT-19). */
-export function RegionNoMatch({ term, onClear, clearLabel }: { term: string; onClear: () => void; clearLabel: string }) {
+/** A search or filter that matches nothing says so, names the term and offers clearing it (FA-22; PT-19); a lookup's own message, MSG-25's (IP-17), in `text`. */
+export function RegionNoMatch({ term, text, onClear, clearLabel }: { term: string; text?: ReactNode; onClear: () => void; clearLabel: string }) {
     const { t } = useTranslation();
 
     return (
         <Empty data-region-state="no-match" role="status">
-            <EmptyDescription>{t('states.no_match', { q: term })}</EmptyDescription>
+            <EmptyDescription>{text ?? t('states.no_match', { q: term })}</EmptyDescription>
             <Button variant="outline" size="sm" onClick={onClear}>
                 {clearLabel}
             </Button>

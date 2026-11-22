@@ -107,17 +107,80 @@ test('edits a draft on the phone through Edit, Preview and Finalize, the preview
     await expect(page.getByRole('button', { name: 'Terbitkan Invoice' })).toBeVisible();
 });
 
-test('lists the branch\'s invoices and finds one by its exact number (ROUTE-041; SCR-38)', async ({ page }) => {
+test('lists the branch\'s invoices, finds one by its exact number, and tells a number that matches none from an empty list (ROUTE-041; SCR-38; IP-17; PT-19; FA-22; TASK-096)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await invoiceRun(page, `invoice-daftar-${String(Date.now())}`, { stage: 'issued' });
+    const number = run.invoice_number ?? '';
+    expect(number).toMatch(/^UJI\/INV\//);
 
     await page.goto(`/keuangan/invoice?perusahaan=${run.company}`);
     const table = page.getByRole('table', { name: 'Invoice', exact: true });
-    await expect(table).toContainText('UJI/INV/');
+    const field = page.getByLabel(/^Cari nomor invoice/);
+    await expect(table).toContainText(number);
     await expect(table).toContainText('Belum Ditagihkan');
-    await page.getByLabel(/^Cari nomor invoice/).fill('TIDAK-ADA');
+
+    // A number that matches none says so with MSG-25, naming the term sent, announced; never the empty list's sentence.
+    await field.fill('TIDAK-ADA');
     await page.getByRole('button', { name: 'Cari' }).click();
-    await expect(page.locator('#konten')).toContainText('Belum ada invoice di cabang ini.');
+    const unmatched = page.locator('[data-region-state="no-match"]');
+    await expect(unmatched).toContainText('Kode TIDAK-ADA tidak dikenal.');
+    await expect(page.locator('#konten [aria-live="polite"]').filter({ hasText: 'Kode TIDAK-ADA tidak dikenal.' })).toHaveCount(1);
+    await expect(page.locator('#konten')).not.toContainText('Belum ada invoice di cabang ini.');
+
+    // "Atur Ulang" clears the lookup, the list back and the field focused for the next.
+    await unmatched.getByRole('button', { name: 'Atur Ulang' }).click();
+    await expect(table).toContainText(number);
+    await expect(field).toHaveValue('');
+    await expect(field).toBeFocused();
+    await expect(page).not.toHaveURL(/nomor=/);
+
+    await field.fill(number);
+    await page.getByRole('button', { name: 'Cari' }).click();
+    await expect(table.locator('tbody tr')).toHaveCount(1);
+    await expect(table).toContainText(number);
+});
+
+test('keeps a branch with no invoice its own sentence, a lookup there its MSG-25, the field bounded to 100 characters (IP-17; PT-19; TASK-096)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await invoiceRun(page, `invoice-kosong-${String(Date.now())}`);
+
+    await page.goto(`/keuangan/invoice?perusahaan=${run.company}`);
+    await expect(page.locator('[data-region-state="empty"]')).toContainText('Belum ada invoice di cabang ini.');
+    await expect(page.locator('[data-region-state="no-match"]')).toHaveCount(0);
+
+    const field = page.getByLabel(/^Cari nomor invoice/);
+    await field.pressSequentially('A'.repeat(101));
+    await expect(field).toHaveValue('A'.repeat(100));
+    await field.fill('UJI/INV/0000');
+    await page.getByRole('button', { name: 'Cari' }).click();
+    await expect(page.locator('[data-region-state="no-match"]')).toContainText('Kode UJI/INV/0000 tidak dikenal.');
+    await expect(page.locator('[data-region-state="empty"]')).toHaveCount(0);
+});
+
+test('answers a lookup sent while "Muat Lagi" is in flight alone, the page it asked for never joining it (IP-18; TASK-096)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await invoiceRun(page, `invoice-balapan-${String(Date.now())}`, { stage: 'issued', drafts: 51 });
+    const number = run.invoice_number ?? '';
+    expect(number).toMatch(/^UJI\/INV\//);
+    // "Muat Lagi"'s page held back, so the lookup's answer lands first.
+    await page.route((url) => url.pathname === '/keuangan/invoice' && url.searchParams.has('setelah'), async (route) => {
+        await new Promise((resolve) => { setTimeout(resolve, 10_000); });
+        await route.continue().catch(() => undefined);
+    });
+
+    await page.goto(`/keuangan/invoice?perusahaan=${run.company}`);
+    const rows = page.getByRole('table', { name: 'Invoice', exact: true }).locator('tbody tr');
+    await expect(rows).toHaveCount(50);
+    await page.getByRole('button', { name: 'Muat Lagi' }).click();
+    await page.getByLabel(/^Cari nomor invoice/).fill(number);
+    await page.getByRole('button', { name: 'Cari' }).click();
+    await expect(rows).toHaveCount(1);
+    await expect(rows.first()).toContainText(number);
+
+    // Past the held page's release, still the lookup's one row.
+    await page.waitForTimeout(12_000);
+    await expect(rows).toHaveCount(1);
+    await expect(rows.first()).toContainText(number);
 });
 
 test('reopens a draft with the tax it stores, stated through a save of the same value, proposed anew for another (DATABASE §12; FS-13)', async ({ page }) => {

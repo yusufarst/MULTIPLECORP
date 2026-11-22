@@ -4,8 +4,11 @@
 // lines' open and delivered figures, the cost only with `cost.view`, the *Surat Jalan* drafted through ROUTE-221 for PG-036
 // (ROUTE-216), the reversal of a confirmation recorded in error (ROUTE-206) and the client's return to the warehouse or the
 // supplier (ROUTE-207), each with its reason. Receiving and dispatch are never offered here (BR-INV-11). One column on the phone.
+// The supplier's proof and the client's registered in place, the form kept (IP-16; NV-04); leaving with unsent input asks MSG-35
+// (NV-02; TASK-096).
 import type { FormDataConvertible } from '@inertiajs/core';
-import { useState } from 'react';
+import { Link, router } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { type BusinessDate, BusinessDateControl } from '@/components/date-field';
@@ -14,6 +17,7 @@ import { DuplicateWarning, type DuplicateMatch } from '@/components/notices';
 import { OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
+import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -21,8 +25,10 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import { Code, DateText } from '@/components/values';
+import { ProofSheet } from '@/features/fin/proof-sheet';
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
+import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
 type Purchase = { id: string; number: string; supplier: string | null; open: boolean };
@@ -30,8 +36,8 @@ type Line = { id: string; no: number; description: string; purchase: Purchase; u
 type ConfirmedLine = { id: string; no: number; description: string; quantity: string; open: string; delivered: string; serial: string | null; replacement: boolean; cost?: string };
 type Correction = { kind: string; quantity: string; at: string; case: string | null };
 type Confirmation = { id: string; reference: string; date: string; purchase: string; supplier: string | null; delivery: { recipient: string; date: string } | null; lines: ConfirmedLine[]; corrections: Correction[]; document: { id: string; state: string | null; number: string | null } | null; standing: boolean };
-type Can = { confirm: boolean; reverse: boolean; return: boolean; cost: boolean; issue: boolean; upload: boolean };
-type Page = { project: { id: string; number: string; title: string; client: string | null; open: boolean }; lines: Line[]; lines_more: string | null; confirmations: Confirmation[]; confirmations_more: string | null; proofs: { id: string; type: string; label: string }[]; racks: { id: string; code: string; name: string }[]; can: Can };
+type Can = { confirm: boolean; reverse: boolean; return: boolean; cost: boolean; issue: boolean };
+type Page = { project: { id: string; number: string; title: string; client: string | null; open: boolean }; lines: Line[]; lines_more: string | null; confirmations: Confirmation[]; confirmations_more: string | null; proofs: { id: string; type: string; label: string }[]; upload: { company: string; types: string[] } | null; racks: { id: string; code: string; name: string }[]; can: Can };
 type Props = { page: Page; today: string };
 type Payload = Record<string, FormDataConvertible>;
 type Correcting = { confirmation: Confirmation; command: 'reverse' | 'return' };
@@ -62,6 +68,7 @@ export default function DirectShipment({ page, today }: Props) {
     const prepare = useCommand<Payload>(() => '/dokumen', 'post');
     const purchases = page.lines.reduce<Purchase[]>((all, line) => (line.purchase.open && !all.some((one) => one.id === line.purchase.id) ? [...all, line.purchase] : all), []);
     const [purchase, setPurchase] = useState(purchases[0]?.id ?? '');
+    const [opened] = useState(purchase);
     const [quantities, setQuantities] = useState<Record<string, string>>({});
     const [serials, setSerials] = useState<Record<string, string>>({});
     const [reference, setReference] = useState('');
@@ -82,6 +89,10 @@ export default function DirectShipment({ page, today }: Props) {
     const [sent, setSent] = useState<{ command: 'reverse' | 'return'; payload: Payload } | null>(null);
     const [acknowledged, setAcknowledged] = useState<string[]>([]);
     const [againReason, setAgainReason] = useState('');
+    const [uploading, setUploading] = useState<'proof' | 'client' | null>(null);
+    const [leaving, setLeaving] = useState<(() => void) | null>(null);
+    // The departure MSG-35 confirmed passes the guard at once: the guard's `dirty` is the last render's until the next one.
+    const departing = useRef(false);
     useClosedOnAnswer(confirm.answer, () => { setConfirming(false); });
     useClosedOnAnswer(reverse.answer, () => { setCorrecting(null); });
     useClosedOnAnswer(returned.answer, () => { setCorrecting(null); });
@@ -93,6 +104,33 @@ export default function DirectShipment({ page, today }: Props) {
     const againMatches = Array.isArray(again.state.matches) ? (again.state.matches as DuplicateMatch[]) : [];
     const againWarned = sent !== null && again.answer?.kind === 'REJECTED' && againMatches.length > 0;
     const answer = reverse.answer ?? returned.answer ?? prepare.answer;
+    // Every field of the confirmation; a confirmed shipment answers on PG-011, so nothing is left to ask about.
+    const dirty = purchase !== opened || Object.values(quantities).some((value) => value !== '') || Object.values(serials).some((value) => value.trim() !== '') || reference !== '' || proof !== '' || replacing !== '' || delivered || recipient !== '' || clientProof !== '' || condition !== '' || date.chosen;
+
+    // A visit away with unsent input asks first (MSG-35; NV-02); background reads do not.
+    useEffect(() => {
+        const off = router.on('before', (event) => {
+            const visit = event.detail.visit;
+
+            if (!dirty || departing.current || visit.method !== 'get' || visit.only.length > 0 || isBackground(visit)) {
+                return;
+            }
+
+            const href = visit.url.href;
+            setLeaving(() => () => { router.visit(href); });
+
+            return false;
+        });
+        const unload = (event: BeforeUnloadEvent) => {
+            if (dirty && !departing.current) event.preventDefault();
+        };
+        window.addEventListener('beforeunload', unload);
+
+        return () => {
+            off();
+            window.removeEventListener('beforeunload', unload);
+        };
+    }, [dirty]);
 
     const startCorrection = (confirmation: Confirmation, command: 'reverse' | 'return') => {
         reverse.clear();
@@ -210,7 +248,7 @@ export default function DirectShipment({ page, today }: Props) {
                                 </NativeSelect>
                             )}
                         </FormField>
-                        {can.upload && <a className="self-start text-body underline" href="/dokumen/bukti">{t('deliveries.upload_proof')}</a>}
+                        {page.upload !== null && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading('proof'); }}>{t('payments.action.upload_proof')}</Button>}
                         <label className="flex min-h-floor items-center gap-2 text-body">
                             <Checkbox checked={delivered} onCheckedChange={(checked) => { setDelivered(checked); }} />
                             <span>{t('dropship.field.delivered')}</span>
@@ -228,6 +266,7 @@ export default function DirectShipment({ page, today }: Props) {
                                         </NativeSelect>
                                     )}
                                 </FormField>
+                                {page.upload !== null && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading('client'); }}>{t('payments.action.upload_proof')}</Button>}
                                 <FormField label={t('deliveries.field.condition')} error={confirm.errors.kondisi}>
                                     {(control) => <Textarea {...control} value={condition} maxLength={500} onChange={(event) => { setCondition(event.target.value); }} />}
                                 </FormField>
@@ -236,7 +275,7 @@ export default function DirectShipment({ page, today }: Props) {
                         {!confirming && confirm.answer !== null && confirm.answer.kind !== 'COMMITTED' && <OutcomeMessage answer={confirm.answer} action={confirm.unknown ? <Button variant="outline" size="sm" onClick={confirm.retry}>{t('actions.try_again')}</Button> : undefined} />}
                         {(['tanggal', 'baris'] as const).map((field) => (confirm.errors[field] === undefined ? null : <p key={field} role="alert" className="text-body text-danger-fg">{confirm.errors[field]}</p>))}
                         <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" render={<a href={`/proyek/${project.id}`} />}>{t('actions.cancel')}</Button>
+                            <Button variant="outline" render={<Link href={`/proyek/${project.id}`} />}>{t('actions.cancel')}</Button>
                             <Button pending={confirm.pending} disabled={!ready || confirm.frozen} onClick={() => { confirm.clear(); setConfirming(true); }}>{t('dropship.action.confirm')}</Button>
                         </div>
                     </fieldset>
@@ -365,6 +404,9 @@ export default function DirectShipment({ page, today }: Props) {
                 reason={{ value: reason, onChange: setReason, error: (correcting?.command === 'return' ? returned : reverse).errors.alasan ?? null }}
                 onConfirm={sendCorrection}
             />
+            {uploading !== null && page.upload !== null && <ProofSheet open onOpenChange={(open) => { if (!open) setUploading(null); }} company={page.upload.company} types={page.upload.types} today={today} back={`${window.location.pathname}${window.location.search}`}
+                onRegistered={(id) => { if (uploading === 'client') setClientProof(id); else setProof(id); setUploading(null); }} />}
+            <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }} onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
         </AppShell>
     );
 }

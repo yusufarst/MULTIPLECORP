@@ -20724,6 +20724,12 @@
             "source": "INFORMATION_ARCHITECTURE §9.2",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "receiving.list.open_lines": {
+            "task": "TASK-096",
+            "source": "GAP-073 defect B — PG-021's open lines, no sum across products or units (CALC-03; DESIGN_SYSTEM §16)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

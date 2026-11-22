@@ -50,7 +50,7 @@ The UX-first V2 review (DIR-131) found, and a read-only verification on `main` 5
 - A: PG-031, PG-032 (supplier and client targets), PG-033, PG-034 and PG-048 (over its refund dialog) opening `ProofSheet` in place of the link to PG-038; the evidence registered selected in the form; the upload offered only where the actor may register that type for the record's company (`EvidenceTypes::choosable`)
 - A: MSG-35 guarding PG-031, PG-032, PG-033 and PG-034 with a dirty state covering every field, cleared after a committed outcome; their "Batal" through the router
 - B: PG-021's row showing the open lines it already counts — "N baris belum diterima", plural through `tc()` —, no unitless sum; PG-011's procurement part showing remainders per line or product with their unit (`Quantity`), nothing for a closed or cancelled purchase; PG-018's exposures grouped by product identity, keyed by `public_id`, the SKU beside a repeated name
-- C: an `ActionBar md:hidden` holding PG-010's, PG-011's and PG-045's primary action, read first in the page's order, absent while PG-010's empty state shows the same action (C1A-2); nothing else of the shell changed
+- C: an `ActionBar md:hidden` holding PG-010's, PG-011's and PG-045's primary action, placed and named as PG-014's is — after the page's content, its spacer keeping the page's end reachable above it —, absent while PG-010's empty state shows the same action (C1A-2); nothing else of the shell changed
 - D: PG-041's states told apart — no company in scope, no invoice, a number that matches none —, the last naming the sent term with MSG-25 (IP-17) and offering "Atur Ulang" (PT-07; PT-19), announced by a live region present from the page's load (FA-22), focus back in the field after the reset; the field bounded to 100 characters (IP-17); the "Muat Lagi then search" race closed
 - the tests below; the new copy key of B in both languages, proposed for the Owner (OB-04) and registered with TASK-096
 
@@ -225,7 +225,7 @@ The UX-first V2 review (DIR-131) found, and a read-only verification on `main` 5
 - Localization/language switch: the key catalogue and copy lists green; B's key proposed, registered with TASK-096
 - Visual breathing room/density: N/A — no visual change beyond the action bar
 - Responsive: C's bar at 320, 390 and 767; A's sheet at 390
-- Accessibility: the existing gate on the touched pages; D's live region; C's reading order
+- Accessibility: the existing gate on the touched pages; D's live region; C's bar a region named for its page, as PG-014's
 - Production build: TL-13
 - Security: no open redirect; no capability change; the echoed term as text
 - Performance: the worklist's and the procurement part's query budgets unchanged

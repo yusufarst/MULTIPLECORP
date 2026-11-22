@@ -9,6 +9,7 @@
 import { Deferred, router, usePage } from '@inertiajs/react';
 import { type ReactNode, useState } from 'react';
 
+import { ActionBar } from '@/components/action-bar';
 import { CompanyTag } from '@/components/company';
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { CorrectionTrail } from '@/components/correction-trail';
@@ -25,6 +26,7 @@ import { typeName } from '@/features/doc/labels';
 import { type Fulfilment, FulfilmentSection } from '@/features/prj/fulfilment';
 import { type Failed, isFailed, ItemText, type Journey as JourneyShape, predicateName, stageName } from '@/features/prj/journey';
 import AppShell from '@/layouts/AppShell';
+import { quantity } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
@@ -61,7 +63,7 @@ type Props = {
     can: { edit: boolean; discard: boolean; cancel?: boolean };
     return_href?: string | null;
     fulfilment: Fulfilment & { today: string };
-    parts?: { procurement?: { purchases: { id: string; number: string; supplier: string; state: 'OPEN' | 'CLOSED' | 'CANCELLED'; date: string; remaining: string }[]; can_create: boolean } };
+    parts?: { procurement?: { purchases: { id: string; number: string; supplier: string; state: 'OPEN' | 'CLOSED' | 'CANCELLED'; date: string; remaining: { description: string; quantity: string; unit: string }[] }[]; can_create: boolean } };
     predicates?: JourneyShape | null | Failed;
     documents?: Documents | Failed;
     history?: History | Failed;
@@ -311,12 +313,17 @@ export default function Journey({ project, journey, financial, can, return_href:
                         {parts.procurement.purchases.length === 0 ? <p className="text-body text-text-secondary">{t('purchases.project.empty')}</p> : (
                             <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
                                 {parts.procurement.purchases.map((purchase) => (
-                                    <li key={purchase.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 py-2 text-body">
-                                        <a className="min-w-0 underline" href={`/pembelian/${purchase.id}`}>{`${purchase.number} · ${purchase.supplier}`}</a>
-                                        <span className="flex flex-wrap items-center gap-3 text-caption text-text-secondary">
-                                            {t('purchases.project.remaining', { sisa: purchase.remaining.replace(/\.?0+$/, '') === '' ? '0' : purchase.remaining.replace(/\.?0+$/, '') })}
+                                    <li key={purchase.id} className="flex min-w-0 flex-col gap-1 py-2 text-body">
+                                        <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+                                            <a className="min-w-0 underline" href={`/pembelian/${purchase.id}`}>{`${purchase.number} · ${purchase.supplier}`}</a>
                                             <StatusBadge family="purchase" state={purchase.state} size="sm" />
-                                        </span>
+                                        </div>
+                                        {/* Each line still to come at its own unit, never one figure across products or units (CALC-03; TASK-096). */}
+                                        {purchase.remaining.length > 0 && (
+                                            <ul role="list" className="flex min-w-0 flex-col gap-0.5 text-caption text-text-secondary">
+                                                {purchase.remaining.map((line, index) => <li key={`${purchase.id}-${String(index)}`} className="min-w-0">{`${line.description} · ${t('purchases.project.remaining', { sisa: quantity(line.quantity, line.unit) })}`}</li>)}
+                                            </ul>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -406,6 +413,12 @@ export default function Journey({ project, journey, financial, can, return_href:
                     </Deferred>
                 </Section>
             </div>
+            {/* On the phone the journey's next step sits in the bottom action bar, as PG-014's primary action does (PT-03; NAV-011; TASK-096). */}
+            {primary !== undefined && (
+                <ActionBar label={t('pages.pg_011.title')} className="md:hidden">
+                    {primary}
+                </ActionBar>
+            )}
             <ConfirmCommand
                 open={discarding}
                 onOpenChange={setDiscarding}

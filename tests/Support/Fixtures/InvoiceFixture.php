@@ -206,6 +206,15 @@ final class InvoiceFixture
             }
         }
 
-        return response()->json(['code' => $company->code, 'project' => $project->public_id, 'number' => $project->project_number, 'invoice' => $invoice?->public_id, 'evidence' => $evidence->public_id, 'client' => $client['organization']->public_id, 'client_name' => 'SMA Uji '.$company->code, 'line' => $line]);
+        // TASK-096 D: drafts past one page of PG-041, newer than the stage's invoice, so the list offers "Muat Lagi".
+        for ($left = min(60, max(0, $request->integer('drafts'))); $left > 0; $left--) {
+            $extra = app(SaveInvoiceDraft::class)->run((string) Str::uuid(), $actor, $ref, null, null, InvoiceWorld::valueOnly('1000'), ['fixture' => "draft-{$left}"]);
+
+            if ($extra->kind !== 'COMMITTED') {
+                return response()->json(['error' => "drafts {$extra->kind} {$extra->code}"], 500);
+            }
+        }
+
+        return response()->json(['code' => $company->code, 'project' => $project->public_id, 'number' => $project->project_number, 'invoice' => $invoice?->public_id, 'invoice_number' => $invoice === null ? null : DB::table('document_versions as v')->join('documents as d', 'd.id', '=', 'v.document_id')->where('d.invoice_id', $invoice->id)->whereNotNull('v.formatted_number')->value('v.formatted_number'), 'evidence' => $evidence->public_id, 'client' => $client['organization']->public_id, 'client_name' => 'SMA Uji '.$company->code, 'line' => $line]);
     }
 }

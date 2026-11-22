@@ -98,3 +98,12 @@ it('shows nothing without finance.view and leaves the commands absent without re
 
     expect(DB::table('disbursements')->where('kind', 'REFUND')->count())->toBe(0)->and(Payment::query()->count())->toBe(1);
 });
+
+it('offers the refund\'s in-place transfer proof only to whom may refund and register it for the company (IP-16; PJ-08; TASK-096)', function () {
+    $uploader = Authorization::admin([$this->company->id], ['finance.view', 'refund.record', 'payment.apply', 'evidence.view', 'evidence.upload']);
+    $applier = Authorization::admin([$this->company->id], ['finance.view', 'payment.apply', 'evidence.view', 'evidence.upload']);
+
+    $this->actingAs($uploader)->get('/keuangan/kredit-pelanggan')->assertInertia(fn (AssertableInertia $page) => $page->where('page.groups.0.upload', ['company' => $this->company->public_id, 'types' => ['TRANSFER_PROOF']]));
+    $this->actingAs($this->actor)->get('/keuangan/kredit-pelanggan')->assertInertia(fn (AssertableInertia $page) => $page->where('page.groups.0.upload', null));
+    $this->actingAs($applier)->get('/keuangan/kredit-pelanggan')->assertInertia(fn (AssertableInertia $page) => $page->where('page.groups.0.upload', null));
+});

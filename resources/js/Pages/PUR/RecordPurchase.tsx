@@ -191,7 +191,8 @@ export default function RecordPurchase({ companies, company, project, supplement
                         }
                     }} />
             )}
-            <ProofSheet open={uploading !== null} onOpenChange={(open) => { if (!open) setUploading(null); }} company={project?.company ?? chosenCompany} types={['SUPPLIER_BILL']} proven today={today} back={window.location.pathname + window.location.search}
+            <ProofSheet open={uploading !== null} onOpenChange={(open) => { if (!open) setUploading(null); }} company={project?.company ?? chosenCompany} types={['SUPPLIER_BILL']} proven today={today}
+                back={project !== null ? window.location.pathname + window.location.search : `/pembelian/baru?${new URLSearchParams({ ...Object.fromEntries(new URLSearchParams(window.location.search)), perusahaan: chosenCompany }).toString()}`}
                 onRegistered={(id) => {
                     const key = uploading;
                     setUploading(null);

@@ -3317,6 +3317,7 @@
     "receiving.list.reload": "Muat Ulang",
     "receiving.list.empty": "Tidak ada barang yang menunggu diterima.",
     "receiving.list.no_lines": "Pembelian ini tidak punya baris yang diterima di gudang.",
+    "receiving.list.open_lines": ":count baris belum diterima",
     "receiving.field.purchase": "Pembelian",
     "receiving.field.supplier": "Pemasok",
     "receiving.field.project": "Proyek",

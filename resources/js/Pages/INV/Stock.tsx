@@ -20,7 +20,7 @@ import { useTranslation } from '@/lib/i18n';
 type Figures = { physical: string; reserved: string; unusable: string; available: string; unit: string; alternate?: { physical: string; reserved: string; unusable: string; available: string; unit: string } };
 type ProductRow = { id: string; name: string; sku: string | null; figures: Figures; pending: string | null; below: string | null; href: string };
 type PlaceRow = { id: string; rack: string; name: string; sku: string | null; condition: 'USABLE' | 'UNUSABLE'; qty: string; unit: string; figures: Figures; href: string };
-type Value = { company: string; name: string; value: string; exposures: { product: string; qty: string; unit: string }[] };
+type Value = { company: string; name: string; value: string; exposures: { id: string; product: string; sku: string | null; qty: string; unit: string }[] };
 type Filters = { saring: string | null; kondisi: 'USABLE' | 'UNUSABLE' | null };
 type Props = {
     view: 'produk' | 'rak';
@@ -55,7 +55,8 @@ function Values({ values }: { values?: Value[] | { failed: true } }) {
                 {values.map((value) => (
                     <li key={value.company} className="flex min-w-0 flex-col gap-1">
                         <span className="flex min-w-0 flex-wrap items-baseline gap-2"><span>{`${value.company} · ${value.name}`}</span><Money value={value.value} /></span>
-                        {value.exposures.map((exposure) => <span key={exposure.product} className="text-caption text-text-secondary">{`${exposure.product}: ${t('messages.msg_41_company', { jumlah: exposure.qty.replace(/\.?0+$/, ''), satuan: exposure.unit })}`}</span>)}
+                        {/* One line per product, by its identity; a name two products share says each one's SKU (TASK-096). */}
+                        {value.exposures.map((exposure) => <span key={exposure.id} className="text-caption text-text-secondary">{`${exposure.sku !== null && value.exposures.some((other) => other.id !== exposure.id && other.product === exposure.product) ? `${exposure.product} · ${exposure.sku}` : exposure.product}: ${t('messages.msg_41_company', { jumlah: exposure.qty.replace(/\.?0+$/, ''), satuan: exposure.unit })}`}</span>)}
                     </li>
                 ))}
             </ul>

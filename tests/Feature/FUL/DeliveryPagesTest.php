@@ -155,3 +155,13 @@ it('drafts DOC-08 from an accepted delivery and DOC-10 only once its inspection 
     expect(DB::table('document_versions')->where('document_id', $document->id)->where('state', 'ISSUED')->count())->toBe(1)
         ->and((string) DB::table('document_versions')->where('document_id', $document->id)->where('state', 'ISSUED')->value('formatted_number'))->toStartWith('BAST/');
 });
+
+it('offers PG-031\'s in-place upload for the shipment\'s company with the proof types the viewer may register there, none to whom may not (IP-16; PJ-08; TASK-096)', function () {
+    $uploader = ReceivingWorld::actor($this->company, [...DeliveryWorld::CAPABILITIES, 'evidence.upload']);
+    $blind = ReceivingWorld::actor($this->company, [...DeliveryWorld::CAPABILITIES, 'evidence.upload']);
+    Authorization::revoke($blind, 'evidence.view');
+
+    expect(shipmentPage($this, $uploader)['shipment']['upload'])->toBe(['company' => $this->company->public_id, 'types' => ['DELIVERY_PROOF', 'OTHER']])
+        ->and(shipmentPage($this, $this->recorder)['shipment']['upload'])->toBeNull()
+        ->and(shipmentPage($this, $blind)['shipment']['upload'])->toBeNull();
+});

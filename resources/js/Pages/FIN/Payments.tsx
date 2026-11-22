@@ -4,6 +4,7 @@ import { router, usePage } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
+import { ActionBar } from '@/components/action-bar';
 import { DataList, ListContinuation } from '@/components/data-list';
 import { FormField } from '@/components/form';
 import { OutcomeMessage } from '@/components/outcome-message';
@@ -100,11 +101,12 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
     ];
     const applied = (row: Payment) => row.applications.filter((application) => application.state === 'ACTIVE');
     const branchOf = (id: string) => branches.find((option) => option.code === find(id)?.company)?.id ?? null;
+    const record = can.record ? <Button onClick={() => { router.visit('/keuangan/pembayaran/baru'); }}><Icon icon={Plus} size="sm" />{t('actions.record_payment')}</Button> : undefined;
 
     return (
         <AppShell title={t('pages.pg_045.title')}>
             <div className="flex min-w-0 flex-col gap-6">
-                <PageHeader title={t('pages.pg_045.title')} primary={can.record ? <Button onClick={() => { router.visit('/keuangan/pembayaran/baru'); }}><Icon icon={Plus} size="sm" />{t('actions.record_payment')}</Button> : undefined} />
+                <PageHeader title={t('pages.pg_045.title')} primary={record} />
                 <FinanceNav current="payments" />
                 {arrived?.kind === 'COMMITTED' && arrived.text !== undefined && <OutcomeMessage answer={{ kind: 'COMMITTED', text: arrived.text }} />}
                 <Answered command={prepare} />
@@ -239,6 +241,12 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
                         </div>
                     </SheetContent>
                 </Sheet>
+            )}
+            {/* On the phone "Catat Pembayaran" sits in the bottom action bar, as PG-014's primary action does (PT-03; J-FIN-03; TASK-096). */}
+            {record !== undefined && (
+                <ActionBar label={t('pages.pg_045.title')} className="md:hidden">
+                    {record}
+                </ActionBar>
             )}
             {applyingRow !== null && <ApplySheet key={applyingRow.id} payment={applyingRow} targets={targets} today={today} back={back} onClose={() => { setApplying(null); }} />}
             {moving !== null && movingRow !== null && <MoveSheet key={moving.application.handle} payment={movingRow} application={moving.application} targets={targets} today={today} back={back} onClose={() => { setMoving(null); }} />}

@@ -24,7 +24,8 @@ final class CountFixture
 
         Authorization::grantCompany($user, $company->id);
 
-        foreach (['stock.view', 'stock.count', 'stock.count_apply', 'stock.resolve_unattributed_evidence', 'evidence.view'] as $capability) {
+        // With `upload`, the pool evidence registered in place too (IP-16; TASK-096).
+        foreach (['stock.view', 'stock.count', 'stock.count_apply', 'stock.resolve_unattributed_evidence', 'evidence.view', ...($request->boolean('upload') ? ['evidence.upload'] : [])] as $capability) {
             Authorization::grant($user, $capability);
         }
 
