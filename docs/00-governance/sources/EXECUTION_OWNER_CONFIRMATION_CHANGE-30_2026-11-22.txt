@@ -1,0 +1,24 @@
+Owner's confirmation received in session during execution, 2026-11-22 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received: the Owner's answer to the executor's question "Jalankan direktif Change 30 ini penuh sesuai teksnya?" (offered answers "Ya, jalankan penuh" and "Ubah dulu"), then the Owner's written confirmation sent during the execution that followed. No secret, address, host name, path or account in it.
+
+Ya, jalankan penuh
+
+OWNER CONFIRMATION — EXECUTE CHANGE 30 AND TASK-096
+I confirm full execution of the previously approved Change 30 directive.
+Proceed with the formal governance records, exactly one consolidated TASK-096, the four defect corrections, regression testing, independent reviews, CI, and eligible PR merge.
+Do not request the same approval again.
+MANDATORY CONDITIONS:
+
+1. Respect the repository's actual governance and approval gates. Do not fabricate approvals or bypass mandatory reviews.
+2. Coordinate shared governance files with the separate TASK-078 workflow. Never overwrite concurrent changes to TASK_PLAN, CURRENT_HANDOFF, or other shared files.
+3. Verify DIR-111 severity against the actual defect impact. Correct all four defects regardless of severity.
+4. Do not merge any normative contract change that requires an outstanding Owner approval. Keep unresolved proposals separate.
+5. Make every correction conform to the original approved PRD and business contracts. Preserve permissions, company isolation, data integrity, and accounting correctness.
+6. Implement only the approved TASK-096 scope. Do not add further Task IDs or silently expand the work.
+7. Run all mandatory tests, independent reviews, and CI gates before marking the Task DONE or merging. Never claim PASS without execution evidence.
+8. Merge only if the PR satisfies the complete repository merge requirements.
+9. Do not deploy or modify staging, production, VPS, Coolify, Cloudflare, live databases, or BantuKasir.
+10. Preserve the separate UX-first redesign plan, including shadcn/ui, Base UI, Modern Web Guidance, and the four-area pilot.
+11. After TASK-096 is completed, provide an evidence-backed assessment of remaining original PRD compliance gaps for TASK-086 UAT. Do not declare full PRD compliance merely because TASK-096 passes.
+12. All visible execution activity, coding progress, test results, and communication with me MUST be in Bahasa Indonesia.
+
+Proceed autonomously within these boundaries and report material blockers requiring an actual Owner decision.

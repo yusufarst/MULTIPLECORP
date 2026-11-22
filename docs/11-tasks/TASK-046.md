@@ -32,6 +32,7 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 - TASK-054 — Expenses, disbursements and other cash
 - TASK-055 — Project completion and Force Complete
 - TASK-056 — Project cancellation
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — the confirmation writes the purchase-line and charge-share guards that receiving, cancellation and the cost cascade post (LK-21, LK-22), the project-line guard, serial rows and direct cost attributions
 

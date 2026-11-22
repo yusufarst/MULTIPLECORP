@@ -30,6 +30,7 @@ Staff must know quantities on hand, reserved, unusable and available, where they
 - TASK-044 — Purchase return to supplier
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
 - TASK-059 — Search and scanning
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — ROUTE-212 writes the stock ledger, its reversal guard (LK-16) and the stock guards that every other inventory Task writes
 

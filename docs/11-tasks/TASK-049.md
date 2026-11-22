@@ -32,6 +32,7 @@ O-04, CAP-10 and AC-10 require staff to tell issued sales value and *Belum Ditag
 
 - TASK-050 — Billing, receivables, dispute hold and Owner write-off
 - TASK-056 — Project cancellation
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — it owns the invoice guard (LK-25) and the project's invoice cap (LK-20) that billing, payments, settlements, write-offs and completion read and post
 

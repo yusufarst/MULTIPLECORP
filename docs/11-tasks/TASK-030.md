@@ -35,6 +35,7 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 - TASK-051 — Payments, applications and bank statement lines
 - TASK-054 — Expenses, disbursements and other cash
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — it owns the evidence rows (LK-29) and the registration keys (LK-28) that every proof-bearing command cites
 

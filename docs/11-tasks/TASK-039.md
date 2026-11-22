@@ -34,6 +34,7 @@ Receiving is where physical stock and its provenance begin: every acquisition cr
 - TASK-042 — Condition, location moves, adjustments and losses
 - TASK-044 — Purchase return to supplier
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — it creates the lots and writes the stock ledger and its product, scope, lot and serial guards (LK-13–LK-17) and the purchase-line guard (LK-21) that every later inventory Task reads
 

@@ -32,6 +32,7 @@ Damaged, disposed, shrunk or lost goods must leave usable stock explicitly and n
 - TASK-043 — Stock count (opname) and discrepancies
 - TASK-048 — Client returns (sales return)
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — it writes the stock ledger and its product, scope, lot, serial and consumption guards (LK-13–LK-17, LK-24) and posts losses through the lot-cost guard (LK-23) that every inventory Task shares
 
