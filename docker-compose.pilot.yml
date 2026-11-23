@@ -1,0 +1,15 @@
+# APPR-042's isolated pilot stack (DIR-134 E1), on the pilot branch only. `-p mcpilot` names the project, its volumes and its
+# network apart from the main stack's; this file gives the pilot's image its own tag — so a pilot build never replaces the
+# main stack's `multiplecorp-app:local` — and its web server the loopback ports 18080 and 18443, beside the main stack's
+# 8080 and 8443. Nothing starts before the host's free memory, CPU and disk are checked (the Owner's directive):
+#   docker compose -p mcpilot -f docker-compose.yml -f docker-compose.pilot.yml up -d --build
+# Its .env is a copy of .env.example with APP_URL=https://localhost:18443. Stop it with `stop`, never `down -v`.
+services:
+    app:
+        image: mcpilot-app:local
+    certs:
+        image: mcpilot-app:local
+    web:
+        ports: !override
+            - "127.0.0.1:18080:8080"
+            - "127.0.0.1:18443:8443"
