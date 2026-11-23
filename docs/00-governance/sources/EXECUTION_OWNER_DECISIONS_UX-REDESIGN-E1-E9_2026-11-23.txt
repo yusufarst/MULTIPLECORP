@@ -1,0 +1,217 @@
+Owner's directives and decisions received in session during execution, 2026-11-23 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received, in their order: the directive resuming the UX-first redesign after TASK-096; the baseline-verification note sent while the executor prepared its answer; and, after the executor's proposal A–F (not reproduced here), the Owner's final decisions E1–E9. No secret, address, host name, path or account in them.
+
+OWNER DIRECTIVE — RESUME MULTIPLECORP UX-FIRST REDESIGN AFTER TASK-096
+TASK-096 has been completed and squash-merged into main as commit `36f7036`.
+The Owner now directs you to resume the separately governed UX-first total redesign initiative.
+PRIMARY OBJECTIVE
+Build a MULTIPLECORP experience that is genuinely intuitive for ordinary, nontechnical users while preserving complete compliance with the original approved PRD.
+UX clarity is the leading design objective. Mobile-first implementation and visual quality must support it.
+Do not return to the old Golden Frontend Reference as the dominant visual standard.
+Only retain its useful concepts for animation, charts, progress indicators, dashboard interactions, and purposeful motion.
+MANDATORY DESIGN PRINCIPLES
+
+* One clear primary purpose per page.
+* Sidebar navigation with logical expandable submenus.
+* Clear mobile navigation and obvious primary actions.
+* Small but comfortable typography with consistent hierarchy.
+* Proportional spacing, alignment, and visual density.
+* Clear icons and predictable controls.
+* Elegant, restrained visual styling.
+* Minimal unnecessary explanatory text.
+* Consistent forms, dialogs, tables, filters, feedback, and page structure.
+* Accessible, responsive, touch-friendly interactions.
+* Beginner-friendly Indonesian terminology.
+* No meaningless animations, excessive cards, or awkwardly wrapped buttons.
+
+Retain the customized shadcn/ui and Base UI architecture.
+Apply Modern Web Guidance. Verify existing installation before considering any installation or changes.
+FIRST WORKSTREAM — PRD AND UX GAP RECONCILIATION
+Use the original PRD, existing UX V2 blueprint, and the newly published "Celah PRD Menjelang UAT" assessment as inputs.
+Map the remaining UX issues to:
+
+* Existing approved PRD requirements.
+* Existing GAP_REGISTER records.
+* Previously identified GF findings.
+* Current screen and workflow contracts.
+* Proposed redesign requirements.
+
+Separate confirmed product defects, design deficiencies, unresolved Owner decisions, and items requiring real-user UAT.
+Do not assume that a DONE Task means all related UX problems have been resolved.
+Do not automatically create new Tasks.
+SECOND WORKSTREAM — FOUR-AREA PILOT
+Prepare the final UX-first pilot for:
+
+1. Masuk and 2FA.
+2. Beranda.
+3. Proyek.
+4. Gudang > Stok.
+
+For each area, provide:
+
+* A clear navigation model.
+* Screen hierarchy.
+* Beginner-oriented task flows.
+* Primary and secondary action placement.
+* Desktop and mobile arrangements.
+* Typography and spacing specifications.
+* Component usage based on shadcn/ui and Base UI.
+* Useful motion and feedback behaviors.
+* Error, loading, empty, and success states.
+* Accessibility and usability acceptance criteria.
+
+Evaluate every flow as if the user had never operated an enterprise application before.
+Do not merely create attractive static mockups. Demonstrate task completion and recovery from common mistakes.
+THIRD WORKSTREAM — FORMAL DESIGN GOVERNANCE
+Verify the existing CR-002, K-1 through K-9 decisions, applicable DESIGN_SYSTEM requirements, CHANGE_CONTROL rules, and required APPR process.
+Identify the minimum authorization needed for a controlled implementation.
+Do not overwrite approved business behavior or silently replace normative contracts.
+Do not treat the previous provisional color selection as final visual approval.
+SAFETY AND EXECUTION
+Do not touch staging, production, VPS, Coolify, live databases, or BantuKasir.
+Do not interfere with TASK-078.
+Do not repeat TASK-096 or create another corrective Task without evidence and Owner authorization.
+Do not perform a full application rewrite before the pilot and governance requirements are approved.
+Preserve original PRD behavior, permissions, company isolation, inventory accuracy, financial correctness, and security.
+ALL visible activities, progress reports, explanations, findings, and responses to the Owner MUST be in Bahasa Indonesia.
+REQUIRED NEXT OUTPUT
+Provide a concise Indonesian proposal covering:
+A. Current UX redesign status after TASK-096.
+B. Remaining confirmed UX issues and their PRD implications.
+C. The recommended final design direction.
+D. Four-area pilot implementation and validation plan.
+E. Exact remaining Owner decisions and governance requirements.
+F. A staged implementation sequence that avoids unnecessary Task creation and redundant work.
+Do not begin broad production-code changes until the applicable design authorization is established.
+
+---
+
+IMPORTANT — BASELINE VERIFICATION FOR UX REDESIGN
+
+Before finalizing the UX redesign proposal, verify that all repository analysis reflects the latest merged main commit `36f7036`, including TASK-096.
+
+Do not rely on the outdated local checkout at `5a44a81`.
+
+If the shared checkout is being used by another session, do not modify or pull it without verifying safety. Use an isolated read-only worktree or safely inspect the latest origin/main instead.
+
+Reuse previous UX audits and artifacts rather than repeating completed work.
+
+Complete the A–F proposal with concrete UX decisions, four-area pilot specifications, existing PRD/GAP traceability, and the minimum formal authorization required for implementation.
+
+Do not create new Tasks, modify production code, or deploy anything at this stage.
+
+All visible progress and final responses MUST be in Bahasa Indonesia.
+
+---
+
+FINAL OWNER DECISION — MULTIPLECORP UX-FIRST REDESIGN E1–E9
+I have reviewed your complete A–F proposal against my original UX redesign objectives and the approved MULTIPLECORP PRD.
+I approve the recommended direction with the explicit decisions and modifications below.
+1. OWNER DECISIONS E1–E9
+E1 — APPROVED.
+Use an isolated worktree and non-merge pilot branch based on the latest verified main. Reuse the existing UX V2 blueprint, audited components, and relevant artifacts.
+E2 — CONDITIONALLY APPROVED.
+The confirmed shared-foundation defects must be corrected before the relevant UAT acceptance gates.
+Prioritize:
+
+* Broken responsive breakpoint behavior.
+* Nonfunctional spinner and loading feedback.
+* Touch input font sizing.
+* Duplicate headings.
+* Duplicated WIB labels.
+* Missing actionable error feedback.
+* Other verified material foundation defects.
+
+Classify each defect according to DIR-111.
+Follow the existing governance process. Do not create new Task IDs automatically. If one consolidated corrective Task is mandatory, present the minimum compliant Change for formal authorization rather than fragmenting the work into many Tasks.
+E3 — APPROVED.
+Resolve GF-01 before production eligibility. Integrate GF-09–GF-13 into the separately governed redesign without discarding valid requirements.
+E4 — APPROVED FOR PILOT VALIDATION ONLY.
+Prepare and test the K-6 stage-indicator proposal. Do not alter normative business behavior before approval.
+E5 — APPROVED FOR VALIDATION ONLY.
+Test recovery-code acknowledgment and empty-group summaries in the pilot. Preserve security, existing permissions, and recovery-code confidentiality. Do not log, transmit, or expose actual recovery codes.
+E6 — APPROVED.
+Plan real-device and beginner-user usability validation. Automated tests cannot substitute for actual usability evidence. Prototype development should not be blocked merely because participants have not yet been scheduled.
+E7 — PROVISIONALLY APPROVED.
+Use the proposed sidebar hierarchy and Indonesian group labels as pilot candidates. Validate their clarity with novice users before final contract approval.
+E8 — APPROVED.
+Treat Grafit & Kobalt as a provisional visual direction, not a mandatory final palette. The final selection must prioritize readability, accessibility, consistency, and an elegant visual identity.
+E9 — REJECTED AS ORIGINALLY PROPOSED.
+Do NOT automatically postpone the entire UX redesign until after GO-LIVE.
+My expectation is that the application must have acceptable, consistent, beginner-friendly UX before receiving production GO-LIVE authorization.
+Maintain release governance and do not bypass existing release freezes. Prepare the necessary formal Change/APPR authorizations to permit the approved redesign implementation before GO-LIVE.
+Any narrower initial release scope would require my separate explicit approval.
+2. UX IS THE PRIMARY DESIGN PRIORITY
+Design every workflow from the perspective of someone who has never used an enterprise management application.
+Users must be able to understand:
+
+* Where they are.
+* What the page is for.
+* What they can do.
+* What they should do next.
+* Which information is important.
+* Whether their action succeeded.
+* How to recover from mistakes.
+
+Prioritize UX correctness, followed by mobile-first implementation and visual refinement.
+Accessibility, business correctness, and security remain mandatory throughout.
+3. COMPLETE DESIGN DIRECTION
+Use one clear purpose per page.
+Provide a hierarchical sidebar with understandable expandable submenus.
+Keep navigation compact, readable, and consistent.
+Use restrained typography, proportional spacing, clear icons, meaningful primary actions, and minimal unnecessary text.
+Avoid crowded dashboards, duplicate headings, oversized controls, confusing tables, excessive cards, and buttons wrapping into awkward rows.
+Use purposeful motion, appropriate charts, progress indicators, and loading feedback.
+Retain the approved original PRD's business semantics, roles, workflows, permissions, and financial/inventory correctness.
+The Golden Frontend Reference must not control the new overall appearance. Only reuse its valuable interaction, motion, dashboard, chart, and progress concepts.
+4. EXISTING TECHNOLOGY
+Retain the customized shadcn/ui and Base UI architecture.
+Apply the existing Modern Web Guidance installation and verified guidance.
+Do not unnecessarily reinstall dependencies.
+Do not overwrite customized components or introduce Radix/Vaul merely because standard shadcn installation examples use them.
+Build reusable components with appropriate accessibility and mobile behavior.
+5. IMMEDIATE NEXT STEP — AUTHORIZED PILOT PREPARATION
+Proceed with the minimum required governance preparation for CR-002 and the isolated four-area pilot.
+Use the previously approved scope:
+
+1. Masuk and 2FA.
+2. Beranda.
+3. Proyek.
+4. Gudang > Stok.
+
+The pilot must include the shared navigation shell, design tokens, typography, spacing, responsive behavior, and common feedback components.
+It must be demonstrable through functional workflows, not static visual mockups alone.
+Use existing application behavior and local test fixtures. Do not access staging or production.
+Complete the necessary pilot APPR before writing pilot code where repository governance requires it.
+This directive authorizes governance preparation and the pilot approach, not bypassing required formal approvals.
+6. DO NOT REPEAT COMPLETED WORK
+Reuse the existing audits, UX V2 blueprint, A–E plan, PRD gap assessment, and proposal A–F.
+Do not restart a broad analysis cycle.
+Do not rewrite TASK-096 or reopen completed defect corrections without new evidence.
+Once pilot governance is satisfied, move directly into building the four-area functional prototype in the isolated worktree.
+Provide visual demonstrations and functional test results for Owner evaluation.
+7. PROGRESSIVE TOTAL REDESIGN
+After the pilot is validated and the applicable contracts are approved, prepare a controlled implementation across all remaining authorized application modules.
+Expand by coherent navigation and workflow groups.
+Reuse pilot components and tests rather than rebuilding them.
+Preserve all original approved PRD workflows.
+Do not claim total redesign completion merely because four pilot areas are finished.
+Do not arbitrarily defer material usability defects until after production launch.
+Do not create many new Tasks for individual visual adjustments. Use the minimum governance-compliant packaging, subject to separate authorization.
+8. SAFETY
+Do not modify VPS, Coolify, staging, production, live databases, DNS, or BantuKasir.
+TASK-078 must remain independent.
+No automatic production deployment.
+No automatic GO-LIVE authorization.
+Do not publish credentials, recovery links, or private operational data.
+9. REQUIRED NEXT RESPONSE
+Respond entirely in Bahasa Indonesia.
+Provide only:
+A. Confirmation of the revised E1–E9 decisions.
+B. The minimum required governance actions for starting the isolated pilot.
+C. The first executable pilot implementation slice once those approvals are satisfied.
+D. How the confirmed shared-foundation defects will be handled before UAT without unnecessarily expanding the Task Plan.
+E. The explicit distinction between pilot validation, full redesign implementation, and production GO-LIVE eligibility.
+Do not request approval for decisions I have explicitly made above.
+Do not begin another broad audit or repetitive planning cycle.
+My final objective is a genuinely usable, elegant, consistent MULTIPLECORP application that faithfully implements the original approved PRD.
+All visible execution updates, implementation explanations, test results, and communications to the Owner MUST be in Bahasa Indonesia.
