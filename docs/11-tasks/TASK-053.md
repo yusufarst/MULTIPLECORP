@@ -31,6 +31,7 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 
 - TASK-055 — Project completion and Force Complete
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — the refund writes the application-source and money-fact guards (LK-26, LK-27) and the case's shortfall counters that payments, contras and applications post
 

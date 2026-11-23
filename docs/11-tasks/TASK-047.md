@@ -29,6 +29,7 @@ A service-only project must complete without fictitious warehouse movements (AC-
 
 - TASK-055 — Project completion and Force Complete
 - TASK-056 — Project cancellation
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — the handover writes the project-line guard (LK-19) that confirmation, cancellation and completion read and that TASK-045's deliveries also post
 

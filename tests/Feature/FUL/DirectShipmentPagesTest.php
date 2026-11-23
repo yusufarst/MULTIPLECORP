@@ -178,3 +178,11 @@ it('continues PG-032\'s lines and confirmations after the row a page ended with 
     expect($next['lines'])->toHaveCount(1)->and($next['lines_more'])->toBeNull()
         ->and(array_intersect(array_column($first['lines'], 'id'), array_column($next['lines'], 'id')))->toBe([]);
 });
+
+it('offers PG-032\'s in-place upload, for the supplier\'s proof and the client\'s, with the types the viewer may register for the project\'s company (IP-16; PJ-08; TASK-096)', function () {
+    $plain = DropshipWorld::actor($this->company);
+    Authorization::revoke($plain, 'evidence.upload');
+
+    $this->actingAs($this->actor)->get($this->page)->assertInertia(fn (AssertableInertia $page) => $page->where('page.upload', ['company' => $this->company->public_id, 'types' => ['DELIVERY_PROOF', 'OTHER']]));
+    $this->actingAs($plain)->get($this->page)->assertInertia(fn (AssertableInertia $page) => $page->where('page.upload', null));
+});

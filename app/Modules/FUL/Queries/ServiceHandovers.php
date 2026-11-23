@@ -54,7 +54,7 @@ final class ServiceHandovers
         $company = $project->companyId;
         $header = DB::table('projects as p')->where('p.id', $project->id)
             ->join('client_organizations as o', 'o.id', '=', 'p.client_organization_id')->join('companies as c', 'c.id', '=', 'p.company_id')
-            ->first(['p.project_number', 'p.title', 'p.state', 'o.name as client', 'c.code as company']);
+            ->first(['p.project_number', 'p.title', 'p.state', 'o.name as client', 'c.code as company', 'c.public_id as company_public']);
         $open = in_array($header === null ? null : Row::text($header, 'state'), ['DRAFT', 'ACTIVE'], true);
         $lines = DB::table('project_lines as l')->where('l.project_id', $project->id)->where('l.fulfillment_mode', 'SERVICE')->whereNotNull('l.current_pin_id')
             ->join('confirmation_line_pins as p', 'p.id', '=', 'l.current_pin_id')->join('project_line_balances as b', 'b.project_line_id', '=', 'l.id')
@@ -92,6 +92,8 @@ final class ServiceHandovers
             ];
         }, $lines);
         $canRecord = $open && $viewer->allows('handover.record', $company);
+        // IP-16 in place: the evidence types the viewer may register for the project's company (PJ-08; TASK-096).
+        $types = array_values(array_intersect(self::EVIDENCE, EvidenceTypes::choosable($viewer, $company)));
 
         return [
             'project' => $header === null ? null : [
@@ -131,7 +133,8 @@ final class ServiceHandovers
             'today' => BusinessDate::today(),
             // UXS-14: the period a backdated BAST's number follows (NM-05).
             'number_periods' => $this->numbering->periods($company, SequenceType::Doc08),
-            'can' => ['record' => $canRecord, 'upload' => $viewer->allows('evidence.upload', $company)],
+            'upload' => $header === null || $types === [] ? null : ['company' => Row::text($header, 'company_public'), 'types' => $types],
+            'can' => ['record' => $canRecord],
         ];
     }
 

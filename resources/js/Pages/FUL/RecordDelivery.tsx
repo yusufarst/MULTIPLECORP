@@ -2,9 +2,11 @@
 // shipped — the recipient, the date, the condition and the proof, per line the quantity at the shipment's unit (ROUTE-201),
 // a difference opening its case; the deliveries with their papers (DOC-08, DOC-10 drafted through ROUTE-221 for PG-036),
 // "Koreksi Catatan Pengiriman" (ROUTE-204), "Tutup Pengiriman" and "Catat Hilang di Perjalanan" (ROUTE-203). A delivery
-// never changes stock; the form says so (BR-INV-02; FS-03). One column on the phone.
+// never changes stock; the form says so (BR-INV-02; FS-03). One column on the phone. The proof registered in place, the form
+// kept (IP-16; NV-04); leaving with unsent input asks MSG-35 (NV-02; TASK-096).
 import type { FormDataConvertible } from '@inertiajs/core';
-import { useState } from 'react';
+import { Link, router } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { type BusinessDate, BusinessDateControl } from '@/components/date-field';
@@ -13,6 +15,7 @@ import { DuplicateWarning, type DuplicateMatch } from '@/components/notices';
 import { OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
+import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -20,9 +23,11 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import { Code, DateText } from '@/components/values';
+import { ProofSheet } from '@/features/fin/proof-sheet';
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { previousPage } from '@/lib/previous-page';
+import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
 const PAGE = '/gudang/pengiriman';
@@ -33,8 +38,8 @@ type DeliveredLine = { id: string; no: number; description: string; quantity: st
 type Paper = { id: string; type: string; state: string | null; number: string | null; substituted: boolean };
 type Delivery = { id: string; date: string; recipient: string; condition: string | null; lines: DeliveredLine[]; proof: { id: string; label: string } | null; papers: Paper[]; corrected: boolean; inspected: boolean };
 type Closure = { id: string; line: string; no: number; kind: string; quantity: string; reason: string; date: string; superseded: boolean };
-type Shipment = { id: string; date: string; project: { id: string; number: string; title: string }; client: string | null; lines: Line[]; deliveries: Delivery[]; closures: Closure[]; proofs: { id: string; type: string; label: string }[] };
-type Can = { record: boolean; close: boolean; lost: boolean; correct: boolean; issue: boolean; upload: boolean };
+type Shipment = { id: string; date: string; project: { id: string; number: string; title: string }; client: string | null; lines: Line[]; deliveries: Delivery[]; closures: Closure[]; proofs: { id: string; type: string; label: string }[]; upload: { company: string; types: string[] } | null };
+type Can = { record: boolean; close: boolean; lost: boolean; correct: boolean; issue: boolean };
 type Props = { shipment: Shipment; today: string; can: Can };
 type Payload = Record<string, FormDataConvertible>;
 type Closing = { line: Line; lost: boolean; supersedes: Closure | null };
@@ -82,6 +87,10 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
     const [sent, setSent] = useState<{ command: 'close' | 'correct'; payload: Payload } | null>(null);
     const [ackAgain, setAckAgain] = useState<string[]>([]);
     const [againReason, setAgainReason] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const [leaving, setLeaving] = useState<(() => void) | null>(null);
+    // The departure MSG-35 confirmed passes the guard at once: the guard's `dirty` is the last render's until the next one.
+    const departing = useRef(false);
     useClosedOnAnswer(close.answer, () => { setClosing(null); });
     useClosedOnAnswer(correct.answer, () => { setCorrecting(null); });
     const open = shipment.lines.filter((line) => Number(line.remainder) > 0);
@@ -94,6 +103,38 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
     const again = sent?.command === 'correct' ? correct : close;
     const againMatches = Array.isArray(again.state.matches) ? (again.state.matches as DuplicateMatch[]) : [];
     const againWarned = sent !== null && again.answer?.kind === 'REJECTED' && againMatches.length > 0;
+    // Every field of the form; a recorded delivery answers on PG-030, so nothing is left to ask about.
+    const dirty = Object.values(quantities).some((value) => value !== '') || recipient !== '' || condition !== '' || discrepancy || inspector !== '' || result !== '' || proof !== '' || date.chosen || duplicateReason !== '';
+    // A command that answers on another page — a paper's draft on PG-036 — leaves the form too: MSG-35 first (NV-02; ER-06).
+    const leaveThen = (go: () => void) => { if (dirty) setLeaving(() => go); else go(); };
+
+    // A visit away with unsent input asks first (MSG-35; NV-02); background reads do not.
+    useEffect(() => {
+        const off = router.on('before', (event) => {
+            const visit = event.detail.visit;
+
+            if (!dirty || departing.current || visit.method !== 'get' || visit.only.length > 0 || isBackground(visit)) {
+                return;
+            }
+
+            const href = visit.url.href;
+            setLeaving(() => () => { router.visit(href); });
+
+            return false;
+        });
+        // A departure that did not happen — refused or interrupted — leaves the guard on again (ER-06).
+        const settled = router.on('finish', () => { departing.current = false; });
+        const unload = (event: BeforeUnloadEvent) => {
+            if (dirty && !departing.current) event.preventDefault();
+        };
+        window.addEventListener('beforeunload', unload);
+
+        return () => {
+            off();
+            settled();
+            window.removeEventListener('beforeunload', unload);
+        };
+    }, [dirty]);
 
     const submit = () => {
         record.submit({
@@ -123,7 +164,7 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_031.title')} />
                 <section data-slot="delivery-shipment" className="flex min-w-0 flex-col gap-1 text-body">
-                    <p><a className="font-medium underline" href={`/proyek/${shipment.project.id}`}>{shipment.project.title}</a>{' · '}<Code>{shipment.project.number}</Code></p>
+                    <p><Link className="font-medium underline" href={`/proyek/${shipment.project.id}`}>{shipment.project.title}</Link>{' · '}<Code>{shipment.project.number}</Code></p>
                     <p className="text-text-secondary">{shipment.client ?? ''}{shipment.client === null ? '' : ' · '}{t('deliveries.shipped_on')} <DateText value={shipment.date} /></p>
                     <p className="text-text-secondary">{t('deliveries.no_stock')}</p>
                 </section>
@@ -186,7 +227,7 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                                 </NativeSelect>
                             )}
                         </FormField>
-                        {can.upload && <a className="self-start text-body underline" href="/dokumen/bukti">{t('deliveries.upload_proof')}</a>}
+                        {shipment.upload !== null && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading(true); }}>{t('payments.action.upload_proof')}</Button>}
                         <details className="flex min-w-0 flex-col gap-3">
                             <summary className="min-h-floor cursor-pointer text-body">{t('deliveries.section.inspection')}</summary>
                             <FormField label={t('deliveries.field.inspector')} error={record.errors.pemeriksa}>
@@ -202,7 +243,7 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                         ) : (record.answer !== null && record.answer.kind !== 'COMMITTED' && <OutcomeMessage answer={record.answer} action={record.unknown ? <Button variant="outline" size="sm" onClick={record.retry}>{t('actions.try_again')}</Button> : undefined} />)}
                         {(['tanggal', 'baris'] as const).map((field) => (record.errors[field] === undefined ? null : <p key={field} role="alert" className="text-body text-danger-fg">{record.errors[field]}</p>))}
                         <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" render={<a href={origin} />}>{t('actions.cancel')}</Button>
+                            <Button variant="outline" render={<Link href={origin} />}>{t('actions.cancel')}</Button>
                             <Button pending={record.pending} disabled={!ready || record.frozen} onClick={submit}>{t('deliveries.action.record')}</Button>
                         </div>
                     </fieldset>
@@ -226,14 +267,14 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                                         ))}
                                     </ul>
                                     {delivery.papers.map((paper) => (
-                                        <a key={paper.id} className="self-start underline" href={`/dokumen/${paper.id}`}>{`${t(paper.type === 'DOC-10' ? 'documents.doc_10' : 'documents.doc_08')}${paper.number === null ? '' : ` ${paper.number}`}`}</a>
+                                        <Link key={paper.id} className="self-start underline" href={`/dokumen/${paper.id}`}>{`${t(paper.type === 'DOC-10' ? 'documents.doc_10' : 'documents.doc_08')}${paper.number === null ? '' : ` ${paper.number}`}`}</Link>
                                     ))}
                                     {delivery.papers.some((paper) => paper.number !== null && (delivery.corrected || paper.substituted)) && <p className="text-caption text-text-secondary">{t('deliveries.revise_paper')}</p>}
                                     {can.issue && (
                                         <div className="flex flex-wrap gap-2">
                                             {(delivery.inspected ? (['DOC-08', 'DOC-10'] as const) : (['DOC-08'] as const)).map((type) => (
                                                 <Button key={type} variant="outline" size="sm" pending={prepare.pending} disabled={prepare.frozen}
-                                                    onClick={() => { prepare.submit({ jenis: type, subjek: { delivery_id: delivery.id } }); }}>
+                                                    onClick={() => { leaveThen(() => { prepare.submit({ jenis: type, subjek: { delivery_id: delivery.id } }); }); }}>
                                                     {t('deliveries.action.issue', { dokumen: t(type === 'DOC-10' ? 'documents.doc_10' : 'documents.doc_08') })}
                                                 </Button>
                                             ))}
@@ -345,6 +386,8 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                     correct.submit(payload);
                 }}
             />
+            {uploading && shipment.upload !== null && <ProofSheet open onOpenChange={setUploading} company={shipment.upload.company} types={shipment.upload.types} today={today} back={`${window.location.pathname}${window.location.search}`} onRegistered={(id) => { setProof(id); setUploading(false); }} />}
+            <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }} onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
         </AppShell>
     );
 }

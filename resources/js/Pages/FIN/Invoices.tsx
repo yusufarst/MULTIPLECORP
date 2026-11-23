@@ -1,13 +1,14 @@
 // PG-041 *Invoice* (ROUTE-041; NAV-041; SCR-38; WF-FIN-01; J-FIN-01; TASK-049): a branch's invoices, each its number, project, client, date, shown state and billed sum — one company at a time, never a total
 // across them (CS-07) —, the exact number lookup, and how "Buat Invoice" is reached for a holder of `invoice.issue`: from the project it bills (ROUTE_CONTRACTS §4). PG-041's filters and cursor stay in the address (IP-18).
+// A number that matches none says so with MSG-25, naming the term sent, and offers "Atur Ulang" — never the empty list's sentence (IP-17; PT-19; FA-22; TASK-096).
 import { router } from '@inertiajs/react';
 import { Search } from 'lucide-react';
-import { type SyntheticEvent, useState } from 'react';
+import { type SyntheticEvent, useRef, useState } from 'react';
 
 import { DataList, ListContinuation } from '@/components/data-list';
 import { FormField } from '@/components/form';
 import { PageHeader } from '@/components/page-header';
-import { RegionEmpty } from '@/components/region-state';
+import { RegionEmpty, RegionNoMatch } from '@/components/region-state';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
@@ -30,6 +31,11 @@ export default function Invoices({ branches, branch, number, rows, more, can }: 
     const [next, setNext] = useState(more);
     const [appending, setAppending] = useState(false);
     const [term, setTerm] = useState(number ?? '');
+    const field = useRef<HTMLInputElement>(null);
+    // The "Muat Lagi" in flight: a lookup cancels it, so its page never joins the lookup's answer.
+    const loading = useRef<{ cancel: () => void } | null>(null);
+    const sent = (number ?? '').trim();
+    const unmatched = branches.length > 0 && shown.length === 0 && sent !== '';
 
     if (base !== rows) {
         setBase(rows);
@@ -50,11 +56,22 @@ export default function Invoices({ branches, branch, number, rows, more, can }: 
     const loadMore = () => {
         if (next === null) return;
         setAppending(true);
-        router.reload({ only: ['rows', 'more'], data: { setelah: next }, preserveUrl: true });
+        router.reload({ only: ['rows', 'more'], data: { setelah: next }, preserveUrl: true, onCancelToken: (token) => { loading.current = token; }, onFinish: () => { loading.current = null; } });
+    };
+    const lookup = (nomor: string) => {
+        loading.current?.cancel();
+        loading.current = null;
+        setAppending(false);
+        visit({ perusahaan: branch, nomor });
     };
     const search = (event: SyntheticEvent) => {
         event.preventDefault();
-        visit({ perusahaan: branch, nomor: term });
+        lookup(term);
+    };
+    const reset = () => {
+        setTerm('');
+        lookup('');
+        field.current?.focus();
     };
     const state = (row: Row) => <StatusBadge family="invoice_and_receivable" state={row.state} size="sm" />;
 
@@ -77,7 +94,7 @@ export default function Invoices({ branches, branch, number, rows, more, can }: 
                     )}
                     <form onSubmit={search} className="flex min-w-0 flex-wrap items-end gap-2">
                         <FormField label={t('invoices.list.number')} className="min-w-0 sm:w-72">
-                            {(control) => <Input {...control} value={term} onChange={(event) => { setTerm(event.target.value); }} />}
+                            {(control) => <Input {...control} ref={field} value={term} maxLength={100} autoComplete="off" spellCheck={false} onChange={(event) => { setTerm(event.target.value); }} />}
                         </FormField>
                         <Button type="submit" variant="outline">
                             <Icon icon={Search} size="sm" />
@@ -86,8 +103,14 @@ export default function Invoices({ branches, branch, number, rows, more, can }: 
                     </form>
                 </div>
                 {can.create && <p className="text-body text-text-secondary">{t('invoices.list.create_hint')}</p>}
+                {/* Present from the page's load, so a lookup that matches none is announced (FA-22). */}
+                <p className="sr-only" aria-live="polite" aria-atomic="true">{unmatched ? t('messages.msg_25', { kode: sent }) : ''}</p>
                 {shown.length === 0 ? (
-                    <RegionEmpty text={branches.length === 0 ? t('invoices.list.empty_scope') : t('invoices.list.empty')} />
+                    unmatched ? (
+                        <RegionNoMatch term={sent} text={t('messages.msg_25', { kode: sent })} announce={false} clearLabel={t('actions.reset')} onClear={reset} />
+                    ) : (
+                        <RegionEmpty text={branches.length === 0 ? t('invoices.list.empty_scope') : t('invoices.list.empty')} />
+                    )
                 ) : (
                     <>
                         <DataList<Row>

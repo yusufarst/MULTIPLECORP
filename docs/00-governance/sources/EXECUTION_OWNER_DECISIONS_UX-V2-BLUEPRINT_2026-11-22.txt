@@ -1,0 +1,161 @@
+Owner's decisions received in session during execution, 2026-11-22 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received: the Owner's review of the UX-first V2 blueprint, answering its options K-1–K-9, which follow the review as the blueprint's section I showed them (the blueprint is a private artifact outside this repository; its options are quoted, not the Owner's words). No secret, address, host name, path or account in it.
+
+OWNER REVIEW — MULTIPLECORP UX-FIRST V2 BLUEPRINT
+I have supplied the latest UX-first V2 blueprint ZIP for independent review.
+I accept the overall UX direction, subject to the conditions below. This is NOT yet authorization for broad implementation, repository changes, or deployment.
+OWNER DECISIONS K-1 THROUGH K-9
+K-1: APPROVE OPTION A IN PRINCIPLE.
+Adopt one focused page per navigation destination and clear, hierarchical navigation. Preserve all existing V1 business capabilities, permission boundaries, and approved workflows.
+Ensure that 37 navigation destinations do not become an overwhelming list for ordinary users.
+Organize navigation according to user responsibilities, frequently performed tasks, and clear terminology. Keep all authorized features discoverable.
+K-2: APPROVE OPTION A.
+Golden Frontend Reference is no longer the governing visual reference.
+Retain only useful animation, motion, charts, progress bars, and dashboard interaction concepts.
+K-3: PROVISIONALLY SELECT OPTION 1 — GRAFIT & KOBALT.
+Use this as the initial pilot direction, not unconditional final visual approval.
+Prioritize restrained elegance, comfortable visual density, clear icons, consistent typography, proportional spacing, and precise alignment.
+Avoid oversized text, excessive cards, overcrowded toolbars, unintended button wrapping, and decorative visual noise.
+K-4: APPROVE OPTION A, SUBJECT TO USABILITY VALIDATION.
+Use a full-screen hierarchical Menu on mobile and a clear sidebar with contextual submenus on desktop.
+Do not introduce unnecessary navigation depth.
+Every page should clearly communicate the current location, the primary task, and the next possible action.
+K-5: APPROVE OPTION A.
+Use appropriate loading skeletons and accessible pending states. Avoid misleading animations or unnecessary loading flashes.
+K-6: APPROVE OPTION A AS A CONTRACT-CHANGE PROPOSAL.
+Project stage indicators and beginner-oriented dashboard guidance may be incorporated, but only when based on genuine business data and meaningful next actions.
+Never fabricate progress or introduce new business obligations.
+Prepare the necessary amendments to SLOP-44, PT-19, PT-31, and related contracts for review.
+K-7: APPROVE OPTION A.
+Retain the existing customized shadcn/ui and Base UI architecture.
+Use Modern Web Guidance as a practical implementation standard.
+Do not reinstall shadcn/ui, overwrite customized components, add unnecessary Radix/Vaul dependencies, or introduce duplicate UI systems.
+Preserve the isolated, verified Modern Web Guidance setup.
+K-8: APPROVE OPTION A IN PRINCIPLE.
+Use controlled, reviewable stages, subject to the required CHANGE_CONTROL authorization.
+Prioritize the verified P0 defects before aesthetic changes.
+Do not automatically create new Task IDs or bypass repository governance and release-freeze rules.
+K-9: MODIFY THE PILOT SCOPE.
+Include FOUR representative areas:
+
+1. Masuk and two-step verification.
+2. Beranda.
+3. Proyek, including creation, detail, navigation, and next-step actions.
+4. Gudang > Stok, including dense operational data and stock details.
+
+The pilot must demonstrate actual beginner-friendly workflows, not merely attractive static layouts.
+NONTECHNICAL USER USABILITY — HIGHEST DESIGN PRIORITY
+Approach every workflow as a person who has never used MULTIPLECORP and has minimal knowledge of enterprise software.
+Evaluate:
+
+* Can the user understand the page immediately?
+* Is the correct action obvious?
+* Are menu names understandable in everyday Indonesian?
+* Can the user find the next step without developer guidance?
+* Are errors understandable and recoverable?
+* Are mandatory fields obvious?
+* Can the user complete tasks without losing information?
+* Can users distinguish draft, saved, submitted, approved, and finalized states?
+* Are potentially irreversible actions handled safely?
+* Does the application provide meaningful feedback after every important interaction?
+
+Avoid explaining confusing interfaces through additional paragraphs. Simplify the interfaces themselves.
+PRIORITY ORDER
+
+1. Business correctness, data safety, and permission integrity.
+2. UX clarity and task completion for ordinary users.
+3. Mobile-first usability.
+4. Consistent visual hierarchy, typography, spacing, and layout.
+5. Motion, interaction polish, and visual refinement.
+6. Performance, accessibility, and maintainability must be preserved throughout all stages.
+
+MANDATORY P0 CORRECTIONS
+Prepare a safe, isolated corrective plan for:
+
+* Forms losing entered information when users navigate to evidence uploads.
+* Primary actions disappearing on mobile.
+* Stock totals combining quantities from incompatible products or units.
+* Incorrect empty-state messaging for invoice search results.
+
+Include regression cases and distinguish confirmed code defects from assumptions.
+These issues must not be postponed for decorative UI improvements.
+IMPLEMENTATION GOVERNANCE
+Before modifying normative design contracts or product code:
+
+1. Prepare the appropriate Owner decision source record.
+2. Prepare the required CHANGE_CONTROL/DIR proposal.
+3. Identify the applicable APPR requirements.
+4. State exactly which documents and rules would be superseded or amended.
+5. Show the proposed first corrective implementation slice and approval boundary.
+
+Do not treat this chat response as permission to bypass formal governance.
+Do not create additional Task IDs automatically.
+Keep all work isolated from TASK-078.
+Do not access or modify staging, production, Coolify, VPS, BantuKasir, or live databases.
+Do not push sensitive screenshots, reference assets, credentials, or private artifacts to GitHub.
+NEXT RESPONSE
+Report in Bahasa Indonesia:
+A. The exact K-1 to K-9 decision summary.
+B. Any contractual conflicts that still require Owner approval.
+C. The proposed P0 corrective implementation order.
+D. The exact scope and acceptance criteria for the four-area UX pilot.
+E. The minimum governance actions needed before coding.
+Avoid repeating the entire audit or starting another large research cycle unless a material verification gap exists.
+ALL progress updates, explanations, findings, questions, and final responses MUST be in Bahasa Indonesia.
+
+---
+The blueprint's options K-1–K-9, as its section I showed them:
+
+K-1 · Arah UX dan arsitektur informasi dasar semua amandemen
+Menyetujui prinsip "satu menu = satu halaman fokus", sitemap bagian C, layar Menu di ponsel, dan pola halaman pratinjau 1–6 sebagai dasar penyusunan amandemen.
+A — Setujui. (rekomendasi)
+B — Setujui dengan catatan (sebutkan bagian yang diubah).
+C — Minta revisi blueprint.
+
+K-2 · Golden menjadi inspirasi saja Level 3
+DIR baru yang menyatakan GD-01, GD-02, K1, keputusan 3, OQ-10, bagian presentasi SD-02, dan CA-04 butir 1, 4–7, 11, 12, 15–16 disupersede. Akibatnya: sistem visual MULTIPLECORP yang orisinal di atas shadcn/ui + Base UI menjadi acuan utama; Golden hanya sumber ide motion, grafik, progress bar, dan pola dasbor, tanpa kewajiban fidelitas atau register deviasi. Aturan aksesibilitas yang sudah ada tetap (GR-01 tepi kontrol ≥3:1, penanda aktif bukan warna saja, D-DS-17 reduced motion, VP-8, SLOP-01–45).
+Dokumen: DECISION_LOG/INDEX, DESIGN_REFERENCES, DESIGN_SYSTEM (Authority, §2, §4, §5, §6, §9.6–§9.7, §10, §12.1, §18, Annex A–B), IA (Authority), TEST_STRATEGY §9; catatan kesinambungan di AGENTS.md aturan 10, EXECUTION_CONTEXT, TOOLCHAIN, CONTEXT_INDEX, SOURCE_OF_TRUTH.
+A — Setujui. (sesuai arahan Owner V2)
+B — Tolak: Golden tetap acuan presentasi.
+
+K-3 · Arah visual Level 3 · DESIGN_SYSTEM §5
+Pilih satu dari tiga arah di bagian F. Ketiganya memakai wireframe, ukuran, dan aturan tipe yang sama: judul ponsel 16/22, judul desktop 20/28, isi 15 px ponsel dan 14 px desktop, input 16 px di layar sentuh, tidak ada teks di bawah 12 px.
+1 — Grafit & Kobalt. (rekomendasi: paling tenang, warna status tidak pernah bersaing dengan tombol)
+2 — Biru Dermaga. Menambah satu huruf, Plus Jakarta Sans: gratis (SIL OFL) dan di-host sendiri sesuai font-src 'self'.
+3 — Hijau Daun Tua.
+
+K-4 · Amandemen navigasi Level 2 + 3
+IA §4 (D-IA-01), §5.2, §5.3, §6.1, §6.2; DESIGN_SYSTEM PT-01, PT-02, §10 baris Tabs; NAVIGATION_CONTRACTS kolom Parent/Entry dan Back (konsekuensi L1, tetap 65 kontrak, NV-01–NV-08 tetap); IA §8 dan §13 ditulis ulang sebagai "grup › daun" dengan bukti reachability 100%; GL-194 "Menu lengkap" dipensiunkan; label "Lainnya" → "Menu" dan tiga label grup baru divalidasi Owner (LOCALIZATION §5). OC-02 (modul tetap navigasi sekunder) dan D-IA-03 (bilah bawah empat entri) tidak diubah.
+A — Setujui dengan layar Menu penuh di ponsel (GR-11/NV-06 ikut diamandemen). (rekomendasi)
+B — Setujui dengan laci berhierarki (perubahan lebih kecil, isi sama).
+C — Tolak: tetap "Menu lengkap" + tab modul.
+
+K-5 · Skeleton saat memuat substansi Level 1, pasca-pembekuan
+Mengizinkan Skeleton shadcn/ui untuk halaman dan grup tertunda yang tata letaknya diketahui (tanpa kilau saat reduced motion, aria-busy pada region). Spinner tetap untuk kontrol sibuk; jeda 300 ms tetap. Dokumen: DESIGN_SYSTEM UXV-17, PT-19, §9.6, §10, §12.3; IA §9.
+A — Setujui. (rekomendasi)
+B — Tolak: spinner saja.
+
+K-6 · Indikator progres dan langkah awal di luar aturan sekarang
+Owner meminta progres yang bermakna, tetapi kontrak sekarang membatasinya. (a) "Tahap 6 dari 9" + bar di halaman proyek (SLOP-44, PT-31). (b) Beranda tanpa data menampilkan daftar langkah awal berstatus Lengkap/Belum dengan satu tautan per langkah (PT-19: keadaan kosong satu kalimat dan paling banyak satu aksi; IA §9). Grafik tetap hanya umur piutang dan laporan.
+A — Setujui (a) dan (b), angka selalu tertulis di samping bar. (rekomendasi)
+B — Setujui salah satu saja.
+C — Tolak: pakai versi yang sudah sesuai kontrak (nama tahap + "sekarang"; satu kalimat + satu aksi).
+
+K-7 · Batas pemakaian shadcn/ui dan Modern Web Guidance perkakas
+- Tidak menjalankan shadcn init, --force, atau --reinstall.
+- Tidak menjalankan add sidebar, karena dry-run menunjukkan perintah itu menimpa button, separator, sheet, tooltip, input dan menambah paket radix-ui. Sidebar dibangun dari primitif Base UI yang sudah ada (Collapsible, Sheet, Tooltip) dengan anatomi shadcn Sidebar.
+- add skeleton (satu berkas baru) hanya bila K-5 disetujui. Tidak memakai drawer berbasis vaul/Radix; laci dan sheet ponsel memakai Drawer Base UI yang sudah ada di @base-ui/react 1.9.0, begitu juga OtpField untuk kode verifikasi.
+- components.json dibiarkan. Dokumentasi resmi tidak mendefinisikan kunci base/iconLibrary, jadi tidak ada kunci tebakan. Setiap add berikutnya wajib --dry-run + cek impor radix-ui.
+- MWG tetap di worktree terisolasi. Memasukkan .agents/ dan skills-lock.json ke repositori adalah keputusan terpisah (bawaan: tidak).
+A — Setujui batas ini. (rekomendasi)
+B — Ubah (sebutkan).
+
+K-8 · Kendaraan dan waktu pelaksanaan tanpa Task ID otomatis
+Rencana tugas dibekukan di 95 (DIR-114); pembekuan perencanaan OF-08 (DIR-085) dan DIR-111 berlaku; DIR-128 (direktif code-first, 20 Nov) melarang Task baru, refaktor, matriks, perkakas, atau pembersihan di luar kebutuhan, dan menargetkan kesiapan produksi 22 Nov. Operasi TASK-078 berjalan di sesi terpisah. Jadi redesain butuh DIR baru yang membukanya secara eksplisit. Saya tidak membuat Task ID; cakupannya ditetapkan Owner/Planning.
+A — Bertahap: perbaikan cacat yang tidak mengubah kontrak dulu (daftar di bawah), lalu redesain lewat DIR baru yang membuka jalurnya. (rekomendasi)
+B — Tunda semuanya sampai rilis stabil; dokumen amandemen disiapkan lebih dulu.
+C — Buka jalur redesain penuh sekarang lewat DIR baru.
+
+K-9 · Irisan pilot setelah fondasi S0
+Fondasi bersama dulu (token, tipe, tombol, formulir, tabel, dialog/sheet, shell dan navigasi), lalu tiga layar pilot diuji di peramban sungguhan sebelum diperluas.
+A — Masuk + Verifikasi Dua Langkah, Beranda, dan Gudang › Stok → Detail Stok Produk (padat, dipakai di ponsel dan desktop). (rekomendasi)
+B — Masuk + Verifikasi Dua Langkah, Beranda, dan Keuangan › Invoice → Detail Invoice (lebih berat di desktop).

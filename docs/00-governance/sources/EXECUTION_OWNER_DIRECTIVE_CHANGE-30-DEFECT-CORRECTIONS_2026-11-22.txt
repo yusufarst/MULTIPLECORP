@@ -1,0 +1,427 @@
+Owner's directive received in session during execution, 2026-11-22 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received; the hosting provider's name replaced by [the hosting provider] under INFRASTRUCTURE §9, which keeps it out of this repository. No secret, address, host name, path or account in it.
+
+OWNER DIRECTIVE — MULTIPLECORP CHANGE 30, CONSOLIDATED DEFECT CORRECTIONS, PRD COMPLIANCE & UX-FIRST REDESIGN GOVERNANCE
+0. MANDATORY LANGUAGE AND EXECUTION RULES
+This directive supersedes the previous unexecuted directive titled:
+"OWNER DIRECTIVE — MULTIPLECORP P0 CORRECTIONS AND UX REDESIGN GOVERNANCE"
+It also incorporates the Owner's subsequent approval of one consolidated defect Task under Change 30.
+ALL visible execution activities, investigation updates, coding progress, test explanations, findings, questions, handoffs, and final responses MUST be written in Bahasa Indonesia.
+This directive is written in English for technical precision.
+Preserve existing repository conventions for code, identifiers, commands, and formal documentation.
+Use Claude Opus 5.5 with maximum reasoning effort, focusing on verified evidence, efficient execution, and strict repository governance.
+Do not repeatedly request decisions already explicitly granted in this directive.
+1. FINAL OWNER DECISION — CHANGE 30 APPROVED
+I have reviewed your complete A–E corrective plan, the four confirmed defects, the proposed governance documents, and the UX-first V2 blueprint.
+I APPROVE the Change 30 approach to introduce exactly ONE consolidated defect-correction Task.
+The approved Task Plan may increase from:
+
+* Previous baseline: 95 Tasks.
+* New authorized total: 96 Tasks.
+* Authorized addition: ONE consolidated defect Task.
+
+This approval supersedes my earlier decision to defer Change 30.
+I explicitly accept the addition of one Task because the application must function correctly and meet its original approved Product Requirements Document (PRD).
+Do not add further Task IDs automatically.
+Do not reopen DONE Tasks, bypass their completion contracts, or fabricate governance exceptions.
+Assign the new Task ID through the repository's existing authorized mechanism.
+IMPORTANT GOVERNANCE DISTINCTION:
+My approval of Change 30 is a formal Owner decision to proceed with the prescribed governance process.
+It does NOT waive mandatory source records, DIR/APPR requirements, independent reviews, CI gates, merge conditions, or deployment authorization.
+Complete and verify the required governance prerequisites before modifying product code.
+Do not ask me again whether I approve adding this single consolidated Task. That decision has already been made.
+Only request further approval if an applicable mandatory governance rule requires a distinct authorization not already covered by this directive.
+2. PRIMARY OBJECTIVE — ORIGINAL PRD COMPLIANCE
+My highest priority is that MULTIPLECORP becomes a genuinely functional application that implements the original approved PRD accurately.
+I do not want a visually attractive application with incomplete, incorrect, or confusing business behavior.
+The required final product must demonstrate:
+
+1. Correct implementation of approved PRD requirements.
+2. Reliable business workflows.
+3. Correct calculations and data transformations.
+4. Protection of business data and user input.
+5. Consistent authorization and role-based access.
+6. Proper company and tenant isolation.
+7. Correct inventory and financial behavior.
+8. Reliable error handling and recovery.
+9. Appropriate auditability and traceability.
+10. Clear, intuitive UX for nontechnical users.
+11. First-class mobile usability.
+12. A consistent, elegant, maintainable interface.
+13. Accessible and performant interactions.
+14. Verified release and operational readiness.
+
+Do not alter the approved business requirements merely to make existing tests pass.
+Do not equate a green CI result with complete PRD compliance.
+The PRD, approved normative contracts, original acceptance criteria, and authorized change records remain the sources of truth for business behavior.
+If conflicts exist, identify and resolve them through the existing governance hierarchy rather than silently choosing a convenient implementation.
+3. REASSESS ALL FOUR DEFECTS AGAINST DIR-111
+Before implementation, reconcile the severity assessment of the four confirmed defects.
+The UX blueprint's P0 designation is not automatically equivalent to DIR-111 severity.
+Use the exact controlling definitions in the repository.
+For each defect, distinguish:
+
+* Transient unsaved form-state loss.
+* Loss of persisted business data.
+* Data-integrity violations.
+* Incorrect business calculations.
+* Misleading information displayed to users.
+* Failure to complete an important workflow.
+* A purely visual or nonblocking usability defect.
+
+Special attention: form-data loss
+Your previous assessment classified the form-data issue as P1.
+Reevaluate this decision carefully because DIR-111 addresses data loss.
+Explain whether the issue affects unsaved input only, already persisted data, or both.
+If the evidence is insufficient, retain a conservative severity until the actual consequences are verified.
+Do not downgrade severity to simplify scheduling, reduce testing, or accelerate release.
+For each defect, report:
+
+* Affected functionality.
+* Verified root cause.
+* Actual impact.
+* Formal severity.
+* Evidence supporting that classification.
+* Required correction.
+* Regression tests.
+* Release-blocking implications.
+
+Preserve the distinction between verified evidence and inference.
+4. APPROVED CONSOLIDATED DEFECT TASK
+The new consolidated Task must contain the following four corrective workstreams.
+DEFECT A — FORM INPUT LOSS DURING EVIDENCE UPLOADS
+Prevent users from unexpectedly losing entered information when navigating to or completing evidence-upload workflows.
+Your previous verification identified potential impact across approximately ten pages.
+Validate the exact affected routes and components against the current repository.
+The correction must ensure:
+
+* Previously entered information is not silently discarded.
+* Evidence uploads preserve the appropriate form state.
+* Navigation and validation errors behave correctly.
+* Failed uploads do not erase unrelated entries.
+* Successful uploads give understandable feedback.
+* Existing business authorization is preserved.
+* Draft and persisted data are clearly distinguished.
+* Tests cover normal operation, errors, and relevant navigation paths.
+
+Do not implement an unrestricted redirect mechanism or bypass server-side authorization.
+Use narrowly scoped, verified fixes.
+DEFECT B — MISLEADING INVENTORY AND PROCUREMENT TOTALS
+Correct displays that combine quantities from different products, incompatible units, or ambiguous product identities.
+Previously identified areas include:
+
+* Barang Masuk.
+* Project procurement.
+* Gudang > Stok.
+
+Verify the exact scope and distinguish presentation defects from underlying calculation defects.
+Do not combine heterogeneous quantities into a single misleading number.
+Do not group distinct products solely because they share the same display name.
+Use stable domain identifiers and approved measurement semantics.
+Preserve existing inventory accounting, transaction history, and business calculations.
+Where totals are genuinely meaningful, show them using the correct units and labels.
+Where aggregation is invalid, replace it with a meaningful presentation rather than inventing a conversion.
+DEFECT C — MISSING PRIMARY ACTIONS ON MOBILE
+Restore discoverability and operability of primary actions on supported mobile screens.
+Previously identified areas:
+
+* Proyek.
+* Perjalanan Proyek.
+* Pembayaran.
+
+Verify the exact affected screens and supported viewports.
+Ensure users can:
+
+* Understand the page's primary purpose.
+* Find the main action.
+* Activate it without unintended overlap or clipping.
+* Operate it with touch and keyboard.
+* Understand disabled or unavailable states.
+* Complete the workflow without switching to desktop.
+
+Avoid merely moving the problem into another hidden menu.
+Keep the correction compatible with existing approved navigation contracts unless a formal amendment is authorized.
+DEFECT D — INCORRECT INVOICE SEARCH EMPTY STATE
+Correct the messaging that incorrectly implies no invoices exist when a particular search simply returns no matching results.
+Distinguish:
+
+* No invoices exist.
+* No invoices match the search.
+* Filters exclude all results.
+* Data is loading.
+* Data retrieval failed.
+
+Use clear Indonesian microcopy.
+Provide an appropriate recovery action when useful.
+Update or replace tests that currently encode the incorrect behavior.
+Do not change the underlying business search semantics without authorization.
+5. EXACT IMPLEMENTATION BOUNDARY
+The consolidated Task is limited to the four defect corrections and their necessary tests, documentation, and directly related dependencies.
+The following are NOT automatically included:
+
+* Full visual redesign.
+* Global design-token replacement.
+* Sidebar architecture changes.
+* Broad route restructuring.
+* New business features.
+* Unrelated refactoring.
+* New database capabilities.
+* Unapproved third-party packages.
+* Production deployment.
+* Changes to Coolify or VPS.
+* Changes to BantuKasir.
+
+Any necessary scope expansion must be documented and authorized under the applicable governance mechanism.
+Do not use this Task as a vehicle for uncontrolled redesign.
+6. FORMAL GOVERNANCE SEQUENCE
+Read the actual current repository contracts before making changes.
+Verify the applicable:
+
+* AGENTS.md.
+* CLAUDE.md.
+* EXECUTION_CONTEXT.
+* CURRENT_HANDOFF.
+* TASK_PLAN.
+* CHANGE_CONTROL.
+* DIR-111.
+* DIR-117.
+* DIR-128.
+* Relevant APPR rules.
+* Applicable PRD and acceptance contracts.
+* Existing defect and release-gate records.
+
+Prepare and process the required governance artifacts, including those identified in your A–E plan:
+
+1. Exact Owner decision source record.
+2. GAP-073, reconciled against existing defect records.
+3. DIR-131, where applicable.
+4. APPR-041, where applicable.
+5. TASK_PLAN Change 30.
+6. Consolidated defect Task contract.
+7. Necessary Level 1 clarifications.
+8. Relevant traceability and test evidence.
+
+Do not invent approval states or record documents as approved before the applicable authority has actually approved them.
+If a source record requires an exact original Owner statement, preserve the actual decision faithfully without silently paraphrasing it into a fabricated authorization.
+Use the repository's prescribed process for the formal Change 30 entry.
+Only after all mandatory prerequisites have been satisfied may the consolidated implementation proceed.
+7. EXECUTION AND VERIFICATION
+Once governance authorizes the implementation:
+Use an isolated, clean branch/worktree based on the verified repository baseline.
+Before modifying files:
+
+* Confirm the actual current main HEAD.
+* Confirm working-tree cleanliness.
+* Identify the exact files and contracts affected.
+* Check that no concurrent work is being overwritten.
+* Preserve TASK-078 isolation.
+
+Implement the corrections in manageable, reviewable increments.
+For each correction:
+
+1. Establish or update a failing regression test reproducing the defect where feasible.
+2. Apply the smallest correct fix.
+3. Run focused tests.
+4. Verify role and permission boundaries.
+5. Check localization behavior.
+6. Verify supported responsive behavior.
+7. Confirm no unrelated business behavior changed.
+8. Document evidence and remaining limitations.
+
+Then run all required repository gates, including applicable:
+
+* Architecture tests.
+* Unit and integration tests.
+* Browser E2E tests.
+* Chromium and WebKit checks.
+* Accessibility checks.
+* Localization checks.
+* Performance checks.
+* Security and authorization checks.
+* Independent code review.
+* Codex review.
+* CI verification.
+
+Use actual repository requirements rather than inventing additional gates.
+Do not mark a test PASS unless it ran and passed.
+Do not dismiss material failures as flakes without evidence.
+Do not self-certify an independent review.
+Push, PR, merge, and DONE transitions must follow the authorization and review requirements in the repository.
+Do not perform any live deployment as part of this Task.
+8. SEPARATE UX-FIRST TOTAL REDESIGN
+The consolidated defect Task does not replace or cancel my broader UX redesign directive.
+Continue the UX-first V2 design work as a separate controlled workstream.
+The current approved-in-principle K-1 through K-9 decisions remain applicable with their established conditions.
+Core design priorities
+
+1. Correct business behavior and data safety.
+2. Intuitive UX for ordinary, nontechnical users.
+3. Efficient task completion with minimal confusion.
+4. Mobile-first responsive behavior.
+5. Clear typography, spacing, layout, and component hierarchy.
+6. Accessible interaction patterns.
+7. Simple, restrained, elegant visual presentation.
+8. Useful motion, dashboards, charts, and progress feedback.
+9. Maintainability and performance.
+
+Accessibility, security, and correctness are cross-cutting requirements and must not be sacrificed at any stage.
+Navigation direction
+One focused page per meaningful navigation destination.
+Use hierarchical sidebar navigation for modules containing multiple genuine subpages.
+Ensure the navigation is understandable without the user knowing internal software terminology.
+Do not overwhelm users with all 37 Owner navigation destinations simultaneously.
+Respect role-specific access and navigation.
+Avoid unnecessary navigation depth, ambiguous labels, excessive clicks, and hidden critical actions.
+Visual direction
+The previous Golden Frontend Reference is no longer the controlling overall visual design.
+Retain only useful qualities such as:
+
+* Purposeful animations.
+* Motion and transitions.
+* Interactive charts.
+* Progress indicators.
+* Useful dashboard interactions.
+
+The provisional Grafit & Kobalt palette remains a pilot candidate, not final visual approval.
+Prioritize a distinctive MULTIPLECORP identity with:
+
+* Compact, readable typography.
+* Balanced spacing.
+* Consistent icons.
+* Clear action hierarchy.
+* Well-proportioned layouts.
+* Restrained surfaces and borders.
+* Comfortable information density.
+* Consistency across all application screens.
+
+Avoid oversized headings, unnecessary text, cluttered toolbars, arbitrary wrapping, and excessive decorative cards.
+Technology
+Retain the customized shadcn/ui and Base UI architecture.
+Use Modern Web Guidance as an implementation standard.
+Preserve React, TypeScript, Inertia, Tailwind CSS v4, and Lucide according to repository conventions.
+Do not replace working components or install duplicate UI dependencies without demonstrated necessity.
+Do not reinstall tooling merely to satisfy this directive if it has already been installed and verified.
+9. FOUR-AREA UX PILOT
+Maintain the previously approved-in-principle pilot scope:
+
+1. Masuk and 2FA.
+2. Beranda.
+3. Proyek: creation, detail, navigation, and next actions.
+4. Gudang > Stok.
+
+Use a first-time, nontechnical user as the primary evaluation perspective.
+For each workflow, verify:
+
+* Can the user understand their current location?
+* Can the user identify what the page is for?
+* Can they find the next action without assistance?
+* Are labels and controls understandable?
+* Are required inputs obvious?
+* Can they recognize success, failure, and pending states?
+* Can they recover from mistakes?
+* Can they distinguish saved, submitted, approved, and finalized states?
+* Can the workflow be completed comfortably on mobile?
+* Is important information presented without unnecessary text?
+
+Prepare implementable previews and acceptance criteria.
+Do not claim real-user usability testing has passed without actual evidence.
+Any production-code implementation of the broader redesign must wait for its own formal authorization and applicable CHANGE_CONTROL approval.
+The UX pilot must not silently modify the consolidated defect Task's scope.
+10. ORIGINAL PRD COVERAGE AND FINAL PRODUCT ACCEPTANCE
+After the necessary corrections and during subsequent authorized product verification, perform a comprehensive requirements-to-implementation reconciliation.
+Use the original approved PRD, subsequent authorized requirement changes, and existing coverage matrices.
+The final verification must distinguish:
+
+* Requirement implemented and proven.
+* Requirement implemented but not adequately tested.
+* Requirement partially implemented.
+* Requirement not implemented.
+* Requirement intentionally deferred under approved scope.
+* Requirement whose applicable contract is ambiguous.
+
+Do not silently mark incomplete features as DONE.
+Do not treat implementation completeness, UI polish, and production readiness as interchangeable concepts.
+Pay particular attention to:
+
+* Core operational workflows.
+* Inventory integrity.
+* Financial and invoice correctness.
+* Company isolation.
+* RBAC.
+* Audit records.
+* Forms and document handling.
+* Search and filtering.
+* Status transitions.
+* Error recovery.
+* Mobile usability.
+* Approved localization.
+* Required reporting.
+* Security controls.
+
+This comprehensive PRD reconciliation is a final acceptance objective, not authorization to introduce unlimited new features into the consolidated defect Task.
+Material gaps require proper classification and disposition through existing governance.
+The objective is demonstrable PRD compliance, not merely reaching 96/96 DONE.
+11. RELEASE AND INFRASTRUCTURE SAFETY
+Keep TASK-078 under the separate operator workflow.
+Do not access or modify:
+
+* MULTIPLECORP staging.
+* MULTIPLECORP production.
+* Coolify.
+* [the hosting provider] VPS.
+* DNS or Cloudflare.
+* Live databases.
+* Shared Docker infrastructure.
+* BantuKasir.
+* Production credentials.
+* Operational backups.
+
+Do not deploy, reseed, reset, or migrate live resources automatically.
+Do not publish credentials, private screenshots, recovery links, or other sensitive operational artifacts to GitHub.
+Do not assume that an earlier successful staging deployment means production is authorized.
+Maintain NO-GO status wherever release-blocking requirements remain unresolved.
+Preserve the independent release and operational gate requirements.
+12. EFFICIENT EXECUTION
+Avoid repeatedly conducting large audits that merely reproduce already verified findings.
+Reuse trustworthy existing evidence and inspect current source code only where necessary to confirm assumptions or changes.
+Use parallel investigation where useful, without duplicating work or overwhelming the execution environment.
+Keep progress reporting milestone-based and concise.
+Do not repeatedly ask the Owner questions already answered.
+If a mandatory decision is still genuinely missing, present the exact decision and controlling rule.
+Do not introduce unrelated tasks or expand the Task Plan beyond 96 without separate Owner authorization.
+13. NEXT ACTIONS
+Proceed in this order:
+STEP 1 — GOVERNANCE
+Recognize the Owner's explicit approval for Change 30 and exactly one consolidated correction Task.
+Verify the formal requirements and prepare/process the necessary decision, DIR, APPR, GAP, and TASK_PLAN records.
+STEP 2 — SEVERITY
+Reconcile all four defects with DIR-111 and document evidence-backed severity and release implications.
+STEP 3 — IMPLEMENTATION AUTHORIZATION
+Establish that all mandatory governance prerequisites are satisfied.
+Do not mistake approval of the approach for permission to bypass separate mandatory gates.
+STEP 4 — TARGETED CORRECTIONS
+Implement the approved four-defect scope in an isolated branch/worktree after authorization.
+STEP 5 — REGRESSION AND REVIEW
+Run the required focused and full validation gates, document results, and follow the repository's PR and merge procedures.
+STEP 6 — UX REDESIGN CONTINUATION
+Continue the separately governed UX-first pilot, design refinement, and visual approval process.
+Do not allow the redesign to interfere with the corrective Task or TASK-078.
+STEP 7 — PRD READINESS
+Preserve the original PRD as the final product acceptance standard and identify any remaining material compliance gaps before GO-LIVE.
+14. REQUIRED RESPONSE FORMAT
+Respond to me entirely in Bahasa Indonesia.
+Provide:
+A. Keputusan Owner: confirm Change 30 is approved for exactly one consolidated Task.
+B. Tata kelola: required records, current verification status, and any mandatory approval still outstanding.
+C. Klasifikasi cacat: DIR-111 severity, evidence, and release impact for each of the four defects.
+D. Pelaksanaan: exact first authorized step, proposed Task contract, affected code areas, and regression strategy.
+E. UX redesign: separate status of K-1 through K-9, the four-area pilot, and pending visual approval.
+F. PRD: how corrections will be traced to original approved requirements and how final completeness will be demonstrated.
+G. Keamanan: confirmation that staging, production, VPS, Coolify, and BantuKasir remain untouched.
+H. Progres: concise DONE/total, active Task, PR/CI, blockers, and next authorized action.
+Do not claim DONE, PASS, APPROVED, or READY unless supported by actual evidence.
+FINAL OWNER EXPECTATION
+I authorize one additional consolidated defect Task because product correctness matters more than an arbitrary Task count.
+However, I expect more than fixing four isolated defects.
+The final MULTIPLECORP product must faithfully implement the original approved PRD, protect business data, operate reliably, and provide a simple, elegant, intuitive user experience that ordinary people can understand without technical guidance.
+Quality must determine completion. Completion counters must never determine quality.
+ALL visible progress, implementation explanations, testing results, and final responses MUST be in Bahasa Indonesia.

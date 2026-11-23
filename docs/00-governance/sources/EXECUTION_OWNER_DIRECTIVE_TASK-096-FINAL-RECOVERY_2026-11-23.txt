@@ -1,0 +1,26 @@
+Owner directive received in session during execution, 2026-11-23 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received: the Owner's answer to the executor's question "Izinkan push koreksi P1-1 dan CI penuh di head baru (siklus ketiga, DIR-127)?" (offered answers "Ya, push koreksi" and "Tahan dulu"), then the Owner's written directive sent during the execution that followed. No secret, address, host name, path or account in it.
+
+Ya, push koreksi
+
+OWNER DIRECTIVE — TASK-096 FINAL RECOVERY AND COMPLETION
+I explicitly authorize ONE additional corrective cycle for TASK-096 under DIR-127, limited to completing PR #101 and resolving the already documented failures.
+This is an exceptional Owner authorization following the second failed CI run. It is NOT permission for unlimited retries, new Tasks, unrelated refactoring, or governance bypasses.
+Primary objective: Complete TASK-096, satisfy all mandatory quality gates, and squash-merge PR #101 when legitimately eligible.
+EXECUTION INSTRUCTIONS
+
+1. Preserve the existing worktree, commits, review evidence, and branch. Do not restart implementation.
+2. Finalize the already reviewed PG-017 P1-1 correction, its regression tests, the authorized Level 1 documentation corrections, and outstanding ER-06 dispositions.
+3. Verify that the return-address fix preserves purchase form inputs, previous prices, supplier context where required, and safe bounded URLs. Never weaken regression assertions merely to make them pass.
+4. For the WebKit 768 px reservations failure, retain the independent evidence of its suspected pre-existing race. Do not modify unrelated product code or suppress the test. Follow the applicable CI flake/retry policy and require the mandatory gate to pass.
+5. Respect DIR-127's final-head policy: prepare the final candidate containing both the verified implementation and its properly qualified DONE record, then execute the mandatory full CI on that exact head. Do not introduce a redundant full CI solely for a record-only commit.
+6. Reuse the completed ER-06 and Codex reviews where valid. Verify any material final-code delta receives the required independent review. Do not request repetitive full reviews merely as a precaution. If a binding rule explicitly requires another head-specific review, perform only the minimum authorized review and document it.
+7. If all mandatory checks pass, every material finding is resolved, and DIR-096/DIR-118 merge conditions are satisfied, you are authorized to squash-merge PR #101 without asking for another routine Owner confirmation.
+8. If the third corrective cycle fails, STOP. Report the exact failed job, evidence, root-cause determination, and remaining blocker. Do not start a fourth cycle without renewed authorization.
+9. Do not touch TASK-078, staging, production, VPS, Coolify, Cloudflare, Docker infrastructure shared with BantuKasir, or secrets.
+10. Do not initiate the UX redesign in this recovery task. Resume its separately governed workflow only after TASK-096 is completed.
+
+STRICT EFFICIENCY
+No new Task IDs. No unnecessary agents. No unrelated fixes. No repeated passing tests without material changes. No artificial CI green status. No disabled or weakened mandatory gates.
+All visible progress updates, code execution explanations, and final reporting MUST be in Bahasa Indonesia.
+Prioritize completing the existing approved task, not generating more planning or repeatedly requesting decisions already authorized by the Owner.
+After completion, report the exact final SHA, CI run, review verdict, merge SHA, DONE counter, and remaining release blockers. Do not claim GO-LIVE authorization.

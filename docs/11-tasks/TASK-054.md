@@ -34,6 +34,7 @@ O-05, CAP-11 and AC-11 require actual/direct cost to stay apart from actual Cash
 - TASK-055 — Project completion and Force Complete
 - TASK-058 — Home, Work and Review — signals and the action queue
 - TASK-060 — Reports, the consolidated report and exports
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — its facts write the money-fact, evidence and source-bill guards (LK-27, LK-29), a purchase payment locks the purchase header (LK-21), and a supplier refund moves a purchase-return case's counters (LK-10)
 

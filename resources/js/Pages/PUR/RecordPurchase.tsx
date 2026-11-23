@@ -1,6 +1,6 @@
 // PG-017 *Buat Pembelian* (ROUTE-017, ROUTE-171; NAV-017; SCR-17; J-PUR-01; J-PUR-02; J-MD-03; J-MD-05; SH-01; TASK-037): opened empty, prefilled with a project's shortage, a product from QS-17's advice, or from PG-016's "Tambahkan Pembelian Susulan". A project purchase takes the project's company, shown and not chosen (L-05); a replenishment chooses it (WF-PUR-02). "Simpan Pembelian" stays disabled with its reason beside it until a supplier and each line's quantity and price are given. The saved purchase records no cash or stock (BR-PUR-03).
 import { router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ActionBar } from '@/components/action-bar';
 import { type BusinessDate, BusinessDateControl } from '@/components/date-field';
@@ -20,6 +20,7 @@ import { blankLine, estimatedTotal, type Demand, type Line, linePayload, type Pr
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
 import { type NumberPeriods, periodOf } from '@/lib/number-period';
+import { returnAddress } from '@/lib/return-address';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
@@ -90,10 +91,20 @@ export default function RecordPurchase({ companies, company, project, supplement
 
     // SH-01: the previous prices of the supplier and the lines' products, read again when either changes.
     const priced = lines.flatMap((line) => (line.product === null ? [] : [line.product.id])).sort().join(',');
+    const pricesQuery = (): Record<string, string> => (supplier === null || priced === '' ? {} : { pemasok: supplier.id, harga: priced, ...(project === null ? { perusahaan: chosenCompany } : {}) });
     useEffect(() => {
         if (supplier === null || priced === '') return;
-        router.reload({ only: ['previous'], data: { pemasok: supplier.id, harga: priced, ...(project === null ? { perusahaan: chosenCompany } : {}) }, preserveUrl: true });
+        router.reload({ only: ['previous'], data: pricesQuery(), preserveUrl: true });
     }, [supplier?.id, priced, chosenCompany]); // eslint-disable-line react-hooks/exhaustive-deps
+    const rereadPrices = () => { if (supplier !== null && priced !== '') router.reload({ only: ['previous'], data: pricesQuery(), preserveUrl: true }); };
+    // A registration answered while the sheet is open — its page, read without the lines' products, replaces SH-01's prices.
+    const answered = useRef(false);
+    useEffect(() => {
+        if (uploading === null) return undefined;
+        answered.current = false;
+
+        return router.on('finish', (event) => { if (event.detail.visit.method !== 'get') answered.current = true; });
+    }, [uploading]);
 
     const chooseCompany = (next: string) => {
         setChosenCompany(next);
@@ -191,11 +202,16 @@ export default function RecordPurchase({ companies, company, project, supplement
                         }
                     }} />
             )}
-            <ProofSheet open={uploading !== null} onOpenChange={(open) => { if (!open) setUploading(null); }} company={project?.company ?? chosenCompany} types={['SUPPLIER_BILL']} proven today={today} back={window.location.pathname + window.location.search}
+            {/* The return address keeps this page's own keys only, its company chosen, and stays one size whatever the lines:
+                their products would grow it past the return list's bound and the purchase's input would be lost on PG-038 (TASK-096 A;
+                ER-06). SH-01's previous prices, which the answer's page reads without them, are read again after the bills — their
+                query alone grows with the lines —, or on closing the sheet once a registration has answered. */}
+            <ProofSheet open={uploading !== null} onOpenChange={(open) => { if (!open) { setUploading(null); if (answered.current) rereadPrices(); } }} company={project?.company ?? chosenCompany} types={['SUPPLIER_BILL']} proven today={today}
+                back={returnAddress('/pembelian/baru', window.location.search, ['proyek', 'produk', 'dari'], project === null ? { perusahaan: chosenCompany } : {})}
                 onRegistered={(id) => {
                     const key = uploading;
                     setUploading(null);
-                    router.reload({ only: ['bills'], preserveUrl: true, onSuccess: () => { setCharges((current) => current.map((charge) => (charge.key === key ? { ...charge, bill: id } : charge))); } });
+                    router.reload({ only: ['bills'], preserveUrl: true, onSuccess: () => { setCharges((current) => current.map((charge) => (charge.key === key ? { ...charge, bill: id } : charge))); rereadPrices(); } });
                 }} />
             <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }}
                 onLeave={() => { const go = leaving; setDirty(false); setLeaving(null); go?.(); }} />

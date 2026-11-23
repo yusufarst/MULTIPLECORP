@@ -1,7 +1,8 @@
 // PG-048 *Kredit Pelanggan* (TASK-053; ROUTE-048; NAV-048; SCR-44; J-FIN-06; CALC-06; WF-FIN-06): credit per client and company, derived and never stored, each source with its trail —
 // a payment or an opening credit —; "Terapkan ke Invoice" (ROUTE-252) to an issued invoice of the same client and company; "Kembalikan Dana" (ROUTE-256) with its transfer evidence and
 // reason, the refund final while it stands (L-46); a refund's shortfall on its case; per project what has arisen, what is left and what is held, "Tahan Kredit" (ROUTE-264; DIR-104).
-// No control deletes credit or a refund (FS-02).
+// No control deletes credit or a refund (FS-02). The refund's transfer proof registered in place over its dialog, which keeps its input (IP-16;
+// NV-04; TASK-096).
 import type { FormDataConvertible } from '@inertiajs/core';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
@@ -16,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText, Money } from '@/components/values';
 import { FinanceNav } from '@/features/fin/finance-nav';
+import { ProofSheet } from '@/features/fin/proof-sheet';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
@@ -37,6 +39,8 @@ type Group = {
     accounts: Option[];
     proofs: Option[];
     invoices: Invoice[];
+    /** IP-16 in place: the refund's transfer proof, where the refunder may register it for the company. */
+    upload: { company: string; types: string[] } | null;
     can: { apply: boolean; refund: boolean; hold: boolean };
 };
 type Props = { page: { branches: Branch[]; branch: string | null; groups: Group[]; more: string | null; today: string } };
@@ -65,6 +69,7 @@ export default function CustomerCredit({ page }: Props) {
     const [proof, setProof] = useState('');
     const [invoice, setInvoice] = useState('');
     const [reason, setReason] = useState('');
+    const [uploading, setUploading] = useState(false);
     const refund = useCommand<Payload>(() => (acting?.kind === 'refund' ? `/keuangan/kredit-pelanggan/${acting.source.id}/kembalikan` : ''), 'post');
     const apply = useCommand<Payload>(() => (acting?.kind === 'apply' ? `/keuangan/pembayaran/${acting.source.id}/terapkan` : ''), 'post');
     const hold = useCommand<Payload>(() => (acting?.kind === 'hold' ? `/keuangan/kredit-pelanggan/proyek/${acting.project.id}/tahan` : ''), 'post');
@@ -72,6 +77,8 @@ export default function CustomerCredit({ page }: Props) {
     // INT-017: an outcome that never arrived keeps its target, so "Coba Lagi" resends the same command before any other may start (IP-02).
     const pending = [refund, apply, hold].find((command) => command.unknown) ?? null;
     useClosedOnAnswer(answer, () => { if (![refund, apply, hold].some((command) => command.unknown)) setActing(null); });
+    // The refund's group as the page holds it now: a proof registered in place is among its proofs once the page answers.
+    const refunding = acting?.kind === 'refund' ? (page.groups.find((group) => group.key === acting.group.key) ?? acting.group) : null;
 
     const open = (next: Acting) => {
         if (pending !== null) return;
@@ -83,6 +90,7 @@ export default function CustomerCredit({ page }: Props) {
         setProof('');
         setInvoice(next.group.invoices[0]?.id ?? '');
         setReason('');
+        setUploading(false);
         setActing(next);
     };
 
@@ -171,14 +179,14 @@ export default function CustomerCredit({ page }: Props) {
                 {page.more !== null && <Button variant="outline" className="self-start" render={<a href={`/keuangan/kredit-pelanggan?${new URLSearchParams({ ...(page.branch === null ? {} : { cabang: page.branch }), setelah: page.more }).toString()}`} />}>{t('actions.load_more')}</Button>}
             </div>
             <ConfirmCommand
-                open={acting?.kind === 'refund' && !refund.unknown}
+                open={acting?.kind === 'refund' && !refund.unknown && !uploading}
                 onOpenChange={(next) => { if (!next) setActing(null); }}
                 title={t('actions.refund')}
                 consequence={t('credit.confirm.refund')}
                 confirmLabel={t('actions.refund')}
                 pending={refund.pending}
                 blocked={acting?.kind !== 'refund' || !positive(amount) || account === '' || proof === ''}
-                items={acting?.kind !== 'refund' ? null : (
+                items={acting?.kind !== 'refund' || refunding === null ? null : (
                     <div className="flex min-w-0 flex-col gap-3">
                         <FormField label={t('credit.field.amount')} help={t('credit.field.capacity', { nilai: acting.source.capacity })} error={refund.errors.jumlah}>
                             {(control) => <DecimalInput {...control} scale={2} value={amount} onValueChange={(next) => { setAmount(next ?? ''); }} />}
@@ -194,11 +202,11 @@ export default function CustomerCredit({ page }: Props) {
                             {(control) => (
                                 <NativeSelect {...control} value={proof} onChange={(event) => { setProof(event.target.value); }}>
                                     <option value="">{t('dispatch.substitute.choose')}</option>
-                                    {acting.group.proofs.map((row) => <option key={row.id} value={row.id}>{row.label}</option>)}
+                                    {refunding.proofs.map((row) => <option key={row.id} value={row.id}>{row.label}</option>)}
                                 </NativeSelect>
                             )}
                         </FormField>
-                        <a className="self-start text-body underline" href="/dokumen/bukti">{t('credit.upload_proof')}</a>
+                        {refunding.upload !== null && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading(true); }}>{t('payments.action.upload_proof')}</Button>}
                     </div>
                 )}
                 reason={{ value: reason, onChange: setReason, error: refund.errors.alasan ?? null }}
@@ -238,6 +246,9 @@ export default function CustomerCredit({ page }: Props) {
                 reason={{ value: reason, onChange: setReason, error: hold.errors.alasan ?? null }}
                 onConfirm={() => { hold.submit({ alasan: reason }); }}
             />
+            {/* As PG-024's correction does: the refund's dialog steps aside while its proof is registered — it would cover the sheet —
+                and comes back with what was typed, Escape closing the sheet alone (IP-16; NV-04; ER-06). */}
+            {uploading && refunding?.upload != null && <ProofSheet open onOpenChange={setUploading} company={refunding.upload.company} types={refunding.upload.types} today={page.today} back={`${window.location.pathname}${window.location.search}`} onRegistered={(id) => { setProof(id); setUploading(false); }} />}
         </AppShell>
     );
 }

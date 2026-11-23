@@ -46,6 +46,14 @@ final class EvidenceController extends Controller
         'arsip' => FilePurpose::Archive,
     ];
 
+    /** The pages whose form keeps its input across an evidence upload, `{id}` a record's exact public id (IP-16; NV-04). */
+    private const RETURN_PAGES = '#\A/(?:keuangan/(?:pembayaran(?:/baru)?|mutasi-bank|potongan|kas-lain|kredit-pelanggan)'
+        .'|gudang/(?:(?:barang-masuk|barang-keluar|pengiriman)/{id}|penyesuaian|stok-opname|selisih-temuan)'
+        .'|pembelian/(?:baru|{id})|proyek/{id}/(?:kirim-langsung|serah-terima|retur))\z#';
+
+    /** A return address's length bound, past the longest cursor a host's address carries. */
+    private const RETURN_BOUND = 2048;
+
     public function __construct(private readonly EvidenceList $evidence) {}
 
     /** `DOC ShowEvidence` (ROUTE-038). */
@@ -203,9 +211,8 @@ final class EvidenceController extends Controller
             default => ['not_processed', __('messages.msg_06')],
         };
 
-        // IP-16 inside a form (PG-022; PG-024; PG-027; PG-046; PG-050): the proof registered, the form stays with its input (NV-04).
-        $back = request()->input('kembali');
-        $inPlace = is_string($back) && preg_match('/^\/(keuangan\/(pembayaran|pembayaran\/baru|mutasi-bank|potongan)|gudang\/barang-(masuk|keluar)\/[0-9a-f-]{36}|gudang\/penyesuaian)(\?[A-Za-z0-9=&_%-]*)?$/', $back) === 1 ? $back : null;
+        // IP-16 inside a form: the proof registered, or refused, the form stays with its input (NV-04).
+        $inPlace = self::inPlace(request()->input('kembali'));
 
         Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text,
             'state' => [...array_intersect_key($state, array_flip(['matches', 'override', 'labels', 'evidence', 'reason'])), ...($inPlace !== null && $outcome->kind === Outcome::COMMITTED ? ['registered' => $evidence] : [])]]);
@@ -215,6 +222,45 @@ final class EvidenceController extends Controller
         }
 
         return redirect()->to('/dokumen/bukti?'.http_build_query(array_filter(['cabang' => $branch, 'bukti' => $evidence])), 303);
+    }
+
+    /**
+     * The form an evidence upload returns to (IP-16; NV-04; TASK-096): one of the pages hosting the in-place upload —
+     * PG-016, PG-017, PG-022, PG-024, PG-026, PG-027, PG-029, PG-031–PG-034, PG-045–PG-050 —, a record named by its exact
+     * public id, its query re-serialized here from unreserved characters and escapes; anything else — another host or
+     * scheme, `//`, `\`, `:`, `#`, a control character, an array, a value past the bound — is no return address, and
+     * PG-038 answers.
+     */
+    private static function inPlace(mixed $back): ?string
+    {
+        if (! is_string($back) || strlen($back) > self::RETURN_BOUND) {
+            return null;
+        }
+
+        [$path, $query] = array_pad(explode('?', $back, 2), 2, '');
+
+        if (preg_match(str_replace('{id}', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', self::RETURN_PAGES), $path) !== 1
+            || preg_match('/\A[A-Za-z0-9._~%+=&*-]*\z/', $query) !== 1) {
+            return null;
+        }
+
+        $pairs = [];
+
+        foreach (array_filter(explode('&', $query), fn (string $pair): bool => $pair !== '') as $pair) {
+            [$key, $value] = array_pad(explode('=', $pair, 2), 2, '');
+            $value = urldecode($value);
+
+            if (preg_match('/\A[a-z][a-z0-9_]{0,31}\z/', $key) !== 1 || array_key_exists($key, $pairs) || preg_match('/[\x00-\x1F\x7F]/', $value) === 1) {
+                return null;
+            }
+
+            $pairs[$key] = $value;
+        }
+
+        $address = $pairs === [] ? $path : $path.'?'.http_build_query($pairs, '', '&', PHP_QUERY_RFC3986);
+
+        // Re-escaping can lengthen a value (`+` as `%20`): the address sent back keeps the same bound.
+        return strlen($address) > self::RETURN_BOUND ? null : $address;
     }
 
     private function refusal(Outcome $outcome): string

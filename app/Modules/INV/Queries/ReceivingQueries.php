@@ -48,6 +48,7 @@ final class ReceivingQueries
 
     /**
      * One company's OPEN purchases with an open warehouse remainder (QS-05), one query, by the oldest first; one more read to know whether more follow.
+     * Each row counts its open lines and never sums quantities across products or units (CALC-03; DESIGN_SYSTEM §16; TASK-096).
      *
      * @return array{rows: list<array<string, mixed>>, more: ?string}
      */
@@ -60,12 +61,12 @@ final class ReceivingQueries
             ->where('l.kind', 'GOODS')->where('l.delivery_mode', 'WAREHOUSE')->whereRaw('(b.ordered_qty_base > b.normal_received_net_qty_base + b.closed_qty_base or b.replacement_expected_qty_base > b.replacement_received_net_qty_base)')
             ->when(is_numeric($cursor), fn ($where) => $where->where('x.id', '>', is_numeric($cursor) ? (int) $cursor : 0))
             ->groupBy('x.id', 'x.public_id', 'x.purchase_number', 'x.supplier_snapshot', 'x.business_date', 'p.project_number')->orderBy('x.id')->limit(self::PAGE + 1)
-            ->selectRaw('x.public_id, x.purchase_number, x.supplier_snapshot, x.business_date, p.project_number, count(*) as lines, sum(b.ordered_qty_base - b.normal_received_net_qty_base - b.closed_qty_base + b.replacement_expected_qty_base - b.replacement_received_net_qty_base) as remaining')->get()->all();
+            ->selectRaw('x.public_id, x.purchase_number, x.supplier_snapshot, x.business_date, p.project_number, count(*) as lines')->get()->all();
         $rows = [];
 
         foreach (array_slice($found, 0, self::PAGE) as $row) {
             $supplier = json_decode(Row::text($row, 'supplier_snapshot'), true);
-            $rows[] = ['id' => Row::text($row, 'public_id'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => is_array($supplier) && is_string($supplier['name'] ?? null) ? $supplier['name'] : '', 'project' => Row::nullable($row, 'project_number'), 'date' => Row::text($row, 'business_date'), 'lines' => (int) Row::text($row, 'lines'), 'remaining' => Row::text($row, 'remaining'), 'href' => '/gudang/barang-masuk/'.Row::text($row, 'public_id')];
+            $rows[] = ['id' => Row::text($row, 'public_id'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => is_array($supplier) && is_string($supplier['name'] ?? null) ? $supplier['name'] : '', 'project' => Row::nullable($row, 'project_number'), 'date' => Row::text($row, 'business_date'), 'lines' => (int) Row::text($row, 'lines'), 'href' => '/gudang/barang-masuk/'.Row::text($row, 'public_id')];
         }
 
         return ['rows' => $rows, 'more' => count($found) > self::PAGE && $rows !== [] ? $rows[count($rows) - 1]['id'] : null];

@@ -30,6 +30,7 @@ CAP-10, CAP-11 and AC-10 require actual payments to create Cash-In and reduce th
 - TASK-052 — Deduction settlements and contras
 - TASK-053 — Customer credit and refunds
 - TASK-060 — Reports, the consolidated report and exports
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — payments and applications write the application-source, invoice, money-fact and evidence guards (LK-25–LK-27, LK-29) that invoices, settlements, refunds, write-offs and other cash post
 

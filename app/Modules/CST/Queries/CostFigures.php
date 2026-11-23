@@ -112,7 +112,7 @@ final class CostFigures
      * Each company's own exposure to what still waits on the Owner (UXS-39; PJ-07; PJ-22), per product and never a case's pending quantity or another company's: an overlap group's members hold one snapshot of the same claims, so a group counts once, by its bound less what it has assigned (DATABASE §5.8); a case alone by its own row.
      *
      * @param  list<int>  $companies
-     * @return array<int, list<array{product: string, qty: string, unit: string}>>
+     * @return array<int, list<array{id: string, product: string, sku: ?string, qty: string, unit: string}>>
      */
     private static function exposures(array $companies): array
     {
@@ -124,8 +124,9 @@ final class CostFigures
             ->whereExists(fn (Builder $member) => $member->from('unattributed_loss_cases as m')->whereRaw('coalesce(m.exposure_group_case_id, m.id) = g.exposure_group_case_id')->where('m.pending_qty_base', '>', 0))
             ->selectRaw('g.company_id, k.product_id, g.bound_qty_base - g.assigned_net_qty_base as qty');
 
-        foreach (DB::query()->fromSub($alone->unionAll($grouped), 'e')->join('products as p', 'p.id', '=', 'e.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('e.qty', '>', 0)->groupBy('e.company_id', 'p.name', 'u.code')->orderBy('p.name')->selectRaw('e.company_id, p.name, u.code, sum(e.qty) as qty')->get() as $row) {
-            $rows[(int) Row::text($row, 'company_id')][] = ['product' => Row::text($row, 'name'), 'qty' => Row::text($row, 'qty'), 'unit' => Row::text($row, 'code')];
+        foreach (DB::query()->fromSub($alone->unionAll($grouped), 'e')->join('products as p', 'p.id', '=', 'e.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('e.qty', '>', 0)->groupBy('e.company_id', 'p.id', 'p.public_id', 'p.name', 'p.sku', 'u.code')->orderBy('p.name')->orderBy('p.id')->selectRaw('e.company_id, p.public_id, p.name, p.sku, u.code, sum(e.qty) as qty')->get() as $row) {
+            // By the product's identity, never its name, which is not unique (TASK-096).
+            $rows[(int) Row::text($row, 'company_id')][] = ['id' => Row::text($row, 'public_id'), 'product' => Row::text($row, 'name'), 'sku' => Row::nullable($row, 'sku'), 'qty' => Row::text($row, 'qty'), 'unit' => Row::text($row, 'code')];
         }
 
         return $rows;

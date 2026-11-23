@@ -61,7 +61,8 @@ final class DirectShipments
         $viewer = $this->capabilities->for($viewerId);
         $company = $project->companyId;
         $cost = $viewer->allows('cost.view', $company);
-        $header = DB::table('projects as p')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')->where('p.id', $project->id)->first(['p.public_id', 'p.project_number', 'p.title', 'p.state', 'o.name as client']);
+        $types = array_values(array_intersect(Deliveries::EVIDENCE, EvidenceTypes::choosable($viewer, $company)));
+        $header = DB::table('projects as p')->join('companies as co', 'co.id', '=', 'p.company_id')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')->where('p.id', $project->id)->first(['p.public_id', 'p.project_number', 'p.title', 'p.state', 'o.name as client', 'co.public_id as company']);
 
         if ($header === null) {
             return null;
@@ -72,11 +73,13 @@ final class DirectShipments
             ...self::lines($viewer, $project->id, $linesAfter),
             ...self::confirmations($viewer, $project, $cost, $confirmationsAfter),
             'proofs' => self::proofs($viewer, $company),
+            // IP-16 in place, the supplier's proof and the client's: the types the viewer may register for the project's company (PJ-08; TASK-096).
+            'upload' => $types === [] ? null : ['company' => Row::text($header, 'company'), 'types' => $types],
             'racks' => array_values(array_map(fn (object $row): array => ['id' => RowHandle::of('locations', (int) Row::text($row, 'id')), 'code' => Row::text($row, 'code'), 'name' => Row::text($row, 'name')],
                 DB::table('locations')->where('is_active', true)->orderBy('code')->get(['id', 'code', 'name'])->all())),
             'can' => [
                 'confirm' => $viewer->allows('dropship.confirm', $company), 'reverse' => $viewer->allows('fulfillment.correct', $company), 'return' => $viewer->allows('sales_return.record', $company),
-                'cost' => $cost, 'issue' => $viewer->allows('documents.issue', $company), 'upload' => $viewer->allows('evidence.upload', $company),
+                'cost' => $cost, 'issue' => $viewer->allows('documents.issue', $company),
             ],
         ];
     }

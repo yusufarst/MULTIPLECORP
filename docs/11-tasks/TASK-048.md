@@ -30,6 +30,7 @@ AC-06, AC-12 and AC-21 require returns with reasons that reconcile stock and kee
 
 - TASK-053 — Customer credit and refunds
 - TASK-055 — Project completion and Force Complete
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — restorations and their reversals write the product, scope, lot, serial, reservation, project-line, lot-cost and consumption guards and the case counters that dispatch, adjustments, purchase returns and the cost cascade (TASK-037–TASK-046) also post
 

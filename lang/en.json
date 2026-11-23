@@ -4350,5 +4350,6 @@
     "pages.pg_008.col_since": "Since",
     "pages.pg_008.conditions_empty": "No condition is still open.",
     "pages.pg_008.empty": "No activity in this window.",
-    "pages.pg_008.all_companies": "All companies"
+    "pages.pg_008.all_companies": "All companies",
+    "receiving.list.open_lines": ":count line not yet received|:count lines not yet received"
 }

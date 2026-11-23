@@ -98,8 +98,9 @@ test('CJ-02: a project bought from two suppliers on one demand, one purchase wit
     const procurement = page.locator('[data-slot="procurement"]');
     await expect(procurement.locator(`a[href="/pembelian/${withoutPo}"]`)).toContainText(run.supplier);
     await expect(procurement.locator(`a[href="/pembelian/${withPo}"]`)).toContainText(run.other_supplier);
-    await expect(procurement).toContainText('Sisa 4');
-    await expect(procurement).toContainText('Sisa 6');
+    // Each purchase's line still to come at its unit, never one figure across products or units (TASK-096).
+    await expect(procurement.locator('li').filter({ has: page.locator(`a[href="/pembelian/${withoutPo}"]`) })).toContainText(new RegExp(`Sisa diterima.*(^|\\D)4 ${run.base_unit}`));
+    await expect(procurement.locator('li').filter({ has: page.locator(`a[href="/pembelian/${withPo}"]`) })).toContainText(new RegExp(`Sisa diterima.*(^|\\D)6 ${run.base_unit}`));
     await expect(page.getByRole('list', { name: 'Baris terkonfirmasi' }).getByRole('listitem')).toHaveCount(1);
 
     // J-PUR-02 from PG-015: a replenishment, its company an explicit field (WF-PUR-02), no PO.

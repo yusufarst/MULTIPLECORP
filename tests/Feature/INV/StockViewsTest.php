@@ -1,5 +1,7 @@
 <?php
 
+use App\Modules\CAT\Models\Product;
+use App\Modules\CAT\Models\ProductUnit;
 use App\Modules\CST\Queries\CostFigures;
 use App\Modules\INV\Queries\MovementHistory;
 use App\Modules\INV\Queries\StockViews;
@@ -330,4 +332,22 @@ it('keeps "Balikkan" while a case\'s reopening leaves something to reverse, and 
 
     $search = $this->actingAs($this->viewer)->get('/gudang/stok?setelah=&cari='.urlencode($this->product->name))->viewData('page')['props']['list'];
     expect($search['cursor_failed'])->toBeFalse()->and(collect($search['rows'])->pluck('id')->all())->toContain($this->product->public_id);
+});
+
+it('keeps two products of one name as two exposure lines, each by its identity with its SKU (UXS-39; TASK-096)', function () {
+    // Two products of one name and one base unit: the grouping by name and unit merged them into one line of nine.
+    $twin = Product::factory()->create(['kind' => 'GOODS', 'sku' => 'UJI-KEMBAR-'.Str::upper(Str::random(6)), 'name' => $this->product->name, 'base_unit_id' => $this->unit, 'quantity_scale' => 0]);
+    ProductUnit::factory()->create(['product_id' => $twin->id, 'unit_id' => $this->unit, 'ratio_to_base' => 1, 'is_base' => true]);
+    $lot = StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '5');
+    StockWorld::recognition($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '1', '5');
+    $twinLot = StockWorld::lot($this->actor->id, $this->company, $twin->id, $this->unit, $this->rack, '4');
+    StockWorld::recognition($this->actor->id, $this->company, $twin->id, $twinLot, $this->rack, '1', '4');
+
+    $exposures = collect(collect(app(CostFigures::class)->stockValues($this->actor->id))->firstWhere('company', $this->company->code)['exposures']);
+    expect($exposures)->toHaveCount(2)
+        ->and($exposures->pluck('product')->unique()->values()->all())->toBe([$this->product->name])
+        ->and($exposures->pluck('unit')->unique()->count())->toBe(1)
+        ->and($exposures->firstWhere('id', $this->product->public_id)['qty'])->toBe('5.000')
+        ->and($exposures->firstWhere('id', $twin->public_id)['qty'])->toBe('4.000')
+        ->and($exposures->firstWhere('id', $twin->public_id)['sku'])->toBe($twin->sku);
 });

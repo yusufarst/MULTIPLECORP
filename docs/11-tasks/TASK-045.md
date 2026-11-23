@@ -29,6 +29,7 @@ CAP-07 and AC-07 require partial and full deliveries with recipient, condition, 
 
 - TASK-048 — Client returns (sales return)
 - TASK-055 — Project completion and Force Complete
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — the delivery and its closure write the project-line guard (LK-19) that dispatch, drop-ship, handover and returns post, and a loss in transit writes the consumption and lot-cost guards of TASK-041's dispatch
 

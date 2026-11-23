@@ -58,9 +58,13 @@ final class CustomerCredit
                 $company = is_int($group['company_id'] ?? null) ? $group['company_id'] : 0;
                 $refund = $viewer->allows('refund.record', $company);
 
-                // The transfer proofs and accounts only to whom may refund, and the proofs only within their family (PJ-08).
+                // The transfer proofs and accounts only to whom may refund, and the proofs only within their family (PJ-08);
+                // the refund's transfer proof registered in place where the refunder may register it for the company (IP-16; TASK-096).
+                $types = $refund ? array_values(array_intersect(['TRANSFER_PROOF'], EvidenceTypes::choosable($viewer, $company))) : [];
+
                 return [...$group, 'company' => $branches[$company] ?? null, 'accounts' => $refund ? $group['accounts'] : [],
                     'proofs' => $refund && EvidenceTypes::mayView($viewer, 'TRANSFER_PROOF', $company) ? $group['proofs'] : [],
+                    'upload' => $types === [] || ! isset($branches[$company]) ? null : ['company' => $branches[$company]['id'], 'types' => $types],
                     'can' => ['apply' => $viewer->allows('payment.apply', $company), 'refund' => $refund, 'hold' => $refund]];
             }, $groups),
             'more' => $more,

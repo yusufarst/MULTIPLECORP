@@ -2,9 +2,11 @@
 // per shipment line the units returned, each usable back into usable stock or damaged into UNUSABLE at a rack, with the case's
 // reason and evidence and an optional new reservation (ROUTE-210) —; the cases with their open steps — the demand, the invoice,
 // the refund and the damaged units' outcome —, "Tutup Kasus" (ROUTE-271), and "Balikkan (Tercatat Keliru)" on a restored unit
-// (ROUTE-211). Net delivered falls; the delivery record stays. One column on the phone.
+// (ROUTE-211). Net delivered falls; the delivery record stays. One column on the phone. The proof registered in place, the form
+// kept (IP-16; NV-04); leaving with unsent input asks MSG-35 (NV-02; TASK-096).
 import type { FormDataConvertible } from '@inertiajs/core';
-import { useState } from 'react';
+import { Link, router } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { type BusinessDate, BusinessDateControl } from '@/components/date-field';
@@ -14,22 +16,26 @@ import { OutcomeMessage } from '@/components/outcome-message';
 import { ScanField, ScanNotice, useScanGuard } from '@/components/scan-field';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
+import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText } from '@/components/values';
+import { ProofSheet } from '@/features/fin/proof-sheet';
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
+import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
 type Consumption = { id: string; lot: string; open: string; serials: { id: string; serial: string }[] };
 type Line = { id: string; shipment: string; date: string; no: number; description: string; unit: string | null; base_unit: string | null; ratio: number; serialized: boolean; scale: number; delivered: string; returned: string; consumptions: Consumption[] };
 type Restoration = { id: string; movement: string; date: string; quantity: string; standing: string; condition: string | null; contra?: string };
 type Case = { id: string; state: string; reason: string | null; lock_version: number; date: string; lot: string | null; steps: { key: string; done: boolean }[]; restorations: Restoration[] };
-type Can = { record: boolean; reverse: boolean; reserve: boolean; close: boolean; cost: boolean; upload: boolean };
-type Page = { project: { id: string; number: string; title: string; client: string | null; state: string }; lines: Line[]; cases: Case[]; racks: { id: string; code: string; name: string }[]; proofs: { id: string; type: string; label: string }[]; can: Can };
+type Can = { record: boolean; reverse: boolean; reserve: boolean; close: boolean; cost: boolean };
+type Page = { project: { id: string; number: string; title: string; client: string | null; state: string }; lines: Line[]; cases: Case[]; racks: { id: string; code: string; name: string }[]; proofs: { id: string; type: string; label: string }[]; upload: { company: string; types: string[] } | null; can: Can };
 type Props = { page: Page; today: string };
+type Kept = { quantities: Record<string, string>; picked: string[]; code: string; reserve: string; reason: string; duplicateReason: string };
 type Payload = Record<string, FormDataConvertible>;
 type Reversing = { caseId: string; restoration: Restoration };
 
@@ -76,6 +82,16 @@ export default function ClientReturn({ page, today }: Props) {
     const [reverseReason, setReverseReason] = useState('');
     const [closeReason, setCloseReason] = useState('');
     const [cuts, setCuts] = useState<Record<string, string>>({});
+    const [uploading, setUploading] = useState(false);
+    const [leaving, setLeaving] = useState<(() => void) | null>(null);
+    // The departure MSG-35 confirmed passes the guard at once: the guard's `dirty` is the last render's until the next one.
+    const departing = useRef(false);
+    // Every field of the form against what it held when it opened, or after the last recorded return, which keeps its line,
+    // condition, rack, proof and date for the next (MSG-35; NV-02).
+    const entriesOf = (kept: Kept) => JSON.stringify([lineId, Object.entries(kept.quantities).filter(([, value]) => value !== '').sort(), [...kept.picked].sort(), inBase, kept.code, condition, rack, proof, kept.reserve, date, kept.reason, kept.duplicateReason]);
+    const cleared: Kept = { quantities: {}, picked: [], code: '', reserve: '', reason: '', duplicateReason: '' };
+    const [pristine, setPristine] = useState(() => entriesOf(cleared));
+    const dirty = entriesOf({ quantities, picked, code, reserve, reason, duplicateReason }) !== pristine;
     // IP-20: a reversal refused for the shortfall (C-06) stays open with the reservations the actor may cut.
     const shortfall = typeof reverse.state.shortfall === 'string' ? reverse.state.shortfall : null;
     const cutting = reverse.answer?.kind === 'REJECTED' && shortfall !== null;
@@ -115,9 +131,37 @@ export default function ClientReturn({ page, today }: Props) {
     // A recorded return answers above the form, which closes once nothing delivered is left to take back.
     const answer = record.answer?.kind === 'COMMITTED' ? record.answer : (reverse.answer ?? close.answer);
 
+    // A visit away with unsent input asks first (MSG-35; NV-02); background reads do not.
+    useEffect(() => {
+        const off = router.on('before', (event) => {
+            const visit = event.detail.visit;
+
+            if (!dirty || departing.current || visit.method !== 'get' || visit.only.length > 0 || isBackground(visit)) {
+                return;
+            }
+
+            const href = visit.url.href;
+            setLeaving(() => () => { router.visit(href); });
+
+            return false;
+        });
+        // A departure that did not happen — refused or interrupted — leaves the guard on again (ER-06).
+        const settled = router.on('finish', () => { departing.current = false; });
+        const unload = (event: BeforeUnloadEvent) => {
+            if (dirty && !departing.current) event.preventDefault();
+        };
+        window.addEventListener('beforeunload', unload);
+
+        return () => {
+            off();
+            settled();
+            window.removeEventListener('beforeunload', unload);
+        };
+    }, [dirty]);
+
     const submit = (extra: Payload = {}) => {
         if (line === null) return;
-        record.submit({ baris: line.id, unit: units, alasan: reason, bukti: proof, tanggal: date.date, tanggal_otomatis: !date.chosen, ...(reserve === '' ? {} : { reservasi: reserve }), ...extra }, () => { setQuantities({}); setPicked([]); setReserve(''); setReason(''); });
+        record.submit({ baris: line.id, unit: units, alasan: reason, bukti: proof, tanggal: date.date, tanggal_otomatis: !date.chosen, ...(reserve === '' ? {} : { reservasi: reserve }), ...extra }, () => { setQuantities({}); setPicked([]); setReserve(''); setReason(''); setCode(''); setScanError(null); setDuplicateReason(''); setPristine(entriesOf(cleared)); });
     };
 
     return (
@@ -125,7 +169,7 @@ export default function ClientReturn({ page, today }: Props) {
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_034.title')} crumbs={[{ label: project.number, href: `/proyek/${project.id}` }]} />
                 <section data-slot="return-project" className="flex min-w-0 flex-col gap-1 text-body">
-                    <p><a className="font-medium underline" href={`/proyek/${project.id}`}>{project.title}</a>{' · '}<Code>{project.number}</Code></p>
+                    <p><Link className="font-medium underline" href={`/proyek/${project.id}`}>{project.title}</Link>{' · '}<Code>{project.number}</Code></p>
                     {project.client !== null && <p className="text-text-secondary">{project.client}</p>}
                     <p className="text-text-secondary">{t('returns_client.keeps_delivery')}</p>
                 </section>
@@ -213,7 +257,7 @@ export default function ClientReturn({ page, today }: Props) {
                                 </NativeSelect>
                             )}
                         </FormField>
-                        {can.upload && <a className="self-start text-body underline" href="/dokumen/bukti">{t('deliveries.upload_proof')}</a>}
+                        {page.upload !== null && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading(true); }}>{t('payments.action.upload_proof')}</Button>}
                         {can.reserve && condition === 'USABLE' && (
                             <FormField label={t('returns_client.field.reserve')} help={t('returns_client.field.reserve_help')} error={record.errors.reservasi} className="w-48">
                                 {(control) => <DecimalInput {...control} scale={line?.scale ?? 0} value={reserve} onValueChange={(next) => { setReserve(next ?? ''); }} />}
@@ -229,7 +273,7 @@ export default function ClientReturn({ page, today }: Props) {
                         ) : (!confirming && record.answer !== null && record.answer.kind !== 'COMMITTED' && <OutcomeMessage answer={record.answer} action={record.unknown ? <Button variant="outline" size="sm" onClick={record.retry}>{t('actions.try_again')}</Button> : undefined} />)}
                         {(['tanggal', 'unit', 'baris'] as const).map((field) => (record.errors[field] === undefined ? null : <p key={field} role="alert" className="text-body text-danger-fg">{record.errors[field]}</p>))}
                         <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" render={<a href={`/proyek/${project.id}`} />}>{t('actions.cancel')}</Button>
+                            <Button variant="outline" render={<Link href={`/proyek/${project.id}`} />}>{t('actions.cancel')}</Button>
                             <Button pending={record.pending} disabled={!ready || record.frozen} onClick={() => { reverse.clear(); close.clear(); record.clear(); setConfirming(true); }}>{t('returns_client.action.record')}</Button>
                         </div>
                     </fieldset>
@@ -313,6 +357,8 @@ export default function ClientReturn({ page, today }: Props) {
                     close.submit({ lock_version: closingCase.lock_version, alasan: closeReason, asal: 'retur-klien', proyek: project.id });
                 }}
             />
+            {uploading && page.upload !== null && <ProofSheet open onOpenChange={setUploading} company={page.upload.company} types={page.upload.types} today={today} back={`${window.location.pathname}${window.location.search}`} onRegistered={(id) => { setProof(id); setUploading(false); }} />}
+            <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }} onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
         </AppShell>
     );
 }

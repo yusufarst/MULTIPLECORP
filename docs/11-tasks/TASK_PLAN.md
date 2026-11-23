@@ -14,9 +14,9 @@ Run PC-5 wrote this plan on 2026-10-19 under [DIR-084](../00-governance/DECISION
 PROJECT TASK STATUS
 
 Baseline Total Tasks: 87
-Current Total Tasks: 95
+Current Total Tasks: 96
 
-DONE: 85
+DONE: 86
 READY: 0
 IN_PROGRESS: 1
 BLOCKED: 2
@@ -25,12 +25,12 @@ TODO: 7
 SUPERSEDED: 0
 
 Progress:
-85 / 95
-Percentage: 89.5 %
+86 / 96
+Percentage: 89.6 %
 
 CURRENT TASK: TASK-078 — Staging stack, the two applications' isolation and the provider features IN_PROGRESS, the human operator's: staging deployed on 2026-11-22, its three findings fixed in the deployment definition, the Owner's decision on Coolify's network attachment and variables open (TASK-078's OPERATOR RECORD)
-NEXT READY TASK: none — no AGENT Task is READY until the operator's staging work (TASK-078, TASK-080) and the Owner's inputs unblock the rest
-LAST TASK PLAN CHANGE: Change 29 of 2026-11-15, recorded 2026-11-20 — TASK-069 proved through the existing suites with its gaps filled, small defects fixed minimally inside it, the Owner's APPR-040; no new Task
+NEXT READY TASK: none — TASK-096 DONE (Change 30); no AGENT Task is READY until the operator's staging work (TASK-078, TASK-080) and the Owner's inputs unblock the rest
+LAST TASK PLAN CHANGE: Change 30 of 2026-11-22 — one consolidated defect Task, TASK-096, for GAP-073's four verified defects, the Owner's APPR-041; the current total 95 → 96
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -144,6 +144,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-093](TASK-093.md) — Defect D6 — the in-place re-authentication resumes only its own account and only on a checked password (UXH-02; IP-11)
 - [x] [TASK-094](TASK-094.md) — Defect D7 — PG-014's inputs frozen while a save's outcome is unknown (IP-02; D-UX-02)
 - [x] [TASK-095](TASK-095.md) — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28)
+- [x] [TASK-096](TASK-096.md) — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 ## 4. The Task list
 
@@ -163,8 +164,8 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | DONE | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
 | [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | DONE | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
 | [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | DONE | 003 | 015, 023 | NO | AGENT | NONE | YES |
-| [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | DONE | 014 | 016, 017, 022, 090, 091 | NO | AGENT | NONE | YES |
-| [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | DONE | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061, 093, 095 | NO | AGENT | NONE | YES |
+| [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | DONE | 014 | 016, 017, 022, 090, 091, 096 | NO | AGENT | NONE | YES |
+| [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | DONE | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061, 093, 095, 096 | NO | AGENT | NONE | YES |
 | [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | DONE | 005, 010, 013, 015, 016 | 018, 022 | NO | AGENT | NONE | YES |
 | [TASK-018](TASK-018.md) | Two-step verification (TOTP) and recovery codes | Platform · IAM | HIGH | DONE | 017 | 019, 020, 021, 074 | NO | AGENT | NONE | YES |
 | [TASK-019](TASK-019.md) | Google sign-in for existing accounts | Platform · IAM | HIGH | DONE | 018 | 020, 023, 024, 082 | NO | AGENT | NONE | YES |
@@ -178,31 +179,31 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | DONE | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | DONE | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
 | [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | DONE | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059, 074, 092 | NO | AGENT | PROPOSED | YES |
-| [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | DONE | 016, 022 | 034, 035, 036, 051, 054, 057 | NO | AGENT | PROPOSED | YES |
+| [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | DONE | 016, 022 | 034, 035, 036, 051, 054, 057, 096 | NO | AGENT | PROPOSED | YES |
 | [TASK-031](TASK-031.md) | Correction cases | Module · OPS | HIGH | DONE | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
-| [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | HIGH | DONE | 021, 025, 026, 027 | 033, 035, 057, 059, 095 | NO | AGENT | NONE | YES |
+| [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | HIGH | DONE | 021, 025, 026, 027 | 033, 035, 057, 059, 095, 096 | NO | AGENT | NONE | YES |
 | [TASK-033](TASK-033.md) | Quotations | Module · PRJ | STANDARD | DONE | 029, 032 | 034, 094 | NO | AGENT | NONE | YES |
 | [TASK-034](TASK-034.md) | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | DONE | 030, 033 | 035, 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
 | [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | HIGH | DONE | 030, 032, 034 | 055 | NO | AGENT | NONE | YES |
 | [TASK-036](TASK-036.md) | Costing foundations — lot cost basis, charge allocation and HPP attribution | Module · CST | HIGH | DONE | 008, 013, 030 | 037, 042, 054 | NO | AGENT | NONE | NO |
-| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | DONE | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
+| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | DONE | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060, 096 | NO | AGENT | NONE | YES |
 | [TASK-038](TASK-038.md) | Reservations | Module · INV | HIGH | DONE | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
-| [TASK-039](TASK-039.md) | Receiving (Barang Masuk) | Module · INV | HIGH | DONE | 029, 031, 037, 038 | 040, 041, 042, 044, 057 | NO | AGENT | NONE | YES |
-| [TASK-040](TASK-040.md) | Stock views, stock history and movement reversal | Module · INV | HIGH | DONE | 039 | 042, 044, 057, 059 | NO | AGENT | NONE | YES |
+| [TASK-039](TASK-039.md) | Receiving (Barang Masuk) | Module · INV | HIGH | DONE | 029, 031, 037, 038 | 040, 041, 042, 044, 057, 096 | NO | AGENT | NONE | YES |
+| [TASK-040](TASK-040.md) | Stock views, stock history and movement reversal | Module · INV | HIGH | DONE | 039 | 042, 044, 057, 059, 096 | NO | AGENT | NONE | YES |
 | [TASK-041](TASK-041.md) | Dispatch (Barang Keluar) and inter-company allocation | Module · INV | HIGH | DONE | 029, 038, 039 | 045, 056, 088 | NO | AGENT | NONE | YES |
-| [TASK-042](TASK-042.md) | Condition, location moves, adjustments and losses | Module · INV | HIGH | DONE | 031, 036, 039, 040 | 043, 048, 057 | NO | AGENT | NONE | YES |
-| [TASK-043](TASK-043.md) | Stock count (opname) and discrepancies | Module · INV | HIGH | DONE | 042 | 055, 058 | NO | AGENT | NONE | YES |
+| [TASK-042](TASK-042.md) | Condition, location moves, adjustments and losses | Module · INV | HIGH | DONE | 031, 036, 039, 040 | 043, 048, 057, 096 | NO | AGENT | NONE | YES |
+| [TASK-043](TASK-043.md) | Stock count (opname) and discrepancies | Module · INV | HIGH | DONE | 042 | 055, 058, 096 | NO | AGENT | NONE | YES |
 | [TASK-044](TASK-044.md) | Purchase return to supplier | Module · PUR · INV | HIGH | DONE | 037, 039, 040 | 048, 054, 055 | NO | AGENT | NONE | YES |
-| [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | DONE | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
-| [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | DONE | 029, 034, 037 | 054, 055, 056 | NO | AGENT | NONE | YES |
-| [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | DONE | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
-| [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | DONE | 042, 044, 045 | 053, 055 | NO | AGENT | NONE | YES |
-| [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | DONE | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
+| [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | DONE | 029, 041 | 048, 055, 096 | NO | AGENT | NONE | YES |
+| [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | DONE | 029, 034, 037 | 054, 055, 056, 096 | NO | AGENT | NONE | YES |
+| [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | DONE | 029, 034 | 055, 056, 096 | NO | AGENT | NONE | YES |
+| [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | DONE | 042, 044, 045 | 053, 055, 096 | NO | AGENT | NONE | YES |
+| [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | DONE | 025, 029, 034 | 050, 056, 096 | NO | AGENT | NONE | YES |
 | [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | DONE | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
-| [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | DONE | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
+| [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | DONE | 030, 050 | 052, 053, 060, 096 | NO | AGENT | NONE | YES |
 | [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | DONE | 051 | 053, 054, 055, 057 | NO | AGENT | NONE | YES |
-| [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | DONE | 048, 051, 052 | 055, 057 | NO | AGENT | NONE | YES |
-| [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | DONE | 030, 036, 037, 044, 046, 052 | 055, 058, 060 | NO | AGENT | NONE | YES |
+| [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | DONE | 048, 051, 052 | 055, 057, 096 | NO | AGENT | NONE | YES |
+| [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | DONE | 030, 036, 037, 044, 046, 052 | 055, 058, 060, 096 | NO | AGENT | NONE | YES |
 | [TASK-055](TASK-055.md) | Project completion and Force Complete | Module · PRJ | HIGH | DONE | 031, 035, 043, 044, 045, 046, 047, 048, 050, 052, 053, 054 | 056, 058 | NO | AGENT | NONE | YES |
 | [TASK-056](TASK-056.md) | Project cancellation | Module · PRJ | HIGH | DONE | 038, 041, 046, 047, 049, 055 | 062, 063, 064, 065, 066, 067, 068, 069, 089 | NO | AGENT | NONE | YES |
 | [TASK-057](TASK-057.md) | Opening import — preparation, dry run, sign-off and commit | Module · Import orchestration · OPS | HIGH | DONE | 022, 026, 027, 028, 030, 032, 034, 037, 039, 040, 042, 050, 052, 053 | 062, 063, 064, 065, 066, 067, 068, 069, 077, 087 | NO | AGENT | NONE | YES |
@@ -234,7 +235,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-083](TASK-083.md) | The alternate operator named and the dispute's governance recorded | Operations · Operations | HIGH | TODO | 076, 080 | 087 | YES | OWNER | NONE | NO |
 | [TASK-084](TASK-084.md) | Production preparation — configuration, outbound HTTPS, branch protection, backups and the off-server copy | Operations · Operations | HIGH | BLOCKED — OPI-04, OPI-28, OPI-31, OPI-32 | 073, 074, 079, 081 | 085 | NO | HUMAN OPERATOR | NONE | NO |
 | [TASK-085](TASK-085.md) | Installation, the first Owner, two-step enrolment and the APP_KEY rotation | Operations · Operations | HIGH | TODO | 020, 084 | 087 | NO | HUMAN OPERATOR | NONE | NO |
-| [TASK-086](TASK-086.md) | UAT with the Owner and the validators | Operations · Operations | STANDARD | TODO | 070, 078 | 087 | NO | OWNER | NONE | NO |
+| [TASK-086](TASK-086.md) | UAT with the Owner and the validators | Operations · Operations | STANDARD | TODO | 070, 078, 096 | 087 | NO | OWNER | NONE | NO |
 | [TASK-087](TASK-087.md) | Cutover and go-live | Operations · Operations | HIGH | TODO | 057, 077, 083, 085, 086 | — | NO | HUMAN OPERATOR | NONE | NO |
 | [TASK-088](TASK-088.md) | Defect D1 — PG-024's ambiguous-code candidates and "Cari Produk" (UXS-34) | Module · INV | STANDARD | DONE | 041 | 062 | NO | AGENT | NONE | YES |
 | [TASK-089](TASK-089.md) | Defect D2 — PG-011 within three deferred groups (PF-34, UXS-44) | Module · PRJ | STANDARD | DONE | 056 | 062 | NO | AGENT | NONE | YES |
@@ -244,6 +245,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-093](TASK-093.md) | Defect D6 — the in-place re-authentication resumes only its own account and only on a checked password (UXH-02; IP-11) | Platform · UI | HIGH | DONE | 016 | 064 | NO | AGENT | NONE | YES |
 | [TASK-094](TASK-094.md) | Defect D7 — PG-014's inputs frozen while a save's outcome is unknown (IP-02; D-UX-02) | Module · PRJ | STANDARD | DONE | 033 | 064 | NO | AGENT | NONE | YES |
 | [TASK-095](TASK-095.md) | Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) | Platform · UI | HIGH | DONE | 011, 016, 023, 032 | 064 | NO | AGENT | NONE | YES |
+| [TASK-096](TASK-096.md) | Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17) | Platform · UI | HIGH | DONE | 015, 016, 030, 032, 037, 039, 040, 042, 043, 045, 046, 047, 048, 049, 051, 053, 054 | 086 | YES | AGENT | NONE | YES |
 
 Stage: Foundation, Platform, Module (the modules in their workflows' order), Verification, Release, Operations. Executor: AGENT, an Execution Agent under this plan's rules; HUMAN OPERATOR, the named operator; OWNER, the Owner — with the client where the Task says so. DB impact: PROPOSED for the five schema Tasks, which create every table of DATABASE §4 expand-only — TASK-005 also the infrastructure stores outside the 125 business tables that [PERMISSIONS_MATRIX §7.2](../05-security/PERMISSIONS_MATRIX.md#72-table-classification) names: the session table, the credential-token store of SECURITY AU-11, the export requests of CONCURRENCY_IDEMPOTENCY H6-04 and the failed-job table, but not the queue, cache, lock and job-batch tables it also names, their stores being Valkey and V1 dispatching no framework batch —, and for TASK-013, which adds C-50's trigger, and TASK-058, which adds IX-13's two partial indexes deferred from TASK-005 (DIR-088), TASK-029, which seeds the fourteen rows of `document_types`, and TASK-030, which adds the type-free evidence identity index (DIR-089); NONE for every other Task, which uses those tables — a missing column is an executor discovery for Planning, never a silent schema change. A BLOCKED status names the input it waits on — an operator's, the Owner's or the client's input of [RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist), a P11 question or DEP-05 (§2).
 
@@ -329,6 +331,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 28, 2026-11-15 (the Owner's narrowing of TASK-066 with its minimal fixes — [APPR-039](../00-governance/DECISION_LOG.md#dir-125-and-appr-039--task-066-narrowed-with-its-minimal-fixes-2026-11-15), DIR-125 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-066 asked the 22 critical journeys by keyboard alone, a screen-reader script for each and each defect sent to its owning Task, which the frozen plan has no place for, and its criteria 1 and 4 need the AA violations and TASK-065's 44 px targets (GF-02, GF-03) fixed. *Change:* for the initial release, the engine and the measured checks on every page state through the localization audit's visits; the keyboard-only runs over the interaction patterns, UXS-41's quotation, the scans and every page's focus walk; representative screen-reader scripts NOT RUN until TASK-086; the AA violations and the 44 px targets fixed minimally inside TASK-066's pull request as APPR-032 did for TASK-067, every other defect recorded for the Owner; TASK-066's scope and criteria 1, 4, 7, 10 and 11, and TEST_STRATEGY §11, amended to read so. No WCAG 2.2 AA criterion, rule or token loosened. *Affected Tasks:* TASK-066. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-066 IN_PROGRESS; DONE 76, READY 0, IN_PROGRESS 2, BLOCKED 4, TODO 13. *Scope change:* none. *Approval:* APPR-039, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
 
 **Change 29, 2026-11-15, recorded 2026-11-20 (the Owner's approach for TASK-069 — [APPR-040](../00-governance/DECISION_LOG.md#dir-126-and-appr-040--task-069-proved-through-the-existing-suites-its-gaps-filled-2026-11-15), DIR-126 —; DIR-114's freeze at 95 Tasks).** *Reason:* TASK-069 asked each element of every H8 row, threat and data path as a case of its own and each defect sent to a new defect Task, which the frozen plan has no place for, while most of the matrix is already proved across the module suites; the registers hold 220 routes and 176 interaction contracts where its criteria say 210 and 165. *Change:* the matrix proved through the existing suites with a traceability register, its gaps filled — the route crawl, the contract-coverage check, the nine counts, SM-05's reconciliation, the missing race and SM-02 cases, the staging scripts NOT RUN —, the counts at the current registers, small defects fixed minimally inside TASK-069, the rest recorded for the Owner; TASK-069's criteria 1, 6, 7, 11 and 12 and TEST_STRATEGY §8 amended to read so. No control, case expectation or accepted residual weakened. *Affected Tasks:* TASK-069. *New Tasks:* none. *Totals:* baseline 87, previous current 95, new current 95. *Dependencies updated:* none. *Statuses:* TASK-069 IN_PROGRESS; DONE 77, READY 0, IN_PROGRESS 2, BLOCKED 4, TODO 12. *Scope change:* none. *Approval:* APPR-040, a Level 1 record under CHANGE_CONTROL within APPR-016's plan.
+
+**Change 30, 2026-11-22 (the UX-first V2 review's four verified defects; the Owner's approval of one consolidated defect Task — [APPR-041](../00-governance/DECISION_LOG.md#dir-132-and-appr-041--change-30-one-consolidated-defect-task-2026-11-22), DIR-132 —; [DEFINITION_OF_DONE §1](../08-testing/DEFINITION_OF_DONE.md#1-statuses-and-the-done-rule); DIR-111's release freeze; DIR-114's closure at 95).** *Reason:* the UX-first V2 review (DIR-131) and its read-only verification on `main` 5a44a81, each defect's plan challenged by an independent refuter, found four defects of DONE Tasks ([GAP-073](../00-governance/GAP_REGISTER.md#gap-073--four-verified-code-defects-found-by-the-ux-first-v2-review)). **A, release blocker (P1)** — input lost on the way to an evidence upload: unsent form input only, no persisted data lost; the main flows with mandatory evidence fail on their designed path (NV-04; IP-16). **B (P2 by impact, fixed under APPR-041)** — quantities summed across products or units on PG-021 and PG-011, and PG-018's exposure lines grouped by a non-unique name: read models only, no stored figure, posting or balance affected. **C, release blocker (P1)** — the primary action missing on the phone on PG-010, PG-011 and PG-045, against J-PRJ-01 and J-FIN-03. **D (P2 by impact, fixed under APPR-041)** — PG-041's non-matching number lookup answered as an empty list, against IP-17 and PT-19. *Change:* the Owner approved one consolidated defect Task, no separate Tasks: TASK-096, with its contract; TASK-086 depends on it. No requirement, acceptance criterion, route or expected value changes; no normative document changes; no assertion is weakened. *Affected Tasks:* TASK-015, TASK-016, TASK-030, TASK-032, TASK-037, TASK-039, TASK-040, TASK-042, TASK-043, TASK-045, TASK-046, TASK-047, TASK-048, TASK-049, TASK-051, TASK-053 and TASK-054 (BLOCKS), TASK-086 (DEPENDS ON). *New Tasks:* TASK-096. *Totals:* baseline 87, previous current 95, new current 96. *Dependencies updated:* those Tasks before TASK-096, TASK-096 before TASK-086 — a dependency pointing to a later identifier, identifiers being stable (as Changes 17–20). *Statuses:* created TODO and READY at once, then IN_PROGRESS beside the operator's TASK-078, PARALLEL SAFE with it alone; DONE 85, READY 0, IN_PROGRESS 2, VERIFYING 0, BLOCKED 2, TODO 7. *Scope change:* none. *Execution correction (ER-08):* TASK-096's IN SCOPE C names PG-014's placement of the phone's action bar — after the page's content, its spacer keeping the page's end reachable — instead of "read first in the page's order", which that spacer cannot meet, and its accessibility requirement C's bar as a region named for its page, as PG-014's, instead of C's reading order; IN SCOPE A and its browser requirement name PG-048's refund dialog stepping aside while the evidence sheet is open and coming back with what was typed, as PG-024's substitution does, instead of the sheet over the dialog, which the alert dialog's layer above the sheet's cannot show; no acceptance criterion changes. *Approval:* APPR-041 — the Owner's explicit approval of the one consolidated Task, confirmed for full execution —, a Level 1 correction under CHANGE_CONTROL within APPR-016's plan.
 
 ## 8. Owner questions
 

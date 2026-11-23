@@ -58,8 +58,10 @@ test('buys a project\'s shortage prefilled, from two suppliers without duplicati
     const procurement = page.locator('[data-slot="procurement"]');
     await expect(procurement).toContainText(run.supplier);
     await expect(procurement).toContainText(run.other_supplier);
-    await expect(procurement).toContainText('Sisa 4');
-    await expect(procurement).toContainText('Sisa 6');
+    // Each purchase's line still to come at its unit, never one figure across products or units (TASK-096).
+    await expect(procurement).toContainText('Sisa diterima');
+    await expect(procurement).toContainText(new RegExp(`(^|\\D)4 ${run.base_unit}`));
+    await expect(procurement).toContainText(new RegExp(`(^|\\D)6 ${run.base_unit}`));
 
     await page.goto(`/pembelian?perusahaan=${run.company}`);
     await expect(page.getByRole('table', { name: 'Pembelian' }).getByRole('row')).toHaveCount(3);

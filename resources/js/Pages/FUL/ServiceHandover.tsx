@@ -5,7 +5,7 @@
 // each with its reversal lines — "Balikkan" with its reason (IP-09; CM-27) — and its BAST, the screen's second command
 // (IP-19): "Terbitkan BAST" creates its draft from the recorded facts, or finds the one an earlier press left, and issues it
 // in place after its confirmation (INT-221; INT-222; IP-08). No stock screen is ever involved (FS-05).
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { RotateCcw, Send } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -26,6 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { DateText } from '@/components/values';
 import { DocumentComposer } from '@/features/doc/composer';
 import { type Paper } from '@/features/doc/paper';
+import { ProofSheet } from '@/features/fin/proof-sheet';
 import { type BastLine, liveBast } from '@/features/ful/handover';
 import AppShell from '@/layouts/AppShell';
 import { dateLong, dateTime, quantity as formatQuantity } from '@/lib/format';
@@ -51,7 +52,9 @@ type Props = {
     today: string;
     /** UXS-14: the BAST numbering's schemes, for the period a backdated issue's number follows. */
     number_periods: NumberPeriods;
-    can: { record: boolean; upload: boolean };
+    /** IP-16 in place: the company and the evidence types the viewer may register there; null when none (TASK-096). */
+    upload: { company: string; types: string[] } | null;
+    can: { record: boolean };
 };
 type Entered = Record<string, { quantity: string; scope: string }>;
 type Payload = Record<string, string | boolean | string[] | { baris: string; jumlah: string; lingkup: string }[] | { service_handover_id: string }>;
@@ -106,7 +109,7 @@ function Recorded({ handover, previewing, onPreview, onReverse, onIssue, prepari
                 <ul role="list" className="flex flex-wrap gap-3">
                     {handover.evidence.map((item) => (
                         <li key={item.id}>
-                            <a href={`/dokumen/bukti?bukti=${item.id}`} className="text-body text-accent-link underline underline-offset-2">{t(evidenceName(item.type))}</a>
+                            <Link href={`/dokumen/bukti?bukti=${item.id}`} className="text-body text-accent-link underline underline-offset-2">{t(evidenceName(item.type))}</Link>
                         </li>
                     ))}
                 </ul>
@@ -115,7 +118,7 @@ function Recorded({ handover, previewing, onPreview, onReverse, onIssue, prepari
                 <span className="text-body text-text-secondary">
                     {bast?.issued != null ? t('handover.bast.issued', { nomor: bast.issued }) : bast?.draft != null ? t('handover.bast.draft') : t('handover.bast.none')}
                 </span>
-                {bast !== null && <a href={`/dokumen/${bast.document}`} className="text-body text-accent-link underline underline-offset-2">{t('handover.bast.open')}</a>}
+                {bast !== null && <Link href={`/dokumen/${bast.document}`} className="text-body text-accent-link underline underline-offset-2">{t('handover.bast.open')}</Link>}
                 {!previewing && standing(handover).length > 0 && bast?.issued == null && (
                     <Button variant="ghost" size="sm" onClick={onPreview}>{t('handover.action.preview_bast')}</Button>
                 )}
@@ -131,7 +134,7 @@ function Recorded({ handover, previewing, onPreview, onReverse, onIssue, prepari
     );
 }
 
-export default function ServiceHandover({ project, lines, handovers, older, after, paper, evidence, today, number_periods: numberPeriods, can }: Props) {
+export default function ServiceHandover({ project, lines, handovers, older, after, paper, evidence, today, number_periods: numberPeriods, upload, can }: Props) {
     const { t } = useTranslation();
     const id = project?.id ?? '';
     const [entered, setEntered] = useState<Entered>({});
@@ -146,6 +149,7 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
     const [issuing, setIssuing] = useState<string | null>(null);
     const [issueDate, setIssueDate] = useState<BusinessDate>({ date: today, chosen: false });
     const [leaving, setLeaving] = useState<(() => void) | null>(null);
+    const [uploading, setUploading] = useState(false);
     // The departure MSG-35 confirmed passes the guard at once: the guard's `dirty` is the last render's until the next one.
     const departing = useRef(false);
     const record = useCommand<Payload>(() => `/proyek/${id}/serah-terima`, 'post');
@@ -155,7 +159,8 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
     const issue = useCommand<Payload>(() => `/dokumen/${issuingHandover?.bast?.document ?? ''}/terbitkan`, 'post');
     const open = lines.filter((line) => Number(line.remainder) > 0);
     const filled = lines.filter((line) => (entered[line.handle]?.quantity ?? '') !== '');
-    const dirty = filled.length > 0 || recipient !== '' || cited !== '';
+    // Every field of the form, a line's work without its quantity and a chosen date among them (MSG-35; TASK-096).
+    const dirty = Object.values(entered).some((entry) => entry.quantity !== '' || entry.scope !== '') || recipient !== '' || cited !== '' || date.chosen || reason !== '';
     const matches = Array.isArray(record.state.matches) ? (record.state.matches as DuplicateMatch[]) : [];
     const warned = record.answer?.kind === 'REJECTED' && matches.length > 0;
     const page = `/proyek/${id}/serah-terima`;
@@ -174,6 +179,8 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
 
             return false;
         });
+        // A departure that did not happen — refused or interrupted — leaves the guard on again (ER-06).
+        const settled = router.on('finish', () => { departing.current = false; });
         const unload = (event: BeforeUnloadEvent) => {
             if (dirty && !departing.current) event.preventDefault();
         };
@@ -181,6 +188,7 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
 
         return () => {
             off();
+            settled();
             window.removeEventListener('beforeunload', unload);
         };
     }, [dirty]);
@@ -245,7 +253,7 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
                             </NativeSelect>
                         )}
                     </FormField>
-                    {can.upload && <a href="/dokumen/bukti" className="text-body text-accent-link underline underline-offset-2">{t('handover.evidence.add')}</a>}
+                    {upload !== null && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading(true); }}>{t('payments.action.upload_proof')}</Button>}
                 </FormSection>
             )}
             <FormSection title={t('handover.lines')}>
@@ -389,6 +397,7 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
                     issue.submit({ draf: draft.id, lock_version: String(draft.lock_version), tanggal: issueDate.date, tanggal_otomatis: !issueDate.chosen, isi: draft.facts ?? '', kembali: page }, () => { setIssuing(null); });
                 }}
             />
+            {uploading && upload !== null && <ProofSheet open onOpenChange={setUploading} company={upload.company} types={upload.types} today={today} back={`${window.location.pathname}${window.location.search}`} onRegistered={(id) => { setCited(id); setUploading(false); }} />}
             <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }}
                 onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
         </AppShell>

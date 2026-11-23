@@ -29,6 +29,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 
 - TASK-055 — Project completion and Force Complete
 - TASK-058 — Home, Work and Review — signals and the action queue
+- TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 
 **PARALLEL SAFE:** NO — its count application and resolutions write the product, scope, lot, serial, reservation, lot-cost and consumption guards that TASK-038–TASK-042 also post through `InventoryPosting` and `CostPosting`, and the unattributed-case counters TASK-042 opens
 
