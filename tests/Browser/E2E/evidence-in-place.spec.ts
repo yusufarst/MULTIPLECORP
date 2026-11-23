@@ -7,7 +7,7 @@ import { creditRun } from '../credit-fixtures';
 import { deliveryRun } from '../delivery-fixtures';
 import { dropshipRun } from '../dropship-fixtures';
 import { uniquePdf, uniquePhoto } from '../evidence-fixtures';
-import { chooseSupplier, purchaseRun } from '../purchase-fixtures';
+import { addPurchaseLine, chooseSupplier, purchaseRun } from '../purchase-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -73,6 +73,16 @@ test('PG-031 on the phone: the proof registered in place, the delivery\'s input 
     await page.waitForURL(/\/gudang\/pengiriman$/);
     await expect(page.locator('#konten')).toContainText('Pengiriman tercatat.');
     await expect(page.getByRole('alertdialog')).toHaveCount(0);
+
+    // A paper's draft answers on its own page: with input unsent, MSG-35 first; "Kembali" stays with it kept (P2-1; ER-06).
+    await page.goto(`/gudang/pengiriman/${run.shipment}`);
+    await form.getByLabel('Nama penerima').fill('Pak Budi');
+    await page.locator('[data-slot="delivery-record"]').first().getByRole('button', { name: 'Terbitkan BAST', exact: true }).click();
+    await expect(page.getByRole('alertdialog')).toContainText('Isian yang belum dikirim akan hilang. Tetap tinggalkan halaman?');
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Kembali' }).click();
+    await expect(page.getByRole('alertdialog')).toHaveCount(0);
+    await expect(page).toHaveURL(new RegExp(`/gudang/pengiriman/${run.shipment}$`));
+    await expect(form.getByLabel('Nama penerima')).toHaveValue('Pak Budi');
 });
 
 test('PG-032: the supplier\'s proof and the client\'s registered in place, each into its own field, the confirmation\'s input kept (IP-16; NV-04)', async ({ page }) => {
@@ -103,7 +113,7 @@ test('PG-032: the supplier\'s proof and the client\'s registered in place, each 
     await expect(form.getByLabel('Nomor pengiriman pemasok')).toHaveValue('SJ-PMS-096');
 });
 
-test('PG-048: the refund\'s transfer proof registered over its dialog, which keeps its reason and chooses the proof, then records (IP-16; NV-04)', async ({ page }) => {
+test('PG-048: the refund\'s transfer proof registered while its dialog steps aside, the dialog back with its reason and the proof chosen, then records (IP-16; NV-04)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await creditRun(page, `bukti-kredit-${String(Date.now())}`);
 
@@ -133,23 +143,36 @@ test('PG-048: the refund\'s transfer proof registered over its dialog, which kee
     await expect(page.locator('#konten')).toContainText('Pengembalian dana dicatat.');
 });
 
-test('PG-017: a supplier\'s bill registered in place from a charge, the purchase\'s input kept and the chosen company carried in the address (IP-16; NV-04)', async ({ page }) => {
+test('PG-017: a supplier\'s bill registered in place from a charge, the purchase\'s input kept, the chosen company carried in an address that never grows with the lines and the previous price read again (IP-16; NV-04; SH-01)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    const run = await purchaseRun(page, `bukti-beli-${String(Date.now())}`);
+    const run = await purchaseRun(page, `bukti-beli-${String(Date.now())}`, 'id', true);
 
     await page.goto('/pembelian/baru');
     await page.getByLabel(/^Perusahaan/).selectOption({ value: run.company });
     await chooseSupplier(page, run.supplier);
+    await addPurchaseLine(page, 0, run.goods, '2', '260000');
+    await expect(page.getByText(/^Harga terakhir/)).toBeVisible();
     await page.getByLabel('Nomor penawaran pemasok').fill('PNW-096');
     await page.getByRole('button', { name: 'Biaya pembelian' }).click();
     await page.getByRole('button', { name: 'Tambah Biaya' }).click();
     await page.getByRole('button', { name: 'Unggah Tagihan' }).click();
+    // The return address carries the page's own keys, never the lines' products or the supplier: one size whatever the lines (ER-06).
+    const sent = page.waitForRequest((request) => request.method() === 'POST' && new URL(request.url()).pathname === '/bukti');
     await register(page, { name: 'tagihan.pdf', mimeType: 'application/pdf', buffer: uniquePdf() }, 'Pemasok Uji 096', { proven: '50000' });
+    const back = String((((await sent).postDataJSON() ?? {}) as { kembali?: unknown }).kembali);
+    expect(back).toContain(`perusahaan=${run.company}`);
+    expect(back).not.toMatch(/harga|pemasok/);
 
     await expect(page).toHaveURL(new RegExp(`/pembelian/baru\\?perusahaan=${run.company}`));
     await expect(page.getByLabel(/^Perusahaan/)).toHaveValue(run.company);
     await expect(page.getByLabel('Nomor penawaran pemasok')).toHaveValue('PNW-096');
+    const line = page.locator('[data-slot="line-editor"] [data-line]').first();
+    await expect(line.getByRole('textbox', { name: 'Jumlah' })).toHaveValue(/^2/);
+    await expect(line.getByRole('textbox', { name: 'Harga' })).toHaveValue(/260/);
     await expect(page.getByLabel(/^Tagihan sumber/)).not.toHaveValue('');
+    // SH-01's previous price, which the answer's page reads without the lines' products, read again with the supplier and the
+    // line the form kept (P3-4; ER-06).
+    await expect(page.getByText(/^Harga terakhir/)).toBeVisible();
 });
 
 test('PG-029: pool evidence registered in place for a pending case\'s resolution, the quantity typed kept and the evidence chosen (IP-16; NV-04)', async ({ page, browser }) => {

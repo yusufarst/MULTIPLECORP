@@ -15,7 +15,8 @@ use Tests\Support\RefreshDatabase;
 // TL-04, TL-07 (TASK-096 A; GAP-073; IP-16; NV-04; ROUTE-229): an evidence registration sent from a form returns to that
 // form — every page hosting the in-place upload, a record named by its exact public id, the query re-serialized with the
 // routes' real cursors —, a refusal stays in the form with nothing registered, and every other return address answers
-// PG-038: another host or scheme, `//`, `\`, `:`, `#`, a control character, an array, a value past the bound.
+// PG-038: another host or scheme, `//`, `\`, `:`, `#`, a control character, an array, a value past the bound, as sent or once
+// re-serialized.
 
 uses(RefreshDatabase::class);
 
@@ -95,7 +96,7 @@ it('returns to every page hosting the in-place upload with its query, a refusal 
         ->and(EvidenceDocument::query()->sole()->is($this->registered))->toBeTrue();
 });
 
-it('answers PG-038 for every other return address, the length bound past the routes\' longest cursor (IP-16; ER-06; criterion 2)', function () {
+it('answers PG-038 for every other return address, the length bound past the routes\' longest cursor, as sent and once re-serialized (IP-16; ER-06; criterion 2)', function () {
     $id = (string) Str::uuid();
     $page = '/keuangan/kas-lain?tab=';
     // A scheme assembled at run time, never written whole in the repository.
@@ -133,5 +134,10 @@ it('answers PG-038 for every other return address, the length bound past the rou
 
     $longest = $page.str_repeat('a', 2048 - strlen($page));
     refusedFrom($this, $longest)->assertRedirect($longest);
+
+    // Re-escaping lengthens each `+` to `%20`: an address within the bound as sent but past it once re-serialized answers PG-038,
+    // one that still fits returns re-serialized (ER-06).
+    refusedFrom($this, $page.str_repeat('a', 2038 - strlen($page)).str_repeat('+', 10))->assertRedirectContains('/dokumen/bukti');
+    refusedFrom($this, $page.str_repeat('a', 2018 - strlen($page)).str_repeat('+', 10))->assertRedirect($page.str_repeat('a', 2018 - strlen($page)).str_repeat('%20', 10));
     expect(EvidenceDocument::query()->count())->toBe(1);
 });
