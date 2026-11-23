@@ -10,6 +10,8 @@
     /* Motion (K-2; Modern Web Guidance): the spinner turns, a skeleton pulses; the utilities' motion-reduce variants still them. */
     --animate-spin: spin var(--mc-dur-spin) linear infinite;
     --animate-pulse: pulse 1.4s ease-in-out infinite;
+    /* A deferred group's content arrives with a short rise and fade; once, on arrival, never on a poll's refresh. */
+    --animate-fade-in: fade-in var(--mc-dur-moderate) var(--ease-reveal) both;
 
     /* Type (K-3): no text under 12 px; the desktop page title 20/28. */
     --text-micro: 0.75rem;
@@ -33,6 +35,13 @@
     @keyframes pulse {
         50% {
             opacity: 0.55;
+        }
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            translate: 0 0.25rem;
         }
     }
 }

@@ -10,7 +10,7 @@ import { RegionError, RegionLoading } from '@/components/region-state';
 import { SignalGroup } from '@/components/signals';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
-import { date, money, quantity, time } from '@/lib/format';
+import { clock, date, money, quantity } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 
 export type SignalRow = { id: string; company: string | null; subject: string; ref: string | null; value: string | null; unit: string | null; at: string | null; href: string | null };
@@ -113,8 +113,12 @@ function useRow() {
     };
 }
 
-/** One deferred group: its spinner, its error, then its signals in the statement's order. */
-export function SignalSection({ data, reload, owner = false }: { data: SignalRead[] | Failed | undefined; reload: () => void; owner?: boolean }) {
+/**
+ * One deferred group: its spinner, its error, then its signals in the statement's order. With `summarizeEmpty` — APPR-042's
+ * pilot, PG-006 only (DIR-134 E5) — the signals with no row are named together in one line after the others, instead of a
+ * heading and a sentence each; every signal the account reads is still accounted for.
+ */
+export function SignalSection({ data, reload, owner = false, summarizeEmpty = false }: { data: SignalRead[] | Failed | undefined; reload: () => void; owner?: boolean; summarizeEmpty?: boolean }) {
     const { t } = useTranslation();
     const row = useRow();
 
@@ -126,10 +130,15 @@ export function SignalSection({ data, reload, owner = false }: { data: SignalRea
         return <RegionError reference="" onReload={reload} />;
     }
 
+    const titleOf = (signal: SignalRead): TranslationKey => (owner && signal.code === 'QS-18' ? 'signals.qs_18_attribution_title' : (TITLES[signal.code] ?? 'signals.qs_01_title'));
+    const shown = summarizeEmpty ? data.filter((signal) => signal.rows.length > 0) : data;
+    const clear = summarizeEmpty ? data.filter((signal) => signal.rows.length === 0) : [];
+
     return (
-        <div className="flex min-w-0 flex-col gap-5">
-            {data.map((signal) => {
-                const title = owner && signal.code === 'QS-18' ? 'signals.qs_18_attribution_title' : (TITLES[signal.code] ?? 'signals.qs_01_title');
+        <div className="flex min-w-0 flex-col gap-5 motion-safe:animate-fade-in">
+            {clear.length > 0 && shown.length === 0 && <p className="text-body text-text-secondary">{t('pages.pg_006.clear_tpl', { v: clear.map((signal) => t(titleOf(signal))).join(', ') })}</p>}
+            {shown.map((signal) => {
+                const title = titleOf(signal);
                 const empty = `signals.qs_${signal.code.slice(3)}_empty` as TranslationKey;
 
                 return (
@@ -153,6 +162,9 @@ export function SignalSection({ data, reload, owner = false }: { data: SignalRea
                     />
                 );
             })}
+            {clear.length > 0 && shown.length > 0 && (
+                <p className="border-t border-border pt-3 text-caption text-text-tertiary">{t('pages.pg_006.clear_tpl', { v: clear.map((signal) => t(titleOf(signal))).join(', ') })}</p>
+            )}
         </div>
     );
 }
@@ -174,7 +186,7 @@ export function Refresh({ groups }: { groups: string[] }) {
 
     return (
         <div className="flex items-center gap-3 text-caption text-text-tertiary">
-            <span>{t('states.updated_at', { waktu: time(at) })}</span>
+            <span>{t('states.updated_at', { waktu: clock(at) })}</span>
             <Button
                 variant="ghost"
                 size="sm"

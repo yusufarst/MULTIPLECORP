@@ -4365,5 +4365,9 @@
     "pages.pg_004.copied": "Tersalin",
     "pages.pg_004.copy_failed": "Tidak dapat menyalin. Teksnya sudah dipilih; salin dengan Ctrl C.",
     "pages.pg_004.codes_use": "Pakai salah satu kode ini untuk masuk bila Anda tidak bisa membuka aplikasi autentikator.",
-    "pages.pg_004.saved_ack": "Saya sudah menyimpan kode pemulihan di tempat yang aman."
+    "pages.pg_004.saved_ack": "Saya sudah menyimpan kode pemulihan di tempat yang aman.",
+    "pages.pg_006.clear_tpl": "Tidak ada yang perlu ditindaklanjuti: :v.",
+    "pages.pg_006.start_title": "Mulai di sini",
+    "pages.pg_006.start_line": "Tambahkan perusahaan pertama Anda. Setelah itu proyek, pembelian, dan keuangan bisa dicatat.",
+    "pages.pg_006.start_action": "Atur Perusahaan"
 }

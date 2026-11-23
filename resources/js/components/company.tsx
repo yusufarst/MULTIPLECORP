@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 // server sends and never computes it; the view is a page control kept in the address, never in storage (D-IA-02).
 export function CompanyTag({ code, className }: { code: string; className?: string }) {
     return (
-        <Badge tone="outline" size="sm" data-code className={cn('font-semibold', className)}>
+        <Badge tone="outline" size="sm" data-code className={cn('rounded-xs font-semibold', className)}>
             {code}
         </Badge>
     );

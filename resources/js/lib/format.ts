@@ -96,11 +96,16 @@ export function dateLong(value: string): string {
     return `${String(dayOfMonth)} ${MONTHS_LONG[month - 1] ?? ''} ${String(year)}`;
 }
 
-/** A time on the 24-hour clock in WIB: "14.05 WIB". */
-export function time(instant: string): string {
+/** A time on the 24-hour clock in WIB, without the zone, for a sentence that names "WIB" itself: "14.05" (GF-07). */
+export function clock(instant: string): string {
     const local = wib(instant);
 
-    return `${two(local.getUTCHours())}.${two(local.getUTCMinutes())} WIB`;
+    return `${two(local.getUTCHours())}.${two(local.getUTCMinutes())}`;
+}
+
+/** A time on the 24-hour clock in WIB: "14.05 WIB". */
+export function time(instant: string): string {
+    return `${clock(instant)} WIB`;
 }
 
 /** A date with its time: "02 Okt 2026 14.05 WIB". */

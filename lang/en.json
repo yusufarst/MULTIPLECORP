@@ -4365,5 +4365,9 @@
     "pages.pg_004.copied": "Copied",
     "pages.pg_004.copy_failed": "Could not copy. The text is selected; copy it with Ctrl C.",
     "pages.pg_004.codes_use": "Use one of these codes to sign in when you cannot open your authenticator app.",
-    "pages.pg_004.saved_ack": "I have saved the recovery codes in a safe place."
+    "pages.pg_004.saved_ack": "I have saved the recovery codes in a safe place.",
+    "pages.pg_006.clear_tpl": "Nothing to follow up: :v.",
+    "pages.pg_006.start_title": "Start here",
+    "pages.pg_006.start_line": "Add your first company. Projects, purchases and finance can then be recorded.",
+    "pages.pg_006.start_action": "Set Up Companies"
 }

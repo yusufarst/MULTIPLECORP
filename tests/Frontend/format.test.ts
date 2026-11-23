@@ -35,3 +35,10 @@ void test('chooses a counted form and replaces named placeholders as Laravel doe
     assert.equal(replace(':Jenis sudah terbit dengan nomor :nomor.', { jenis: 'kuitansi', nomor: 'ARJ/KWT/2026/10/0001' }), 'Kuitansi sudah terbit dengan nomor ARJ/KWT/2026/10/0001.');
     assert.equal(replace(':waktu dan :w', { w: 'X', waktu: 'Y' }), 'Y dan X');
 });
+
+void test('clock() is time() without its zone, for a sentence that names "WIB" itself (GF-07; APPR-042 pilot)', () => {
+    for (const instant of ['2026-11-24T03:44:00Z', '2026-11-23T17:05:00Z']) {
+        assert.equal(`${format.clock(instant)} WIB`, format.time(instant));
+        assert.doesNotMatch(format.clock(instant), /WIB/);
+    }
+});

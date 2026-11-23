@@ -20814,6 +20814,30 @@
             "source": "CR-002 K-5 — the recovery-code acknowledgement, the pilot only (DIR-134 E5)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "pages.pg_006.clear_tpl": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-6 — PG-006's empty-group summary, the pilot only (DIR-134 E5)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.start_title": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-6 — PG-006's first step without K-6 (blueprint D1)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.start_line": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-6 — PG-006's first step without K-6 (blueprint D1)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.start_action": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-6 — PG-006's first step without K-6 (blueprint D1)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
