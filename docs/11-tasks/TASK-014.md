@@ -28,6 +28,7 @@ CAP-14 and AC-14 require natural Indonesian by default with English through a sw
 
 - TASK-015 — Design system — tokens, components, patterns and states
 - TASK-023 — My account — password, two-step verification, Google link and language
+- TASK-097 — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01)
 
 **PARALLEL SAFE:** NO — every UI Task adds keys to the same catalogue
 

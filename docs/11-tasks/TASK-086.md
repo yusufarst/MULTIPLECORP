@@ -25,6 +25,7 @@ The validators are confirmed but their review capacity is not (DEP-06; [GAP-014]
 - TASK-070 — Full release regression and the device UAT's preparation
 - TASK-078 — Staging stack, the two applications' isolation and the provider features
 - TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
+- TASK-097 — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01)
 
 **BLOCKS:**
 
