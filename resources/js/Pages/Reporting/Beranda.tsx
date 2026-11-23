@@ -256,7 +256,8 @@ function KpiCards({ figures }: { figures: Figures }) {
     );
 }
 
-/** The companies side by side, the consolidated figures being the cards above (CS-08); on the phone one block per company. */
+/** The companies side by side, the consolidated figures being the cards above (CS-08); below 1,200 px, where its seven columns
+    do not fit, one block per company (§6: a table that does not fit becomes rows). */
 function CompanyTable({ rows }: { rows: Figures[] }) {
     const { t } = useTranslation();
     const fields = (row: Figures): [TranslationKey, string][] => [
@@ -270,9 +271,9 @@ function CompanyTable({ rows }: { rows: Figures[] }) {
 
     return (
         <>
-            <ul role="list" aria-label={t('pages.pg_006.figures')} className="flex min-w-0 flex-col divide-y divide-border md:hidden">
+            <ul role="list" aria-label={t('pages.pg_006.figures')} className="flex min-w-0 flex-col divide-y divide-border md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-5 md:divide-y-0 xl:hidden">
                 {rows.map((row) => (
-                    <li key={row.company ?? 'gabungan'} className="flex min-w-0 flex-col gap-2 py-3 first:pt-0 last:pb-0">
+                    <li key={row.company ?? 'gabungan'} className="flex min-w-0 flex-col gap-2 py-3 first:pt-0 last:pb-0 md:py-0">
                         <p data-code className="text-body font-semibold text-text-primary">
                             {row.company ?? t('pages.pg_006.view.gabungan')}
                         </p>
@@ -288,7 +289,7 @@ function CompanyTable({ rows }: { rows: Figures[] }) {
                     </li>
                 ))}
             </ul>
-            <div className="min-w-0 max-md:hidden">
+            <div className="min-w-0 max-xl:hidden">
                 <Table aria-label={t('pages.pg_006.figures')} scrollLabel={t('pages.pg_006.figures')}>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
