@@ -1,0 +1,103 @@
+/* APPR-042 (DIR-134 E1, E8): the UX-first pilot's prototype-only tokens, on the non-merge branch `pilot/ux-v2` alone —
+   Grafit & Kobalt, a provisional direction and not a final palette — with the shared-foundation corrections the pilot
+   validates. TASK-097 takes from here only what conforms to the current contracts, never these tokens. */
+
+@theme {
+    /* The bands (TASK-097's defect): the `sm:` utilities apply again, at §6's tablet band — §6 names no 640 px band, so
+       none is added; TASK-097 gives each utility the band of its own intent. */
+    --breakpoint-sm: 48rem;
+
+    /* Motion (K-2; Modern Web Guidance): the spinner turns, a skeleton pulses; the utilities' motion-reduce variants still them. */
+    --animate-spin: spin var(--mc-dur-spin) linear infinite;
+    --animate-pulse: pulse 1.4s ease-in-out infinite;
+
+    /* Type (K-3): no text under 12 px; the desktop page title 20/28. */
+    --text-micro: 0.75rem;
+    --text-pill-sm: 0.75rem;
+    --text-title: calc(20 * var(--tu));
+    --text-title--line-height: calc(28 * var(--tu));
+    --text-title--letter-spacing: -0.01em;
+
+    /* The shell (K-1, K-4): the tablet's labelled rail, the menu drawer beside it, the sign-in card (K-5). */
+    --spacing-rail: 5rem;
+    --spacing-nav-drawer: 20rem;
+    --spacing-auth: 25rem;
+    --shadow-drawer-start: 1px 0 0 rgb(15 16 20 / 0.06), 24px 0 48px rgb(15 16 20 / 0.12);
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes pulse {
+        50% {
+            opacity: 0.55;
+        }
+    }
+}
+
+/* `:root:root` outranks every `:root` block of the tokens, their band overrides included. */
+:root:root {
+    /* Grafit & Kobalt: graphite for the primary action, cobalt only for links, focus and the active menu; status colours never
+       compete with a button. Contrast: graphite on white 15.97:1, cobalt 6.47:1. */
+    --brand-primary: #1f2226;
+    --brand-primary-rim: #121416;
+    --brand-primary-hover: #2c3036;
+    --brand-primary-press: #15171a;
+    --brand-primary-deep: #0f1113;
+    --brand-accent: #2a56c6;
+    --brand-accent-strong: #1f45a8;
+    --brand-accent-link: #2a56c6;
+    --brand-accent-soft: #8da5e0;
+    --brand-link-soft: #3d63c9;
+    --brand-link-strong: #1d3f99;
+    --brand-link-rule: #a9bbe9;
+    --brand-tint-50: #f5f8fe;
+    --brand-tint-100: #edf2fc;
+    --brand-tint-100-hover: #e3eafa;
+    --brand-tint-150: #edf2fc;
+    --brand-tint-200: #dde6f8;
+    --brand-on-tint: #1f45a8;
+    --brand-nav-hover: #f1f3f7;
+    --brand-nav-press: #e8ecf4;
+    --brand-fill-rule: #c9d5f2;
+    --brand-fill-wash: #f8fafd;
+    --brand-signal: #2a56c6;
+    --brand-cta: #1f2226;
+    --brand-cta-band: #2c3036;
+    --brand-cta-hover: #2c3036;
+    --brand-cta-ink: #ffffff;
+    --brand-cta-rim: #121416;
+    --brand-cta-glow: rgb(31 34 38 / 0.2);
+    --brand-cta-shadow: rgb(31 34 38 / 0.18);
+    --brand-focus-halo: rgb(42 86 198 / 0.35);
+    --brand-progress: #2a56c6;
+    --brand-step-done-line: #c9d5f2;
+    --brand-step-done-dot: #9fb4ea;
+
+    --color-canvas: #f7f7f6;
+    --color-text-primary: #18191b;
+    --color-border-input: #86867f;
+    /* The accent button's ink on the light cobalt tint (about 7:1). */
+    --color-text-on-lime: #1f45a8;
+
+    /* The shell: the 248 px sidebar; the phone's page title 18/24 and its top bar's 16/22 (K-3). */
+    --sidebar-width: 15.5rem;
+    /* A module's pages hang from a guide line under the centre of its 20 px icon. */
+    --nav-leaf-inset: calc(var(--nav-icon-inset) + 0.5625rem);
+    /* Rows and hovers neutral, not the olive of APPR-011's palette. */
+    --color-row-hover: #f6f7f9;
+    --m-text-title: 1.125rem;
+    --m-text-title-lh: 1.5rem;
+    --m-text-heading: 1rem;
+    --m-text-heading-lh: 1.375rem;
+}
+
+/* A text field is 16 px under a coarse pointer, the sign-in fields included, so no browser zooms into it (D-DS-02). */
+@media (pointer: coarse) {
+    :root:root {
+        --text-input-size: 1rem;
+        --text-auth-input-size: 1rem;
+    }
+}

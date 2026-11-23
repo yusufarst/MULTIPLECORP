@@ -4351,5 +4351,19 @@
     "pages.pg_008.conditions_empty": "No condition is still open.",
     "pages.pg_008.empty": "No activity in this window.",
     "pages.pg_008.all_companies": "All companies",
-    "receiving.list.open_lines": ":count line not yet received|:count lines not yet received"
+    "receiving.list.open_lines": ":count line not yet received|:count lines not yet received",
+    "shell.nav.group_operations": "Operations",
+    "shell.nav.group_finance_documents": "Finance & documents",
+    "shell.nav.group_administration": "Administration",
+    "shell.nav.menu": "Menu",
+    "pages.pg_004.step_of": "Step :nomor of :jumlah",
+    "pages.pg_004.step_scan": "Scan the QR code",
+    "pages.pg_004.step_code": "Enter the code",
+    "pages.pg_004.step_save": "Save the recovery codes",
+    "pages.pg_004.copy_key": "Copy key",
+    "pages.pg_004.copy_codes": "Copy all codes",
+    "pages.pg_004.copied": "Copied",
+    "pages.pg_004.copy_failed": "Could not copy. The text is selected; copy it with Ctrl C.",
+    "pages.pg_004.codes_use": "Use one of these codes to sign in when you cannot open your authenticator app.",
+    "pages.pg_004.saved_ack": "I have saved the recovery codes in a safe place."
 }

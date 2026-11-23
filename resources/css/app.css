@@ -1,6 +1,8 @@
 /* Tailwind scans only the application's views and frontend code, not the repository's documents. */
 @import 'tailwindcss' source(none);
 @import './tokens.css';
+/* APPR-042's pilot tokens, on the non-merge branch `pilot/ux-v2` alone. */
+@import './pilot.css';
 
 @source '../views';
 @source '../js';

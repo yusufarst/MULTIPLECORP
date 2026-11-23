@@ -4,17 +4,17 @@
 // success loads the next page as a full document (AU-06; H7-12). "Lupa kata sandi?" answers that the Owner issues a
 // reset link (DEP-08) — no reset request exists. With a Google client configured, "Lanjutkan dengan Google" leads
 // to ROUTE-102 and its one generic failure shows here (AU-22; GLC-09; TASK-019), with H7-16's shared-device advice.
-import { Head, router, useForm } from '@inertiajs/react';
+// APPR-042's pilot: the page sits in the shared sign-in frame (CR-002 K-5); its behaviour is unchanged.
+import { router, useForm } from '@inertiajs/react';
 import { useEffect, useId, useState } from 'react';
 
 import GoogleButton from '@/components/GoogleButton';
-import LanguageSwitch from '@/components/LanguageSwitch';
 import { PasswordInput } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import AuthLayout from '@/layouts/AuthLayout';
 import { languageQuery, useTranslation } from '@/lib/i18n';
-import { documentTitle } from '@/lib/title';
 
 export default function SignIn({
     notice,
@@ -46,14 +46,9 @@ export default function SignIn({
     const error = form.errors.email ?? form.errors.password;
 
     return (
-        <main id="konten" className="mx-auto flex min-h-dvh w-full max-w-sheet-sm flex-col gap-6 bg-canvas px-m-gutter py-8">
-            <Head title={documentTitle(t('pages.pg_001.title'))} />
-            <div className="flex justify-end">
-                <LanguageSwitch />
-            </div>
-            <h1 className="text-m-title font-semibold text-text-primary md:text-title">{t('pages.pg_001.heading')}</h1>
+        <AuthLayout title={t('pages.pg_001.title')} heading={t('pages.pg_001.heading')}>
             {googleFailed !== null && (
-                <p role="alert" className="text-body font-medium text-danger-fg">
+                <p role="alert" className="rounded-md bg-danger-bg px-3 py-2 text-body font-medium text-danger-fg">
                     {googleFailed}
                 </p>
             )}
@@ -105,21 +100,26 @@ export default function SignIn({
                     />
                     <FieldError id={`${id}-error`}>{error}</FieldError>
                 </Field>
-                <Button type="submit" variant="primary" size="lg" pending={form.processing} pendingLabel={t('pages.pg_001.submit')}>
+                <Button type="submit" variant="primary" size="lg" className="mt-2" pending={form.processing} pendingLabel={t('pages.pg_001.submit')}>
                     {t('pages.pg_001.submit')}
                 </Button>
             </form>
             {google && (
                 <div className="flex flex-col gap-3">
-                    <p className="text-center text-body text-text-secondary">{t('pages.pg_001.or')}</p>
+                    <p className="flex items-center gap-3 text-caption text-text-tertiary">
+                        <span aria-hidden="true" className="h-px flex-1 bg-border" />
+                        {t('pages.pg_001.or')}
+                        <span aria-hidden="true" className="h-px flex-1 bg-border" />
+                    </p>
                     <GoogleButton href={`/masuk/google${languageQuery()}`} label={t('pages.pg_001.google')} />
-                    <p className="text-body text-text-secondary">{t('auth.shared_device_advice')}</p>
+                    <p className="text-caption text-text-secondary">{t('auth.shared_device_advice')}</p>
                 </div>
             )}
-            <div className="flex flex-col items-start gap-1">
+            <div className="flex flex-col items-start gap-1 border-t border-border pt-4">
                 <Button
                     variant="ghost"
                     size="sm"
+                    className="-ml-4"
                     aria-expanded={forgot}
                     onClick={() => {
                         setForgot(true);
@@ -129,6 +129,6 @@ export default function SignIn({
                 </Button>
                 {forgot && <p className="text-body text-text-secondary">{t('pages.pg_001.forgot_answer')}</p>}
             </div>
-        </main>
+        </AuthLayout>
     );
 }

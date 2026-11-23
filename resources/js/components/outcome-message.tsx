@@ -72,7 +72,8 @@ export function OutcomeMessage({ answer, action }: { answer: Answer; action?: Re
         <div ref={ref} tabIndex={takesFocus ? -1 : undefined} data-answer={answer.kind} className="outline-none">
             <Alert tone={face.tone} icon={face.icon} title={t(face.label)} action={action}>
                 {answer.text}
-                {answer.kind === 'FAILED' && answer.reference !== undefined && (
+                {/* "Kode referensi" only with a code the server gave (TASK-097's defect). */}
+                {answer.kind === 'FAILED' && answer.reference !== undefined && answer.reference.trim() !== '' && (
                     <span data-code className="mt-1 block text-caption text-text-tertiary">
                         {t('outcome.reference', { kode: answer.reference })}
                     </span>

@@ -4,7 +4,7 @@ import { type ReactNode, useRef, useState } from 'react';
 
 import { GlobalSearch } from '@/components/shell/global-search';
 import { AccountMenu, CreateMenu, roleLabel } from '@/components/shell/menus';
-import { BottomBar, MoreDrawer, Sidebar } from '@/components/shell/navigation';
+import { BottomBar, NavigationDrawer, PHONE, Sidebar, TABLET, useMediaQuery } from '@/components/shell/navigation';
 import { NoticeStrip, ShortcutsHelp } from '@/components/shell/notices';
 import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,7 @@ import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { type AccountHints, BUILT } from '@/lib/navigation';
 import { type ReauthGateway, SessionGuard } from '@/lib/session-guard';
 import { useShortcut } from '@/lib/shortcuts';
-import { documentTitle } from '@/lib/title';
+import { APPLICATION, documentTitle } from '@/lib/title';
 import { cn } from '@/lib/utils';
 
 // The application shell every authenticated page sits in (DESIGN_SYSTEM PT-01, PT-02; INFORMATION_ARCHITECTURE
@@ -51,7 +51,10 @@ export default function AppShell({ title, back, focused = false, children, built
     const account = page.props.auth;
     const pathname = new URL(page.url, window.location.origin).pathname;
     const [rail, setRail] = useState(() => composer && window.matchMedia('(width >= 64.0625rem) and (width < 80rem)').matches);
-    const [more, setMore] = useState(false);
+    // APPR-042's pilot: the tablet band always shows the rail (§6; KB-03; TASK-097's defect), the phone the bottom bar.
+    const phone = useMediaQuery(PHONE);
+    const tablet = useMediaQuery(TABLET);
+    const [menu, setMenu] = useState(false);
     const [phoneSearch, setPhoneSearch] = useState(false);
     const [help, setHelp] = useState(false);
     const [leaving, setLeaving] = useState(false);
@@ -94,11 +97,16 @@ export default function AppShell({ title, back, focused = false, children, built
                 <Sidebar
                     account={account}
                     pathname={pathname}
-                    rail={rail}
+                    rail={rail || tablet}
                     onToggle={() => {
                         setRail((value) => !value);
                     }}
-                built={built} />
+                    onMenu={() => {
+                        setMenu(true);
+                    }}
+                    menuOpen={menu}
+                    built={built}
+                />
                 <div className="flex min-w-0 flex-1 flex-col">
                     <header className="sticky top-0 z-(--z-bar) flex h-appbar items-center gap-2 border-b border-border-subtle bg-surface px-m-gutter md:h-header md:gap-3 md:px-gutter">
                         {back !== undefined && (
@@ -106,7 +114,14 @@ export default function AppShell({ title, back, focused = false, children, built
                                 <Icon icon={ArrowLeft} size="md" />
                             </Button>
                         )}
-                        <p className="min-w-0 flex-1 truncate text-m-heading font-semibold text-text-primary md:hidden">{title}</p>
+                        {/* One visible title on the phone (§6, §11; TASK-097's defect): a page with its own header names itself there,
+                            and the bar then carries the wordmark — the document title already names the application. */}
+                        {back === undefined && (
+                            <span aria-hidden="true" className="hidden text-heading-sm font-semibold tracking-tight text-text-primary max-md:group-has-[[data-slot=page-header]]/shell:inline">
+                                {APPLICATION}
+                            </span>
+                        )}
+                        <p className="min-w-0 flex-1 truncate text-m-heading font-semibold text-text-primary group-has-[[data-slot=page-header]]/shell:invisible md:hidden">{title}</p>
                         {onSearchPage ? <div className="min-w-0 flex-1 max-md:hidden" /> : (
                             <>
                                 <div className="min-w-0 flex-1 max-md:hidden md:max-w-search">
@@ -143,17 +158,19 @@ export default function AppShell({ title, back, focused = false, children, built
                             setPhoneSearch(true);
                         }
                     }}
-                    onMore={() => {
-                        setMore(true);
+                    onMenu={() => {
+                        setMenu(true);
                     }}
+                    menuOpen={menu}
                     built={built}
                 />
             )}
-            <MoreDrawer
+            <NavigationDrawer
                 account={account}
                 pathname={pathname}
-                open={more}
-                onOpenChange={setMore}
+                open={menu}
+                onOpenChange={setMenu}
+                phone={phone}
                 built={built}
                 accountItems={
                     <div className="flex flex-col gap-2">

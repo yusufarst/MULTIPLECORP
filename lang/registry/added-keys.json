@@ -20730,6 +20730,90 @@
             "source": "GAP-073 defect B — PG-021's open lines, no sum across products or units (CALC-03; DESIGN_SYSTEM §16)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "shell.nav.group_operations": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-1 blueprint C — a provisional group label (DIR-134 E7)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shell.nav.group_finance_documents": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-1 blueprint C — a provisional group label (DIR-134 E7)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shell.nav.group_administration": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-1 blueprint C — a provisional group label (DIR-134 E7)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shell.nav.menu": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-1 blueprint C — the phone bar's and the rail's menu",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.step_of": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — PG-004's steps",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.step_scan": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — PG-004's steps (AUTH_JOURNEYS §2.4)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.step_code": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — PG-004's steps (AUTH_JOURNEYS §2.4)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.step_save": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — PG-004's steps (AUTH_JOURNEYS §2.4)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.copy_key": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — PG-004's text key",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.copy_codes": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — PG-004's recovery codes (DIR-134 E5)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.copied": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — the copy button's answer",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.copy_failed": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — the copy button's answer",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.codes_use": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — PG-004's recovery codes (AU-19)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.saved_ack": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-5 — the recovery-code acknowledgement, the pilot only (DIR-134 E5)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -35,6 +35,8 @@ const twMerge = extendTailwindMerge({
             radius: ['xs', 'sm', 'md', 'lg', 'xl', 'sheet', 'full'],
             shadow: ['xs', 'card', 'card-hover', 'pop', 'raised', 'menu', 'toast', 'modal', 'drawer', 'footer', 'cta'],
             breakpoint: ['md', 'lg', 'xl', 'composer'],
+            // APPR-042's pilot: the sheet widths a caller can override — the menu drawer's own over the sheet's.
+            spacing: ['sheet-sm', 'sheet-lg', 'nav-drawer'],
         },
     },
 });

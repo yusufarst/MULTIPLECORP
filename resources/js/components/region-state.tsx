@@ -5,19 +5,31 @@ import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyDescription } from '@/components/ui/empty';
 import { Icon } from '@/components/ui/icon';
-import { Spinner } from '@/components/ui/spinner';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useDelayed } from '@/components/ui/spinner';
 import { useTranslation } from '@/lib/i18n';
+import { cn } from '@/lib/utils';
 
 // PT-19's states of a region (DESIGN_SYSTEM §9.4, §10 "States of a region", §12.3): loading with a spinner after
 // 300 ms, never a skeleton; empty — one sentence and at most one action, a search's naming its term; a part's
 // error — "Bagian Ini Tidak Dapat Dimuat", the reference code and "Muat Ulang Bagian Ini", the rest of the page
 // working —; one region never blanks the page. Each change is announced (WCAG 4.1.3).
-export function RegionLoading() {
+// APPR-042's pilot (CR-002 K-2): a region loads behind lines in the shape of its content, shown after the same 300 ms,
+// and says "Memuat" in a live region that exists before the words arrive, so the change is heard.
+export function RegionLoading({ lines = 3 }: { lines?: number }) {
     const { t } = useTranslation();
+    const shown = useDelayed(true);
 
     return (
-        <div data-region-state="loading" className="flex min-h-control-xl items-center justify-center py-6">
-            <Spinner label={t('states.loading')} size="md" />
+        <div data-region-state="loading" role="status" className="flex min-h-control-xl flex-col justify-center gap-3 py-6">
+            {shown && (
+                <>
+                    <span className="sr-only">{t('states.loading')}</span>
+                    {Array.from({ length: lines }, (_, line) => (
+                        <Skeleton key={line} className={cn('h-4', line === lines - 1 ? 'w-3/5' : 'w-full')} />
+                    ))}
+                </>
+            )}
         </div>
     );
 }
@@ -63,9 +75,12 @@ export function RegionError({ reference, onReload }: { reference: string; onRelo
                     </Button>
                 }
             >
-                <span data-code className="text-caption text-text-tertiary">
-                    {t('outcome.reference', { kode: reference })}
-                </span>
+                {/* "Kode referensi" only with a code the server gave (TASK-097's defect). */}
+                {reference.trim() !== '' && (
+                    <span data-code className="text-caption text-text-tertiary">
+                        {t('outcome.reference', { kode: reference })}
+                    </span>
+                )}
             </Alert>
         </div>
     );
@@ -94,9 +109,11 @@ export function SystemPage({ kind, message, reference, back, page = false }: { k
                 {t(face.title)}
             </Title>
             <EmptyDescription>{message}</EmptyDescription>
-            <span data-code className="text-caption text-text-tertiary">
-                {t('outcome.reference', { kode: reference })}
-            </span>
+            {reference.trim() !== '' && (
+                <span data-code className="text-caption text-text-tertiary">
+                    {t('outcome.reference', { kode: reference })}
+                </span>
+            )}
             {back}
         </Empty>
     );
