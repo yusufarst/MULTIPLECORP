@@ -1,0 +1,76 @@
+Owner's authorization received in session during execution, 2026-11-23 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received: the Owner's answer to the executor's question "Otorisasi Change 31 (satu Task konsolidasi cacat fondasi, D) sesuai usulan?", sent as the written directive below after pull request #102's first commit (aeedbdc) was reviewed. No secret, address, host name, path or account in it.
+
+OWNER DIRECTIVE — AUTHORIZE CHANGE 31, RESOLVE PR #102, AND START THE UX PILOT
+I explicitly authorize Change 31 for exactly ONE consolidated shared-foundation defect Task, subject to the repository's mandatory CHANGE_CONTROL, DIR, APPR, review, and CI requirements.
+This authorization permits the approved Task Plan to expand from 96 to 97 Tasks. Do not create additional Tasks without separate authorization.
+1. CHANGE 31 — APPROVED
+The consolidated correction scope includes the verified shared-foundation defects identified in the A–F proposal:
+
+* Broken responsive `sm:` breakpoint.
+* Nonfunctional spinner and loading animation.
+* Incorrect touch-input typography.
+* Duplicate page headings.
+* Missing reference codes in applicable error messages.
+* Incorrect tablet sidebar behavior.
+* Duplicate WIB labels.
+* GF-01 document composition accuracy defect.
+
+Retain evidence-based DIR-111 severity classifications.
+Give GF-01 appropriate release-blocking priority.
+Do not silently expand this Task to include the complete visual redesign, unrelated page-specific issues, or new business functionality.
+Reuse validated pilot-foundation code where technically and contractually appropriate.
+2. EXPLICIT PILOT AUTHORIZATION — APPR-042
+I explicitly approve the following narrowly scoped exception:
+An isolated, non-merge UX validation pilot may be implemented outside the normal READY Task workflow, provided the exception is formally recorded under APPR-042 and the applicable governance rules.
+The authorized boundaries are:
+
+* One isolated pilot worktree and branch.
+* Four areas: Masuk/2FA, Beranda, Proyek, and Gudang > Stok.
+* Shared navigation shell and reusable design primitives.
+* Temporary prototype-only design tokens, including deviations from the existing approved visual tokens.
+* Existing local fixtures and test environments only.
+* No production deployment.
+* No automatic merge to main.
+* No unauthorized changes to PRD business behavior, permissions, routes, authentication, or tenant isolation.
+
+This message is the explicit Owner approval for these pilot boundaries. Preserve it as an exact source record.
+Do not represent this approval as authorization for final visual design, full production redesign, or GO-LIVE.
+3. RESOLVE CODEX P1 ON PR #102
+PR #102 at `aeedbdc` received a material Codex P1 finding because APPR-042 declared an exception approved without sufficient explicit Owner authorization.
+Use the explicit authorization in this message to correct the governance record, approval status, and CURRENT_HANDOFF consistently.
+Record the source accurately and do not fabricate an earlier approval date.
+Ensure all other Codex findings are resolved before merge.
+4. INVESTIGATE CI FAILURES
+The currently observed failures include Verify and Localization.
+Inspect the actual logs and artifacts, including Docker stack startup and the db-roles connection-refused evidence.
+Distinguish infrastructure readiness problems from product defects.
+Apply only justified corrections or permitted reruns under the existing CI governance.
+Do not weaken tests, bypass mandatory gates, change production credentials, or broaden database privileges without authorization.
+Merge PR #102 only after every mandatory review and CI requirement is satisfied.
+5. BEGIN THE FUNCTIONAL UX PILOT
+After PR #102 is legitimately merged and pilot governance is effective, proceed with the first authorized implementation slice.
+Prioritize:
+
+1. Shared design foundation.
+2. Responsive navigation shell.
+3. Authentication and 2FA.
+4. Error, loading, empty, and success feedback.
+
+Then continue with Beranda, Proyek, and Gudang > Stok within the approved pilot scope.
+Use customized shadcn/ui, Base UI, and the already installed Modern Web Guidance.
+Do not unnecessarily reinstall or overwrite customized dependencies.
+Build interactive, testable workflows rather than static mockups.
+Prepare visual evidence for desktop, tablet, and mobile, plus browser and accessibility tests.
+Reuse previous audits and blueprints. Do not restart completed research.
+6. RELEASE PROTECTION
+The approved redesign must reach its required acceptance state before production GO-LIVE.
+Keep TASK-078, staging, production, VPS, Coolify, DNS, live databases, and BantuKasir untouched.
+Do not deploy or declare GO-LIVE.
+7. EXECUTION EFFICIENCY
+Do not ask again for approval of Change 31 or the specifically authorized APPR-042 pilot boundaries.
+Complete the formal records and follow mandatory repository gates.
+Avoid unnecessary agents, repeated audits, redundant CI runs, and additional Task creation.
+Continue autonomously within the approved boundaries.
+If a genuinely new mandatory Owner decision is required, identify its exact scope and governing rule.
+ALL visible coding activity, progress reports, explanations, and final communication MUST be in Bahasa Indonesia.
+Report the corrected PR #102 status, formal Change 31 status, the first pilot implementation result, and remaining material blockers.

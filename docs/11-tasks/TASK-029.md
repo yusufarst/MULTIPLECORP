@@ -41,6 +41,7 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 - TASK-059 — Search and scanning
 - TASK-074 — Backup tooling, the off-server copy and the drill procedures
 - TASK-092 — Defect D5 — the composer's paper fit without a resize-observer loop
+- TASK-097 — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01)
 
 **PARALLEL SAFE:** NO — it owns the document chain (LK-30), the issue's draw at LK-31 and the template contract that every issuing Task builds on
 

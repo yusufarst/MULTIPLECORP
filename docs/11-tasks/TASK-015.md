@@ -32,6 +32,7 @@ A consistent, accessible, comfortable interface in natural Indonesian is V1's ex
 - TASK-090 — Defect D3 — the number's period on a backdated numbered command (UXS-14)
 - TASK-091 — Defect D4 — a popover opened inside a modal layer stacks above it
 - TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
+- TASK-097 — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01)
 
 **PARALLEL SAFE:** NO — every page Task composes these components
 
