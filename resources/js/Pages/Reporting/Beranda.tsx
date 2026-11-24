@@ -19,7 +19,7 @@ import { Icon } from '@/components/ui/icon';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { failed, type Failed, Refresh, type SignalRead, SignalSection } from '@/features/home/signals';
 import AppShell from '@/layouts/AppShell';
-import { dateTime, money, time } from '@/lib/format';
+import { clock, dateTime, money } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { BUILT } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
@@ -173,7 +173,7 @@ function PeriodFigures({ data, view }: { data: Period | Failed | undefined; view
                     ]}
                 />
             )}
-            <p className="text-caption text-text-tertiary">{t('pages.pg_006.as_of_tpl', { v: time(data.as_of) })}</p>
+            <p className="text-caption text-text-tertiary">{t('pages.pg_006.as_of_tpl', { v: clock(data.as_of) })}</p>
             <Table aria-label={t('pages.pg_006.figures')} scrollLabel={t('pages.pg_006.figures')}>
                 <TableHeader>
                     <TableRow className="hover:bg-transparent">

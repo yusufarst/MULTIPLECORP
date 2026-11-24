@@ -34,7 +34,7 @@ export function ChoicesFind({ disabled, onFind, label, help }: { disabled: boole
 
     return (
         <div data-slot="dispatch-find" className="flex min-w-0 flex-wrap items-end gap-3">
-            <FormField label={label ?? t('dispatch.line.find')} help={help ?? t('dispatch.line.more')} className="min-w-0 sm:w-80">
+            <FormField label={label ?? t('dispatch.line.find')} help={help ?? t('dispatch.line.more')} className="min-w-0 md:w-80">
                 {(control) => <Input {...control} value={text} maxLength={120} disabled={disabled} onChange={(event) => { setText(event.target.value); }} />}
             </FormField>
             <Button variant="outline" disabled={disabled || text.trim() === ''} onClick={() => { onFind(text.trim()); }}>{t('dispatch.line.find_action')}</Button>

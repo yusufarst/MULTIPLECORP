@@ -92,3 +92,9 @@ it('writes the renderer\'s document with the bundled fonts by their relative add
     expect($html)->toStartWith('<!doctype html><html lang="id">')->toContain('<link rel="stylesheet" href="fonts.css">')->toContain('@page document')
         ->not->toContain('http://')->not->toContain('https://');
 });
+
+it('gives the issued document\'s body no margin of its own, so its blocks sit on the page margins as the preview\'s do (GF-01)', function () {
+    $html = MustacheTemplates::document(MustacheTemplates::render('DOC-09', paperOf('DOC-09', false)));
+
+    expect($html)->toContain('<style>body{margin:0}');
+});

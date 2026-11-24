@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTab } from '@/components/ui/tabs';
 import { useLabel } from '@/features/reporting/report-view';
 import AppShell from '@/layouts/AppShell';
-import { date, dateTime } from '@/lib/format';
+import { date, dateClock } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
 import { useStatusPoll } from '@/lib/use-status-poll';
 
@@ -112,11 +112,11 @@ export default function EksporSaya({ rows, more, tab }: Props) {
                                     <span className="text-label text-text-secondary">
                                         {row.from !== null && row.to !== null ? `${date(row.from)} – ${date(row.to)}` : ''}
                                         {row.companies.length > 0 ? ` · ${row.companies.join(', ')}` : ''}
-                                        {` · ${t('pages.pg_053.requested', { waktu: dateTime(row.requested_at) })}`}
+                                        {` · ${t('pages.pg_053.requested', { waktu: dateClock(row.requested_at) })}`}
                                     </span>
                                     {row.state === 'FAILED' && <span className="text-label text-text-secondary">{t('pages.pg_053.failed')}</span>}
                                     {row.state === 'WITHHELD' && <span className="text-label text-text-secondary">{t('pages.pg_053.withheld')}</span>}
-                                    {row.expires_at !== null && <span className="text-caption text-text-tertiary">{t('pages.pg_053.expires', { waktu: dateTime(row.expires_at) })}</span>}
+                                    {row.expires_at !== null && <span className="text-caption text-text-tertiary">{t('pages.pg_053.expires', { waktu: dateClock(row.expires_at) })}</span>}
                                 </div>
                                 <div className="flex min-w-0 flex-wrap items-center gap-3">
                                     <Status row={row} onSettled={reload} />

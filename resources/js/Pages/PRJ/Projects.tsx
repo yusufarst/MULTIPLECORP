@@ -140,7 +140,7 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
                     {companies.length > 1 && (
                         <CompanyFilter companies={companies} selected={filter.perusahaan} onChange={(codes) => { visit({ perusahaan: codes.join(','), setelah: null }); }} />
                     )}
-                    <FormField label={t('projects.field.state')} className="min-w-0 sm:w-60">
+                    <FormField label={t('projects.field.state')} className="min-w-0 md:w-60">
                         {(control) => (
                             <NativeSelect {...control} value={filter.status ?? ''} onChange={(event) => { visit({ status: event.target.value, setelah: null }); }}>
                                 <option value="">{t('projects.list.all_states')}</option>

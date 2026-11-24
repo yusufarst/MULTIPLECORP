@@ -187,7 +187,7 @@ export default function CorrectionCases({ branches, branch, rows, more, selected
                 <PageAnswer />
                 {selected !== null && !shown.some((row) => row.id === selected.id) && <CaseDetail key={selected.id} row={selected} branch={branch} canClose={can.close} />}
                 {branches.length > 1 && (
-                    <FormField label={t('cases.field.branch')} className="min-w-0 sm:w-80">
+                    <FormField label={t('cases.field.branch')} className="min-w-0 md:w-80">
                         {(control) => (
                             <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ perusahaan: event.target.value, setelah: null }); }}>
                                 {branches.map((option) => (

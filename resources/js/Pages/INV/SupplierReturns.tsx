@@ -272,7 +272,7 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
             {detail.causal !== null && <p className="text-body text-text-secondary">{detail.causal === '' ? t('returns.causal_other') : t('returns.causal', { nomor: detail.causal })}</p>}
             {answer !== null && answer.kind !== 'COMMITTED' && confirming === null && reversing === null && <OutcomeMessage answer={answer} action={outcome.unknown || close.unknown || reverse.unknown ? <Button variant="outline" size="sm" onClick={outcome.unknown ? outcome.retry : close.unknown ? close.retry : reverse.retry}>{t('actions.try_again')}</Button> : undefined} />}
             {detail.figures !== null && (
-                <dl data-slot="return-figures" className="grid min-w-0 grid-cols-1 gap-x-6 gap-y-2 text-body sm:grid-cols-2">
+                <dl data-slot="return-figures" className="grid min-w-0 grid-cols-1 gap-x-6 gap-y-2 text-body md:grid-cols-2">
                     {([['returned', 'cases.counter.returned_cost'], ['refunded', 'cases.counter.refunded_value'], ['replaced', 'cases.counter.replaced_value'], ['unrecovered', 'cases.counter.unrecovered_value']] as const).map(([field, label]) => (
                         <div key={field} className="flex min-w-0 flex-wrap justify-between gap-2"><dt className="text-text-secondary">{t(label)}</dt><dd><Money value={detail.figures?.[field] ?? '0'} /></dd></div>
                     ))}

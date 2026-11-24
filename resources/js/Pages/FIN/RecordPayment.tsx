@@ -247,7 +247,7 @@ export default function RecordPayment({ companies, company, client, origin, invo
                             <div className="flex min-w-0 flex-col gap-4">
                                 <p className="text-body text-text-secondary">{t('payments.claim.help')}</p>
                                 {claims.map((claim, index) => (
-                                    <div key={String(index)} className="grid min-w-0 gap-3 sm:grid-cols-3">
+                                    <div key={String(index)} className="grid min-w-0 gap-3 md:grid-cols-3">
                                         <FormField label={t('payments.claim.class')}>
                                             {(control) => (
                                                 <NativeSelect {...control} value={claim.kelas} onChange={(event) => { setClaim(index, { kelas: event.target.value }); }}>
@@ -329,7 +329,7 @@ export default function RecordPayment({ companies, company, client, origin, invo
                             ) : (
                                 <ul role="list" aria-label={t('pages.pg_046.applications')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
                                     {invoices.map((invoice) => (
-                                        <li key={invoice.id} data-testid="application" className="grid min-w-0 gap-2 py-3 sm:grid-cols-2 sm:items-center">
+                                        <li key={invoice.id} data-testid="application" className="grid min-w-0 gap-2 py-3 md:grid-cols-2 md:items-center">
                                             <div className="flex min-w-0 flex-col gap-1">
                                                 <Code>{invoiceName(invoice)}</Code>
                                                 <span className="text-caption text-text-secondary">{`${invoice.project_number === null ? '' : `${invoice.project_number} · `}${t(invoice.billed ? 'payments.invoice.billed' : 'payments.invoice.unbilled')}`}</span>

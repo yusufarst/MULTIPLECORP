@@ -89,7 +89,7 @@ function LineProgress({ line, onReserve, onCancel, onReplan }: { line: Fulfilmen
                 <span className="rounded-sm border border-border-subtle px-2 text-caption text-text-secondary">{t(modeName(line.mode))}</span>
                 {line.split_from !== null && <span className="text-caption text-text-secondary">{t('fulfilment.split_from', { n: line.split_from })}</span>}
             </div>
-            <dl className="grid min-w-0 grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 lg:grid-cols-6">
+            <dl className="grid min-w-0 grid-cols-2 gap-x-6 gap-y-2 md:grid-cols-3 lg:grid-cols-6">
                 <Fact label={t('fulfilment.field.demand')} value={amount(line.demand, line.unit)} />
                 {facts.map(([key, value]) => (
                     <Fact key={key} label={t(`fulfilment.field.${key}` as TranslationKey)} value={amount(value, line.unit)} />

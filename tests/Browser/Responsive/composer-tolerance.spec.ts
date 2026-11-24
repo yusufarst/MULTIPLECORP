@@ -10,7 +10,8 @@ import { documentDraft } from '../document-fixtures';
 // style — against the issued rendition of the same content laid out by the renderer's own engine (WeasyPrint, through
 // the layout fixture): the same blocks in the same order, the draft marking, the number line and the signature images
 // excepted, the paper's size and page count, and each block's position on the page within 1 mm. The comparison is
-// recorded beside the gate's records for the Owner's decision (APPR-038); only a measurement that could not be made fails.
+// recorded beside the gate's records, and since TASK-097 (GF-01, release-blocking — DIR-124; DIR-134 E3) a layout beyond
+// the tolerance fails, as a measurement that could not be made does.
 
 type Block = { key: string; page?: number; x: number; y: number; w: number; h: number };
 type Issued = { pages: number; width: number; height: number; blocks: Block[] };
@@ -18,10 +19,10 @@ type Issued = { pages: number; width: number; height: number; blocks: Block[] };
 /** What may differ by rule: the draft's marking, the number line an issue fills, and the stamp and signature images. */
 const EXCEPTED = new Set(['paper-marking', 'paper-watermark', 'paper-number', 'paper-number-pending', 'paper-stamp', 'paper-sign']);
 const TOLERANCE = 1;
-// The layout the engine's fixture drafts on PG-036 from a synthetic project — the SPK; the others are their issuing modules'
-// own subjects (SyntheticSubjects::SUPPLIED), DOC-10's draft not prepared from a project —; every layout shares the
-// document's wrapper, the open partial and paper.css.
-const LAYOUTS = ['DOC-09'];
+// The layouts the engine's fixture drafts on PG-036: the SPK from a synthetic project, and every composer's own — PG-014's
+// quotation DOC-01, PG-033's handover DOC-08, PG-042's and PG-043's invoices DOC-06 and DOC-04 — from the synthetic
+// subjects (SyntheticSubjects::SUPPLIED). Every layout shares the document's wrapper, the open partial and paper.css.
+const LAYOUTS = ['DOC-09', 'DOC-01', 'DOC-08', 'DOC-06', 'DOC-04'];
 
 for (const layout of LAYOUTS) {
     test(`${layout}'s draft preview against its issued layout within 1 mm`, async ({ page }, testInfo) => {
@@ -96,5 +97,7 @@ for (const layout of LAYOUTS) {
         mkdirSync(directory, { recursive: true });
         writeFileSync(join(directory, `${layout}.json`), `${JSON.stringify(record, null, 2)}\n`);
         testInfo.annotations.push({ type: 'tolerance', description: `${layout} ${result}: worst ${String(worst)} mm, residual ${String(residual)} mm, pages ${String(previewPages)}/${String(issued.pages)}` });
+        // Criterion 6 itself: the same blocks in order, the paper's size and page count, each block within 1 mm.
+        expect(record, `${layout}: worst ${String(worst)} mm, shift ${JSON.stringify(shift)}, residual ${String(residual)} mm`).toMatchObject({ result: 'PASS' });
     });
 }

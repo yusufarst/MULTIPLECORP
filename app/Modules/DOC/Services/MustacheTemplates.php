@@ -69,12 +69,17 @@ final class MustacheTemplates implements RenditionTemplate
         return $engine->render($layout, $paper);
     }
 
-    /** The HTML document the renderer reads: the bundled fonts by their relative address, the shared print style inline. */
+    /**
+     * The HTML document the renderer reads: the bundled fonts by their relative address, the shared print style inline.
+     * The body has no margin of its own, so every block sits on `@page document`'s margins alone and the text column is
+     * the composer's preview's (TASK-029 criterion 6; TASK-065 GF-01; TASK-097). The rule stays here, not in paper.css,
+     * which the application's bundle also imports.
+     */
     public static function document(string $body): string
     {
         $style = (string) file_get_contents(self::directory().'/paper.css');
 
-        return '<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Dokumen</title><link rel="stylesheet" href="fonts.css"><style>'.$style.'</style></head><body>'.$body.'</body></html>';
+        return '<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Dokumen</title><link rel="stylesheet" href="fonts.css"><style>body{margin:0}'.$style.'</style></head><body>'.$body.'</body></html>';
     }
 
     public static function directory(): string

@@ -82,7 +82,7 @@ export default function Invoices({ branches, branch, number, rows, more, can }: 
                 <FinanceNav current="invoices" />
                 <div className="flex min-w-0 flex-wrap items-end gap-4">
                     {branches.length > 1 && (
-                        <FormField label={t('invoices.field.branch')} className="min-w-0 sm:w-80">
+                        <FormField label={t('invoices.field.branch')} className="min-w-0 md:w-80">
                             {(control) => (
                                 <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ perusahaan: event.target.value }); }}>
                                     {branches.map((option) => (
@@ -93,7 +93,7 @@ export default function Invoices({ branches, branch, number, rows, more, can }: 
                         </FormField>
                     )}
                     <form onSubmit={search} className="flex min-w-0 flex-wrap items-end gap-2">
-                        <FormField label={t('invoices.list.number')} className="min-w-0 sm:w-72">
+                        <FormField label={t('invoices.list.number')} className="min-w-0 md:w-72">
                             {(control) => <Input {...control} ref={field} value={term} maxLength={100} autoComplete="off" spellCheck={false} onChange={(event) => { setTerm(event.target.value); }} />}
                         </FormField>
                         <Button type="submit" variant="outline">

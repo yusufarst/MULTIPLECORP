@@ -509,7 +509,7 @@ function EvidenceSheet({ evidence, branch, canUpload }: { evidence: Detail; bran
                     <SheetTitle>{t(typeName(evidence.type))}</SheetTitle>
                     <SheetDescription>{evidence.pool ? t('glossary.gl_125') : evidence.issuer}</SheetDescription>
                 </SheetHeader>
-                <dl className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+                <dl className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
                     {facts.map(([label, value]) => (
                         <div key={label} className="flex min-w-0 flex-col gap-1">
                             <dt className="text-caption text-text-tertiary">{label}</dt>
@@ -585,7 +585,7 @@ export default function Evidence({ branches, branch, rows, more, evidence, amoun
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_038.title')} primary={uploadAction} />
                 <div className="flex min-w-0 flex-wrap items-end gap-3">
-                    <FormField label={t('evidence.field.branch')} className="min-w-0 sm:w-80">
+                    <FormField label={t('evidence.field.branch')} className="min-w-0 md:w-80">
                         {(control) => (
                             <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ cabang: event.target.value, setelah: null, bukti: null }); }}>
                                 {branches.map((option) => (

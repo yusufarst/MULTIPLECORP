@@ -31,7 +31,7 @@ export function BasisValues({ charge, lines, onChange }: { charge: Charge; lines
     return (
         <div className="flex min-w-0 flex-col gap-2">
             {lines.map((line, index) => (
-                <FormField key={line.key} label={line.label} className="sm:w-80">
+                <FormField key={line.key} label={line.label} className="md:w-80">
                     {(control) => <DecimalInput {...control} aria-label={`${t('purchases.charge.basis_value')} ${line.label}`} scale={3} value={charge.values[index] ?? ''} onValueChange={(value) => {
                         const next = lines.map((_, at) => charge.values[at] ?? '');
                         next[index] = value ?? '';
@@ -57,7 +57,7 @@ export function ChargeFields({ charge, bills, lines, onChange, onRemove, onUploa
     return (
         <div data-slot="purchase-charge" className="flex min-w-0 flex-col gap-3 rounded-md border border-border-subtle p-3">
             <div className="flex min-w-0 flex-wrap items-end gap-4">
-                <FormField label={t('pages.pg_017.source_bill')} required error={error('tagihan')} className="min-w-0 sm:w-96">
+                <FormField label={t('pages.pg_017.source_bill')} required error={error('tagihan')} className="min-w-0 md:w-96">
                     {(control) => (
                         <NativeSelect {...control} value={charge.bill} onChange={(event) => { onChange({ bill: event.target.value }); }}>
                             <option value="">{t('purchases.charge.choose_bill')}</option>
@@ -66,10 +66,10 @@ export function ChargeFields({ charge, bills, lines, onChange, onRemove, onUploa
                     )}
                 </FormField>
                 {onUpload !== undefined && <Button variant="outline" onClick={onUpload}>{t('purchases.charge.upload_bill')}</Button>}
-                <FormField label={t('pages.pg_017.charge_amount')} required error={error('jumlah')} className="sm:w-44">
+                <FormField label={t('pages.pg_017.charge_amount')} required error={error('jumlah')} className="md:w-44">
                     {(control) => <DecimalInput {...control} kind="money" scale={2} value={charge.amount} onValueChange={(value) => { onChange({ amount: value ?? '' }); }} />}
                 </FormField>
-                <FormField label={t('pages.pg_017.classification')} className="sm:w-56">
+                <FormField label={t('pages.pg_017.classification')} className="md:w-56">
                     {(control) => (
                         <NativeSelect {...control} value={charge.classification} onChange={(event) => { onChange({ classification: event.target.value as Charge['classification'] }); }}>
                             <option value="ATTRIBUTABLE">{t('pages.pg_017.class_attributable')}</option>
@@ -78,7 +78,7 @@ export function ChargeFields({ charge, bills, lines, onChange, onRemove, onUploa
                     )}
                 </FormField>
                 {charge.classification === 'ATTRIBUTABLE' && (
-                    <FormField label={t('purchases.charge.basis')} error={error('dasar')} className="sm:w-56">
+                    <FormField label={t('purchases.charge.basis')} error={error('dasar')} className="md:w-56">
                         {(control) => (
                             <NativeSelect {...control} value={charge.basis} onChange={(event) => { onChange({ basis: event.target.value }); }}>
                                 {BASES.map((basis) => <option key={basis} value={basis}>{t(`purchases.basis.${basis}` as TranslationKey)}</option>)}

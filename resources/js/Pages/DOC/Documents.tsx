@@ -74,7 +74,7 @@ export default function Documents({ branches, branch, number, rows, more }: Prop
                 <PageHeader title={t('pages.pg_035.title')} />
                 <div className="flex min-w-0 flex-wrap items-end gap-3">
                     {branches.length > 1 && (
-                        <FormField label={t('documents.field.branch')} className="min-w-0 sm:w-80">
+                        <FormField label={t('documents.field.branch')} className="min-w-0 md:w-80">
                             {(control) => (
                                 <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ perusahaan: event.target.value, setelah: null, nomor: null }); }}>
                                     {branches.map((option) => (
@@ -88,7 +88,7 @@ export default function Documents({ branches, branch, number, rows, more }: Prop
                     )}
                     <form
                         role="search"
-                        className="flex min-w-0 flex-1 items-end gap-2 sm:max-w-md"
+                        className="flex min-w-0 flex-1 items-end gap-2 md:max-w-md"
                         onSubmit={(event) => {
                             event.preventDefault();
                             visit({ nomor: term.trim(), setelah: null });

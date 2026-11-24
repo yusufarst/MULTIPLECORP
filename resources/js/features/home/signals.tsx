@@ -10,7 +10,7 @@ import { RegionError, RegionLoading } from '@/components/region-state';
 import { SignalGroup } from '@/components/signals';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
-import { date, money, quantity, time } from '@/lib/format';
+import { clock, date, money, quantity } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 
 export type SignalRow = { id: string; company: string | null; subject: string; ref: string | null; value: string | null; unit: string | null; at: string | null; href: string | null };
@@ -174,7 +174,7 @@ export function Refresh({ groups }: { groups: string[] }) {
 
     return (
         <div className="flex items-center gap-3 text-caption text-text-tertiary">
-            <span>{t('states.updated_at', { waktu: time(at) })}</span>
+            <span>{t('states.updated_at', { waktu: clock(at) })}</span>
             <Button
                 variant="ghost"
                 size="sm"

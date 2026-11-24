@@ -48,7 +48,7 @@ export default function TotpEnrolment({ stage, replacing }: { stage: 'enrol' | '
                 <p role="status" className="text-body text-text-primary">
                     {t('pages.pg_004.codes_line')}
                 </p>
-                <ul className="grid grid-cols-1 gap-2 font-mono text-body text-text-primary sm:grid-cols-2" aria-label={t('pages.pg_004.codes_heading')}>
+                <ul className="grid grid-cols-1 gap-2 font-mono text-body text-text-primary md:grid-cols-2" aria-label={t('pages.pg_004.codes_heading')}>
                     {codes.map((code) => (
                         <li key={code} className="rounded-md border border-border px-3 py-2">
                             {code}

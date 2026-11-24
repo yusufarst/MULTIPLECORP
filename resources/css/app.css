@@ -144,14 +144,7 @@
         font-variation-settings: var(--font-variation-text);
     }
 
-    /* Text fields at 16 px on touch devices (D-DS-02), so no browser zooms into them. */
-    @media (pointer: coarse) {
-        input,
-        select,
-        textarea {
-            font-size: var(--text-touch);
-        }
-    }
+    /* Text fields at 16 px on touch devices (D-DS-02): the rule sits outside the layers, at the end of this file. */
 
     /* A coarse pointer's 44 px targets (D-DS-19; TASK-065 GF-03; APPR-039): a text link outside a sentence, a check and a
        radio keep their look and their place, an invisible layer centred on each widening what a finger can hit to
@@ -300,5 +293,16 @@
         outline-style: solid;
         outline-width: 2px;
         outline-offset: 2px;
+    }
+}
+
+/* Text fields at 16 px on touch devices (D-DS-02; TASK-065 GF-02; TASK-097), so no browser zooms into them. Outside the
+   cascade layers, so it outranks every size utility a field carries — `text-(length:--text-input-size)`, `text-body`
+   and the rest —; a fine pointer keeps each field's own size. */
+@media (pointer: coarse) {
+    input,
+    select,
+    textarea {
+        font-size: var(--text-touch);
     }
 }

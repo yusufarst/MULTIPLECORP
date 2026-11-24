@@ -190,7 +190,7 @@ export function ContraSheet({ payment, today, back, onClose }: { payment: Paymen
                     {applications.length > 0 && (
                         <FormSection title={t('payments.contra.applications')}>
                             {applications.map((row) => (
-                                <div key={row.handle} className="grid min-w-0 gap-3 sm:grid-cols-2">
+                                <div key={row.handle} className="grid min-w-0 gap-3 md:grid-cols-2">
                                     <FormField label={row.target === 'REFUND' ? t('payments.contra.refund', { jumlah: money(row.amount) }) : t('payments.contra.invoice', { nomor: row.number ?? t('payments.invoice.unnumbered'), jumlah: money(row.amount) })}>
                                         {(control) => (
                                             <NativeSelect {...control} value={actions[row.handle] ?? 'KEEP'} onChange={(event) => { setActions((current) => ({ ...current, [row.handle]: event.target.value })); }}>

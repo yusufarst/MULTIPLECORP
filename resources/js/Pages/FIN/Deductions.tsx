@@ -318,7 +318,7 @@ export default function Deductions({ branches, branch, tab, rows, more, after, c
                 <FinanceNav current="deductions" />
                 {arrived?.kind === 'COMMITTED' && arrived.text !== undefined && <OutcomeMessage answer={{ kind: 'COMMITTED', text: arrived.text }} />}
                 {branches.length > 1 && (
-                    <FormField label={t('receivables.field.branch')} className="min-w-0 sm:w-80">
+                    <FormField label={t('receivables.field.branch')} className="min-w-0 md:w-80">
                         {(control) => (
                             <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ perusahaan: event.target.value }); }}>
                                 <option value="">{t('receivables.field.all_branches')}</option>

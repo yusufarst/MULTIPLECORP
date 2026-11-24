@@ -144,7 +144,7 @@ export default function StockHistory({ filters, list, types, today, cut, reversa
                 <PageHeader title={t('pages.pg_020.title')} crumbs={[{ label: t('pages.pg_018.title'), href: '/gudang/stok' }]} />
                 {flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' && <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} />}
                 <form className="flex min-w-0 flex-wrap items-end gap-3" onSubmit={apply}>
-                    <FormField label={t('stock.history.filter_type')} className="min-w-0 sm:w-64">
+                    <FormField label={t('stock.history.filter_type')} className="min-w-0 md:w-64">
                         {(control) => (
                             <NativeSelect {...control} value={draft.jenis ?? ''} onChange={(event) => { setDraft({ ...draft, jenis: event.target.value }); }}>
                                 <option value="">{t('stock.history.all_types')}</option>

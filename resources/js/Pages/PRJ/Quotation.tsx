@@ -158,14 +158,14 @@ function DraftComposer({ project, draft, taxes, today, periods, money, issue }: 
                 ) : (
                     <ol aria-label={t('quotations.form.lines')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
                         {lines.map((line, index) => (
-                            <li key={line.handle} id={`line-${String(index)}`} className="grid min-w-0 gap-3 py-4 sm:grid-cols-2">
-                                <div className="flex min-w-0 items-start justify-between gap-2 sm:col-span-2">
+                            <li key={line.handle} id={`line-${String(index)}`} className="grid min-w-0 gap-3 py-4 md:grid-cols-2">
+                                <div className="flex min-w-0 items-start justify-between gap-2 md:col-span-2">
                                     <span className="min-w-0 font-semibold text-text-primary">{`${String(index + 1)}. ${line.product}`}</span>
                                     <Button variant="ghost" size="sm" disabled={lines.length === 1} aria-label={t('quotations.form.remove', { n: index + 1 })} onClick={() => { setLines(lines.filter((_, at) => at !== index)); setDirty(true); }}>
                                         <Icon icon={Trash2} size="sm" />
                                     </Button>
                                 </div>
-                                <FormField label={t('quotations.field.description')} className="sm:col-span-2" error={lineError(index, 'keterangan')}>
+                                <FormField label={t('quotations.field.description')} className="md:col-span-2" error={lineError(index, 'keterangan')}>
                                     {(control) => <Input {...control} value={line.description} onChange={(event) => { update(index, { description: event.target.value }); }} />}
                                 </FormField>
                                 <FormField label={t('quotations.field.quantity', { satuan: line.unit })} required error={lineError(index, 'jumlah')}>

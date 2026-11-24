@@ -140,7 +140,7 @@ export default function RecordPurchase({ companies, company, project, supplement
                             { label: t('purchases.field.company'), value: `${project.company_code} · ${project.company_name}` },
                         ]} />
                     ) : (
-                        <FormField label={t('purchases.field.company')} required error={errors.perusahaan} help={t('purchases.form.replenishment')} className="min-w-0 sm:w-96">
+                        <FormField label={t('purchases.field.company')} required error={errors.perusahaan} help={t('purchases.form.replenishment')} className="min-w-0 md:w-96">
                             {(control) => (
                                 <NativeSelect {...control} value={chosenCompany} onChange={(event) => { chooseCompany(event.target.value); touch(); }}>
                                     {companies.map((option) => <option key={option.id} value={option.id}>{`${option.code} · ${option.name}`}</option>)}
@@ -149,14 +149,14 @@ export default function RecordPurchase({ companies, company, project, supplement
                         </FormField>
                     )}
                     <div className="flex min-w-0 flex-wrap items-start gap-4">
-                        <FormField label={t('purchases.field.supplier')} required error={errors.pemasok} className="min-w-0 sm:w-96">
+                        <FormField label={t('purchases.field.supplier')} required error={errors.pemasok} className="min-w-0 md:w-96">
                             {() => (
                                 <PartyLookup type="supplier" label={t('purchases.field.supplier')} value={supplier} canCreate={can.new_supplier}
                                     onChoose={(next) => { setSupplier(next); touch(); }}
                                     onCreate={(name) => { setCreating({ key: Date.now(), name }); }} />
                             )}
                         </FormField>
-                        <FormField label={t('pages.pg_017.supplier_quote')} error={errors.referensi} className="min-w-0 sm:w-72">
+                        <FormField label={t('pages.pg_017.supplier_quote')} error={errors.referensi} className="min-w-0 md:w-72">
                             {(control) => <Input {...control} value={reference} maxLength={120} onChange={(event) => { setReference(event.target.value); touch(); }} />}
                         </FormField>
                     </div>

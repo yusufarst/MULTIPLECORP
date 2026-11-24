@@ -215,7 +215,7 @@ export default function OwnAccount({ account, totp, google, last_login: lastLogi
                                 <p role="status" className="text-body text-text-primary">
                                     {t('account.codes.line')}
                                 </p>
-                                <ul aria-label={t('account.sections.codes')} className="grid grid-cols-1 gap-2 font-mono text-body text-text-primary sm:grid-cols-2 md:max-w-96">
+                                <ul aria-label={t('account.sections.codes')} className="grid grid-cols-1 gap-2 font-mono text-body text-text-primary md:grid-cols-2 md:max-w-96">
                                     {codes.map((code) => (
                                         <li key={code} className="rounded-md border border-border px-3 py-2">
                                             {code}
