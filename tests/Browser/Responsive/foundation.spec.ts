@@ -127,7 +127,7 @@ test.describe('on the phone with a coarse pointer', () => {
             await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
             const titles = await page.evaluate(() =>
                 [...document.querySelectorAll('h1, header:not([data-slot]) > p')]
-                    .filter((element) => element.checkVisibility({ visibilityProperty: true }))
+                    .filter((element) => element.checkVisibility() && getComputedStyle(element).visibility !== 'hidden')
                     .map((element) => element.textContent.trim()),
             );
             expect(titles, path).toHaveLength(1);

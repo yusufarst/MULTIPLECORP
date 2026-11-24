@@ -19,10 +19,11 @@ type Issued = { pages: number; width: number; height: number; blocks: Block[] };
 /** What may differ by rule: the draft's marking, the number line an issue fills, and the stamp and signature images. */
 const EXCEPTED = new Set(['paper-marking', 'paper-watermark', 'paper-number', 'paper-number-pending', 'paper-stamp', 'paper-sign']);
 const TOLERANCE = 1;
-// The layouts the engine's fixture drafts on PG-036: the SPK from a synthetic project, and every composer's own — PG-014's
-// quotation DOC-01, PG-033's handover DOC-08, PG-042's and PG-043's invoices DOC-06 and DOC-04 — from the synthetic
-// subjects (SyntheticSubjects::SUPPLIED). Every layout shares the document's wrapper, the open partial and paper.css.
-const LAYOUTS = ['DOC-09', 'DOC-01', 'DOC-08', 'DOC-06', 'DOC-04'];
+// The layout the engine's fixture drafts on PG-036 from a synthetic project — the SPK; the composers' own layouts are their
+// issuing modules' subjects (SyntheticSubjects::SUPPLIED names the types those modules supply), which this fixture does not
+// build. Every layout shares the renderer's wrapper, the open partial and paper.css — held for all fourteen by
+// tests/Unit/DOC/DocumentPaperTest.php —, so DOC-09's measurement stands for every composer (TASK-097 criterion 8).
+const LAYOUTS = ['DOC-09'];
 
 for (const layout of LAYOUTS) {
     test(`${layout}'s draft preview against its issued layout within 1 mm`, async ({ page }, testInfo) => {

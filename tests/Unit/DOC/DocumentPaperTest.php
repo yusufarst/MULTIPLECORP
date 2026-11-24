@@ -93,8 +93,11 @@ it('writes the renderer\'s document with the bundled fonts by their relative add
         ->not->toContain('http://')->not->toContain('https://');
 });
 
-it('gives the issued document\'s body no margin of its own, so its blocks sit on the page margins as the preview\'s do (GF-01)', function () {
-    $html = MustacheTemplates::document(MustacheTemplates::render('DOC-09', paperOf('DOC-09', false)));
+it('issues every layout the same way: no body margin, the one paper, the draft marking only on a draft (GF-01; TASK-097 criterion 8)', function (string $layout) {
+    $issued = MustacheTemplates::document(MustacheTemplates::render($layout, paperOf($layout, false)));
+    $draft = MustacheTemplates::render($layout, paperOf($layout, true));
 
-    expect($html)->toContain('<style>body{margin:0}');
-});
+    expect($issued)->toContain('<style>body{margin:0}')->toContain('@page document')
+        ->toContain('<div class="paper paper-'.$layout.'" data-layout="'.$layout.'">')->not->toContain('<p class="paper-marking">')
+        ->and($draft)->toContain(' paper-draft" data-layout="'.$layout.'">')->toContain('<p class="paper-marking">');
+})->with(array_map(fn (int $number): string => sprintf('DOC-%02d', $number), range(1, 14)));

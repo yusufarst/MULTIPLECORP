@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 97
 
-DONE: 86
-READY: 1
+DONE: 87
+READY: 0
 IN_PROGRESS: 1
 BLOCKED: 2
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 7
 SUPERSEDED: 0
 
 Progress:
-86 / 97
-Percentage: 88.7 %
+87 / 97
+Percentage: 89.7 %
 
 CURRENT TASK: TASK-078 — Staging stack, the two applications' isolation and the provider features IN_PROGRESS, the human operator's: staging deployed on 2026-11-22, its three findings fixed in the deployment definition, the Owner's decision on Coolify's network attachment and variables open (TASK-078's OPERATOR RECORD)
-NEXT READY TASK: TASK-097 — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01), Change 31 (APPR-043), once the UX pilot's first slice has validated the shared foundation it reuses (DIR-135)
+NEXT READY TASK: none — TASK-097 DONE (Change 31); no AGENT Task is READY until the operator's staging work (TASK-078, TASK-080) and the Owner's inputs unblock the rest
 LAST TASK PLAN CHANGE: Change 31 of 2026-11-23 — one consolidated shared-foundation defect Task, TASK-097, the Owner's APPR-043; the current total 96 → 97
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -145,7 +145,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-094](TASK-094.md) — Defect D7 — PG-014's inputs frozen while a save's outcome is unknown (IP-02; D-UX-02)
 - [x] [TASK-095](TASK-095.md) — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28)
 - [x] [TASK-096](TASK-096.md) — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
-- [ ] [TASK-097](TASK-097.md) — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01)
+- [x] [TASK-097](TASK-097.md) — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01)
 
 ## 4. The Task list
 
@@ -247,7 +247,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-094](TASK-094.md) | Defect D7 — PG-014's inputs frozen while a save's outcome is unknown (IP-02; D-UX-02) | Module · PRJ | STANDARD | DONE | 033 | 064 | NO | AGENT | NONE | YES |
 | [TASK-095](TASK-095.md) | Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) | Platform · UI | HIGH | DONE | 011, 016, 023, 032 | 064 | NO | AGENT | NONE | YES |
 | [TASK-096](TASK-096.md) | Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17) | Platform · UI | HIGH | DONE | 015, 016, 030, 032, 037, 039, 040, 042, 043, 045, 046, 047, 048, 049, 051, 053, 054 | 086 | YES | AGENT | NONE | YES |
-| [TASK-097](TASK-097.md) | Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01) | Platform · UI | HIGH | READY | 014, 015, 016, 029, 032 | 086 | YES | AGENT | NONE | YES |
+| [TASK-097](TASK-097.md) | Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01) | Platform · UI | HIGH | DONE | 014, 015, 016, 029, 032 | 086 | YES | AGENT | NONE | YES |
 
 Stage: Foundation, Platform, Module (the modules in their workflows' order), Verification, Release, Operations. Executor: AGENT, an Execution Agent under this plan's rules; HUMAN OPERATOR, the named operator; OWNER, the Owner — with the client where the Task says so. DB impact: PROPOSED for the five schema Tasks, which create every table of DATABASE §4 expand-only — TASK-005 also the infrastructure stores outside the 125 business tables that [PERMISSIONS_MATRIX §7.2](../05-security/PERMISSIONS_MATRIX.md#72-table-classification) names: the session table, the credential-token store of SECURITY AU-11, the export requests of CONCURRENCY_IDEMPOTENCY H6-04 and the failed-job table, but not the queue, cache, lock and job-batch tables it also names, their stores being Valkey and V1 dispatching no framework batch —, and for TASK-013, which adds C-50's trigger, and TASK-058, which adds IX-13's two partial indexes deferred from TASK-005 (DIR-088), TASK-029, which seeds the fourteen rows of `document_types`, and TASK-030, which adds the type-free evidence identity index (DIR-089); NONE for every other Task, which uses those tables — a missing column is an executor discovery for Planning, never a silent schema change. A BLOCKED status names the input it waits on — an operator's, the Owner's or the client's input of [RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist), a P11 question or DEP-05 (§2).
 

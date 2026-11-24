@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-23 | Owner: Planning
 
 Approval: the one consolidated shared-foundation defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 31, which the Owner approved explicitly ([APPR-043](../00-governance/DECISION_LOG.md#dir-135-and-appr-043--change-31-one-consolidated-shared-foundation-defect-task-2026-11-23); DIR-135), from the defects the proposal A–F verified on `main` 36f7036 (DIR-134 E2) and TASK-065's GF-01 (DIR-134 E3).
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -205,19 +205,19 @@ The proposal A–F verified these defects on `main` 36f7036 (DIR-134 E2); each i
 
 **TEST CHECKLIST:**
 
-- [ ] Lint: Pint and ESLint in this head's CI (TL-01)
-- [ ] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
-- [ ] Relevant automated tests: the frontend and Browser tests above in this head's CI
-- [ ] Authorization: the route audit (TL-07) and every denial suite unchanged and green
-- [ ] Route integrity: N/A — no route added or changed
-- [ ] Interaction behavior: the Browser tests above
-- [ ] Browser E2E if required: on Chromium and WebKit (TL-09)
-- [ ] Responsive/adaptive if required: the band edges, the tablet rail and the phone's one title (TL-11)
-- [ ] Visual breathing room/density if UI: N/A — no visual change beyond the corrected behaviours
-- [ ] Production build: TL-13 in this head's CI
-- [ ] Security checks if required: no capability change; the reference code as given
-- [ ] Database safety review: no schema change, no migration, no write path; production not touched
-- [ ] Final diff review: ER-06's independent review and Codex's review within DIR-096's bounded loop
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
+- [x] Relevant automated tests: the frontend and Browser tests above in this head's CI
+- [x] Authorization: the route audit (TL-07) and every denial suite unchanged and green
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: the Browser tests above
+- [x] Browser E2E if required: on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the band edges, the tablet rail and the phone's one title (TL-11)
+- [x] Visual breathing room/density if UI: N/A — no visual change beyond the corrected behaviours
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: no capability change; the reference code as given
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: ER-06's independent review and Codex's review within DIR-096's bounded loop
 
 **COMPLETION EVIDENCE:**
 
@@ -228,9 +228,9 @@ The proposal A–F verified these defects on `main` 36f7036 (DIR-134 E2); each i
 - Browser evidence: the Browser tests above on Chromium and WebKit, as the pull request's checks show before the merge
 - Localization evidence: the changed templates in both languages
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
-- Files changed: listed at DONE
+- Files changed: the tokens and the coarse pointer's rule — `resources/css/tokens.css`, `resources/css/app.css` —; `resources/js/components/outcome-message.tsx`, `region-state.tsx`, `record-blocks.tsx`; `resources/js/layouts/AppShell.tsx`; `resources/js/lib/format.ts`; PG-006's, the signals', PG-051's and PG-053's calls (`Beranda.tsx`, `features/home/signals.tsx`, `features/reporting/report-view.tsx`, `EksporSaya.tsx`); `resources/js/Pages/PRJ/Journey.tsx`; the 37 files holding the 65 `sm:` utilities; `app/Modules/DOC/Services/MustacheTemplates.php` and `resources/documents/paper.css`; the gallery's specimen without a code (`Pages/Fixtures/Components.tsx`); `tests/Frontend/foundation.test.ts`, `tests/Browser/Responsive/foundation.spec.ts`, `tests/Browser/Responsive/composer-tolerance.spec.ts`, `tests/Unit/DOC/DocumentPaperTest.php`
 - Commit SHA: this branch's commits from `main`, the Owner's identity, no AI attribution
-- Notes: each defect's DIR-111 class and its evidence, as WHY THIS EXISTS gives them; the pilot's foundation code reused, named at DONE
+- Notes: each defect's DIR-111 class and its evidence as WHY THIS EXISTS gives them — seven P2/P3 and GF-01 P1 —, all eight corrected. **Bands**: the 65 `sm:` utilities on §6's tablet band `md:`, the band each one's intent names — beyond the phone's one column —, the variant names `sm` of the size maps untouched; a frontend test refuses a utility on a band §6 does not define. **Spinner**: `--animate-spin` and the `spin` keyframes in the tokens' theme, one turn per `--mc-dur-spin`, `motion-reduce:animate-none` kept. **Touch input**: D-DS-02's rule moved outside the cascade layers, so it outranks `text-(length:--text-input-size)`, `text-body` and every other size utility of a field on a coarse pointer; a fine pointer keeps 14 px. **Headings**: PG-011's financial part names itself once, `PositionBlock`'s title optional; on the phone the app bar's copy of the title is out of sight where the page's header names the page (PT-03: the back arrow and the title lead), its place kept. **Reference code**: "Kode referensi" only with a non-empty code in `OutcomeMessage`, `RegionError` and `SystemPage`. **Tablet**: the 80 px rail from 768 to 1,024 px from the band's media query, Ctrl B unchanged from 1,025 px. **Time**: `clock()` and `dateClock()` for the six templates that name "WIB" themselves — PG-006, the signals' "Diperbarui", PG-051's position and print footer, PG-053's two —, the catalogue's copy unchanged. **GF-01**: the renderer's document without the body's margin (in its wrapper, not in `paper.css`, which the bundle also imports); the draft marking over the sheet's top margin on screen, out of the flow; the tolerance asserted, no longer only recorded, on DOC-09 — the layout the fixture drafts on PG-036 —, and every one of the fourteen layouts issued through the same wrapper, paper and marking, held by the unit test, so DOC-09's measurement stands for every composer; ER-06 found the composers' own layouts beyond the fixture's subjects, a fixture change outside this contract. **Pilot code reused** (DIR-135), without its provisional tokens: the reference-code guard of `region-state.tsx` and `outcome-message.tsx`, the spin keyframes, the tablet rail's `rail || tablet` and the phone title's `group-has` visibility, `clock()`, PG-011's single heading; not taken: the pilot's `--breakpoint-sm`, its wordmark, skeletons, navigation and palette
 - Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**

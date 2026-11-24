@@ -91,8 +91,11 @@ export default function AppShell({ title, back, focused = false, children, built
     useShortcut({ key: '/', ctrl: true }, () => {
         setHelp(true);
     });
+    // KB-03's Ctrl B collapses and expands the desktop's sidebar; the tablet band always shows the rail, so it does nothing there.
     useShortcut({ key: 'b', ctrl: true }, () => {
-        setRail((value) => !value);
+        if (!window.matchMedia(TABLET).matches) {
+            setRail((value) => !value);
+        }
     });
 
     const signOut = built.has('ROUTE-108') ? () => {
