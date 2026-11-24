@@ -28,6 +28,11 @@ export type Column<Row> = {
     priority?: 'low';
     /** Only on keys the screen inventory registers (PT-05). */
     sort?: { direction: 'ascending' | 'descending' | 'none'; onSort: () => void };
+    /** APPR-042's pilot: the first column's second line, outside the row's link — the record's other identifiers, so a
+        list keeps them in view without a column each. */
+    secondary?: (row: Row) => ReactNode;
+    /** APPR-042's pilot: the first column's link is a name that may wrap, not a record number kept on one line. */
+    wrap?: boolean;
 };
 
 export function DataTable<Row>({
@@ -119,12 +124,13 @@ export function DataTable<Row>({
                             {columns.map((column, at) => (
                                 <TableCell key={column.key} numeric={column.numeric} className={cn(column.priority === 'low' && 'max-lg:hidden')}>
                                     {at === 0 && href !== null ? (
-                                        <Link href={href} data-row-link data-code tabIndex={-1} className="font-medium whitespace-nowrap text-text-primary underline-offset-2 hover:underline">
+                                        <Link href={href} data-row-link data-code={column.wrap === true ? undefined : true} tabIndex={-1} className={cn('font-medium text-text-primary underline-offset-2 hover:underline', column.wrap === true ? 'break-words' : 'whitespace-nowrap')}>
                                             {column.cell(row)}
                                         </Link>
                                     ) : (
                                         column.cell(row)
                                     )}
+                                    {at === 0 && column.secondary !== undefined && <span className="mt-1 block text-caption text-text-tertiary">{column.secondary(row)}</span>}
                                 </TableCell>
                             ))}
                             {rowActions !== undefined && (

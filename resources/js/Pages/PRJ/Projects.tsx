@@ -166,21 +166,32 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
                             rows={shown}
                             rowKey={(row) => row.id}
                             rowHref={(row) => `/proyek/${row.id}`}
+                            // APPR-042's pilot: the decision first — which project, its status, its stage, its next step —, the
+                            // number, company and client kept on the project's second line rather than a column each (9 → 6).
                             columns={[
-                                { key: 'company', header: t('projects.field.company'), cell: (row) => <CompanyTag code={row.company} /> },
-                                { key: 'number', header: t('projects.field.number'), cell: (row) => <Code>{row.number}</Code> },
-                                { key: 'title', header: t('projects.field.title'), cell: (row) => row.title },
-                                { key: 'client', header: t('projects.field.client'), cell: (row) => row.client },
+                                {
+                                    key: 'project',
+                                    header: t('pages.pg_010.title'),
+                                    wrap: true,
+                                    cell: (row) => row.title,
+                                    secondary: (row) => (
+                                        <span className="inline-flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                                            <CompanyTag code={row.company} />
+                                            <Code>{row.number}</Code>
+                                            <span className="min-w-0 break-words">{row.client}</span>
+                                        </span>
+                                    ),
+                                },
                                 { key: 'state', header: t('projects.field.state'), cell: (row) => <StatusBadge family="project" state={row.state} size="sm" /> },
-                                { key: 'deadline', header: t('projects.field.deadline'), priority: 'low', cell: (row) => (row.deadline === null ? '—' : <DateText value={row.deadline} />) },
                                 { key: 'stage', header: t('projects.field.stage'), cell: stage },
-                                { key: 'next', header: t('journey.next'), priority: 'low', cell: nextStep },
+                                { key: 'next', header: t('journey.next'), cell: nextStep },
+                                { key: 'deadline', header: t('projects.field.deadline'), priority: 'low', cell: (row) => (row.deadline === null ? '—' : <DateText value={row.deadline} />) },
                             ]}
                             dense={(row) => ({
-                                title: `${row.number} · ${row.title}`,
+                                title: row.title,
                                 secondary: (
                                     <span className="flex min-w-0 flex-col gap-1">
-                                        <span>{`${row.company} · ${row.client}`}</span>
+                                        <span>{`${row.number} · ${row.company} · ${row.client}`}</span>
                                         {stage(row)}
                                     </span>
                                 ),
