@@ -251,6 +251,29 @@ export function StageTrack({ stages, label, onSelect }: { stages: Stage[]; label
         <ol aria-label={label} data-slot="stage-track" className="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-3">
             {stages.map((stage, index) => {
                 const current = stage.state === 'current';
+                // APPR-042's pilot, the Owner's D-2 (P-1): the read-only track draws no disc, border or ring — nothing a
+                // reader could take for a button. A check for a stage done, a dot for one to come, the current stage's
+                // larger accent dot and bold name, the warning icon for one needing attention; its number in plain text.
+                const marker = (
+                    <span aria-hidden data-slot="stage-marker" className="inline-flex size-4 shrink-0 items-center justify-center">
+                        {stage.state === 'complete' ? (
+                            <Icon icon={Check} size="xs" className="text-step-done-dot" />
+                        ) : stage.state === 'attention' ? (
+                            <Icon icon={TriangleAlert} size="xs" className="text-warning-fg" />
+                        ) : (
+                            <span className={cn('rounded-full', current ? 'size-3 bg-accent-olive' : 'size-2 bg-border-strong')} />
+                        )}
+                    </span>
+                );
+                const readOnly = (
+                    <span className="flex cursor-default items-center gap-2">
+                        {marker}
+                        <span className={cn('text-label', current ? 'font-semibold text-text-primary' : stage.state === 'upcoming' ? 'text-text-tertiary' : 'text-text-secondary')}>
+                            <span className="tabular-nums">{index + 1}</span> {stage.label}
+                            {current && <span className="sr-only"> {t('stage.step_of', { n: index + 1, total: stages.length })}</span>}
+                        </span>
+                    </span>
+                );
                 const body = (
                     <>
                         <span
@@ -275,7 +298,7 @@ export function StageTrack({ stages, label, onSelect }: { stages: Stage[]; label
                 return (
                     <li key={stage.key} aria-current={current ? 'step' : undefined} className="flex min-w-0 items-center gap-2">
                         {onSelect === undefined ? (
-                            <span className="flex items-center gap-2">{body}</span>
+                            readOnly
                         ) : (
                             <button
                                 type="button"
