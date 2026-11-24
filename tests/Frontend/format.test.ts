@@ -42,3 +42,13 @@ void test('clock() is time() without its zone, for a sentence that names "WIB" i
         assert.doesNotMatch(format.clock(instant), /WIB/);
     }
 });
+
+void test('a whole quantity keeps its zeros: exact() and trimZeros() never turn "100" into "1" (APPR-042 pilot)', () => {
+    const naive = (value: string): string => value.replace(/\.?0+$/, '');
+
+    assert.equal(naive('100'), '1', 'the defect the pilot found: a bare trim on a whole quantity');
+    for (const [value, shown, trimmed] of [['100', '100', '100'], ['20.0000', '20', '20'], ['2.50', '2,5', '2.5'], ['1250', '1.250', '1250'], ['0.0000', '0', '0'], ['10', '10', '10']] as const) {
+        assert.equal(format.exact(value), shown, value);
+        assert.equal(format.trimZeros(value), trimmed, value);
+    }
+});

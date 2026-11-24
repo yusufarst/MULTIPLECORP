@@ -4370,5 +4370,8 @@
     "pages.pg_006.start_title": "Start here",
     "pages.pg_006.start_line": "Add your first company. Projects, purchases and finance can then be recorded.",
     "pages.pg_006.start_action": "Set Up Companies",
-    "journey.stage_of": "Stage :n of :total"
+    "journey.stage_of": "Stage :n of :total",
+    "stock.scope": "Physical quantities in the warehouse, shared by all companies; inventory value is per company.",
+    "stock.related": "Other warehouse work",
+    "stock.column.attention": "Attention"
 }

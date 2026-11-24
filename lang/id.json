@@ -4370,5 +4370,8 @@
     "pages.pg_006.start_title": "Mulai di sini",
     "pages.pg_006.start_line": "Tambahkan perusahaan pertama Anda. Setelah itu proyek, pembelian, dan keuangan bisa dicatat.",
     "pages.pg_006.start_action": "Atur Perusahaan",
-    "journey.stage_of": "Tahap :n dari :total"
+    "journey.stage_of": "Tahap :n dari :total",
+    "stock.scope": "Jumlah fisik di gudang, bersama untuk semua perusahaan; nilai persediaan dihitung per perusahaan.",
+    "stock.related": "Pekerjaan gudang lainnya",
+    "stock.column.attention": "Perhatian"
 }

@@ -20844,6 +20844,24 @@
             "source": "CR-002 K-6 — the project stage bar, numbers always written, the pilot only (DIR-134 E4)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "stock.scope": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-1 — PG-018 says what its figures cover (PERMISSIONS_MATRIX PJ-01, PJ-22)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.related": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-1 — PG-018 names the warehouse pages the account opens (the navigation leaves)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.attention": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-1 — PG-018 gathers each product's minimum and pending notes in one column",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

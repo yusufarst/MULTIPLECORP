@@ -26,11 +26,21 @@ function thousands(digits: string): string {
     return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
-function exact(value: string): string {
+/** A decimal in the locale's form, exact: the whole part grouped, the fraction's trailing zeros dropped — "1.250", "2,5". */
+export function exact(value: string): string {
     const { negative, whole, fraction } = decimal(value);
     const significant = fraction.replace(/0+$/, '');
 
     return (negative ? MINUS : '') + thousands(whole) + (significant === '' ? '' : `,${significant}`);
+}
+
+/**
+ * A decimal string without its fraction's trailing zeros, for a field's own value ("12.5000" → "12.5"). APPR-042's pilot:
+ * only a value with a decimal point is trimmed — the server sends a whole quantity as "100", which a bare
+ * `replace(/\.?0+$/, '')` turns into "1".
+ */
+export function trimZeros(value: string): string {
+    return value.includes('.') ? value.replace(/\.?0+$/, '') : value;
 }
 
 function day(date: string): [number, number, number] {
