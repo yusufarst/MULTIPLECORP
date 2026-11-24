@@ -4369,5 +4369,6 @@
     "pages.pg_006.clear_tpl": "Tidak ada yang perlu ditindaklanjuti: :v.",
     "pages.pg_006.start_title": "Mulai di sini",
     "pages.pg_006.start_line": "Tambahkan perusahaan pertama Anda. Setelah itu proyek, pembelian, dan keuangan bisa dicatat.",
-    "pages.pg_006.start_action": "Atur Perusahaan"
+    "pages.pg_006.start_action": "Atur Perusahaan",
+    "journey.stage_of": "Tahap :n dari :total"
 }

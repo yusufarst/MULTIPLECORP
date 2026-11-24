@@ -20838,6 +20838,12 @@
             "source": "CR-002 K-6 — PG-006's first step without K-6 (blueprint D1)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "journey.stage_of": {
+            "task": "APPR-042 pilot",
+            "source": "CR-002 K-6 — the project stage bar, numbers always written, the pilot only (DIR-134 E4)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -18,7 +18,7 @@ import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { NativeSelect } from '@/components/ui/native-select';
-import { Spinner } from '@/components/ui/spinner';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Code, DateText } from '@/components/values';
 import { type Failed, isFailed, ItemText, type JourneySummary, StageSummary } from '@/features/prj/journey';
 import AppShell from '@/layouts/AppShell';
@@ -66,7 +66,9 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
     const [shown, setShown] = useState(rows);
     const [next, setNext] = useState(more);
     const [appending, setAppending] = useState(false);
-    const [known, setKnown] = useState<Record<string, JourneySummary>>({});
+    // APPR-042's pilot: the journeys the page mounts with count too — a page restored from history (Back) carries its
+    // resolved deferred group, which the change below never sees; without this its stages stayed loading for good.
+    const [known, setKnown] = useState<Record<string, JourneySummary>>(() => (journeys !== undefined && !isFailed(journeys) ? journeys : {}));
     const [seen, setSeen] = useState(journeys);
     // The page the last journey request was for, so a retry asks for that page's rows (`setelah`), not the first page's.
     const [requested, setRequested] = useState<string | null>(null);
@@ -107,12 +109,14 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
             return summary.outcome !== null ? <span className="text-text-secondary">—</span> : <StageSummary summary={summary} />;
         }
 
+        // APPR-042's pilot (CR-002 K-2): a quiet line where the stage will be, not one spinner per row — the column's one
+        // status below says "Memuat tahap…" once for all of them.
         return failed ? (
             <button type="button" className="text-caption text-accent-link underline underline-offset-2" onClick={reloadJourneys}>
                 {t('projects.list.journey_failed')}
             </button>
         ) : (
-            <Spinner label={t('projects.list.journey_loading')} delay={0} />
+            <Skeleton className="h-3 w-28" />
         );
     };
     const nextStep = (row: Row) => {
@@ -184,6 +188,10 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
                             })}
                         />
                         <ListContinuation state={next === null ? 'end' : 'more'} loading={appending} onLoadMore={loadMore} onReload={loadMore} />
+                        {/* The stages' one live region, present before its words change, so the loading is heard once. */}
+                        <p role="status" className="sr-only">
+                            {!failed && shown.some((row) => known[row.id] === undefined) ? t('projects.list.journey_loading') : ''}
+                        </p>
                     </>
                 )}
             </div>

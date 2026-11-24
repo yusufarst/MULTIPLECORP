@@ -1,13 +1,17 @@
 // PG-011 *Perjalanan Proyek* (ROUTE-011, ROUTE-153; NAV-011; SCR-10, SCR-14; IA §5.5, §8.2; UXN-02; D-IA-09; TASK-032):
-// the project as a guided journey and the hub every later step starts from. At once: the header and its one primary
-// action, *Tahap proyek* with the current stage marked (GR-03), *Sekarang · Berikutnya · Hambatan*, the derived part strip
-// on the desktop (PT-31), "Posisi keuangan" with `finance.view` and "Rincian proyek". Then three deferred groups, each
-// with its own loading state and error, the others staying (QB-02; PT-19; UXS-44): the completion predicates —
-// the blockers and "Yang tersisa sebelum selesai" —, "Kesiapan dokumen" and *Riwayat*. *Tindakan Lain* holds "Ubah
-// proyek" and "Buang Draf", whose confirmation says that the number is retired (IP-08; MSG-39; L-37). A part of a family
-// the account lacks is absent (§13.7); the parts of later Tasks arrive with them.
+// the project as a guided journey and the hub every later step starts from. At once: the header, *Tahap proyek* with the
+// current stage marked (GR-03), *Berikutnya* with the one primary action and *Hambatan*, "Posisi keuangan" with
+// `finance.view` and "Rincian proyek". Then three deferred groups, each with its own loading state and error, the others
+// staying (QB-02; PT-19; UXS-44): the completion predicates — the blockers and "Yang tersisa sebelum selesai" —,
+// "Kesiapan dokumen" and *Riwayat*. *Tindakan Lain* holds "Ubah proyek" and "Buang Draf", whose confirmation says that
+// the number is retired (IP-08; MSG-39; L-37). A part of a family the account lacks is absent (§13.7).
+// APPR-042's pilot (CR-002 K-1, K-6; DIR-134 E3, E4): the journey is one card — the stage bar "Tahap n dari N" (K-6, the
+// pilot only), the stage track, the next step as the one primary action and the blockers —, the next step's sentence
+// shown once; the other parts are sections parted by space and rules, not cards (GF-09), in two columns from 1,200 px —
+// the work on the left, the record's facts on the right; "Posisi keuangan" named once (TASK-097's defect). The derived
+// part strip, which repeated the stage track, is left out (a CR-002 candidate). Every behaviour is unchanged.
 import { Deferred, router, usePage } from '@inertiajs/react';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useId, useState } from 'react';
 
 import { ActionBar } from '@/components/action-bar';
 import { CompanyTag } from '@/components/company';
@@ -15,8 +19,9 @@ import { ConfirmCommand } from '@/components/confirm-dialog';
 import { CorrectionTrail } from '@/components/correction-trail';
 import { OutcomeMessage } from '@/components/outcome-message';
 import { type MenuAction, PageHeader } from '@/components/page-header';
-import { Disclosure, FactsList, NowStrip, PartStrip, PositionBlock, StageTrack } from '@/components/record-blocks';
+import { Disclosure, FactsList, PositionBlock, StageTrack } from '@/components/record-blocks';
 import { RegionEmpty, RegionLoading } from '@/components/region-state';
+import { PHONE, useMediaQuery } from '@/components/shell/navigation';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -24,7 +29,7 @@ import { Code, DateText, DateTimeText, Money, Quantity } from '@/components/valu
 import { type Checklist, ChecklistSection } from '@/features/adm/checklist';
 import { typeName } from '@/features/doc/labels';
 import { type Fulfilment, FulfilmentSection } from '@/features/prj/fulfilment';
-import { type Failed, isFailed, ItemText, type Journey as JourneyShape, predicateName, stageName } from '@/features/prj/journey';
+import { type Failed, isFailed, ItemText, type Journey as JourneyShape, predicateName, StageBar, stageName } from '@/features/prj/journey';
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
@@ -99,12 +104,30 @@ function GroupFailed({ group }: { group: string }) {
     );
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+/** A part of the record: its heading, an action beside it, parted from the one above by space and a rule — a card only for a distinct object (GF-09). */
+function Section({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
+    const id = useId();
+
     return (
-        <Card className="flex min-w-0 flex-col gap-3 p-4 md:p-6">
-            <h2 className="text-heading-sm font-semibold text-text-primary">{title}</h2>
+        <section aria-labelledby={id} className="flex min-w-0 flex-col gap-3 border-t border-border pt-5">
+            <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+                <h2 id={id} className="text-heading-sm font-semibold text-text-primary">
+                    {title}
+                </h2>
+                {action}
+            </div>
             {children}
-        </Card>
+        </section>
+    );
+}
+
+/** A label over its content inside the journey card: *Sekarang*, *Berikutnya*, *Hambatan*. */
+function Part({ title, children }: { title: string; children: ReactNode }) {
+    return (
+        <div className="flex min-w-0 flex-col gap-1">
+            <h3 className="text-label font-semibold text-text-tertiary">{title}</h3>
+            <div className="min-w-0 text-body text-text-primary">{children}</div>
+        </div>
     );
 }
 
@@ -153,6 +176,8 @@ function CancelDialog({ project, companions, onClose }: { project: Project; comp
 
 export default function Journey({ project, journey, financial, can, return_href: returnHref = null, fulfilment, parts, predicates, documents, history, companions, cancelled }: Props) {
     const { t } = useTranslation();
+    const trackId = useId();
+    const phone = useMediaQuery(PHONE);
     const [discarding, setDiscarding] = useState(false);
     const [cancelling, setCancelling] = useState(false);
     const discard = useCommand<Record<string, never>>(() => `/proyek/${project.id}/hapus-draf`, 'post');
@@ -172,13 +197,13 @@ export default function Journey({ project, journey, financial, can, return_href:
     ];
     const primary = nextHref !== null && shown?.next ? (
         // The next step's sentence may be long: the button wraps it rather than widening the page (TL-11).
-        <Button size="lg" className="h-auto min-h-control-lg max-w-full shrink whitespace-normal py-2 text-left leading-snug" render={<a href={nextHref} />}>
+        <Button variant="primary" size="lg" className="h-auto min-h-control-lg max-w-full shrink whitespace-normal py-2 text-left leading-snug" render={<a href={nextHref} />}>
             {t(shown.next.key as TranslationKey, shown.next.params)}
         </Button>
     ) : undefined;
     const stages = (shown?.stages ?? []).map((stage) => ({ key: stage.key, label: t(stageName(stage.key)), state: stage.state }));
     const blockers = full === null ? (isFailed(predicates) ? <GroupFailed group="predicates" /> : <span className="text-text-secondary">{t('states.loading')}</span>)
-        : full.blockers.length === 0 ? undefined
+        : full.blockers.length === 0 ? <span className="text-text-secondary">{t('journey.no_blockers')}</span>
             : (
                 <ul role="list" className="flex flex-col gap-1">
                     {full.blockers.map((item, index) => (
@@ -186,6 +211,9 @@ export default function Journey({ project, journey, financial, can, return_href:
                     ))}
                 </ul>
             );
+    // The stage bar says the current stage itself; *Sekarang* stays only where the bar has no place to show.
+    const barShown = shown !== null && shown.current !== null && stages.length > 0;
+    const track = <StageTrack label={t('journey.track')} stages={stages} />;
 
     return (
         <AppShell title={t('pages.pg_011.title')}>
@@ -207,213 +235,233 @@ export default function Journey({ project, journey, financial, can, return_href:
                             )}
                         </>
                     }
-                    primary={primary}
                     actions={actions}
                 />
                 <PageAnswer />
-                {shown?.outcome != null ? (
-                    <Card className="p-4">
-                        <p className="text-body text-text-primary">{t('projects.journey.closed')}</p>
-                        {reachesCompletion && <a href={completion} className="text-body text-accent-link underline underline-offset-2">{t('completion.record.open')}</a>}
-                        {project.state === 'CANCELLED' && (
-                            isFailed(cancelled) ? <GroupFailed group="cancelled" /> : cancelled === undefined || cancelled === null ? null : (
-                                <div className="mt-2 flex flex-col gap-2" data-slot="cancelled-record">
-                                    <p className="text-body text-text-secondary">{cancelled.by ?? '—'} · <DateTimeText value={cancelled.at} /></p>
-                                    {cancelled.reason !== null && <p className="text-body text-text-primary">{t('completion.record.reason', { alasan: cancelled.reason })}</p>}
-                                    <p className="text-body text-text-secondary">{t('projects.cancel.stays')}</p>
-                                    {cancelled.obligations.length > 0 && (
-                                        <ul role="list" className="flex flex-col gap-1">
-                                            {cancelled.obligations.map((row, index) => (
-                                                <li key={`${row.kind}-${String(index)}`} className="flex flex-wrap items-baseline gap-2 text-body text-text-primary">
-                                                    <span className="font-semibold">{t(`completion.obligation.${row.kind}` as TranslationKey)}</span>
-                                                    <span>{row.label}</span>
-                                                    {row.amount !== null && <Money value={row.amount} />}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                            )
-                        )}
-                    </Card>
-                ) : shown !== null && (
-                    <section aria-label={t('journey.track')} className="flex min-w-0 flex-col gap-4">
-                        <StageTrack label={t('journey.track')} stages={stages} />
-                        <NowStrip
-                            now={shown.current === null ? '—' : t(stageName(shown.current))}
-                            next={shown.next === null ? '—' : <ItemText item={{ ...shown.next, href: null }} />}
-                            blockers={blockers}
-                        />
-                        <PartStrip parts={(shown.stages).map((stage) => ({
-                            name: t(stageName(stage.key)),
-                            state: stage.state === 'complete' ? 'DONE' : stage.state === 'upcoming' ? 'NOT_STARTED' : 'IN_PROGRESS',
-                            fact: stage.key === 'agreement' ? t('projects.journey.lines', { n: project.lines.length }) : '',
-                        }))} />
-                        {shown.not_needed.length > 0 && (
-                            <Disclosure title={t('journey.not_needed')}>
-                                <p className="text-body text-text-secondary">{shown.not_needed.map((key) => t(stageName(key))).join(', ')}</p>
-                            </Disclosure>
-                        )}
-                    </section>
-                )}
-                <div className="grid min-w-0 gap-6 lg:grid-cols-2">
-                    <Section title={t('journey.remaining')}>
-                        <Deferred data="predicates" fallback={<RegionLoading />}>
-                            {isFailed(predicates) ? <GroupFailed group="predicates" />
-                                : full === null || full.remaining.length === 0 ? <p className="text-body text-text-secondary">{t('projects.journey.nothing_remaining')}</p>
-                                    : (
-                                        <ul role="list" className="flex flex-col gap-3">
-                                            {full.remaining.map((predicate) => (
-                                                <li key={predicate.predicate} className="flex flex-col gap-1">
-                                                    <span className="text-label font-semibold text-text-primary">{t(predicateName(predicate.predicate))}</span>
-                                                    <ul role="list" className="flex flex-col gap-0.5 text-body text-text-secondary">
-                                                        {predicate.items.map((item, index) => (
-                                                            <li key={`${item.key}-${String(index)}`}><ItemText item={item} /></li>
-                                                        ))}
-                                                    </ul>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                        </Deferred>
-                    </Section>
-                    <Section title={t('journey.docs_readiness')}>
-                        <Deferred data="documents" fallback={<RegionLoading />}>
-                            {documents === undefined ? null : isFailed(documents) ? <GroupFailed group="documents" /> : (
-                                <div className="flex min-w-0 flex-col gap-4">
-                                    {/* The administrative checklist, missing items first (J-ADM-01; TASK-035). */}
-                                    {documents.checklist !== null && <ChecklistSection projectId={project.id} checklist={documents.checklist} />}
-                                    {documents.rows.length === 0 ? <RegionEmpty text={t('projects.journey.no_documents')} />
-                                    : (
-                                        <ul role="list" className="flex flex-col divide-y divide-border-subtle">
-                                            {documents.rows.map((row) => (
-                                                <li key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 py-2">
-                                                    <a href={`/dokumen/${row.id}`} className="min-w-0 text-body text-accent-link underline underline-offset-2">
-                                                        {t(typeName(row.type))}
-                                                        {row.number !== null && <> · <Code>{row.number}</Code></>}
-                                                    </a>
-                                                    <StatusBadge family="document_version" state={row.state as 'DRAFT'} size="sm" />
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                            )}
-                        </Deferred>
-                    </Section>
-                </div>
-                {/* The confirmation and *Item dan pemenuhan* (J-PRJ-02; J-FUL-01; TASK-034). */}
-                {parts?.procurement !== undefined && (
-                    <section data-slot="procurement" className="flex min-w-0 flex-col gap-3">
-                        <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-                            <h2 className="text-subhead">{t('purchases.project.title')}</h2>
-                            {parts.procurement.can_create && <Button variant="outline" size="sm" render={<a href={`/pembelian/baru?proyek=${project.id}`} />}>{t('actions.create_purchase')}</Button>}
-                        </div>
-                        {parts.procurement.purchases.length === 0 ? <p className="text-body text-text-secondary">{t('purchases.project.empty')}</p> : (
-                            <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
-                                {parts.procurement.purchases.map((purchase) => (
-                                    <li key={purchase.id} className="flex min-w-0 flex-col gap-1 py-2 text-body">
-                                        <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-                                            <a className="min-w-0 underline" href={`/pembelian/${purchase.id}`}>{`${purchase.number} · ${purchase.supplier}`}</a>
-                                            <StatusBadge family="purchase" state={purchase.state} size="sm" />
-                                        </div>
-                                        {/* Each line still to come at its own unit, never one figure across products or units (CALC-03; TASK-096). */}
-                                        {purchase.remaining.length > 0 && (
-                                            <div className="flex min-w-0 flex-col gap-0.5 text-caption text-text-secondary">
-                                                <span>{t('pages.pg_016.remaining')}</span>
-                                                <ul role="list" className="flex min-w-0 flex-col gap-0.5">
-                                                    {purchase.remaining.map((line, index) => <li key={`${purchase.id}-${String(index)}`} className="min-w-0">{line.description}{' · '}<Quantity value={line.quantity} unit={line.unit} /></li>)}
+                <div className="grid min-w-0 grid-cols-1 items-start gap-x-8 gap-y-6 xl:grid-cols-3">
+                    <div className="flex min-w-0 flex-col gap-6 xl:col-span-2">
+                        {shown?.outcome != null ? (
+                            <Card className="p-4">
+                                <p className="text-body text-text-primary">{t('projects.journey.closed')}</p>
+                                {reachesCompletion && <a href={completion} className="text-body text-accent-link underline underline-offset-2">{t('completion.record.open')}</a>}
+                                {project.state === 'CANCELLED' && (
+                                    isFailed(cancelled) ? <GroupFailed group="cancelled" /> : cancelled === undefined || cancelled === null ? null : (
+                                        <div className="mt-2 flex flex-col gap-2" data-slot="cancelled-record">
+                                            <p className="text-body text-text-secondary">{cancelled.by ?? '—'} · <DateTimeText value={cancelled.at} /></p>
+                                            {cancelled.reason !== null && <p className="text-body text-text-primary">{t('completion.record.reason', { alasan: cancelled.reason })}</p>}
+                                            <p className="text-body text-text-secondary">{t('projects.cancel.stays')}</p>
+                                            {cancelled.obligations.length > 0 && (
+                                                <ul role="list" className="flex flex-col gap-1">
+                                                    {cancelled.obligations.map((row, index) => (
+                                                        <li key={`${row.kind}-${String(index)}`} className="flex flex-wrap items-baseline gap-2 text-body text-text-primary">
+                                                            <span className="font-semibold">{t(`completion.obligation.${row.kind}` as TranslationKey)}</span>
+                                                            <span>{row.label}</span>
+                                                            {row.amount !== null && <Money value={row.amount} />}
+                                                        </li>
+                                                    ))}
                                                 </ul>
-                                            </div>
+                                            )}
+                                        </div>
+                                    )
+                                )}
+                            </Card>
+                        ) : shown !== null && (
+                            <section aria-labelledby={trackId} data-slot="journey" className="flex min-w-0 flex-col gap-5 rounded-xl border border-border bg-surface p-4 md:p-5">
+                                <h2 id={trackId} className="sr-only">
+                                    {t('journey.track')}
+                                </h2>
+                                <div className="flex min-w-0 flex-col gap-4">
+                                    <StageBar stages={shown.stages} position={shown.position} current={shown.current} blocked={shown.blocked} />
+                                    {/* All the stages by name: open on the tablet and desktop, one disclosure on the phone, where the bar already says where the project is. */}
+                                    {phone && barShown ? <Disclosure title={t('journey.track')}>{track}</Disclosure> : track}
+                                    {shown.not_needed.length > 0 && (
+                                        <Disclosure title={t('journey.not_needed')}>
+                                            <p className="text-body text-text-secondary">{shown.not_needed.map((key) => t(stageName(key))).join(', ')}</p>
+                                        </Disclosure>
+                                    )}
+                                </div>
+                                <div className="grid min-w-0 gap-4 border-t border-border pt-4 md:grid-cols-2">
+                                    {!barShown && <Part title={t('journey.now')}>{shown.current === null ? '—' : t(stageName(shown.current))}</Part>}
+                                    <Part title={t('journey.next')}>
+                                        {shown.next === null ? (
+                                            '—'
+                                        ) : primary === undefined ? (
+                                            <ItemText item={{ ...shown.next, href: null }} />
+                                        ) : (
+                                            <>
+                                                {/* The sentence once: the button carries it from the tablet up; on the phone the bottom bar does, the words stay here. */}
+                                                <span className="md:hidden">
+                                                    <ItemText item={{ ...shown.next, href: null }} />
+                                                </span>
+                                                <span className="mt-1 flex max-md:hidden">{primary}</span>
+                                            </>
                                         )}
-                                    </li>
-                                ))}
-                            </ul>
+                                    </Part>
+                                    <Part title={t('journey.blockers')}>{blockers}</Part>
+                                </div>
+                            </section>
                         )}
-                    </section>
-                )}
-                <div id="pemenuhan" className="min-w-0">
-                    <FulfilmentSection projectId={project.id} lockVersion={project.lock_version} fulfilment={fulfilment} today={fulfilment.today} title={(children) => <Section title={t('fulfilment.title')}>{children}</Section>} />
-                </div>
-                {financial !== null && (
-                    <Section title={t('journey.financial')}>
-                        <PositionBlock title={t('journey.financial')} lines={[
-                            { label: t('journey.pos.confirmed'), value: <Money value={financial.confirmed} /> },
-                            { label: t('journey.pos.invoiced'), value: <Money value={financial.invoiced} />, emphasis: true },
-                        ]} />
-                    </Section>
-                )}
-                <Section title={t('journey.details')}>
-                    <FactsList facts={[
-                        { label: t('projects.field.company'), value: `${project.company.code} · ${project.company.name}` },
-                        { label: t('projects.field.client'), value: project.client },
-                        { label: t('projects.field.unit'), value: project.unit ?? '—' },
-                        { label: t('projects.field.address'), value: project.address === null ? '—' : [project.address.label, project.address.lines, project.address.city].filter((part) => part !== null).join(', ') },
-                        { label: t('projects.field.contact'), value: project.contact === null ? '—' : [project.contact.name, project.contact.phone].filter((part) => part !== null).join(' · ') },
-                        { label: t('projects.field.channel'), value: t(project.channel === 'SIPLAH' ? 'projects.channel.siplah' : 'projects.channel.regular') },
-                        ...(project.link === null ? [] : [{
-                            label: t('projects.field.link'),
-                            value: project.link.visible && project.link.id !== null
-                                ? <a href={`/proyek/${project.link.id}`} className="text-accent-link underline underline-offset-2">{`${project.link.number ?? ''} · ${project.link.title ?? ''}`}</a>
-                                : t('projects.link.other_company'),
-                        }]),
-                    ]} />
-                    {project.link?.reason != null && <p className="text-body text-text-secondary">{t('projects.link.reason', { alasan: project.link.reason })}</p>}
-                    {fulfilment.correct_dispatch && <Button variant="outline" size="sm" className="self-start" render={<a href={`/gudang/barang-keluar/${project.id}#barang-keluar-tercatat`} />}>{t('dispatch.substitute.action')}</Button>}
-                    {project.siplah !== null && (
-                        <Disclosure title={t('projects.siplah.title')} defaultOpen>
-                            <FactsList facts={[
-                                ...SIPLAH_TEXTS.map((field) => ({ label: t(siplahName(field)), value: project.siplah?.[field] ?? '—' })),
-                                ...SIPLAH_AMOUNTS.filter((field) => project.siplah !== null && field in project.siplah).map((field) => ({
-                                    label: t(siplahName(field)),
-                                    value: project.siplah?.[field] == null ? '—' : <Money value={project.siplah[field] ?? '0'} />,
-                                    numeric: true,
-                                })),
+                        <Section title={t('journey.remaining')}>
+                            <Deferred data="predicates" fallback={<RegionLoading />}>
+                                {isFailed(predicates) ? <GroupFailed group="predicates" />
+                                    : full === null || full.remaining.length === 0 ? <p className="text-body text-text-secondary">{t('projects.journey.nothing_remaining')}</p>
+                                        : (
+                                            <ul role="list" className="flex flex-col gap-3">
+                                                {full.remaining.map((predicate) => (
+                                                    <li key={predicate.predicate} className="flex flex-col gap-1">
+                                                        <span className="text-label font-semibold text-text-primary">{t(predicateName(predicate.predicate))}</span>
+                                                        <ul role="list" className="flex flex-col gap-0.5 text-body text-text-secondary">
+                                                            {predicate.items.map((item, index) => (
+                                                                <li key={`${item.key}-${String(index)}`}><ItemText item={item} /></li>
+                                                            ))}
+                                                        </ul>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                            </Deferred>
+                        </Section>
+                        {parts?.procurement !== undefined && (
+                            <Section
+                                title={t('purchases.project.title')}
+                                action={parts.procurement.can_create ? <Button variant="outline" size="sm" render={<a href={`/pembelian/baru?proyek=${project.id}`} />}>{t('actions.create_purchase')}</Button> : undefined}
+                            >
+                                <div data-slot="procurement" className="min-w-0">
+                                    {parts.procurement.purchases.length === 0 ? <p className="text-body text-text-secondary">{t('purchases.project.empty')}</p> : (
+                                        <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
+                                            {parts.procurement.purchases.map((purchase) => (
+                                                <li key={purchase.id} className="flex min-w-0 flex-col gap-1 py-2 text-body">
+                                                    <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+                                                        <a className="min-w-0 underline" href={`/pembelian/${purchase.id}`}>{`${purchase.number} · ${purchase.supplier}`}</a>
+                                                        <StatusBadge family="purchase" state={purchase.state} size="sm" />
+                                                    </div>
+                                                    {/* Each line still to come at its own unit, never one figure across products or units (CALC-03; TASK-096). */}
+                                                    {purchase.remaining.length > 0 && (
+                                                        <div className="flex min-w-0 flex-col gap-0.5 text-caption text-text-secondary">
+                                                            <span>{t('pages.pg_016.remaining')}</span>
+                                                            <ul role="list" className="flex min-w-0 flex-col gap-0.5">
+                                                                {purchase.remaining.map((line, index) => <li key={`${purchase.id}-${String(index)}`} className="min-w-0">{line.description}{' · '}<Quantity value={line.quantity} unit={line.unit} /></li>)}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </Section>
+                        )}
+                        {/* The confirmation and *Item dan pemenuhan* (J-PRJ-02; J-FUL-01; TASK-034). */}
+                        <div id="pemenuhan" className="min-w-0">
+                            <FulfilmentSection projectId={project.id} lockVersion={project.lock_version} fulfilment={fulfilment} today={fulfilment.today} title={(children) => <Section title={t('fulfilment.title')}>{children}</Section>} />
+                        </div>
+                        <Section title={t('projects.journey.history')}>
+                            <Deferred data="history" fallback={<RegionLoading />}>
+                                {history === undefined ? null : isFailed(history) ? <GroupFailed group="history" /> : (
+                                    <div className="flex min-w-0 flex-col gap-4">
+                                        <ol className="flex flex-col divide-y divide-border-subtle">
+                                            {history.events.map((event, index) => (
+                                                <li key={`${event.kind}-${String(index)}`} className="flex min-w-0 flex-col gap-0.5 py-2">
+                                                    <span className="text-body text-text-primary">{t(`projects.history.${event.kind.toLowerCase()}` as TranslationKey)}</span>
+                                                    <span className="text-caption text-text-secondary">
+                                                        <DateTimeText value={event.at} />
+                                                        {event.by !== null && ` · ${event.by}`}
+                                                    </span>
+                                                    {event.reason !== null && <span className="text-caption text-text-secondary">{event.reason}</span>}
+                                                </li>
+                                            ))}
+                                        </ol>
+                                        <CorrectionTrail corrects={history.corrects} correctedBy={history.corrected_by} hrefOf={() => null} />
+                                    </div>
+                                )}
+                            </Deferred>
+                        </Section>
+                    </div>
+                    <div className="flex min-w-0 flex-col gap-6">
+                        {financial !== null && (
+                            <Section title={t('journey.financial')}>
+                                <PositionBlock lines={[
+                                    { label: t('journey.pos.confirmed'), value: <Money value={financial.confirmed} /> },
+                                    { label: t('journey.pos.invoiced'), value: <Money value={financial.invoiced} />, emphasis: true },
+                                ]} />
+                            </Section>
+                        )}
+                        <Section title={t('journey.docs_readiness')}>
+                            <Deferred data="documents" fallback={<RegionLoading />}>
+                                {documents === undefined ? null : isFailed(documents) ? <GroupFailed group="documents" /> : (
+                                    <div className="flex min-w-0 flex-col gap-4">
+                                        {/* The administrative checklist, missing items first (J-ADM-01; TASK-035). */}
+                                        {documents.checklist !== null && <ChecklistSection projectId={project.id} checklist={documents.checklist} />}
+                                        {documents.rows.length === 0 ? <RegionEmpty text={t('projects.journey.no_documents')} />
+                                        : (
+                                            <ul role="list" className="flex flex-col divide-y divide-border-subtle">
+                                                {documents.rows.map((row) => (
+                                                    <li key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 py-2">
+                                                        <a href={`/dokumen/${row.id}`} className="min-w-0 text-body text-accent-link underline underline-offset-2">
+                                                            {t(typeName(row.type))}
+                                                            {row.number !== null && <> · <Code>{row.number}</Code></>}
+                                                        </a>
+                                                        <StatusBadge family="document_version" state={row.state as 'DRAFT'} size="sm" />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                )}
+                            </Deferred>
+                        </Section>
+                        <Section title={t('journey.details')}>
+                            <FactsList fit facts={[
+                                { label: t('projects.field.company'), value: `${project.company.code} · ${project.company.name}` },
+                                { label: t('projects.field.client'), value: project.client },
+                                { label: t('projects.field.unit'), value: project.unit ?? '—' },
+                                { label: t('projects.field.address'), value: project.address === null ? '—' : [project.address.label, project.address.lines, project.address.city].filter((part) => part !== null).join(', ') },
+                                { label: t('projects.field.contact'), value: project.contact === null ? '—' : [project.contact.name, project.contact.phone].filter((part) => part !== null).join(' · ') },
+                                { label: t('projects.field.channel'), value: t(project.channel === 'SIPLAH' ? 'projects.channel.siplah' : 'projects.channel.regular') },
+                                ...(project.link === null ? [] : [{
+                                    label: t('projects.field.link'),
+                                    value: project.link.visible && project.link.id !== null
+                                        ? <a href={`/proyek/${project.link.id}`} className="text-accent-link underline underline-offset-2">{`${project.link.number ?? ''} · ${project.link.title ?? ''}`}</a>
+                                        : t('projects.link.other_company'),
+                                }]),
                             ]} />
-                            <p className="text-caption text-text-tertiary">{t('projects.siplah.manual')}</p>
-                        </Disclosure>
-                    )}
-                    {project.lines.length === 0 ? (
-                        <p className="text-body text-text-secondary">{t('projects.form.no_lines')}</p>
-                    ) : (
-                        <ul role="list" aria-label={t('projects.form.lines')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
-                            {project.lines.map((line) => (
-                                <li key={line.no} className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2">
-                                    <span className="min-w-0">
-                                        <span className="block font-medium text-text-primary">{line.product}</span>
-                                        {line.description !== line.product && <span className="block text-caption text-text-secondary">{line.description}</span>}
-                                    </span>
-                                    <span className="flex shrink-0 flex-wrap items-baseline gap-x-3 text-body text-text-secondary">
-                                        <span className="tabular-nums text-text-primary">{`${line.quantity.replace(/\.?0+$/, '')} ${line.unit}`}</span>
-                                        <span>{t(modeName(line.mode))}</span>
-                                        {'price' in line && <span>{line.price == null ? '—' : <Money value={line.price} />}</span>}
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </Section>
-                <Section title={t('projects.journey.history')}>
-                    <Deferred data="history" fallback={<RegionLoading />}>
-                        {history === undefined ? null : isFailed(history) ? <GroupFailed group="history" /> : (
-                            <div className="flex min-w-0 flex-col gap-4">
-                                <ol className="flex flex-col divide-y divide-border-subtle">
-                                    {history.events.map((event, index) => (
-                                        <li key={`${event.kind}-${String(index)}`} className="flex min-w-0 flex-col gap-0.5 py-2">
-                                            <span className="text-body text-text-primary">{t(`projects.history.${event.kind.toLowerCase()}` as TranslationKey)}</span>
-                                            <span className="text-caption text-text-secondary">
-                                                <DateTimeText value={event.at} />
-                                                {event.by !== null && ` · ${event.by}`}
+                            {project.link?.reason != null && <p className="text-body text-text-secondary">{t('projects.link.reason', { alasan: project.link.reason })}</p>}
+                            {fulfilment.correct_dispatch && <Button variant="outline" size="sm" className="self-start" render={<a href={`/gudang/barang-keluar/${project.id}#barang-keluar-tercatat`} />}>{t('dispatch.substitute.action')}</Button>}
+                            {project.siplah !== null && (
+                                <Disclosure title={t('projects.siplah.title')} defaultOpen>
+                                    <FactsList fit facts={[
+                                        ...SIPLAH_TEXTS.map((field) => ({ label: t(siplahName(field)), value: project.siplah?.[field] ?? '—' })),
+                                        ...SIPLAH_AMOUNTS.filter((field) => project.siplah !== null && field in project.siplah).map((field) => ({
+                                            label: t(siplahName(field)),
+                                            value: project.siplah?.[field] == null ? '—' : <Money value={project.siplah[field] ?? '0'} />,
+                                            numeric: true,
+                                        })),
+                                    ]} />
+                                    <p className="text-caption text-text-tertiary">{t('projects.siplah.manual')}</p>
+                                </Disclosure>
+                            )}
+                            {project.lines.length === 0 ? (
+                                <p className="text-body text-text-secondary">{t('projects.form.no_lines')}</p>
+                            ) : (
+                                <ul role="list" aria-label={t('projects.form.lines')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
+                                    {project.lines.map((line) => (
+                                        <li key={line.no} className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2">
+                                            <span className="min-w-0">
+                                                <span className="block font-medium text-text-primary">{line.product}</span>
+                                                {line.description !== line.product && <span className="block text-caption text-text-secondary">{line.description}</span>}
                                             </span>
-                                            {event.reason !== null && <span className="text-caption text-text-secondary">{event.reason}</span>}
+                                            <span className="flex shrink-0 flex-wrap items-baseline gap-x-3 text-body text-text-secondary">
+                                                <span className="tabular-nums text-text-primary">{`${line.quantity.replace(/\.?0+$/, '')} ${line.unit}`}</span>
+                                                <span>{t(modeName(line.mode))}</span>
+                                                {'price' in line && <span>{line.price == null ? '—' : <Money value={line.price} />}</span>}
+                                            </span>
                                         </li>
                                     ))}
-                                </ol>
-                                <CorrectionTrail corrects={history.corrects} correctedBy={history.corrected_by} hrefOf={() => null} />
-                            </div>
-                        )}
-                    </Deferred>
-                </Section>
+                                </ul>
+                            )}
+                        </Section>
+                    </div>
+                </div>
             </div>
             {/* On the phone the journey's next step sits in the bottom action bar, as PG-014's primary action does (PT-03; NAV-011; TASK-096). */}
             {primary !== undefined && (

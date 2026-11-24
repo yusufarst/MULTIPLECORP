@@ -25,6 +25,9 @@
     --spacing-nav-drawer: 20rem;
     --spacing-auth: 25rem;
     --shadow-drawer-start: 1px 0 0 rgb(15 16 20 / 0.06), 24px 0 48px rgb(15 16 20 / 0.12);
+    /* A facts list measures its own container, not the screen: two columns from 30rem of room, three from 46rem. */
+    --container-facts-2: 30rem;
+    --container-facts-3: 46rem;
 
     @keyframes spin {
         to {

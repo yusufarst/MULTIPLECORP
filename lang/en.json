@@ -4369,5 +4369,6 @@
     "pages.pg_006.clear_tpl": "Nothing to follow up: :v.",
     "pages.pg_006.start_title": "Start here",
     "pages.pg_006.start_line": "Add your first company. Projects, purchases and finance can then be recorded.",
-    "pages.pg_006.start_action": "Set Up Companies"
+    "pages.pg_006.start_action": "Set Up Companies",
+    "journey.stage_of": "Stage :n of :total"
 }

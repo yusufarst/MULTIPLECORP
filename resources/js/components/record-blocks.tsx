@@ -17,12 +17,18 @@ import { cn } from '@/lib/utils';
 
 export type Fact = { label: ReactNode; value: ReactNode; numeric?: boolean };
 
-/** PT-12's facts summary: a definition list in two to four columns, stacked on the phone. */
-export function FactsList({ facts, columns = 3, className }: { facts: Fact[]; columns?: 2 | 3 | 4; className?: string }) {
-    return (
+/** PT-12's facts summary: a definition list in two to four columns, stacked on the phone. With `fit` (APPR-042's pilot) the
+    columns follow the room its own container gives — a narrow side column stacks it — one column where container
+    queries are unknown (Modern Web Guidance, size-aware-styling). */
+export function FactsList({ facts, columns = 3, fit = false, className }: { facts: Fact[]; columns?: 2 | 3 | 4; fit?: boolean; className?: string }) {
+    const list = (
         <dl
             data-slot="facts"
-            className={cn('grid min-w-0 grid-cols-1 gap-x-6 gap-y-3 md:grid-cols-2', columns >= 3 && 'lg:grid-cols-3', columns === 4 && 'xl:grid-cols-4', className)}
+            className={cn(
+                'grid min-w-0 grid-cols-1 gap-x-6 gap-y-3',
+                fit ? cn('@facts-2:grid-cols-2', columns >= 3 && '@facts-3:grid-cols-3') : cn('md:grid-cols-2', columns >= 3 && 'lg:grid-cols-3', columns === 4 && 'xl:grid-cols-4'),
+                className,
+            )}
         >
             {facts.map((fact, index) => (
                 <div key={index} className="flex min-w-0 flex-col gap-0.5">
@@ -32,6 +38,8 @@ export function FactsList({ facts, columns = 3, className }: { facts: Fact[]; co
             ))}
         </dl>
     );
+
+    return fit ? <div className="@container min-w-0">{list}</div> : list;
 }
 
 /** The metric strip: key figures in one row separated by hairlines, wrapping on narrow widths (§10). */
@@ -89,10 +97,11 @@ export type PositionLine = { label: ReactNode; value: ReactNode; emphasis?: bool
 
 /** PT-24's financial position block (§14.1): the server's lines with right-aligned figures, the last in 600 weight;
     a contra or correction is its own line, never a silently changed figure. */
-export function PositionBlock({ title, lines }: { title: ReactNode; lines: PositionLine[] }) {
+export function PositionBlock({ title, lines }: { title?: ReactNode; lines: PositionLine[] }) {
     return (
         <section aria-label={typeof title === 'string' ? title : undefined} className="flex min-w-0 flex-col gap-2">
-            <h3 className="text-heading-sm font-semibold text-text-primary">{title}</h3>
+            {/* APPR-042's pilot: no title of its own where its section already names it — one heading (TASK-097's defect). */}
+            {title !== undefined && <h3 className="text-heading-sm font-semibold text-text-primary">{title}</h3>}
             <dl className="flex min-w-0 flex-col divide-y divide-border-subtle">
                 {lines.map((line, index) => (
                     <div key={index} className={cn('flex min-w-0 items-baseline justify-between gap-4 py-2', line.emphasis === true && 'font-semibold')}>
