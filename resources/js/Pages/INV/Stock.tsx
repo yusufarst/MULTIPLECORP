@@ -295,10 +295,7 @@ export default function Stock({ view, filters, list, values, can }: Props) {
                         )}
                     />
                 </div>
-                <Deferred data="values" fallback={<ValuesLoading />}>
-                    <Values values={values} />
-                </Deferred>
-                <section aria-label={view === 'produk' ? t('pages.pg_018.title') : t('stock.tab.places')} aria-busy={searching || undefined} className={cn('flex min-w-0 flex-col gap-3 transition-opacity duration-(--mc-dur-fast)', searching && 'opacity-60')}>
+                <section aria-label={view === 'produk' ? t('pages.pg_018.title') : t('stock.tab.places')} aria-busy={searching || undefined} className={cn('flex min-w-0 flex-col gap-3 transition-opacity duration-(--mc-dur-fast) md:order-2', searching && 'opacity-60')}>
                     <p data-slot="stock-formula" className="text-caption text-text-secondary">{t('inventory.available_formula')}</p>
                     {view === 'rak' && <p data-slot="stock-place-note" className="text-caption text-text-tertiary">{t('stock.place.product_figures')}</p>}
                     {noMatch ? (
@@ -367,6 +364,13 @@ export default function Stock({ view, filters, list, values, can }: Props) {
                     )}
                     {!noMatch && <ListContinuation state={list.cursor_failed ? 'cursor_failed' : list.more === null ? 'end' : 'more'} loading={appending} onLoadMore={more} onReload={() => { visit({}); }} />}
                 </section>
+                {/* The Owner's option (b), 2026-11-24: on the phone the company values follow the list — what is in stock
+                    comes first —; from the tablet up they stand above it. The document order is the phone's. */}
+                <div data-slot="stock-values-place" className="min-w-0 empty:hidden md:order-1">
+                    <Deferred data="values" fallback={<ValuesLoading />}>
+                        <Values values={values} />
+                    </Deferred>
+                </div>
             </div>
         </AppShell>
     );
