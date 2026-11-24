@@ -159,6 +159,13 @@
     vertical-align: top;
 }
 
+/* The meta block's references — dates and record numbers — on one line in either engine: a browser would break
+   "CTH/PRJ/2026/0001" at its slashes where the renderer does not (§6: record numbers never break; TASK-029
+   criterion 6; GF-01). DOC-05's own table, whose sentences wrap, is not the meta block's. */
+.paper-meta .paper-references td {
+    white-space: nowrap;
+}
+
 .paper-text {
     margin-bottom: 4mm;
 }
