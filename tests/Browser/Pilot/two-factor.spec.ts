@@ -51,7 +51,8 @@ test('enrols an Owner without TOTP — the recovery codes stage: shown once, kep
     await page.getByRole('button', { name: 'Aktifkan' }).click();
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Simpan kode pemulihan');
-    await expect(page.getByRole('status')).toContainText('Simpan kode pemulihan ini. Kode hanya ditampilkan sekali.');
+    // Two live regions on this page (the line and the copy confirmation): the line by its text.
+    await expect(page.getByRole('status').filter({ hasText: 'Simpan kode pemulihan ini. Kode hanya ditampilkan sekali.' })).toBeVisible();
     await expect(page.getByRole('list', { name: 'Kode pemulihan' }).getByRole('listitem')).toHaveCount(8);
     expect(await page.evaluate(() => JSON.stringify(window.history.state))).not.toContain(key);
 

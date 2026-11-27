@@ -6,8 +6,8 @@ import { projectRun, type ProjectRun } from '../project-fixtures';
 import { searchStock, stockRun } from '../stock-fixtures';
 
 // APPR-042's pilot on the real stack (the Owner's directive of 2026-11-27): what the pilot deliberately does differently
-// from the contract the four layers' specs still encode — Beranda's figures as cards with the table one step behind
-// "Rincian angka", the project's stage track folded on the phone and read-only, PG-018's labelled rows up to 1,024 px
+// from the contract the four layers' specs still encode — Beranda's figures as cards (the per-company table only for
+// a comparison of several companies), the project's stage track folded on the phone and read-only, PG-018's labelled rows up to 1,024 px
 // and its table from 1,025 px, the stock list before the company values on the phone (D-1) — and the check the layers'
 // specs cannot make of them. The layers' own specs stay unchanged: where they fail on a deliberate difference they are
 // classified, and this file is the pilot's contract on the same stack, with the same fixtures. Nothing here is a release
@@ -30,20 +30,20 @@ async function fillParties(page: Page, run: ProjectRun, title: string): Promise<
     await page.getByLabel(/^Judul proyek/).fill(title);
 }
 
-test('Beranda: the figures as cards, the table behind "Rincian angka", and no axe violation on the three home pages', async ({ page }) => {
+test('Beranda: the four KPIs as cards with the link to the details, and no axe violation on the three home pages', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await importRun(page, `pilot-beranda-${String(Date.now())}`);
 
     await page.goto('/beranda');
     await expect(page.getByRole('heading', { name: 'Angka Periode' })).toBeVisible();
-    const details = page.getByRole('button', { name: 'Rincian angka' });
-    await expect(details).toBeVisible();
 
-    if ((await details.getAttribute('aria-expanded')) !== 'true') {
-        await details.click();
+    // The figures as cards; the per-company table is only for a comparison of several companies, so a layer's data order
+    // decides whether it shows — the layers' own specs assume it always does. "Rincian angka" is a link to PG-052.
+    for (const label of ['Nilai penjualan (invoice terbit)', 'Kas masuk (uang diterima)', 'Piutang aktif', 'Laba manajerial']) {
+        await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
     }
 
-    await expect(page.getByRole('table', { name: 'Angka Periode' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Rincian angka' })).toBeVisible();
     expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
 
     await page.goto('/pekerjaan');
