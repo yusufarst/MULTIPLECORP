@@ -9,7 +9,7 @@ import { searchStock, stockRun } from '../stock-fixtures';
 // Skipped unless WALKTHROUGH_SEED=1 — the CI workflow runs it once as a rehearsal without printing anything, and the
 // layers never list it. The two accounts it makes are printed only with WALKTHROUGH_PRINT=1, on the operator's own terminal.
 
-test.describe.configure({ timeout: 600_000 });
+test.describe.configure({ timeout: 300_000 });
 
 async function account(page: import('@playwright/test').Page, run: string, withTotp: boolean): Promise<Account> {
     const response = await page.request.post('/__fixtures/akun', { data: { run, kind: 'owner', totp: withTotp, locale: 'id' } });
@@ -25,6 +25,8 @@ test('seeds the walkthrough preview and checks what an Owner who made none of it
     // The data: a company with stock, a company with a project; each helper signs its own throwaway Owner in.
     await page.setViewportSize({ width: 1280, height: 900 });
     const stock = await stockRun(page, `wt-stok-${stamp}`);
+    // Each helper signs its own Owner in from a signed-out browser, so the one before it is signed out first.
+    await page.context().clearCookies();
     const project = await projectRun(page, `wt-proyek-${stamp}`, { project: true });
 
     // The people the walkthrough signs in as: an Owner with two-step verification, and an Owner who has none yet (E5's enrolment).
