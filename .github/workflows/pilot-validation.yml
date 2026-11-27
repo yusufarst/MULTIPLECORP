@@ -1,0 +1,167 @@
+# APPR-042's pilot validation (the Owner's directive of 2026-11-27): a push to a `pilot/**` branch only — never `main`, never
+# a pull request, and `ci.yml` leaves these branches to this file, so a pilot push is one run of it, not a second, full one.
+# The pilot's four areas — Masuk with two-step verification, Beranda, Proyek, Gudang › Stok — are the specs of the four
+# browser layers, unchanged, on the repository's own Docker Compose stack: Chromium and WebKit, one worker, the stack's
+# synthetic data only. A spec that encodes the current contract where the pilot deliberately differs fails here and is
+# classified; it is never edited to pass. This is no release check: nothing deploys, nothing here is a required check,
+# and the branch is never merged. The two specs that show recovery codes (two-factor, reauth) log their results only and
+# leave no screenshot or trace in the evidence (E5). No secret but the run's own read-only token, for Composer's downloads
+# from GitHub; the one action is GitHub's artifact upload, pinned to a commit, as ci.yml pins it (SX-05).
+name: Pilot validation
+
+on:
+  push:
+    branches:
+      - 'pilot/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pilot-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Static — build, types, lint, copy catalogue, secret scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out the tested commit
+        run: |
+          git init -q .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch -q --no-tags --depth=1 origin "${GITHUB_SHA}"
+          git checkout -q --detach FETCH_HEAD
+          git log -1 --format='Tested commit: %H'
+
+      - name: Prepare the environment
+        run: |
+          cp .env.example .env
+          echo "HOST_UID=$(id -u)" >> "$GITHUB_ENV"
+          echo "HOST_GID=$(id -g)" >> "$GITHUB_ENV"
+
+      - name: Build the application image
+        run: docker compose build app
+
+      - name: Install the dependencies from the lockfiles
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ github.token }}"}}'
+        run: |
+          docker compose run --rm --no-deps -e COMPOSER_AUTH app composer install --no-interaction --prefer-dist --no-progress
+          docker compose run --rm --no-deps app php artisan key:generate --no-interaction
+          docker compose run --rm node npm ci
+
+      - name: The checks — each one runs, any failure fails the job
+        run: |
+          set +e
+          status=0
+          check() {
+            name=$1
+            shift
+            echo "== ${name}"
+            "$@"
+            code=$?
+            echo "-- ${name}: exit ${code}"
+            [ "${code}" -eq 0 ] || status=1
+          }
+          check 'ESLint' docker compose run --rm node npm run lint
+          check 'TypeScript' docker compose run --rm node npm run typecheck
+          check 'ESLint rules' docker compose run --rm node npm run test:lint-rules
+          check 'Frontend formats and counted forms' docker compose run --rm node npm run test:frontend
+          check 'Copy catalogue (KeyCatalogueTest and the localization unit tests)' docker compose run --rm --no-deps app php artisan test tests/Unit/Localization
+          check 'Production frontend build' docker compose run --rm node npm run build
+          check 'Secret-like scan (SX-06)' docker compose run --rm node sh -c 'sh scripts/ci/scan-secrets.sh --self-test && sh scripts/ci/scan-secrets.sh'
+          exit "${status}"
+
+  browser:
+    name: Browser — ${{ matrix.layer }}, the four areas
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        layer: [E2E, Accessibility, Responsive, Localization]
+    steps:
+      - name: Check out the tested commit
+        run: |
+          git init -q .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch -q --no-tags --depth=1 origin "${GITHUB_SHA}"
+          git checkout -q --detach FETCH_HEAD
+          git log -1 --format='Tested commit: %H'
+
+      - name: Prepare the environment
+        run: |
+          cp .env.example .env
+          echo "HOST_UID=$(id -u)" >> "$GITHUB_ENV"
+          echo "HOST_GID=$(id -g)" >> "$GITHUB_ENV"
+
+      - name: Build the application image and pull the Playwright image
+        run: |
+          docker compose build app
+          docker compose --profile tools pull e2e
+
+      - name: Install the dependencies from the lockfiles and build the frontend
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ github.token }}"}}'
+        run: |
+          docker compose run --rm --no-deps -e COMPOSER_AUTH app composer install --no-interaction --prefer-dist --no-progress
+          docker compose run --rm --no-deps app php artisan key:generate --no-interaction
+          docker compose run --rm node npm ci
+          docker compose run --rm node npm run build
+
+      - name: The stack, migrated
+        run: |
+          docker compose up -d --wait
+          docker compose exec -T app php artisan migrate --database=migration --force
+
+      - name: The specs of the four areas, one worker
+        run: |
+          set +e
+          dir="tests/Browser/${{ matrix.layer }}"
+          shown=''
+          held=''
+          for name in sign-in two-factor reauth home projects stock; do
+            file="${dir}/${name}.spec.ts"
+            [ -f "${file}" ] || continue
+            case "${name}" in
+              two-factor | reauth) held="${held} ${file}" ;;
+              *) shown="${shown} ${file}" ;;
+            esac
+          done
+          status=0
+          if [ -n "${held}" ]; then
+            echo "== Recovery-code specs, results only:${held}"
+            docker compose run --rm e2e npx --no-install playwright test -c tests/Browser/playwright.config.ts --workers=1 ${held} > /tmp/held.log 2>&1
+            code=$?
+            [ "${code}" -eq 0 ] || status=1
+            grep -E '^\s+(✓|✘|-)\s|^\s+[0-9]+ (passed|failed|skipped|did not run|flaky)|^\s+[0-9]+\) \[|^\s+(Error|Locator|Timeout)' /tmp/held.log | cut -c1-220
+            echo "-- exit ${code}"
+          fi
+          echo "== Specs:${shown}"
+          docker compose run --rm e2e npx --no-install playwright test -c tests/Browser/playwright.config.ts --workers=1 ${shown}
+          code=$?
+          [ "${code}" -eq 0 ] || status=1
+          echo "-- exit ${code}"
+          exit "${status}"
+
+      - name: Stack logs
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Keep the evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: pilot-browser-evidence-${{ matrix.layer }}
+          path: |
+            storage/test-results/browser/artifacts/
+            !storage/test-results/browser/artifacts/**/*two-factor*/**
+            !storage/test-results/browser/artifacts/**/*reauth*/**
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Stop the stack
+        if: always()
+        run: docker compose down -v

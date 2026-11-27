@@ -14,6 +14,8 @@ on:
   push:
     branches:
       - '**'
+      # APPR-042's pilot branches (never merged) have their own workflow, pilot-validation.yml.
+      - '!pilot/**'
 
 permissions:
   contents: read
