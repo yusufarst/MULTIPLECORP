@@ -367,7 +367,7 @@ export default function Stock({ view, filters, list, values, can }: Props) {
                 {/* The Owner's option (b), 2026-11-24: on the phone the company values follow the list — what is in stock
                     comes first —; from the tablet up they stand above it. The document order is the phone's. */}
                 <div data-slot="stock-values-place" className="min-w-0 empty:hidden md:order-1">
-                    <Deferred data="values" fallback={<ValuesLoading />}>
+                    <Deferred data="values" fallback={page.props.auth.capabilities.includes('cost.view') ? <ValuesLoading /> : null}>
                         <Values values={values} />
                     </Deferred>
                 </div>

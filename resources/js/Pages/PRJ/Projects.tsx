@@ -18,7 +18,7 @@ import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { NativeSelect } from '@/components/ui/native-select';
-import { Skeleton } from '@/components/ui/skeleton';
+import { DelayedSkeleton } from '@/components/ui/skeleton';
 import { Code, DateText } from '@/components/values';
 import { type Failed, isFailed, ItemText, type JourneySummary, StageSummary } from '@/features/prj/journey';
 import AppShell from '@/layouts/AppShell';
@@ -116,7 +116,7 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
                 {t('projects.list.journey_failed')}
             </button>
         ) : (
-            <Skeleton className="h-3 w-28" />
+            <DelayedSkeleton className="h-3 w-28" />
         );
     };
     const nextStep = (row: Row) => {
