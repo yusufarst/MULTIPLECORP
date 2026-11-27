@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-28 | Owner: Planning
 
 Approval: one of the seven Tasks of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 33, which the Owner approved explicitly ([APPR-052](../00-governance/DECISION_LOG.md#dir-148-and-appr-052--change-33-the-redesigns-seven-tasks-d-8s-minimum-corrections-and-the-release-freeze-exception-2026-11-28); DIR-148), within the approvals of CR-002's packages ([DECISION_LOG](../00-governance/DECISION_LOG.md#approval-register), APPR-044–APPR-051).
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -178,19 +178,19 @@ The navigation of the approved redesign ([APPR-050](../00-governance/DECISION_LO
 
 **TEST CHECKLIST:**
 
-- [ ] Lint: Pint and ESLint in this head's CI (TL-01)
-- [ ] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
-- [ ] Relevant automated tests: the frontend and Browser tests above in this head's CI
-- [ ] Authorization: the route audit (TL-07) and every denial suite unchanged and green
-- [ ] Route integrity: N/A — no route added or changed
-- [ ] Interaction behavior: the Browser tests above
-- [ ] Browser E2E if required: on Chromium and WebKit (TL-09)
-- [ ] Responsive/adaptive if required: the band edges and the labelled-rows thresholds (TL-11)
-- [ ] Visual breathing room/density if UI: against §5 and §§9–10; the density decisions (the 12 px floor, the 20/28 title) the Owner's, at the walkthrough
-- [ ] Production build: TL-13 in this head's CI
-- [ ] Security checks if required: no capability change; nothing shown that the account may not read
-- [ ] Database safety review: no schema change, no migration, no write path; production not touched
-- [ ] Final diff review: ER-06's independent review within DIR-096's bounded loop
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
+- [x] Relevant automated tests: the frontend and Browser tests above in this head's CI
+- [x] Authorization: the route audit (TL-07) and every denial suite unchanged and green
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: the Browser tests above
+- [x] Browser E2E if required: on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the band edges and the labelled-rows thresholds (TL-11)
+- [x] Visual breathing room/density if UI: against §5 and §§9–10; the density decisions (the 12 px floor, the 20/28 title) the Owner's, at the walkthrough
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: no capability change; nothing shown that the account may not read
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: ER-06's independent review within DIR-096's bounded loop
 
 **COMPLETION EVIDENCE:**
 
@@ -201,9 +201,9 @@ The navigation of the approved redesign ([APPR-050](../00-governance/DECISION_LO
 - Browser evidence: the Browser tests above on Chromium and WebKit, as the pull request's checks show before the merge
 - Localization evidence: the changed templates in both languages
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
-- Files changed: —
+- Files changed: `resources/js/lib/navigation.ts` (the three groups, the 37 leaves, `navigationTree`, `currentLeaf`; `PG-039` and `PG-058` added to `BUILT`), `resources/js/components/shell/navigation.tsx` (the sidebar's groups and module disclosures, the labelled rail, the *Menu* drawer and the phone's full-screen *Menu*), `resources/js/layouts/AppShell.tsx`, `resources/js/lib/title.ts`, `resources/js/lib/utils.ts`; `resources/css/tokens.css` (the 248 px sidebar, the 80 px rail, the 20 rem drawer, the guide line's inset); `lang/id.json`, `lang/en.json` (`shell.nav.menu` and the three `shell.nav.group_*`); `tests/Unit/Localization/KeyCatalogueTest.php` (902 keys); `tests/Frontend/navigation-tree.test.ts` (new), `tests/Browser/Responsive/navigation.spec.ts` (new), `tests/Browser/E2E/shell.spec.ts`, `journey-cj02.spec.ts`, `journey-cj14.spec.ts`, `tests/Browser/Accessibility/shell.spec.ts`; K-4's exact text in `docs/07-ux-design/` (INFORMATION_ARCHITECTURE, DESIGN_SYSTEM, NAVIGATION_CONTRACTS, LOCALIZATION) and `docs/03-workflows/` (INTERACTION_CONTRACTS, ROUTE_CONTRACTS), with `FEATURE_COVERAGE_MATRIX`'s two component names
 - Commit SHA: this branch's commits from `main`, the Owner's identity, no AI attribution
-- Notes: —
+- Notes: **K-4's contract text with its code** — the Owner's approved structure (APPR-050) lands here with the navigation, the key catalogue and the tests it must agree with; the term *Menu* and the three group labels stay *proposed — final after novice validation (DIR-134 E7)*, `shell.nav.*` marked `DIR-146` in LOCALIZATION §6 and the catalogue's count 898 → 902 recorded in §7 (the two retired keys kept as retired rows). **The tree** — eight modules in three groups, 37 leaves, every page by its capability and company scope (AZ-01), the server deciding each request; the sidebar 248 px, the rail 80 px labelled with a 20 rem drawer beside it, the phone's bottom bar of four and a full-screen *Menu* (*Kerja*, the groups, *Akun*), a page opened from it closing it. **Non-loss found a defect already in `main`:** the test that every leaf is reachable for an account that holds every capability failed on two pages — *Dokumen Administrasi* (PG-039; TASK-035) and *Impor* (PG-058; TASK-057) were built, with routes, but never added to `BUILT`, so the shell hid their entries; both are added, so the 37 are reachable. **Two lines the notes left out** (ER-06's M4): `--sidebar-width` 264 → 248 and the navigation icon 24 → 20 px in DESIGN_SYSTEM. **Old specifications reconciled, none weakened:** `shell.spec.ts`, `journey-cj02`, `journey-cj14` and the accessibility shell spec now open a module by its button and read the groups; the new `navigation.spec.ts` measures the sidebar, the rail, the drawer and the phone sheet at their bands. Not done and recorded as such: the novice validation (E6, E7), real devices and screen readers — TASK-104's gate.
 - Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**

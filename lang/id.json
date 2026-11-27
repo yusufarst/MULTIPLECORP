@@ -4351,5 +4351,9 @@
     "pages.pg_008.conditions_empty": "Tidak ada kondisi yang masih terbuka.",
     "pages.pg_008.empty": "Tidak ada aktivitas dalam jangka ini.",
     "pages.pg_008.all_companies": "Semua perusahaan",
-    "receiving.list.open_lines": ":count baris belum diterima"
+    "receiving.list.open_lines": ":count baris belum diterima",
+    "shell.nav.group_operations": "Operasional",
+    "shell.nav.group_finance_documents": "Keuangan & dokumen",
+    "shell.nav.group_administration": "Administrasi",
+    "shell.nav.menu": "Menu"
 }

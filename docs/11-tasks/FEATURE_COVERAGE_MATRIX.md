@@ -3309,8 +3309,8 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | migration-rule:DB24-08 | migration rule | DATABASE · 24. Migration and opening data — Useful current-year documents | TASK-005, TASK-006, TASK-057 |
 | migration-rule:DB24-09 | migration rule | DATABASE · 24. Migration and opening data — Number sequences | TASK-006, TASK-021, TASK-057 |
 | migration-rule:DB24-10 | migration rule | DATABASE · 24. Migration and opening data — Dry run | TASK-005, TASK-057 |
-| component:Shell — sidebar, *Menu lengkap*, icon rail, top bar, skip link | component | DESIGN_SYSTEM · 10. Component composition | TASK-015, TASK-016 |
-| component:Phone app bar and bottom bar; *Lainnya* | component | DESIGN_SYSTEM · 10. Component composition | TASK-015, TASK-016 |
+| component:Shell — sidebar, *Menu*, labelled rail, top bar, skip link | component | DESIGN_SYSTEM · 10. Component composition | TASK-015, TASK-016 |
+| component:Phone app bar and bottom bar; *Menu* | component | DESIGN_SYSTEM · 10. Component composition | TASK-015, TASK-016 |
 | component:Page header | component | DESIGN_SYSTEM · 10. Component composition | TASK-015 |
 | component:Button | component | DESIGN_SYSTEM · 10. Component composition | TASK-015 |
 | component:Split action | component | DESIGN_SYSTEM · 10. Component composition | TASK-015 |

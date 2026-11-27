@@ -4351,5 +4351,9 @@
     "pages.pg_008.conditions_empty": "No condition is still open.",
     "pages.pg_008.empty": "No activity in this window.",
     "pages.pg_008.all_companies": "All companies",
-    "receiving.list.open_lines": ":count line not yet received|:count lines not yet received"
+    "receiving.list.open_lines": ":count line not yet received|:count lines not yet received",
+    "shell.nav.group_operations": "Operations",
+    "shell.nav.group_finance_documents": "Finance & documents",
+    "shell.nav.group_administration": "Administration",
+    "shell.nav.menu": "Menu"
 }
