@@ -2,6 +2,10 @@
 
 Status: REVIEW | Updated: 2026-10-23 | Owner: Planning
 
+## Unreleased — 2026-11-28, TASK-098 — the design foundation
+
+- Built TASK-098 on its branch `task/TASK-098-design-foundation`: the tokens of the approved working direction (Grafit & Kobalt) with DESIGN_SYSTEM §5's text they must agree with, a text floor of 12 px and the title at 20/28, the skeleton and its 300 ms rule for a region that loads, and D-8's two shared corrections — one helper that never turns a quantity of "100" into "1", and a link drawn as a button no longer typed as one. No page, navigation or business behaviour changes.
+
 ## Unreleased — 2026-09-27
 
 - Inspected the empty repository and established the P0 documentation foundation.

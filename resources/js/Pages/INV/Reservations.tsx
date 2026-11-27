@@ -21,7 +21,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Tabs, TabsList, TabsTab } from '@/components/ui/tabs';
 import { Code } from '@/components/values';
 import AppShell from '@/layouts/AppShell';
-import { quantity as formatQuantity } from '@/lib/format';
+import { quantity as formatQuantity, plainQuantity } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
@@ -53,7 +53,7 @@ type Action = { kind: 'reserve' | 'reduce' | 'release'; row: Row };
 type Payload = Record<string, string | boolean>;
 
 const LIST = '/gudang/reservasi';
-const amount = (value: string, unit: string): string => formatQuantity(value.replace(/\.?0+$/, '') || '0', unit);
+const amount = (value: string, unit: string): string => formatQuantity(plainQuantity(value), unit);
 // A demand row's hint only — what is left to reserve, or the availability when lower; AX-01 decides at commit.
 const ceiling = (row: Row): string => (row.available !== undefined && Number(row.available) < Number(row.quantity) ? row.available : row.quantity);
 
@@ -101,7 +101,7 @@ export default function Reservations({ branches, branch, filters, product, rows,
         const next = `${kind}:${row.key}`;
         [reserve, reduce].forEach((command) => { if (target.current === next) command.clear(); else command.leave(); });
         target.current = next;
-        setQuantity(kind === 'reserve' && row.kind === 'demand' ? ceiling(row).replace(/\.?0+$/, '') : '');
+        setQuantity(kind === 'reserve' && row.kind === 'demand' ? plainQuantity(ceiling(row)) : '');
         setReason('');
         setAction({ kind, row });
     };

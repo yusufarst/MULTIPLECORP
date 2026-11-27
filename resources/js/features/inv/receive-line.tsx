@@ -14,6 +14,7 @@ import { ProofSheet } from '@/features/fin/proof-sheet';
 import * as decimal from '@/lib/decimal';
 import { useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
+import { plainQuantity } from '@/lib/format';
 
 export type ReceiveLine = { handle: string; no: number; description: string; product: string; name: string; sku: string | null; serialized: boolean; scale: number; ordered: string; received: string; closed: string; remaining: string; replacement: string; reservable: string | null; units: { code: string; name: string; ratio: number }[] };
 export type Receipt = { handle: string; movement: string; line: number; kind: string; usable: string; damaged: string; rejected: string; reference: string | null; date: string; lot: string | null; reversed: boolean };
@@ -21,7 +22,7 @@ export type ReturnCase = { id: string; label: string };
 export type Rack = { id: string; code: string; name: string };
 export type ScannedSerial = { serial: string; damaged: boolean };
 
-export const plain = (value: string): string => (value.includes('.') ? value.replace(/\.?0+$/, '') : value);
+export const plain = (value: string): string => plainQuantity(value);
 
 export function LineForm({ line, url, company, racks, receipts, cases, closed, today, canEvidence, serials, onSerials, hidden, onUnsent, onBusy }: {
     line: ReceiveLine;

@@ -7,6 +7,7 @@ import { ReservationCut, type Reservation } from '@/components/notices';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
+import { plainQuantity } from '@/lib/format';
 
 export type ReceiptReversalFigures = {
     places: { location: string; code: string; condition: 'USABLE' | 'UNUSABLE'; qty: string }[];
@@ -17,7 +18,7 @@ export type ReceiptReversalFigures = {
     consumed: boolean;
 };
 
-const plain = (value: string) => value.replace(/\.?0+$/, '') || '0';
+const plain = (value: string) => plainQuantity(value);
 const placeKey = (place: { location: string; condition: string }) => `${place.location}|${place.condition}`;
 
 export function ReceiptReversal({ handle, figures, today, back, onClose }: { handle: string; figures: ReceiptReversalFigures; today: string; back: string; onClose: () => void }) {

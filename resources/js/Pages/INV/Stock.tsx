@@ -16,6 +16,7 @@ import { lookUp } from '@/features/inv/scan-client';
 import { rememberStockList } from '@/features/inv/stock-list-address';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
+import { plainQuantity } from '@/lib/format';
 
 type Figures = { physical: string; reserved: string; unusable: string; available: string; unit: string; alternate?: { physical: string; reserved: string; unusable: string; available: string; unit: string } };
 type ProductRow = { id: string; name: string; sku: string | null; figures: Figures; pending: string | null; below: string | null; href: string };
@@ -56,7 +57,7 @@ function Values({ values }: { values?: Value[] | { failed: true } }) {
                     <li key={value.company} className="flex min-w-0 flex-col gap-1">
                         <span className="flex min-w-0 flex-wrap items-baseline gap-2"><span>{`${value.company} · ${value.name}`}</span><Money value={value.value} /></span>
                         {/* One line per product, by its identity; a name two products share says each one's SKU (TASK-096). */}
-                        {value.exposures.map((exposure) => <span key={exposure.id} className="text-caption text-text-secondary">{`${exposure.sku !== null && value.exposures.some((other) => other.id !== exposure.id && other.product === exposure.product) ? `${exposure.product} · ${exposure.sku}` : exposure.product}: ${t('messages.msg_41_company', { jumlah: exposure.qty.replace(/\.?0+$/, ''), satuan: exposure.unit })}`}</span>)}
+                        {value.exposures.map((exposure) => <span key={exposure.id} className="text-caption text-text-secondary">{`${exposure.sku !== null && value.exposures.some((other) => other.id !== exposure.id && other.product === exposure.product) ? `${exposure.product} · ${exposure.sku}` : exposure.product}: ${t('messages.msg_41_company', { jumlah: plainQuantity(exposure.qty), satuan: exposure.unit })}`}</span>)}
                     </li>
                 ))}
             </ul>

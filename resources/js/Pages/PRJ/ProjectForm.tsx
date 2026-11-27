@@ -34,6 +34,7 @@ import type { AccountHints } from '@/lib/navigation';
 import { type NumberPeriods, periodOf } from '@/lib/number-period';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
+import { plainQuantity } from '@/lib/format';
 
 type Company = { id: string; code: string; name: string; money: boolean; taxes: string[]; number_periods: NumberPeriods };
 type Product = { id: string; name: string; sku: string | null; kind: 'GOODS' | 'SERVICE'; scale: number; units: { code: string; name: string; ratio: number }[]; price?: string | null };
@@ -78,7 +79,7 @@ const modeName = (mode: string): TranslationKey => `projects.mode.${mode.toLower
 const blank = (key: string): Line => ({ key, handle: null, term: '', product: null, quantity: null, unit: '', mode: 'WAREHOUSE', price: null, description: '' });
 
 /** The quantity as entered, without the trailing zeros the database's scale adds. */
-const entered = (quantity: string): string => (quantity.includes('.') ? quantity.replace(/\.?0+$/, '') : quantity);
+const entered = (quantity: string): string => plainQuantity(quantity);
 
 /** A stored version's lines as the editor holds them. */
 const linesOf = (project: Existing | null): Line[] => (project?.lines ?? []).map((line) => ({

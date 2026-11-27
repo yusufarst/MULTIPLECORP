@@ -38,10 +38,25 @@
        turn per `--mc-dur-spin`; `motion-reduce:animate-none` keeps it still under reduced motion. The reset above
        clears Tailwind's own, so the one animation the system uses is defined here. */
     --animate-spin: spin var(--mc-dur-spin) linear infinite;
+    --animate-pulse: pulse 1.4s ease-in-out infinite;
+    --animate-fade-in: fade-in var(--mc-dur-moderate) var(--ease-reveal) both;
 
     @keyframes spin {
         to {
             transform: rotate(360deg);
+        }
+    }
+
+    @keyframes pulse {
+        50% {
+            opacity: 0.55;
+        }
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            translate: 0 0.25rem;
         }
     }
 
@@ -50,11 +65,11 @@
     --spacing: 0.25rem;
 
     /* §5.1 — neutrals, surfaces and rows. */
-    --color-canvas: #f7f8f3;
+    --color-canvas: #f7f7f6;
     --color-surface: #ffffff;
     --color-surface-sunken: #f2f3ee;
     --color-surface-warm: #fdfcf4;
-    --color-row-hover: #f8f9f4;
+    --color-row-hover: #f6f7f9;
     --color-row-press: #f2f3ec;
     --color-sunken-hover: #e9eae4;
     --color-avatar: #dfe1e3;
@@ -94,18 +109,18 @@
     --color-google-hover: #f8f9fa;
 
     /* §5.1 — the ink tiers; each muted grey only on its own surface, where it meets 4.5:1 (GR-04). */
-    --color-text-primary: #0f1014;
+    --color-text-primary: #18191b;
     --color-text-strong: #3a3b42;
     --color-text-secondary: #55565c;
     --color-text-tertiary: #6b6d73;
     --color-text-muted: #75767a;
-    --color-text-muted-canvas: #717276;
+    --color-text-muted-canvas: #6f7074;
     --color-text-muted-tint: #6d6e72;
     --color-text-tertiary-lime: #696b71;
     --color-text-placeholder: #75767a;
     --color-text-disabled: #9b9da1;
     --color-text-on-primary: #ffffff;
-    --color-text-on-lime: #0d0e00;
+    --color-text-on-lime: #1f45a8;
     --color-icon-field: #262626;
 
     /* §5.1 — the six status tones, a word with its icon, never colour alone (D-DS-04; WCAG 1.4.1). */
@@ -179,9 +194,9 @@
     --text-display: calc(44 * var(--tu));
     --text-display--line-height: calc(50 * var(--tu));
     --text-display--letter-spacing: -0.02em;
-    --text-title: calc(32 * var(--tu));
-    --text-title--line-height: calc(40 * var(--tu));
-    --text-title--letter-spacing: -0.02em;
+    --text-title: calc(20 * var(--tu));
+    --text-title--line-height: calc(28 * var(--tu));
+    --text-title--letter-spacing: -0.01em;
     --text-figure-xl: calc(28 * var(--tu));
     --text-figure-xl--line-height: calc(36 * var(--tu));
     --text-figure-xl--letter-spacing: -0.02em;
@@ -212,11 +227,11 @@
     /* §5.2 — fixed small sizes, never shrunk; nothing below 11 px, the 10.5 px pill excluded (GR-16). */
     --text-caption: 0.75rem;
     --text-caption--line-height: 1rem;
-    --text-micro: 0.6875rem;
+    --text-micro: 0.75rem;
     --text-micro--line-height: 1rem;
     --text-pill: 0.75rem;
     --text-pill--line-height: 1rem;
-    --text-pill-sm: 0.6875rem;
+    --text-pill-sm: 0.75rem;
     --text-pill-sm--line-height: 1rem;
 
     /* §5.2 — the phone scale; text fields 16 px on touch (D-DS-02). */
@@ -398,40 +413,40 @@
 
 :root {
     /* §5.1 — the brand set, the only colours a project re-tints. */
-    --brand-primary: #1a5035;
-    --brand-primary-rim: #12452b;
-    --brand-primary-hover: #154530;
-    --brand-primary-press: #113c29;
-    --brand-primary-deep: #0e3b25;
-    --brand-accent: #545e21;
-    --brand-accent-strong: #353e1c;
-    --brand-accent-link: #4c572c;
-    --brand-accent-soft: #8b936d;
-    --brand-link-soft: #5a643c;
-    --brand-link-strong: #3d4624;
-    --brand-link-rule: #969c71;
-    --brand-tint-50: #f5f9df;
-    --brand-tint-100: #f0f5ca;
-    --brand-tint-100-hover: #e9f0b9;
-    --brand-tint-150: #ecf1d2;
-    --brand-tint-200: #e4ebc2;
-    --brand-on-tint: #556a08;
-    --brand-nav-hover: #f6f9eb;
-    --brand-nav-press: #f0f4dc;
-    --brand-fill-rule: #cfd6ad;
-    --brand-fill-wash: #fbfcf6;
-    --brand-signal: #bbdf06;
-    --brand-cta: #bdca88;
-    --brand-cta-band: #b0ba7d;
-    --brand-cta-hover: #b5c37e;
-    --brand-cta-ink: #0b1005;
-    --brand-cta-rim: #a9b676;
-    --brand-cta-glow: rgb(120 140 40 / 0.28);
-    --brand-cta-shadow: rgb(108 122 52 / 0.22);
-    --brand-focus-halo: rgb(84 94 33 / 0.35);
-    --brand-progress: #a3b26a;
-    --brand-step-done-line: #e4e9cb;
-    --brand-step-done-dot: #dde7a6;
+    --brand-primary: #1f2226;
+    --brand-primary-rim: #121416;
+    --brand-primary-hover: #2c3036;
+    --brand-primary-press: #15171a;
+    --brand-primary-deep: #0f1113;
+    --brand-accent: #2a56c6;
+    --brand-accent-strong: #1f45a8;
+    --brand-accent-link: #2a56c6;
+    --brand-accent-soft: #8da5e0;
+    --brand-link-soft: #3d63c9;
+    --brand-link-strong: #1d3f99;
+    --brand-link-rule: #a9bbe9;
+    --brand-tint-50: #f5f8fe;
+    --brand-tint-100: #edf2fc;
+    --brand-tint-100-hover: #e3eafa;
+    --brand-tint-150: #edf2fc;
+    --brand-tint-200: #dde6f8;
+    --brand-on-tint: #1f45a8;
+    --brand-nav-hover: #f1f3f7;
+    --brand-nav-press: #e8ecf4;
+    --brand-fill-rule: #c9d5f2;
+    --brand-fill-wash: #f8fafd;
+    --brand-signal: #2a56c6;
+    --brand-cta: #1f2226;
+    --brand-cta-band: #2c3036;
+    --brand-cta-hover: #2c3036;
+    --brand-cta-ink: #ffffff;
+    --brand-cta-rim: #121416;
+    --brand-cta-glow: rgb(31 34 38 / 0.2);
+    --brand-cta-shadow: rgb(31 34 38 / 0.18);
+    --brand-focus-halo: rgb(42 86 198 / 0.35);
+    --brand-progress: #2a56c6;
+    --brand-step-done-line: #c9d5f2;
+    --brand-step-done-dot: #9fb4ea;
 
     /* §5.1 — shadcn/ui's theme variables, each a token. */
     --background: var(--color-canvas);
@@ -497,10 +512,10 @@
     --text-auth-helper-size: calc(15 * var(--tu));
     --text-auth-helper-lh: calc(24 * var(--tu));
     --text-body-lg-lh-para: calc(24 * var(--tu));
-    --m-text-title: 1.5625rem;
-    --m-text-title-lh: 1.9375rem;
-    --m-text-heading: 1.125rem;
-    --m-text-heading-lh: 1.5rem;
+    --m-text-title: 1.125rem;
+    --m-text-title-lh: 1.5rem;
+    --m-text-heading: 1rem;
+    --m-text-heading-lh: 1.375rem;
     --m-text-row: 0.9375rem;
     --m-text-row-lh: 1.25rem;
     --m-text-body: 0.9375rem;
@@ -700,13 +715,6 @@
 @media (min-width: 375px) {
     :root {
         --m-gutter: 1.25rem;
-    }
-}
-
-@media (min-width: 400px) {
-    :root {
-        --m-text-title: 1.625rem;
-        --m-text-title-lh: 2rem;
     }
 }
 

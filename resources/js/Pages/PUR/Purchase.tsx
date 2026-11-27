@@ -20,6 +20,7 @@ import { ReceiptReversal, type ReceiptReversalFigures } from '@/features/inv/rec
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
+import { plainQuantity } from '@/lib/format';
 
 type LineRow = {
     handle: string; no: number; kind: 'GOODS' | 'NONSTOCK'; mode: 'WAREHOUSE' | 'DROPSHIP'; description: string; product: Product; quantity: string; unit: string; base_unit: string; price: string; value: string; tax: string;
@@ -73,7 +74,7 @@ function Cascade({ cascade, line }: { cascade: Props['cascade']; line: number | 
             <div className="flex flex-wrap gap-2"><dt className="text-text-secondary">{t('purchases.cascade.lots')}</dt><dd>{lots.length === 0 ? '—' : lots.map((lot) => lot.code).join(', ')}</dd></div>
             <div className="flex flex-col gap-1">
                 <dt className="text-text-secondary">{t('purchases.cascade.consumptions')}</dt>
-                {consumptions.length === 0 ? <dd>—</dd> : consumptions.map((row, index) => <dd key={index}>{`${row.lot} · ${row.quantity.replace(/\.?0+$/, '')}${row.project === null ? '' : ` · ${row.project}`}`}</dd>)}
+                {consumptions.length === 0 ? <dd>—</dd> : consumptions.map((row, index) => <dd key={index}>{`${row.lot} · ${plainQuantity(row.quantity)}${row.project === null ? '' : ` · ${row.project}`}`}</dd>)}
             </div>
             <div className="flex flex-wrap gap-2"><dt className="text-text-secondary">{t('purchases.cascade.projects')}</dt><dd>{projects.length === 0 ? '—' : projects.map((project) => project.number).join(', ')}</dd></div>
         </dl>
@@ -110,7 +111,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
         send.clear();
         setReason('');
         setValue(next.kind === 'correct' ? next.current : '');
-        setClosures(Object.fromEntries(openLines.map((line) => [line.handle, line.remaining.replace(/\.?0+$/, '')])));
+        setClosures(Object.fromEntries(openLines.map((line) => [line.handle, plainQuantity(line.remaining)])));
         setBasis('LINE_VALUE');
         setBasisValues([]);
         setDialog(next);
@@ -127,7 +128,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
         (send.submit as unknown as (value: typeof payload, done: () => void) => void)(payload, finish);
     };
     const startAmend = () => {
-        setAmending(goodsLines.map((line): Line => ({ key: line.handle, handle: line.handle, kind: 'GOODS', term: '', product: line.product, quantity: line.quantity.replace(/\.?0+$/, ''), unit: line.unit, price: line.price, direct: line.mode === 'DROPSHIP', demand: line.demand ?? '', description: line.description, taxes: line.taxes.map((tax) => ({ code: tax.code, rate: tax.rate, amount: tax.amount })) })));
+        setAmending(goodsLines.map((line): Line => ({ key: line.handle, handle: line.handle, kind: 'GOODS', term: '', product: line.product, quantity: plainQuantity(line.quantity), unit: line.unit, price: line.price, direct: line.mode === 'DROPSHIP', demand: line.demand ?? '', description: line.description, taxes: line.taxes.map((tax) => ({ code: tax.code, rate: tax.rate, amount: tax.amount })) })));
     };
     const amendError = (index: number, field: string) => amend.errors[`baris.${String(index)}.${field}`];
     const dialogConfirm: Record<string, { title: string; consequence: string; label: string; destructive: boolean }> = {
@@ -190,7 +191,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                                 </div>
                                 {line.description !== line.product.name && <p className="text-caption text-text-secondary">{line.description}</p>}
                                 <div className="flex min-w-0 flex-wrap gap-x-6 gap-y-1 text-caption text-text-secondary">
-                                    <span>{`${t('purchases.line.entered')}: ${line.quantity.replace(/\.?0+$/, '')} ${line.unit}`}</span>
+                                    <span>{`${t('purchases.line.entered')}: ${plainQuantity(line.quantity)} ${line.unit}`}</span>
                                     <span>{t('purchases.line.ordered')}: <Quantity value={line.ordered} unit={line.base_unit} /></span>
                                     {line.kind === 'GOODS' && <span>{t('purchases.line.received')}: <Quantity value={line.received} unit={line.base_unit} /></span>}
                                     {line.kind === 'GOODS' && <span>{t('pages.pg_016.remaining')}: <Quantity value={line.remaining} unit={line.base_unit} /></span>}
@@ -253,7 +254,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                         <ul role="list" data-slot="purchase-receipts" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
                             {receipts.map((row) => (
                                 <li key={row.handle} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-2">
-                                    <span className="min-w-0">{t('receiving.summary.line', { baris: String(row.line), layak: row.usable.replace(/\.?0+$/, '') || '0', rusak: row.damaged.replace(/\.?0+$/, '') || '0', tolak: row.rejected.replace(/\.?0+$/, '') || '0' })}{row.reference === null ? '' : ` · ${row.reference}`}</span>
+                                    <span className="min-w-0">{t('receiving.summary.line', { baris: String(row.line), layak: plainQuantity(row.usable), rusak: plainQuantity(row.damaged), tolak: plainQuantity(row.rejected) })}{row.reference === null ? '' : ` · ${row.reference}`}</span>
                                     {can.reverse && row.reversal !== null && row.reversal.places.length > 0 && <Button variant="ghost" size="sm" onClick={() => { setReversing(row); }}>{t('actions.reverse_receipt')}</Button>}
                                     {can.reverse && row.reversal !== null && row.reversal.places.length === 0 && row.reversal.consumed && <span className="flex min-w-0 flex-wrap items-center gap-2 text-caption text-text-secondary">{t('receiving.reverse.all_consumed')}<a className="underline" href="/dokumen/kasus">{t('receiving.reverse.cases')}</a></span>}
                                 </li>
@@ -297,7 +298,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                         <div className="flex min-w-0 flex-col gap-3">
                             {dialog.kind !== 'unmark' && <BusinessDateControl today={today} value={date} onChange={setDate} />}
                             {dialog.kind === 'close' && openLines.map((line) => (
-                                <FormField key={line.handle} label={`${String(line.no)}. ${line.product.name}`} help={t('purchases.close.open_of', { sisa: line.remaining.replace(/\.?0+$/, ''), satuan: line.base_unit })}>
+                                <FormField key={line.handle} label={`${String(line.no)}. ${line.product.name}`} help={t('purchases.close.open_of', { sisa: plainQuantity(line.remaining), satuan: line.base_unit })}>
                                     {(control) => <DecimalInput {...control} scale={3} value={closures[line.handle] ?? ''} onValueChange={(next) => { setClosures({ ...closures, [line.handle]: next ?? '' }); }} />}
                                 </FormField>
                             ))}

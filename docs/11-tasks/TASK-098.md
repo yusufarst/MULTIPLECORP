@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-28 | Owner: Planning
 
 Approval: one of the seven Tasks of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 33, which the Owner approved explicitly ([APPR-052](../00-governance/DECISION_LOG.md#dir-148-and-appr-052--change-33-the-redesigns-seven-tasks-d-8s-minimum-corrections-and-the-release-freeze-exception-2026-11-28); DIR-148), within the approvals of CR-002's packages ([DECISION_LOG](../00-governance/DECISION_LOG.md#approval-register), APPR-044–APPR-051).
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -180,19 +180,19 @@ The design foundation of the approved redesign stands, on the shared components 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint: Pint and ESLint in this head's CI (TL-01)
-- [ ] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
-- [ ] Relevant automated tests: the frontend and Browser tests above in this head's CI
-- [ ] Authorization: the route audit (TL-07) and every denial suite unchanged and green
-- [ ] Route integrity: N/A — no route added or changed
-- [ ] Interaction behavior: the Browser tests above
-- [ ] Browser E2E if required: on Chromium and WebKit (TL-09)
-- [ ] Responsive/adaptive if required: the band edges and the labelled-rows thresholds (TL-11)
-- [ ] Visual breathing room/density if UI: against §5 and §§9–10; the density decisions (the 12 px floor, the 20/28 title) the Owner's, at the walkthrough
-- [ ] Production build: TL-13 in this head's CI
-- [ ] Security checks if required: no capability change; nothing shown that the account may not read
-- [ ] Database safety review: no schema change, no migration, no write path; production not touched
-- [ ] Final diff review: ER-06's independent review within DIR-096's bounded loop
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
+- [x] Relevant automated tests: the frontend and Browser tests above in this head's CI
+- [x] Authorization: the route audit (TL-07) and every denial suite unchanged and green
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: the Browser tests above
+- [x] Browser E2E if required: on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the band edges and the labelled-rows thresholds (TL-11)
+- [x] Visual breathing room/density if UI: against §5 and §§9–10; the density decisions (the 12 px floor, the 20/28 title) the Owner's, at the walkthrough
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: no capability change; nothing shown that the account may not read
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: ER-06's independent review within DIR-096's bounded loop
 
 **COMPLETION EVIDENCE:**
 
@@ -203,9 +203,9 @@ The design foundation of the approved redesign stands, on the shared components 
 - Browser evidence: the Browser tests above on Chromium and WebKit, as the pull request's checks show before the merge
 - Localization evidence: the changed templates in both languages
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
-- Files changed: —
+- Files changed: the tokens — `resources/css/tokens.css` (§5's colour values, the type scale's title 20/28 and floor of 12 px, the phone's title 18/24 and heading 16/22, the CTA's glow and shadow, the focus halo, `--animate-pulse` and `--animate-fade-in` with their keyframes) —; `resources/js/components/ui/skeleton.tsx` (new), `button.tsx`, `resources/js/components/region-state.tsx`, `record-blocks.tsx`; `resources/js/lib/format.ts` (`plainQuantity`) and the nine files that called a quantity's zeros away themselves (`components/form.tsx`, `features/inv/receipt-reversal.tsx`, `features/inv/receive-line.tsx`, `features/prj/fulfilment.tsx`, `Pages/INV/Reservations.tsx`, `Pages/INV/Stock.tsx`, `Pages/PRJ/Journey.tsx`, `Pages/PRJ/ProjectForm.tsx`, `Pages/PUR/Purchase.tsx`); the gallery's specimens (`Pages/Fixtures/Components.tsx`); `docs/07-ux-design/DESIGN_SYSTEM.md` (K-3's exact text, applied with the tokens it agrees with); `tests/Frontend/design-foundation.test.ts` (new), `tests/Browser/Responsive/design-foundation.spec.ts` (new)
 - Commit SHA: this branch's commits from `main`, the Owner's identity, no AI attribution
-- Notes: —
+- Notes: **K-3's contract text with its tokens** — DESIGN_SYSTEM's §5.1, §5.2, §7, the shell row, the stage marker, §12.1's pill and Annex B GR-01–GR-04 as the Owner approved them (APPR-051) land in this pull request with `tokens.css`, the tokens test (TL-08) reading §5 as written; every value stays a working direction until the Owner's visual verdict (E8). **Tokens** — graphite for the primary action, cobalt for links, focus, selection and progress; `--color-text-muted-canvas` `#6f7074`; a text floor of 12 px and the title 20/28; the contrast of every text pair, control edge and the done marker held by a test (4.5:1 and 3:1). **The pale done token** `--brand-step-done-dot` (2.06:1 on white) draws nothing: the stage marker and the segmented indicator use cobalt (6.47:1) and no component names the token (the Owner's correction 3). **Skeleton (K-5)** — `RegionLoading` shows lines in the shape of its content after the spinner's 300 ms, its `role="status"` there from the first render and its one word said once, the shapes `aria-hidden` and still under reduced motion; the 43 deferred regions use it; a region the account may not read is never rendered through it (the server defers a group only to an account that may read it — INFORMATION_ARCHITECTURE §9; PJ-13), so no placeholder stands in for a figure without its capability. **D-8 #2** — the server sends a quantity whole ("100"); seventeen lines trimmed its trailing zeros with `/\.?0+$/`, fourteen of them without a guard, so "100" became "1"; one helper, `plainQuantity`, trims only after a decimal point and every call site uses it — the new test fails on `main` (no helper, seventeen sites) and passes here; no source value, rounding or calculation changed. **D-8 #6** — a link drawn as a button is cloned as a plain link and no longer typed `button`. Base UI kept: no dependency added, no `shadcn` command run.
 - Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**

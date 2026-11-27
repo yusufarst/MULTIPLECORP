@@ -26,6 +26,20 @@ function thousands(digits: string): string {
     return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
+/**
+ * A decimal string without the zeros that only fill its scale — the form a field or a sentence takes the value in: "100.00" is "100",
+ * "0.50" is "0.5", "0.00" is "0". A value with no decimal point is returned as it is: "100" is never "1" (D-8 #2).
+ */
+export function plainQuantity(value: string): string {
+    if (!value.includes('.')) {
+        return value;
+    }
+
+    const trimmed = value.replace(/0+$/, '').replace(/\.$/, '');
+
+    return trimmed === '' || trimmed === '-' ? '0' : trimmed;
+}
+
 function exact(value: string): string {
     const { negative, whole, fraction } = decimal(value);
     const significant = fraction.replace(/0+$/, '');

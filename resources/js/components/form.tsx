@@ -9,6 +9,7 @@ import { useTranslation } from '@/lib/i18n';
 import { parseDecimal } from '@/lib/number-entry';
 import * as format from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { plainQuantity } from '@/lib/format';
 
 // PT-09's form layout and validation (DESIGN_SYSTEM §9.3; ADMIN_FLOW IP-13, IP-14): sections under subheading titles,
 // not in panels; labels above fields with "(wajib)" after a required one; helper text only where it prevents an
@@ -182,7 +183,7 @@ export function DecimalInput({
 
 /** A decimal without its trailing zeros, to compare two spellings of one figure. */
 function plain(decimal: string): string {
-    return decimal.includes('.') ? decimal.replace(/\.?0+$/, '') : decimal;
+    return plainQuantity(decimal);
 }
 
 /** The entered text without the field's own presentation — "Rp" before money, the unit after a quantity — so a

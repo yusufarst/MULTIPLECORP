@@ -5,19 +5,35 @@ import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyDescription } from '@/components/ui/empty';
 import { Icon } from '@/components/ui/icon';
-import { Spinner } from '@/components/ui/spinner';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useDelayed } from '@/components/ui/spinner';
 import { useTranslation } from '@/lib/i18n';
+import { cn } from '@/lib/utils';
 
-// PT-19's states of a region (DESIGN_SYSTEM §9.4, §10 "States of a region", §12.3): loading with a spinner after
-// 300 ms, never a skeleton; empty — one sentence and at most one action, a search's naming its term; a part's
-// error — "Bagian Ini Tidak Dapat Dimuat", the reference code and "Muat Ulang Bagian Ini", the rest of the page
-// working —; one region never blanks the page. Each change is announced (WCAG 4.1.3).
-export function RegionLoading() {
+// PT-19's states of a region (DESIGN_SYSTEM §9.4, §10 "States of a region", §12.3): loading behind a skeleton after
+// 300 ms (K-5), a busy control keeping its spinner; empty — one sentence and at most one action, a search's naming its
+// term; a part's error — "Bagian Ini Tidak Dapat Dimuat", the reference code and "Muat Ulang Bagian Ini", the rest of the
+// page working —; one region never blanks the page. Each change is announced (WCAG 4.1.3).
+/**
+ * A region that loads behind lines in the shape of its content. The status line exists from the first render, so the change is
+ * heard; the shapes and their one word "Memuat" come after the same 300 ms as a spinner's, so a fast answer never flashes. The
+ * shapes are hidden from assistive technology. A region the account may not read is never rendered here: a group it holds no
+ * capability for does not exist on its page (INFORMATION_ARCHITECTURE §9; PJ-13), and no placeholder stands in for its figures.
+ */
+export function RegionLoading({ lines = 3 }: { lines?: number }) {
     const { t } = useTranslation();
+    const shown = useDelayed(true);
 
     return (
-        <div data-region-state="loading" className="flex min-h-control-xl items-center justify-center py-6">
-            <Spinner label={t('states.loading')} size="md" />
+        <div data-region-state="loading" role="status" className="flex min-h-control-xl flex-col justify-center gap-3 py-6">
+            {shown && (
+                <>
+                    <span className="sr-only">{t('states.loading')}</span>
+                    {Array.from({ length: lines }, (_, line) => (
+                        <Skeleton key={line} className={cn('h-4', line === lines - 1 ? 'w-3/5' : 'w-full')} />
+                    ))}
+                </>
+            )}
         </div>
     );
 }
