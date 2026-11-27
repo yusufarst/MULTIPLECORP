@@ -86,7 +86,7 @@ function FindingRow({ finding, companies, today, can }: { finding: Finding; comp
             )}
             {can.surplus && (
                 <div className="flex min-w-0 flex-wrap items-end gap-3">
-                    <FormField label={t('discrepancies.field.company')} error={command.errors.perusahaan} className="min-w-0 sm:w-64">
+                    <FormField label={t('discrepancies.field.company')} error={command.errors.perusahaan} className="min-w-0 md:w-64">
                         {(control) => (
                             <NativeSelect {...control} value={company} disabled={frozen} onChange={(event) => { setCompany(event.target.value); }}>
                                 <option value="">{t('dispatch.substitute.choose')}</option>
@@ -174,7 +174,7 @@ function CaseRow({ row, proofs, today, can }: { row: Case; proofs: Props['proofs
                                     {(control) => <DecimalInput {...control} scale={3} value={quantities[lot.lot] ?? ''} onValueChange={(next) => { setQuantities({ ...quantities, [lot.lot]: next ?? '' }); setKept({ ...kept, [lot.lot]: lot }); }} />}
                                 </FormField>
                                 {can.resolve && companies.length > 0 && (
-                                    <FormField label={t('discrepancies.field.bearer', { kode: lot.code })} className="min-w-0 sm:w-48">
+                                    <FormField label={t('discrepancies.field.bearer', { kode: lot.code })} className="min-w-0 md:w-48">
                                         {(control) => (
                                             <NativeSelect {...control} value={bearerOf(lot)} onChange={(event) => { setBearers({ ...bearers, [lot.lot]: event.target.value }); }}>
                                                 {companies.map((one) => <option key={one.id} value={one.id}>{one.company}</option>)}
@@ -188,7 +188,7 @@ function CaseRow({ row, proofs, today, can }: { row: Case; proofs: Props['proofs
                 </fieldset>
             )}
             {can.evidence && !can.resolve && (
-                <FormField label={t('adjustments.field.proof')} error={proof.errors.bukti} className="min-w-0 sm:w-96">
+                <FormField label={t('adjustments.field.proof')} error={proof.errors.bukti} className="min-w-0 md:w-96">
                     {(control) => (
                         <NativeSelect {...control} value={evidence} disabled={frozen} onChange={(event) => { setEvidence(event.target.value); }}>
                             <option value="">{t('dispatch.substitute.choose')}</option>

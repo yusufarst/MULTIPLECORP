@@ -47,7 +47,7 @@ export default function Quotations({ branches, branch, money, rows, more }: Prop
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_037.title')} />
                 {branches.length > 1 && (
-                    <FormField label={t('documents.field.branch')} className="min-w-0 sm:w-80">
+                    <FormField label={t('documents.field.branch')} className="min-w-0 md:w-80">
                         {(control) => (
                             <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { router.get(`/dokumen/penawaran?${new URLSearchParams({ perusahaan: event.target.value }).toString()}`, {}, { preserveScroll: true, preserveState: true }); }}>
                                 {branches.map((option) => (

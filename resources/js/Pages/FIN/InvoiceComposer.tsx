@@ -164,7 +164,7 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
                     lines.length === 0 ? <RegionEmpty text={t('invoices.refusal.unconfirmed')} /> : (
                         <ol aria-label={t('invoices.detail.lines')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
                             {lines.map((line) => (
-                                <li key={line.handle} data-testid="invoice-line" className="grid min-w-0 gap-2 py-3 sm:grid-cols-2 sm:items-end">
+                                <li key={line.handle} data-testid="invoice-line" className="grid min-w-0 gap-2 py-3 md:grid-cols-2 md:items-end">
                                     <div className="flex min-w-0 flex-col">
                                         <span className="font-semibold text-text-primary">{`${String(line.no)}. ${line.description}`}</span>
                                         <span className="text-body text-text-secondary">{`${line.quantity} ${line.unit} · `}<Money value={line.value} /></span>

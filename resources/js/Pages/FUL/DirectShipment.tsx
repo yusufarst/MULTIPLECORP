@@ -194,7 +194,7 @@ export default function DirectShipment({ page, today }: Props) {
                                 <li key={line.id} data-slot="dropship-line" className="flex min-w-0 flex-col gap-2 py-3">
                                     <span className="font-medium">{`${String(line.no)}. ${line.description}`}</span>
                                     <span className="text-caption text-text-secondary">{`${line.purchase.number}${line.purchase.supplier === null ? '' : ` · ${line.purchase.supplier}`}`}</span>
-                                    <dl className="grid min-w-0 grid-cols-2 gap-x-6 gap-y-1 text-body sm:grid-cols-4">
+                                    <dl className="grid min-w-0 grid-cols-2 gap-x-6 gap-y-1 text-body md:grid-cols-4">
                                         {(['ordered', 'confirmed', 'remainder', 'awaited'] as const).map((field) => (
                                             <div key={field} className="flex min-w-0 flex-col"><dt className="text-caption text-text-secondary">{t(`dropship.figure.${field}`)}</dt><dd>{`${line[field]} ${line.base_unit ?? ''}`}</dd></div>
                                         ))}

@@ -88,11 +88,12 @@ export function KpiTile({ icon, tone, label, value, href }: { icon: LucideIcon; 
 export type PositionLine = { label: ReactNode; value: ReactNode; emphasis?: boolean; note?: ReactNode };
 
 /** PT-24's financial position block (§14.1): the server's lines with right-aligned figures, the last in 600 weight;
-    a contra or correction is its own line, never a silently changed figure. */
-export function PositionBlock({ title, lines }: { title: ReactNode; lines: PositionLine[] }) {
+    a contra or correction is its own line, never a silently changed figure. Without a title it is the content of a
+    section that already names it, so it adds no second heading (TASK-097). */
+export function PositionBlock({ title, lines }: { title?: ReactNode; lines: PositionLine[] }) {
     return (
         <section aria-label={typeof title === 'string' ? title : undefined} className="flex min-w-0 flex-col gap-2">
-            <h3 className="text-heading-sm font-semibold text-text-primary">{title}</h3>
+            {title !== undefined && <h3 className="text-heading-sm font-semibold text-text-primary">{title}</h3>}
             <dl className="flex min-w-0 flex-col divide-y divide-border-subtle">
                 {lines.map((line, index) => (
                     <div key={index} className={cn('flex min-w-0 items-baseline justify-between gap-4 py-2', line.emphasis === true && 'font-semibold')}>

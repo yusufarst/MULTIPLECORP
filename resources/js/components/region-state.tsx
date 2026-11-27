@@ -63,9 +63,12 @@ export function RegionError({ reference, onReload }: { reference: string; onRelo
                     </Button>
                 }
             >
-                <span data-code className="text-caption text-text-tertiary">
-                    {t('outcome.reference', { kode: reference })}
-                </span>
+                {/* "Kode referensi" only with a code the server gave (TASK-097). */}
+                {reference.trim() !== '' && (
+                    <span data-code className="text-caption text-text-tertiary">
+                        {t('outcome.reference', { kode: reference })}
+                    </span>
+                )}
             </Alert>
         </div>
     );
@@ -94,9 +97,11 @@ export function SystemPage({ kind, message, reference, back, page = false }: { k
                 {t(face.title)}
             </Title>
             <EmptyDescription>{message}</EmptyDescription>
-            <span data-code className="text-caption text-text-tertiary">
-                {t('outcome.reference', { kode: reference })}
-            </span>
+            {reference.trim() !== '' && (
+                <span data-code className="text-caption text-text-tertiary">
+                    {t('outcome.reference', { kode: reference })}
+                </span>
+            )}
             {back}
         </Empty>
     );

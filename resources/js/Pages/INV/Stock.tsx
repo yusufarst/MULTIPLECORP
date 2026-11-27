@@ -131,7 +131,7 @@ export default function Stock({ view, filters, list, values, can }: Props) {
                 <ScanNotice notice={guard.notice} />
                 <ScanField inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} result={result} error={scanError} />
                 <form className="flex min-w-0 flex-wrap items-end gap-3" role="search" onSubmit={search}>
-                    <FormField label={t('stock.search')} className="min-w-0 flex-1 sm:max-w-96">
+                    <FormField label={t('stock.search')} className="min-w-0 flex-1 md:max-w-96">
                         {(control) => <Input {...control} value={term} maxLength={100} onChange={(event) => { setTerm(event.target.value); }} />}
                     </FormField>
                     <Button type="submit" variant="outline">{t('stock.search_action')}</Button>

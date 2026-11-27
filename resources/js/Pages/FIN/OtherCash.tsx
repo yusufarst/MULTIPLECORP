@@ -280,7 +280,7 @@ export default function OtherCash({ branches, branch, tabs, tab, rows, more, aft
                     {can('cashin') && <Button size="sm" variant="outline" onClick={() => { setRecording('cashin'); }}><Plus className="size-4" aria-hidden />{t('actions.record_other_cash_in')}</Button>}
                 </div>
                 {many && (
-                    <FormField label={t('receivables.field.branch')} className="min-w-0 sm:w-80">
+                    <FormField label={t('receivables.field.branch')} className="min-w-0 md:w-80">
                         {(control) => (
                             <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ perusahaan: event.target.value }); }}>
                                 <option value="">{t('receivables.field.all_branches')}</option>

@@ -1,6 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft, LogOut, ShieldAlert, UserRound } from 'lucide-react';
-import { type ReactNode, useRef, useState } from 'react';
+import { type ReactNode, useRef, useState, useSyncExternalStore } from 'react';
 
 import { GlobalSearch } from '@/components/shell/global-search';
 import { AccountMenu, CreateMenu, roleLabel } from '@/components/shell/menus';
@@ -45,8 +45,26 @@ export type ShellProps = {
     composer?: boolean;
 };
 
+// §6's tablet band, 768–1,024 px: the navigation is the 80 px rail there (KB-03; TASK-097).
+const TABLET = '(width >= 48rem) and (width < 64.0625rem)';
+
+function useTabletBand(): boolean {
+    return useSyncExternalStore(
+        (notify) => {
+            const query = window.matchMedia(TABLET);
+            query.addEventListener('change', notify);
+
+            return () => {
+                query.removeEventListener('change', notify);
+            };
+        },
+        () => window.matchMedia(TABLET).matches,
+    );
+}
+
 export default function AppShell({ title, back, focused = false, children, built = BUILT, gateway, composer = false }: ShellProps) {
     const { t } = useTranslation();
+    const tablet = useTabletBand();
     const page = usePage<{ auth: AccountHints }>();
     const account = page.props.auth;
     const pathname = new URL(page.url, window.location.origin).pathname;
@@ -73,8 +91,11 @@ export default function AppShell({ title, back, focused = false, children, built
     useShortcut({ key: '/', ctrl: true }, () => {
         setHelp(true);
     });
+    // KB-03's Ctrl B collapses and expands the desktop's sidebar; the tablet band always shows the rail, so it does nothing there.
     useShortcut({ key: 'b', ctrl: true }, () => {
-        setRail((value) => !value);
+        if (!window.matchMedia(TABLET).matches) {
+            setRail((value) => !value);
+        }
     });
 
     const signOut = built.has('ROUTE-108') ? () => {
@@ -94,7 +115,7 @@ export default function AppShell({ title, back, focused = false, children, built
                 <Sidebar
                     account={account}
                     pathname={pathname}
-                    rail={rail}
+                    rail={rail || tablet}
                     onToggle={() => {
                         setRail((value) => !value);
                     }}
@@ -106,7 +127,9 @@ export default function AppShell({ title, back, focused = false, children, built
                                 <Icon icon={ArrowLeft} size="md" />
                             </Button>
                         )}
-                        <p className="min-w-0 flex-1 truncate text-m-heading font-semibold text-text-primary md:hidden">{title}</p>
+                        {/* One visible title on the phone (§6; PT-03; TASK-097): a page with its own header names itself there, with
+                            its back arrow, so the bar's copy of the title stays out of sight while keeping its place. */}
+                        <p className="min-w-0 flex-1 truncate text-m-heading font-semibold text-text-primary group-has-[[data-slot=page-header]]/shell:invisible md:hidden">{title}</p>
                         {onSearchPage ? <div className="min-w-0 flex-1 max-md:hidden" /> : (
                             <>
                                 <div className="min-w-0 flex-1 max-md:hidden md:max-w-search">

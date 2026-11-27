@@ -55,7 +55,7 @@ export default function Purchases({ branches, branch, state, rows, more, can }: 
                 {can.create && <Button className="self-start md:hidden" render={<a href="/pembelian/baru" />}>{t('actions.create_purchase')}</Button>}
                 <div className="flex min-w-0 flex-wrap items-end gap-4">
                     {branches.length > 1 && (
-                        <FormField label={t('purchases.field.company')} className="min-w-0 sm:w-80">
+                        <FormField label={t('purchases.field.company')} className="min-w-0 md:w-80">
                             {(control) => (
                                 <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ perusahaan: event.target.value, status: state }); }}>
                                     {branches.map((option) => <option key={option.id} value={option.id}>{`${option.code} · ${option.name}`}</option>)}
@@ -63,7 +63,7 @@ export default function Purchases({ branches, branch, state, rows, more, can }: 
                             )}
                         </FormField>
                     )}
-                    <FormField label={t('purchases.field.state')} className="min-w-0 sm:w-56">
+                    <FormField label={t('purchases.field.state')} className="min-w-0 md:w-56">
                         {(control) => (
                             <NativeSelect {...control} value={state ?? ''} onChange={(event) => { visit({ perusahaan: branch, status: event.target.value }); }}>
                                 <option value="">{t('purchases.list.all_states')}</option>

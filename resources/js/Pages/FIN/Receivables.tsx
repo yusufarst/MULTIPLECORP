@@ -78,7 +78,7 @@ export default function Receivables({ branches, branch, tab, client, clients, su
                 <Answered command={bill} />
                 <div className="flex min-w-0 flex-wrap items-end gap-4">
                     {branches.length > 1 && (
-                        <FormField label={t('receivables.field.branch')} className="min-w-0 sm:w-80">
+                        <FormField label={t('receivables.field.branch')} className="min-w-0 md:w-80">
                             {(control) => (
                                 <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ perusahaan: event.target.value, klien: null }); }}>
                                     <option value="">{t('receivables.field.all_branches')}</option>
@@ -87,7 +87,7 @@ export default function Receivables({ branches, branch, tab, client, clients, su
                             )}
                         </FormField>
                     )}
-                    <FormField label={t('receivables.field.client')} className="min-w-0 sm:w-80">
+                    <FormField label={t('receivables.field.client')} className="min-w-0 md:w-80">
                         {(control) => (
                             <NativeSelect {...control} value={client ?? ''} onChange={(event) => { visit({ klien: event.target.value }); }}>
                                 <option value="">{t('receivables.field.all_clients')}</option>

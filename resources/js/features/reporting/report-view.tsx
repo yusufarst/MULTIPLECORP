@@ -22,7 +22,7 @@ import { Icon } from '@/components/ui/icon';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTab } from '@/components/ui/tabs';
-import { date, dateTime, money, percent } from '@/lib/format';
+import { date, dateClock, money, percent } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 
 export type Column = { key: string; kind: 'text' | 'label' | 'company' | 'date' | 'qty' | 'money' | 'percent'; total: boolean };
@@ -304,11 +304,11 @@ export function ReportPage({ props, path, title, back, links }: { props: ReportP
                         )}
                     </FormField>
                 )}
-                <p className="text-caption text-text-tertiary md:ml-auto">{POSITIONS.has(report) ? t('pages.pg_051.as_of', { waktu: dateTime(asOf) }) : `${date(filters.dari)} – ${date(filters.sampai)}`}</p>
+                <p className="text-caption text-text-tertiary md:ml-auto">{POSITIONS.has(report) ? t('pages.pg_051.as_of', { waktu: dateClock(asOf) }) : `${date(filters.dari)} – ${date(filters.sampai)}`}</p>
             </div>
             {tables === undefined ? <RegionLoading /> : <ReportTables tables={tables} />}
             <p className="hidden text-caption print:block" data-slot="print-footer">
-                {t('pages.pg_051.print_footer', { waktu: dateTime(asOf), nama: user })}
+                {t('pages.pg_051.print_footer', { waktu: dateClock(asOf), nama: user })}
             </p>
         </div>
     );

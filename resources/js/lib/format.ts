@@ -96,16 +96,27 @@ export function dateLong(value: string): string {
     return `${String(dayOfMonth)} ${MONTHS_LONG[month - 1] ?? ''} ${String(year)}`;
 }
 
-/** A time on the 24-hour clock in WIB: "14.05 WIB". */
-export function time(instant: string): string {
+/** A time on the 24-hour clock in WIB without the zone, for a template that names "WIB" itself — "Diperbarui {waktu}
+    WIB" —, so the zone is shown once (TASK-065 GF-07; TASK-097): "14.05". */
+export function clock(instant: string): string {
     const local = wib(instant);
 
-    return `${two(local.getUTCHours())}.${two(local.getUTCMinutes())} WIB`;
+    return `${two(local.getUTCHours())}.${two(local.getUTCMinutes())}`;
+}
+
+/** A time on the 24-hour clock in WIB: "14.05 WIB". */
+export function time(instant: string): string {
+    return `${clock(instant)} WIB`;
+}
+
+/** A date with its time, without the zone, for a template that names "WIB" itself: "02 Okt 2026 14.05" (TASK-097). */
+export function dateClock(instant: string): string {
+    return `${date(dayOf(instant))} ${clock(instant)}`;
 }
 
 /** A date with its time: "02 Okt 2026 14.05 WIB". */
 export function dateTime(instant: string): string {
-    return `${date(dayOf(instant))} ${time(instant)}`;
+    return `${dateClock(instant)} WIB`;
 }
 
 /** An instant's day in WIB as `YYYY-MM-DD`, for the day formats above. */

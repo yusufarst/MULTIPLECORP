@@ -127,7 +127,7 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
                 <FormField label={t('pages.pg_022.rejected')} error={error('tolak')} className="w-32">
                     {(control) => <DecimalInput {...control} scale={3} value={rejected} disabled={frozen} onValueChange={(value) => { setRejected(value ?? ''); }} />}
                 </FormField>
-                <FormField label={t('pages.pg_022.rack')} error={error('rak')} className="min-w-0 sm:w-64">
+                <FormField label={t('pages.pg_022.rack')} error={error('rak')} className="min-w-0 md:w-64">
                     {(control) => (
                         <NativeSelect {...control} value={rack} disabled={frozen} onChange={(event) => { setRack(event.target.value); }}>
                             <option value="">{t('pages.pg_022.rack_choose')}</option>
@@ -135,7 +135,7 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
                         </NativeSelect>
                     )}
                 </FormField>
-                <FormField label={t('pages.pg_022.delivery_ref')} error={error('referensi')} className="min-w-0 sm:w-64">
+                <FormField label={t('pages.pg_022.delivery_ref')} error={error('referensi')} className="min-w-0 md:w-64">
                     {(control) => <Input {...control} value={reference} maxLength={120} disabled={frozen} onChange={(event) => { setReference(event.target.value); }} />}
                 </FormField>
             </div>
@@ -160,7 +160,7 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
             )}
             {(ownReceipts.length > 0 || expected) && (
                 <div className="flex min-w-0 flex-wrap items-start gap-4">
-                    <FormField label={t('receiving.line.kind')} className="min-w-0 sm:w-64">
+                    <FormField label={t('receiving.line.kind')} className="min-w-0 md:w-64">
                         {(control) => (
                             <NativeSelect {...control} value={kind} disabled={frozen} onChange={(event) => { setKind(event.target.value); }}>
                                 <option value="ORIGINAL">{t('receiving.kind.ORIGINAL')}</option>
@@ -171,7 +171,7 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
                         )}
                     </FormField>
                     {kind === 'REPLACEMENT' && (
-                        <FormField label={t('receiving.line.case')} error={error('kasus')} className="min-w-0 sm:w-80">
+                        <FormField label={t('receiving.line.case')} error={error('kasus')} className="min-w-0 md:w-80">
                             {(control) => (
                                 <NativeSelect {...control} value={returnCase} disabled={frozen} onChange={(event) => { setReturnCase(event.target.value); }}>
                                     <option value="">{t('receiving.line.choose_case')}</option>
@@ -181,7 +181,7 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
                         </FormField>
                     )}
                     {(kind === 'SUPPLEMENT' || kind === 'RE_RECEIPT') && (
-                        <FormField label={t('receiving.line.cited')} error={error('mengoreksi')} className="min-w-0 sm:w-80">
+                        <FormField label={t('receiving.line.cited')} error={error('mengoreksi')} className="min-w-0 md:w-80">
                             {(control) => (
                                 <NativeSelect {...control} value={cited} disabled={frozen} onChange={(event) => { setCited(event.target.value); }}>
                                     <option value="">{t('receiving.line.choose_cited')}</option>
@@ -193,7 +193,7 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
                 </div>
             )}
             {line.reservable !== null && (
-                <FormField label={t('pages.pg_022.reserve')} help={t('pages.pg_022.reserve_limit_tpl', { v: plain(line.reservable) })} error={error('reservasi')} className="min-w-0 sm:w-64">
+                <FormField label={t('pages.pg_022.reserve')} help={t('pages.pg_022.reserve_limit_tpl', { v: plain(line.reservable) })} error={error('reservasi')} className="min-w-0 md:w-64">
                     {(control) => <DecimalInput {...control} scale={3} value={reserve} disabled={frozen} onValueChange={(value) => { setReserve(value ?? ''); }} />}
                 </FormField>
             )}

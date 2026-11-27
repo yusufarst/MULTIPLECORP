@@ -606,6 +606,10 @@ export default function ComponentGallery() {
                 <RegionLoading />
                 <RegionEmpty text={t('signals.qs_02_empty')} />
                 <RegionError reference={SAMPLE.reference} onReload={() => undefined} />
+                {/* A part's error the server gave no code for, as Beranda's failed group is: no "Kode referensi" line (TASK-097). */}
+                <div data-specimen="no-reference">
+                    <RegionError reference="" onReload={() => undefined} />
+                </div>
                 <SystemPage kind="not_found" message={t('messages.msg_09')} reference={SAMPLE.reference} back={<Button variant="outline">{t('actions.back_to_work')}</Button>} />
             </Section>
 

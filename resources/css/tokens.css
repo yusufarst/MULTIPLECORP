@@ -34,6 +34,17 @@
     --breakpoint-xl: 75rem;
     --breakpoint-composer: 80rem;
 
+    /* §8: the spinner's turn (TASK-097) — `animate-spin` on a busy control's icon, shown after the 300 ms delay, one
+       turn per `--mc-dur-spin`; `motion-reduce:animate-none` keeps it still under reduced motion. The reset above
+       clears Tailwind's own, so the one animation the system uses is defined here. */
+    --animate-spin: spin var(--mc-dur-spin) linear infinite;
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
     /* §5.3: the 4 px scale with its 2 px step (SLOP-33); the steps a component may use are the
        `--space-*` tokens below, held by the token lint (eslint/rules/token-values.js). */
     --spacing: 0.25rem;

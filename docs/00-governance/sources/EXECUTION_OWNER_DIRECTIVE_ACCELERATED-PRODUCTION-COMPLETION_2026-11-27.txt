@@ -1,0 +1,25 @@
+Owner directive received in session during execution, 2026-11-27 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received: the Owner's answer to the executor's question "Izinkan patch TL-14 beserta siklus CI keempat untuk PR #103, atau ditahan dulu?" and the directive that followed.
+
+Ya, izinkan
+
+OWNER DIRECTIVE — ACCELERATED PRODUCTION COMPLETION
+Saya mengizinkan patch keamanan TL-14 dan satu siklus CI tambahan khusus PR #103 sesuai DIR-127. Verifikasi seluruh advisory, gunakan versi patch kompatibel yang bebas dari advisory terkait, dan batasi perubahan dependensi seminimal mungkin.
+Merge segera setelah seluruh gerbang wajib lulus. Jangan mengulang review Codex tanpa alasan material.
+Tetapkan batasan berikut:
+
+* Anggaran tambahan Rp0.
+* Penambahan RAM laptop DILARANG.
+* Jangan meminta saya membebaskan RAM lagi.
+* Jangan menjalankan atau me-restart Docker Desktop.
+* Gunakan GitHub Actions untuk pengujian yang membutuhkan stack lengkap.
+* Jangan menambah Task tanpa persetujuan eksplisit saya.
+* Jangan mengulang audit, perencanaan, atau pengujian yang sudah memiliki bukti sah.
+* Jangan melemahkan pengujian, keamanan, integritas data, maupun acceptance criteria.
+* Koordinasikan penyelesaian CR-002 dengan sesi UI/UX tanpa menghambat pekerjaan yang independen.
+* Maksimalkan penggunaan komponen pilot yang telah tervalidasi.
+* Persiapkan pekerjaan operator dalam instruksi singkat, konkret, dan berurutan. Seluruh eksekusi VPS tetap dilakukan oleh saya.
+
+Saya tidak ingin jadwal Februari 2027 diterima sebagai target default. Targetkan penyelesaian secepat mungkin pada Desember 2026. Susun ulang estimasi berdasarkan pekerjaan tersisa yang nyata, bukan sekadar kecepatan historis.
+Utamakan eksekusi dan hasil terverifikasi, bukan laporan panjang. Jangan membuat siklus perencanaan baru.
+Catat arahan ini melalui mekanisme governance yang berlaku dengan perubahan minimum.
+Lanjutkan FAST BUILD secara autonomous. Seluruh aktivitas dan laporan dalam Bahasa Indonesia.

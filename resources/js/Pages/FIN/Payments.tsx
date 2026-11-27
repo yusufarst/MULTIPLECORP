@@ -114,7 +114,7 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
                 <Answered command={attach} />
                 <div className="flex min-w-0 flex-wrap items-end gap-4">
                     {branches.length > 1 && (
-                        <FormField label={t('receivables.field.branch')} className="min-w-0 sm:w-80">
+                        <FormField label={t('receivables.field.branch')} className="min-w-0 md:w-80">
                             {(control) => (
                                 <NativeSelect {...control} value={branch ?? ''} onChange={(event) => { visit({ perusahaan: event.target.value, klien: null }); }}>
                                     <option value="">{t('receivables.field.all_branches')}</option>
@@ -123,7 +123,7 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
                             )}
                         </FormField>
                     )}
-                    <FormField label={t('receivables.field.client')} className="min-w-0 sm:w-80">
+                    <FormField label={t('receivables.field.client')} className="min-w-0 md:w-80">
                         {(control) => (
                             <NativeSelect {...control} value={client ?? ''} onChange={(event) => { visit({ klien: event.target.value }); }}>
                                 <option value="">{t('receivables.field.all_clients')}</option>
@@ -178,7 +178,7 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
                                 { label: t('pages.pg_046.col_applied'), value: <Money value={add('0', ...applied(current).filter((row) => row.target === 'INVOICE').map((row) => row.amount))} /> },
                                 { label: t('glossary.gl_141'), value: <Money value={current.capacity} />, emphasis: true },
                             ]} />
-                            <dl className="grid min-w-0 gap-2 text-body sm:grid-cols-2">
+                            <dl className="grid min-w-0 gap-2 text-body md:grid-cols-2">
                                 <div><dt className="text-text-secondary">{t('pages.pg_045.col_date')}</dt><dd><DateText value={current.date} /></dd></div>
                                 <div><dt className="text-text-secondary">{t('pages.pg_046.method')}</dt><dd>{t(`payments.method.${current.method}` as TranslationKey)}</dd></div>
                                 {current.account !== null && <div><dt className="text-text-secondary">{t('pages.pg_046.account')}</dt><dd>{current.account}</dd></div>}
@@ -187,11 +187,11 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
                                 <div><dt className="text-text-secondary">{t('pages.pg_046.statement_line')}</dt><dd>{current.line ?? (current.flagged ? t('payments.detail.flagged') : '—')}</dd></div>
                                 {positive(current.claimed) && <div><dt className="text-text-secondary">{t('payments.detail.claimed')}</dt><dd><Money value={current.claimed} /></dd></div>}
                                 {current.proof !== null && <div><dt className="text-text-secondary">{t('pages.pg_046.proof')}</dt><dd><a href={`/dokumen/bukti?bukti=${current.proof}`} className="text-accent-link underline underline-offset-2">{t('payments.detail.open_proof')}</a></dd></div>}
-                                {current.recovery && <div className="sm:col-span-2"><dd>{t('payments.detail.recovery')}</dd></div>}
-                                {current.rerecords !== null && <div className="sm:col-span-2"><dd>{t('payments.detail.rerecords')}</dd></div>}
-                                {current.rerecorded_by !== null && <div className="sm:col-span-2"><dd>{t('payments.detail.rerecorded')}</dd></div>}
-                                {current.unevidenced !== null && <div className="sm:col-span-2"><dt className="text-text-secondary">{t('payments.detail.no_proof')}</dt><dd>{current.unevidenced}</dd></div>}
-                                {current.without_proof && current.can.attach && <div className="sm:col-span-2"><dd><Button variant="outline" size="sm" onClick={() => { setAttaching(current.id); }}>{t('payments.action.upload_proof')}</Button></dd></div>}
+                                {current.recovery && <div className="md:col-span-2"><dd>{t('payments.detail.recovery')}</dd></div>}
+                                {current.rerecords !== null && <div className="md:col-span-2"><dd>{t('payments.detail.rerecords')}</dd></div>}
+                                {current.rerecorded_by !== null && <div className="md:col-span-2"><dd>{t('payments.detail.rerecorded')}</dd></div>}
+                                {current.unevidenced !== null && <div className="md:col-span-2"><dt className="text-text-secondary">{t('payments.detail.no_proof')}</dt><dd>{current.unevidenced}</dd></div>}
+                                {current.without_proof && current.can.attach && <div className="md:col-span-2"><dd><Button variant="outline" size="sm" onClick={() => { setAttaching(current.id); }}>{t('payments.action.upload_proof')}</Button></dd></div>}
                             </dl>
                             <section aria-label={t('pages.pg_046.applications')} className="flex min-w-0 flex-col gap-2">
                                 <h3 className="text-heading-sm font-semibold text-text-primary">{t('pages.pg_046.applications')}</h3>

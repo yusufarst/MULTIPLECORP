@@ -89,7 +89,7 @@ export default function DispatchWorklist({ groups, companies, chosen, closed }: 
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_023.title')} />
                 {companies.length > 1 && (
-                    <FormField label={t('receiving.list.filter')} className="min-w-0 sm:w-80">
+                    <FormField label={t('receiving.list.filter')} className="min-w-0 md:w-80">
                         {(control) => (
                             <NativeSelect {...control} value={chosen ?? ''} onChange={(event) => { visit(event.target.value === '' ? null : event.target.value, closed); }}>
                                 <option value="">{t('receiving.list.all')}</option>

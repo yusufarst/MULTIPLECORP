@@ -266,20 +266,20 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
                             const progress = { dipesan: figure(line.demand), diserahkan: figure(line.handed_over), dibatalkan: figure(line.cancelled), sisa: figure(line.remainder), satuan: line.base_unit };
 
                             return (
-                                <li key={line.handle} data-testid="service-line" className="grid min-w-0 gap-3 py-4 sm:grid-cols-2">
-                                    <div className="flex min-w-0 flex-col gap-1 sm:col-span-2">
+                                <li key={line.handle} data-testid="service-line" className="grid min-w-0 gap-3 py-4 md:grid-cols-2">
+                                    <div className="flex min-w-0 flex-col gap-1 md:col-span-2">
                                         <span className="min-w-0 font-semibold text-text-primary">{`${String(line.no)}. ${line.description}`}</span>
                                         <span className="text-body text-text-secondary">{t('handover.line.progress', progress)}</span>
                                     </div>
                                     {Number(line.remainder) <= 0 ? (
-                                        <p className="text-body text-text-secondary sm:col-span-2">{t('handover.line.done')}</p>
+                                        <p className="text-body text-text-secondary md:col-span-2">{t('handover.line.done')}</p>
                                     ) : can.record && (
                                         <>
                                             <FormField label={t('handover.field.quantity', { satuan: line.unit })} error={lineError(line.handle, 'jumlah')}
                                                 help={line.ratio === 1 ? undefined : t('handover.field.ratio', { satuan: line.unit, rasio: String(line.ratio), dasar: line.base_unit })}>
                                                 {(control) => <DecimalInput {...control} value={entered[line.handle]?.quantity ?? ''} scale={line.scale} unit={line.unit} onValueChange={(value) => { set(line.handle, { quantity: value ?? '' }); }} />}
                                             </FormField>
-                                            <FormField label={t('handover.field.scope')} className="sm:col-span-2" help={t('handover.field.scope_help')} error={lineError(line.handle, 'lingkup')}>
+                                            <FormField label={t('handover.field.scope')} className="md:col-span-2" help={t('handover.field.scope_help')} error={lineError(line.handle, 'lingkup')}>
                                                 {(control) => <Textarea {...control} rows={2} value={entered[line.handle]?.scope ?? ''} onChange={(event) => { set(line.handle, { scope: event.target.value }); }} />}
                                             </FormField>
                                         </>

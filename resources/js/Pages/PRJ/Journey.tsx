@@ -337,7 +337,7 @@ export default function Journey({ project, journey, financial, can, return_href:
                 </div>
                 {financial !== null && (
                     <Section title={t('journey.financial')}>
-                        <PositionBlock title={t('journey.financial')} lines={[
+                        <PositionBlock lines={[
                             { label: t('journey.pos.confirmed'), value: <Money value={financial.confirmed} /> },
                             { label: t('journey.pos.invoiced'), value: <Money value={financial.invoiced} />, emphasis: true },
                         ]} />
