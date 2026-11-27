@@ -136,6 +136,10 @@ jobs:
           echo "-- exit ${code}"
           exit "${code}"
 
+      - name: The walkthrough preview's seed, rehearsed once, nothing printed
+        if: matrix.layer == 'Pilot'
+        run: docker compose run --rm -e WALKTHROUGH_SEED=1 e2e npx --no-install playwright test -c tests/Browser/playwright.config.ts --workers=1 --project=chromium tests/Browser/Pilot/seed-walkthrough.spec.ts
+
       - name: Keep the evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

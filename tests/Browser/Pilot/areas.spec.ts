@@ -67,6 +67,7 @@ test('Proyek on the phone: "Tahap n dari N" first, the track folded under "Tahap
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Proyek dari ponsel');
     await expect(page.locator('#konten')).toContainText(/Tahap \d+ dari \d+/);
+    await expect(page.locator('#konten')).toContainText('Proyek ini belum memiliki baris.');
     await expect(page.getByRole('list', { name: 'Tahap proyek' })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Tahap proyek' }).click();
