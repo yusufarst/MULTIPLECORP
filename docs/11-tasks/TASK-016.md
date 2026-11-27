@@ -44,6 +44,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 - TASK-095 — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) (Change 20)
 - TASK-096 — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 - TASK-097 — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01)
+- TASK-099 — Navigation — the three-level Menu: the shell, rail, sidebar and phone menu, the 37 pages and the 65 NAV contracts (K-4)
 
 **PARALLEL SAFE:** NO — every page Task renders inside the shell
 

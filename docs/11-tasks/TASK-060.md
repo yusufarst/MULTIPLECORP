@@ -41,6 +41,7 @@ CAP-11 and AC-11 require reports that keep the five concepts apart — sales val
 - TASK-067 — Localization completeness and the per-page copy lists
 - TASK-068 — Performance targets and query budgets in CI
 - TASK-069 — Security test matrix, route integrity and zero dead interactions
+- TASK-103 — Administration, settings, records and reports on the redesigned patterns
 
 **PARALLEL SAFE:** NO — its report query classes and the single export job read every module's facts and share the one export overlap lock
 

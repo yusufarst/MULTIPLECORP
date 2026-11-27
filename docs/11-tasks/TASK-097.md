@@ -38,6 +38,7 @@ The proposal A–F verified these defects on `main` 36f7036 (DIR-134 E2); each i
 **BLOCKS:**
 
 - TASK-086 — UAT with the Owner and the validators
+- TASK-098 — Design foundation — the working tokens (Grafit & Kobalt), the skeleton and motion, Base UI only, and D-8's quantity and link-button corrections (K-3; K-5; K-7; D-8)
 
 **PARALLEL SAFE:** YES — with the operator's TASK-078 alone: disjoint files apart from TASK_PLAN and CURRENT_HANDOFF, whose concurrent changes are kept by merging `main` into the branch before the merge; with no other AGENT Task. The UX pilot under APPR-042 is no Task and never merges; its validated foundation code is reused here where it conforms to the current contracts (DIR-135).
 

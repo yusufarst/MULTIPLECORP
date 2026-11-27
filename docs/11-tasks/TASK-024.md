@@ -38,6 +38,7 @@ Accounts, roles, capabilities and company grants are Owner-only authority (WORKF
 - TASK-067 — Localization completeness and the per-page copy lists
 - TASK-068 — Performance targets and query budgets in CI
 - TASK-069 — Security test matrix, route integrity and zero dead interactions
+- TASK-103 — Administration, settings, records and reports on the redesigned patterns
 
 **PARALLEL SAFE:** NO — its access changes lock target accounts at LK-03 and the Owner set at LK-02, which every command and sign-in of those accounts also meets (RV-01–RV-05)
 

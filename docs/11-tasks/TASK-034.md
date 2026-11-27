@@ -34,6 +34,7 @@ The commercial confirmation is the reservation trigger and the point where a pro
 - TASK-047 — Service fulfillment and handover
 - TASK-049 — Invoices and the pre-payment Kuitansi
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
+- TASK-101 — Sales and billing on the redesigned patterns — quotations, commercial confirmation, invoices, billing, payments and customer credit
 
 **PARALLEL SAFE:** NO — it owns AX-13 and AX-14 under the project's row (LK-01) and the per-line guards (LK-19) that the reservation, purchase and fulfilment Tasks build on
 

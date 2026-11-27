@@ -435,7 +435,7 @@ Every UI Task answers AICWDF §27's twenty-one items on the built screens, never
 | §27 item | How it is judged | Rule |
 | --- | --- | --- |
 | Modern visual quality | reviewed on the built screens, with the anti-slop review repeated on them (UXH-07; UXS-43) | DESIGN_SYSTEM §§3–4, §18 |
-| Design system consistency | measured: computed tokens — colour, type, spacing, radius, elevation, motion — equal §5's values; components and patterns as §§9–10 compose them; the reference's recipes where DA-01 and DA-02 name them. A difference is a finding; an accepted and documented difference of Annex A stays one, never a pass (CA-05; CD-05) | DESIGN_SYSTEM §§5, 9, 10; Annex A |
+| Design system consistency | measured: computed tokens — colour, type, spacing, radius, elevation, motion — equal §5's values; components and patterns as §§9–10 compose them — against §5 and §§9–10 alone, never against the reference or a render of it. A difference is a finding; an accepted and documented difference of Annex A stays one, never a pass (CA-05; CD-05) | DESIGN_SYSTEM §§5, 9, 10; Annex A |
 | Primary action clear | one primary action per page or region, present and enabled when its INT- contract says | DESIGN_SYSTEM §9.4; INT- |
 | Unnecessary duplicate actions: 0 | counted per page against its INT- contracts | INTERACTION_CONTRACTS |
 | Back action clear; navigation contract valid | the NAV- contract's back, cancel, success and error paths (§8) | NAVIGATION_CONTRACTS |

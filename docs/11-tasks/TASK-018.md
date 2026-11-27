@@ -30,6 +30,7 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 - TASK-020 — Installation step, the first Owner and the Owner-recovery path
 - TASK-021 — Numbering, its settings page and the Owner's raise after a restore
 - TASK-074 — Backup tooling, the off-server copy and the drill procedures
+- TASK-100 — The list pattern and the four pilot areas — labelled rows, the stage indicator and first step, the recovery codes' stage; Masuk, Beranda, Proyek and Stok (D-5; D-6; K-6; E5; D-8)
 
 **PARALLEL SAFE:** NO — it changes the sign-in pipeline of TASK-017
 
