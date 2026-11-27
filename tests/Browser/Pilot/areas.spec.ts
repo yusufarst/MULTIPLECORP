@@ -105,21 +105,86 @@ for (const width of [320, 390, 768, 1024, 1025, 1280]) {
     });
 }
 
-test('Stok on the phone: the list comes before the company values (D-1)', async ({ page }) => {
+test('Stok: the list comes before the company values on the phone and after them from the tablet (D-1)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await stockRun(page, `pilot-urutan-${String(Date.now())}`);
-    await page.setViewportSize({ width: 390, height: 844 });
 
-    await page.goto('/gudang/stok');
-    await searchStock(page, run.name);
-    await expect(page.getByRole('list', { name: 'Stok' })).toBeVisible();
+    for (const [width, phone] of [[390, true], [768, false]] as const) {
+        await page.setViewportSize({ width, height: 844 });
+        await page.goto('/gudang/stok');
+        await searchStock(page, run.name);
 
-    const values = page.getByRole('heading', { name: 'Nilai Stok Perusahaan' });
-    await values.waitFor({ timeout: 20_000 }).catch(() => undefined);
+        const list = page.getByRole('list', { name: 'Stok' });
+        await expect(list).toBeVisible();
+        await expect(page.locator('[data-slot="stock-values-place"]')).toHaveCount(1);
 
-    if ((await values.count()) > 0) {
-        const list = await page.getByRole('list', { name: 'Stok' }).boundingBox();
-        const heading = await values.boundingBox();
-        expect(list?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(heading?.y ?? 0);
+        // What never depends on the fixture's values: the place of the values in the document and the flex order of the two
+        // blocks. The phone's order is the document's (list first); from md up the values' place takes order 1 and the list 2.
+        const layout = await list.evaluate((ul) => {
+            const place = document.querySelector('[data-slot="stock-values-place"]');
+            const parent = place?.parentElement ?? null;
+            let block: Element = ul;
+
+            while (block.parentElement !== null && block.parentElement !== parent) block = block.parentElement;
+
+            return {
+                sibling: place !== null && block.parentElement === parent,
+                listFirst: place !== null && (block.compareDocumentPosition(place) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
+                listOrder: Number(getComputedStyle(block).order),
+                placeOrder: place === null ? Number.NaN : Number(getComputedStyle(place).order),
+            };
+        });
+
+        expect(layout.sibling).toBe(true);
+        expect(layout.listFirst).toBe(true);
+
+        if (phone) {
+            expect(layout.placeOrder).toBeGreaterThanOrEqual(layout.listOrder);
+        } else {
+            expect(layout.placeOrder).toBeLessThan(layout.listOrder);
+        }
+
+        // And where it can be seen: with the company values on screen, their place on the page.
+        const values = page.locator('[data-slot="stock-values"]').first();
+        const shown = await values.waitFor({ state: 'visible', timeout: 20_000 }).then(() => true, () => false);
+
+        console.log(`D-1 at ${String(width)} px: order list ${String(layout.listOrder)}, values ${String(layout.placeOrder)}; the company values ${shown ? 'on screen, position checked' : 'not on screen (the fixture holds none), position not checked'}`);
+
+        if (shown) {
+            const listBox = await list.boundingBox();
+            const valuesBox = await values.boundingBox();
+
+            if (phone) {
+                expect(listBox?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(valuesBox?.y ?? 0);
+            } else {
+                expect(valuesBox?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(listBox?.y ?? 0);
+            }
+        }
     }
+});
+
+test('Beranda: "Muat Ulang" and the 60-second poll each send a partial request for the home groups alone (F-04)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await importRun(page, `pilot-poll-${String(Date.now())}`);
+
+    await page.clock.install();
+    await page.goto('/beranda');
+    await expect(page.getByRole('heading', { name: 'Angka Periode' })).toBeVisible();
+
+    const partial = async (request: { allHeaders: () => Promise<Record<string, string>> }): Promise<string | undefined> => (await request.allHeaders())['x-inertia-partial-data'];
+
+    // The user's refresh.
+    const clicked = page.waitForRequest(async (request) => (await partial(request)) !== undefined, { timeout: 30_000 });
+    await page.getByRole('button', { name: 'Muat Ulang' }).click();
+    const byUser = await partial(await clicked);
+    expect(byUser?.length ?? 0).toBeGreaterThan(0);
+
+    // The poll: nothing but the clock moves, past the minute.
+    await expect(page.getByRole('button', { name: 'Muat Ulang' })).toBeEnabled();
+    const polled = page.waitForRequest(async (request) => (await partial(request)) !== undefined, { timeout: 30_000 });
+    await page.clock.fastForward(61_000);
+    const byPoll = await partial(await polled);
+    expect(byPoll?.length ?? 0).toBeGreaterThan(0);
+    // The same groups, never the whole page.
+    expect(byPoll).toBe(byUser);
 });
