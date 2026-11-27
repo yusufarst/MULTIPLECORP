@@ -81,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        layer: [E2E, Accessibility, Responsive, Localization]
+        layer: [E2E, Accessibility, Responsive, Localization, Pilot]
     steps:
       - name: Check out the tested commit
         run: |
@@ -120,35 +120,21 @@ jobs:
         run: |
           set +e
           dir="tests/Browser/${{ matrix.layer }}"
-          shown=''
-          held=''
-          for name in sign-in two-factor reauth home projects stock; do
-            file="${dir}/${name}.spec.ts"
-            [ -f "${file}" ] || continue
-            case "${name}" in
-              two-factor | reauth) held="${held} ${file}" ;;
-              *) shown="${shown} ${file}" ;;
-            esac
-          done
-          status=0
-          if [ -n "${held}" ]; then
-            echo "== Recovery-code specs, results only:${held}"
-            docker compose run --rm e2e npx --no-install playwright test -c tests/Browser/playwright.config.ts --workers=1 ${held} > /tmp/held.log 2>&1
-            code=$?
-            [ "${code}" -eq 0 ] || status=1
-            grep -E '^\s+(✓|✘|-)\s|^\s+[0-9]+ (passed|failed|skipped|did not run|flaky)|^\s+[0-9]+\) \[|^\s+(Error|Locator|Timeout)' /tmp/held.log | cut -c1-220
-            echo "-- exit ${code}"
+          if [ "${{ matrix.layer }}" = Pilot ]; then
+            list='areas'
+          else
+            list='home projects reauth sign-in stock'
           fi
+          shown=''
+          for name in ${list}; do
+            file="${dir}/${name}.spec.ts"
+            [ -f "${file}" ] && shown="${shown} ${file}"
+          done
           echo "== Specs:${shown}"
           docker compose run --rm e2e npx --no-install playwright test -c tests/Browser/playwright.config.ts --workers=1 ${shown}
           code=$?
-          [ "${code}" -eq 0 ] || status=1
           echo "-- exit ${code}"
-          exit "${status}"
-
-      - name: Stack logs
-        if: failure()
-        run: docker compose logs --no-color
+          exit "${code}"
 
       - name: Keep the evidence
         if: always()
@@ -161,6 +147,23 @@ jobs:
             !storage/test-results/browser/artifacts/**/*reauth*/**
           retention-days: 14
           if-no-files-found: ignore
+
+      - name: The recovery-code spec, results only
+        if: always()
+        run: |
+          set +e
+          held="tests/Browser/${{ matrix.layer }}/two-factor.spec.ts"
+          [ -f "${held}" ] || exit 0
+          echo "== Recovery-code spec, results only: ${held}"
+          docker compose run --rm e2e npx --no-install playwright test -c tests/Browser/playwright.config.ts --workers=1 "${held}" > /tmp/held.log 2>&1
+          code=$?
+          grep -E '^\s+(✓|✘|-)\s|^\s+[0-9]+ (passed|failed|skipped|did not run|flaky)|^\s+[0-9]+\) \[|^\s+(Error|Locator|Timeout)' /tmp/held.log | cut -c1-220
+          echo "-- exit ${code}"
+          exit "${code}"
+
+      - name: Stack logs
+        if: failure()
+        run: docker compose logs --no-color
 
       - name: Stop the stack
         if: always()

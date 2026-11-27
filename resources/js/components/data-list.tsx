@@ -194,11 +194,11 @@ export function RowList({ label, rows, positionStart = 1 }: { label: string; row
                             {positionStart + index}
                         </span>
                         <span className="flex min-w-0 flex-1 flex-col gap-1">
-                            <span className="flex min-w-0 items-baseline justify-between gap-3">
-                                <span data-code className="min-w-0 text-m-row font-medium text-text-primary">
+                            <span className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                                <span data-code className="min-w-0 text-m-row font-medium break-words text-text-primary">
                                     {row.title}
                                 </span>
-                                {row.figure !== undefined && <span className="shrink-0 text-m-row font-medium tabular-nums">{row.figure}</span>}
+                                {row.figure !== undefined && <span className="max-w-full text-m-row font-medium tabular-nums">{row.figure}</span>}
                             </span>
                             {(row.secondary !== undefined || row.status !== undefined) && (
                                 <span className="flex min-w-0 items-center justify-between gap-3">

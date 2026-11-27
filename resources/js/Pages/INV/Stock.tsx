@@ -51,7 +51,7 @@ const KEYS: Key[] = ['physical', 'reserved', 'unusable', 'available'];
 const LABEL = { physical: 'glossary.gl_076', reserved: 'glossary.gl_077', unusable: 'glossary.gl_078', available: 'glossary.gl_079' } as const;
 
 /** One of the four quantities in the product's unit, its alternate unit as a hint where the server gave one. */
-const figure = (figures: Figures, key: Key) => <Quantity value={figures[key]} unit={figures.unit} alternate={figures.alternate === undefined ? undefined : { value: figures.alternate[key], unit: figures.alternate.unit }} />;
+const figure = (figures: Figures, key: Key, className?: string) => <Quantity value={figures[key]} unit={figures.unit} className={className} alternate={figures.alternate === undefined ? undefined : { value: figures.alternate[key], unit: figures.alternate.unit }} />;
 
 /** The same quantity in a table cell: the alternate hint on a second line, so four figures fit the desktop's width — the
     words and numbers exactly as the formatter gives them, nothing converted here. */
@@ -202,14 +202,14 @@ export default function Stock({ view, filters, list, values, can }: Props) {
         <span className="flex min-w-0 flex-wrap gap-x-3 gap-y-0.5">
             {keys.map((key) => (
                 <span key={key} className="min-w-0">
-                    {t(LABEL[key])} {figure(figures, key)}
+                    {t(LABEL[key])} {figure(figures, key, 'whitespace-normal')}
                 </span>
             ))}
         </span>
     );
     // The row's key figure beside its name, named as the table's column is.
     const labelled = (label: string, value: ReactNode) => (
-        <span className="inline-flex items-baseline gap-1">
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
             <span className="text-m-meta font-normal text-text-tertiary">{label}</span>
             <strong className="font-semibold text-text-primary">{value}</strong>
         </span>
@@ -319,7 +319,7 @@ export default function Stock({ view, filters, list, values, can }: Props) {
                             ]}
                             dense={(row) => ({
                                 title: row.name,
-                                figure: labelled(t('glossary.gl_079'), figure(row.figures, 'available')),
+                                figure: labelled(t('glossary.gl_079'), figure(row.figures, 'available', 'whitespace-normal')),
                                 wrap: true,
                                 secondary: (
                                     <span className="flex min-w-0 flex-col gap-1">
@@ -350,7 +350,7 @@ export default function Stock({ view, filters, list, values, can }: Props) {
                             ]}
                             dense={(row) => ({
                                 title: row.name,
-                                figure: labelled(t('stock.place.here'), <Quantity value={row.qty} unit={row.unit} />),
+                                figure: labelled(t('stock.place.here'), <Quantity value={row.qty} unit={row.unit} className="whitespace-normal" />),
                                 wrap: true,
                                 secondary: (
                                     <span className="flex min-w-0 flex-col gap-1">
