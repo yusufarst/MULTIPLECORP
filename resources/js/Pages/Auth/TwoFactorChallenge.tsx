@@ -3,15 +3,15 @@
 // code answer for every failing code and MSG-20 in a cooldown, never which part was wrong (AU-04, AU-05; HO-40).
 // "Kembali" returns to PG-001 with the e-mail kept, whose view discards the pending attempt (OQ-14). An
 // authentication boundary: the history is cleared here, and a success loads the next page as a full document.
-import { Head, router, useForm } from '@inertiajs/react';
+// APPR-042's pilot: the page sits in the shared sign-in frame (CR-002 K-5); its behaviour is unchanged.
+import { router, useForm } from '@inertiajs/react';
 import { useEffect, useId, useState } from 'react';
 
-import LanguageSwitch from '@/components/LanguageSwitch';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import AuthLayout from '@/layouts/AuthLayout';
 import { languageQuery, useTranslation } from '@/lib/i18n';
-import { documentTitle } from '@/lib/title';
 
 export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) {
     const { t } = useTranslation();
@@ -28,12 +28,7 @@ export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) 
     const error = form.errors[field];
 
     return (
-        <main id="konten" className="mx-auto flex min-h-dvh w-full max-w-sheet-sm flex-col gap-6 bg-canvas px-m-gutter py-8">
-            <Head title={documentTitle(t('pages.pg_002.title'))} />
-            <div className="flex justify-end">
-                <LanguageSwitch />
-            </div>
-            <h1 className="text-m-title font-semibold text-text-primary md:text-title">{t('pages.pg_002.heading')}</h1>
+        <AuthLayout title={t('pages.pg_002.title')} heading={t('pages.pg_002.heading')}>
             <form
                 className="flex flex-col gap-4"
                 onSubmit={(event) => {
@@ -55,6 +50,7 @@ export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) 
                         inputMode={useRecovery ? 'text' : 'numeric'}
                         maxLength={useRecovery ? 64 : 6}
                         required
+                        data-code
                         value={form.data[field]}
                         aria-invalid={error !== undefined ? true : undefined}
                         aria-describedby={`${id}-advice ${id}-error`}
@@ -65,15 +61,16 @@ export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) 
                     <FieldDescription id={`${id}-advice`}>{t('pages.pg_002.code_advice')}</FieldDescription>
                     <FieldError id={`${id}-error`}>{error}</FieldError>
                 </Field>
-                <Button type="submit" variant="primary" size="lg" pending={form.processing} pendingLabel={t('pages.pg_002.submit')}>
+                <Button type="submit" variant="primary" size="lg" className="mt-2" pending={form.processing} pendingLabel={t('pages.pg_002.submit')}>
                     {t('pages.pg_002.submit')}
                 </Button>
             </form>
-            <div className="flex flex-col items-start gap-1">
+            <div className="flex flex-col items-start gap-1 border-t border-border pt-4">
                 {recovery ? (
                     <Button
                         variant="ghost"
                         size="sm"
+                        className="-ml-4"
                         onClick={() => {
                             form.clearErrors();
                             setUseRecovery(!useRecovery);
@@ -86,6 +83,7 @@ export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) 
                         <Button
                             variant="ghost"
                             size="sm"
+                            className="-ml-4"
                             aria-expanded={noApp}
                             onClick={() => {
                                 setNoApp(true);
@@ -93,12 +91,13 @@ export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) 
                         >
                             {t('pages.pg_002.no_app')}
                         </Button>
-                        {noApp && <p className="text-body text-text-secondary">{t('pages.pg_002.no_app_answer')}</p>}
+                        {noApp && <p className="pb-2 text-body text-text-secondary">{t('pages.pg_002.no_app_answer')}</p>}
                     </>
                 )}
                 <Button
                     variant="ghost"
                     size="sm"
+                    className="-ml-4"
                     onClick={() => {
                         window.location.assign(`/masuk${languageQuery()}`);
                     }}
@@ -106,6 +105,6 @@ export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) 
                     {t('pages.pg_002.back')}
                 </Button>
             </div>
-        </main>
+        </AuthLayout>
     );
 }

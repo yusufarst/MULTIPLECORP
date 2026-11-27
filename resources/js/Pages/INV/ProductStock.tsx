@@ -10,10 +10,11 @@ import { InventoryBlock, type StockFigures } from '@/components/record-blocks';
 import { RegionEmpty, RegionLoading } from '@/components/region-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Code, DateText, Money } from '@/components/values';
+import { Code, DateText, Money, Quantity } from '@/components/values';
 import { MoveSheet, type Moving } from '@/features/inv/move-sheet';
 import { stockListAddress } from '@/features/inv/stock-list-address';
 import AppShell from '@/layouts/AppShell';
+import { exact } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 
 type Lot = { id: string; code: string; qty: string; rack: string; condition: 'USABLE' | 'UNUSABLE'; oldest: boolean; other: boolean; company?: string; kind?: string; date?: string; acquired?: string };
@@ -81,7 +82,7 @@ function Lots() {
     return (
         <>
             <section data-slot="product-lots" className="flex min-w-0 flex-col gap-2">
-                <h2 className="text-subhead">{t('stock.section.lots')}</h2>
+                <h2 className="text-heading-sm font-semibold text-text-primary">{t('stock.section.lots')}</h2>
                 {lots.length === 0 ? <RegionEmpty text={t('stock.empty_product')} /> : (
                     <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
                         {lots.map((lot) => {
@@ -108,7 +109,7 @@ function Lots() {
             </section>
             {serials.length > 0 && (
                 <section data-slot="product-serials" className="flex min-w-0 flex-col gap-2">
-                    <h2 className="text-subhead">{t('stock.section.serials')}</h2>
+                    <h2 className="text-heading-sm font-semibold text-text-primary">{t('stock.section.serials')}</h2>
                     <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
                         {serials.map((serial) => (
                             <li key={serial.serial} className="flex min-w-0 flex-wrap items-center gap-2 py-2">
@@ -141,7 +142,7 @@ function ReservationList({ reservations }: { reservations: Reservations }) {
 
     return (
         <section data-slot="product-reservations" className="flex min-w-0 flex-col gap-2">
-            <h2 className="text-subhead">{t('stock.section.reservations')}</h2>
+            <h2 className="text-heading-sm font-semibold text-text-primary">{t('stock.section.reservations')}</h2>
             <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
                 {shown.map((reservation) => (
                     <li key={reservation.id} className="flex min-w-0 flex-wrap items-center gap-2 py-2">
@@ -165,7 +166,7 @@ function Movements({ product }: { product: string }) {
 
     return (
         <section data-slot="product-movements" className="flex min-w-0 flex-col gap-2">
-            <h2 className="text-subhead">{t('stock.section.movements')}</h2>
+            <h2 className="text-heading-sm font-semibold text-text-primary">{t('stock.section.movements')}</h2>
             <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
                 {movements.map((movement) => (
                     <li key={movement.id} className="flex min-w-0 flex-wrap items-center gap-2 py-2">
@@ -214,7 +215,7 @@ export default function ProductStock({ product, places, reservations, can, movin
     return (
         <AppShell title={t('pages.pg_019.title')} back={{ href: list, label: t('pages.pg_018.title') }}>
             <div className="flex min-w-0 flex-col gap-6">
-                <PageHeader title={product.name} crumbs={[{ label: t('pages.pg_018.title'), href: list }]} />
+                <PageHeader title={product.name} crumbs={[{ label: t('pages.pg_018.title'), href: list }]} facts={product.sku === null ? undefined : <Code>{product.sku}</Code>} />
                 {flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' && <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} />}
                 {(can.condition || can.adjust || can.move) && (
                     <div data-slot="product-commands" className="flex min-w-0 flex-wrap gap-2">
@@ -226,12 +227,12 @@ export default function ProductStock({ product, places, reservations, can, movin
                 )}
                 <InventoryBlock figures={product.figures} belowMinimum={product.below ?? undefined} />
                 {product.below !== null && can.purchase && <Button variant="outline" className="self-start" render={<a href={`/pembelian/baru?produk=${product.id}`} />}>{t('stock.restock')}</Button>}
-                {product.pending !== null && <p data-slot="stock-pending" className="text-body text-text-secondary">{t('messages.msg_41', { jumlah: product.pending, satuan: product.figures.unit })}</p>}
+                {product.pending !== null && <p data-slot="stock-pending" className="text-body text-text-secondary">{t('messages.msg_41', { jumlah: exact(product.pending), satuan: product.figures.unit })}</p>}
                 <section data-slot="product-places" className="flex min-w-0 flex-col gap-2">
-                    <h2 className="text-subhead">{t('stock.section.places')}</h2>
+                    <h2 className="text-heading-sm font-semibold text-text-primary">{t('stock.section.places')}</h2>
                     {places.length === 0 ? <RegionEmpty text={t('stock.empty_product')} /> : (
                         <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
-                            {places.map((place) => <li key={`${place.rack}-${place.condition}`} className="py-2">{`${place.rack} · ${t(`stock.condition.${place.condition}`)} · ${place.qty}`}</li>)}
+                            {places.map((place) => <li key={`${place.rack}-${place.condition}`} className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2"><span>{`${place.rack} · ${t(`stock.condition.${place.condition}`)}`}</span><Quantity value={place.qty} unit={product.figures.unit} className="text-text-primary" /></li>)}
                         </ul>
                     )}
                 </section>

@@ -19,6 +19,11 @@ import { cn } from '@/lib/utils';
 // "x dari y", page-size choice, selection checkboxes, column resizing or inline editing (PF-15; PF-17).
 export const PAGE_SIZE = 25;
 
+/** A first column's second line, absent when the record has nothing to put there (a product without an SKU). */
+function Secondary({ content }: { content: ReactNode }) {
+    return content === null || content === undefined || content === '' ? null : <span className="mt-1 block text-caption text-text-tertiary">{content}</span>;
+}
+
 export type Column<Row> = {
     key: string;
     header: ReactNode;
@@ -28,6 +33,11 @@ export type Column<Row> = {
     priority?: 'low';
     /** Only on keys the screen inventory registers (PT-05). */
     sort?: { direction: 'ascending' | 'descending' | 'none'; onSort: () => void };
+    /** APPR-042's pilot: the first column's second line, outside the row's link — the record's other identifiers, so a
+        list keeps them in view without a column each. */
+    secondary?: (row: Row) => ReactNode;
+    /** APPR-042's pilot: the first column's link is a name that may wrap, not a record number kept on one line. */
+    wrap?: boolean;
 };
 
 export function DataTable<Row>({
@@ -119,12 +129,13 @@ export function DataTable<Row>({
                             {columns.map((column, at) => (
                                 <TableCell key={column.key} numeric={column.numeric} className={cn(column.priority === 'low' && 'max-lg:hidden')}>
                                     {at === 0 && href !== null ? (
-                                        <Link href={href} data-row-link data-code tabIndex={-1} className="font-medium whitespace-nowrap text-text-primary underline-offset-2 hover:underline">
+                                        <Link href={href} data-row-link data-code={column.wrap === true ? undefined : true} tabIndex={-1} className={cn('font-medium text-text-primary underline-offset-2 hover:underline', column.wrap === true ? 'break-words' : 'whitespace-nowrap')}>
                                             {column.cell(row)}
                                         </Link>
                                     ) : (
                                         column.cell(row)
                                     )}
+                                    {at === 0 && column.secondary !== undefined && <Secondary content={column.secondary(row)} />}
                                 </TableCell>
                             ))}
                             {rowActions !== undefined && (
@@ -160,7 +171,17 @@ export function RowMenu({ actions }: { actions: MenuAction[] }) {
     );
 }
 
-export type DenseRow = { key: string; href: string | null; title: ReactNode; figure?: ReactNode; secondary?: ReactNode; status?: ReactNode };
+export type DenseRow = {
+    key: string;
+    href: string | null;
+    title: ReactNode;
+    figure?: ReactNode;
+    secondary?: ReactNode;
+    status?: ReactNode;
+    /** APPR-042's pilot: the second line wraps instead of being cut — for rows whose facts are figures and notes that
+        must be read whole, never shortened with an ellipsis. */
+    wrap?: boolean;
+};
 
 /** PT-06: rows of at least 60 px, two lines — the identifier with the key figure, the muted facts with the status. */
 export function RowList({ label, rows, positionStart = 1 }: { label: string; rows: DenseRow[]; positionStart?: number }) {
@@ -173,15 +194,15 @@ export function RowList({ label, rows, positionStart = 1 }: { label: string; row
                             {positionStart + index}
                         </span>
                         <span className="flex min-w-0 flex-1 flex-col gap-1">
-                            <span className="flex min-w-0 items-baseline justify-between gap-3">
-                                <span data-code className="min-w-0 text-m-row font-medium text-text-primary">
+                            <span className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                                <span data-code className="min-w-0 text-m-row font-medium break-words text-text-primary">
                                     {row.title}
                                 </span>
-                                {row.figure !== undefined && <span className="shrink-0 text-m-row font-medium tabular-nums">{row.figure}</span>}
+                                {row.figure !== undefined && <span className="max-w-full text-m-row font-medium tabular-nums">{row.figure}</span>}
                             </span>
                             {(row.secondary !== undefined || row.status !== undefined) && (
                                 <span className="flex min-w-0 items-center justify-between gap-3">
-                                    <span className="min-w-0 truncate text-m-meta text-text-tertiary">{row.secondary}</span>
+                                    <span className={cn('min-w-0 text-m-meta text-text-tertiary', row.wrap === true ? 'break-words' : 'truncate')}>{row.secondary}</span>
                                     {row.status !== undefined && <span className="shrink-0">{row.status}</span>}
                                 </span>
                             )}
@@ -205,16 +226,18 @@ function DenseLink({ href, children }: { href: string | null; children: ReactNod
     );
 }
 
-/** One data set as PT-05's table from 768 px and PT-06's rows below it. */
-export function DataList<Row>(props: Parameters<typeof DataTable<Row>>[0] & { dense: (row: Row) => Omit<DenseRow, 'key' | 'href'> }) {
-    const { dense, ...table } = props;
+/** One data set as PT-05's table from 768 px and PT-06's rows below it. APPR-042's pilot: `denseBelow="lg"` keeps the
+    labelled rows through the tablet band, for a table whose columns do not fit there (§6: a table that does not fit
+    becomes rows) — every figure stays, labelled, none hidden. */
+export function DataList<Row>(props: Parameters<typeof DataTable<Row>>[0] & { dense: (row: Row) => Omit<DenseRow, 'key' | 'href'>; denseBelow?: 'md' | 'lg' }) {
+    const { dense, denseBelow = 'md', ...table } = props;
 
     return (
         <>
-            <div className="max-md:hidden">
+            <div className={denseBelow === 'lg' ? 'max-lg:hidden' : 'max-md:hidden'}>
                 <DataTable {...table} />
             </div>
-            <div className="md:hidden">
+            <div className={denseBelow === 'lg' ? 'lg:hidden' : 'md:hidden'}>
                 <RowList
                     label={table.caption}
                     positionStart={table.positionStart}

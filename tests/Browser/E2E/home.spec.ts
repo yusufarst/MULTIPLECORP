@@ -17,7 +17,13 @@ test('shows the Owner Beranda, Pekerjaan and Tinjauan, each group loading after 
     await page.goto('/beranda');
     await expect(page.getByRole('heading', { name: 'Beranda', level: 1 })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Perlu keputusan Anda' })).toBeVisible();
-    await expect(page.getByRole('table', { name: 'Angka Periode' })).toBeVisible();
+    // K-6, D-6: the four figures as cards, "Rincian angka" the link to PG-052; the per-company table only for a comparison of several
+    // companies at 1,200 px or more, so it is not asserted here.
+    for (const label of ['Nilai penjualan (invoice terbit)', 'Kas masuk (uang diterima)', 'Piutang aktif', 'Laba manajerial']) {
+        await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
+    }
+
+    await expect(page.getByRole('link', { name: 'Rincian angka' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Buka Pekerjaan' })).toBeVisible();
     await expect(page.locator('[data-region-state="error"]')).toHaveCount(0);
 

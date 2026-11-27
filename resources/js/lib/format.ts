@@ -40,7 +40,8 @@ export function plainQuantity(value: string): string {
     return trimmed === '' || trimmed === '-' ? '0' : trimmed;
 }
 
-function exact(value: string): string {
+/** A decimal in the locale's form, exact: the whole part grouped, the fraction's trailing zeros dropped — "1.250", "2,5". */
+export function exact(value: string): string {
     const { negative, whole, fraction } = decimal(value);
     const significant = fraction.replace(/0+$/, '');
 

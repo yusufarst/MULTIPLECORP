@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-28 | Owner: Planning
 
 Approval: one of the seven Tasks of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 33, which the Owner approved explicitly ([APPR-052](../00-governance/DECISION_LOG.md#dir-148-and-appr-052--change-33-the-redesigns-seven-tasks-d-8s-minimum-corrections-and-the-release-freeze-exception-2026-11-28); DIR-148), within the approvals of CR-002's packages ([DECISION_LOG](../00-governance/DECISION_LOG.md#approval-register), APPR-044–APPR-051).
 
-**STATUS:** TODO
+**STATUS:** READY
 
 **RISK CLASS:** STANDARD
 

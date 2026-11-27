@@ -51,13 +51,35 @@ async function enrolNewDevice(page: Page): Promise<void> {
 
     await page.getByLabel('Kode 6 digit dari aplikasi autentikator').fill(totp(key));
     await page.getByRole('button', { name: 'Aktifkan' }).click();
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Kode pemulihan');
-    await expect(page.getByRole('status')).toContainText('Simpan kode pemulihan ini. Kode hanya ditampilkan sekali.');
-    await expect(page.getByRole('list', { name: 'Kode pemulihan' }).getByRole('listitem')).toHaveCount(8);
+    // E5 (CR-002 K-6): the recovery codes on a stage of their own, "Lanjutkan" open only after the account's confirmation.
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Simpan kode pemulihan');
+    // Two live regions on this page (the line and the copy confirmation): the line by its text.
+    await expect(page.getByRole('status').filter({ hasText: 'Simpan kode pemulihan ini. Kode hanya ditampilkan sekali.' })).toBeVisible();
+    const items = page.getByRole('list', { name: 'Kode pemulihan' }).getByRole('listitem');
+    await expect(items).toHaveCount(8);
+    const codes = (await items.allInnerTexts()).map((text) => text.trim());
+    expect(codes.every((code) => code !== '')).toBe(true);
     expect(await page.evaluate(() => JSON.stringify(window.history.state))).not.toContain(key);
+    // The Owner's correction 5: the codes in no history entry, no persistent storage, no session storage, no form memory.
+    const kept = await page.evaluate(() => JSON.stringify([window.history.state, Object.entries(window.localStorage), Object.entries(window.sessionStorage), [...document.querySelectorAll('input, textarea')].map((field) => (field as HTMLInputElement).value)]));
+    for (const code of codes) {
+        expect(kept, 'a recovery code kept in the browser').not.toContain(code);
+    }
 
-    await page.getByRole('button', { name: 'Lanjutkan' }).click();
+    const proceed = page.getByRole('button', { name: 'Lanjutkan' });
+    await expect(proceed).toBeDisabled();
+    await page.getByRole('checkbox', { name: 'Saya sudah menyimpan kode pemulihan di tempat yang aman.' }).check();
+    await expect(proceed).toBeEnabled();
+    await proceed.click();
     await page.waitForURL((url) => ['/beranda', '/pekerjaan'].includes(url.pathname));
+
+    // Back never brings the codes again: whatever page it shows holds none of them.
+    await page.goBack();
+    await expect(page.locator('body')).not.toContainText(codes[0] ?? '-');
+    const shown = await page.locator('body').innerText();
+    for (const code of codes) {
+        expect(shown, 'a recovery code shown again').not.toContain(code);
+    }
 }
 
 test('signs in with the password and then one code, a wrong code answered generically (ROUTE-002, ROUTE-104; AU-16)', async ({ page }) => {

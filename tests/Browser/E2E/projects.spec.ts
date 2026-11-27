@@ -164,7 +164,7 @@ test('keeps the client\'s unit and PIC shown and choosable after MSG-17, the ref
     await expect(startNumbering).toHaveAttribute('href', new RegExp(`/pengaturan/penomoran\\?perusahaan=${run.company}`));
 });
 
-test('creates and reads a project on the phone — the header, its next step and the track first (J-PRJ-01 on the phone; NAV-011)', async ({ page }) => {
+test('creates and reads a project on the phone — the header, its next step and "Tahap n dari N" first, the track folded and read-only (J-PRJ-01 on the phone; NAV-011; D-2; K-6)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const run = await projectRun(page, `ponsel-${String(Date.now())}`);
 
@@ -174,7 +174,36 @@ test('creates and reads a project on the phone — the header, its next step and
     await page.waitForURL(UUID);
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Proyek dari ponsel');
-    await expect(page.getByRole('list', { name: 'Tahap proyek' })).toBeVisible();
+    await expect(page.locator('#konten')).toContainText(/Tahap \d+ dari \d+/);
     await expect(page.locator('#konten')).toContainText('Proyek ini belum memiliki baris.');
+    // D-2, K-6: the track is a read-only status folded under "Tahap proyek" on the phone; nothing in it can be focused or clicked.
+    await expect(page.getByRole('list', { name: 'Tahap proyek' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Tahap proyek' }).click();
+    const track = page.getByRole('list', { name: 'Tahap proyek' });
+    await expect(track).toBeVisible();
+    await expect(track.locator('a, button, input, [tabindex]')).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test('keeps a project list\'s stages when it is restored by Back, none left loading (TASK-032; D-8 on the history-restored list)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await projectRun(page, `kembali-${String(Date.now())}`);
+
+    await page.goto('/proyek/baru');
+    await fillParties(page, run, 'Proyek untuk kembali ke daftar');
+    await page.getByRole('button', { name: 'Buat Proyek' }).click();
+    await page.waitForURL(UUID);
+
+    await page.goto('/proyek');
+    const row = page.getByRole('row').filter({ hasText: 'Proyek untuk kembali ke daftar' });
+    await expect(row).toContainText('Kesepakatan');
+    await expect(page.getByRole('status').filter({ hasText: 'Memuat tahap' })).toHaveCount(0);
+
+    // Into the project, then Back: the list comes from the browser's history with its resolved stage group, which must count.
+    await row.getByRole('link', { name: 'Proyek untuk kembali ke daftar' }).click();
+    await page.waitForURL(UUID);
+    await page.goBack();
+    await page.waitForURL(/\/proyek(\?.*)?$/);
+    await expect(row).toContainText('Kesepakatan');
+    await expect(page.getByRole('status').filter({ hasText: 'Memuat tahap' })).toHaveCount(0);
 });
