@@ -55,7 +55,7 @@ The list pattern and the four pilot areas of the approved redesign are built on 
 **REFERENCES:**
 
 - [APPR-048](../00-governance/DECISION_LOG.md#dir-144-and-appr-048--cr-002s-addition-d-5-a-wide-table-becomes-labelled-rows-below-its-threshold-2026-11-28); [APPR-049](../00-governance/DECISION_LOG.md#dir-145-and-appr-049--cr-002s-addition-d-6-the-arrangements-of-pg-010-pg-011-pg-018-and-pg-019-2026-11-28); [APPR-047](../00-governance/DECISION_LOG.md#dir-143-and-appr-047--cr-002s-package-k-6-the-stage-indicator-the-first-step-and-the-recovery-codes-stage-2026-11-28); [APPR-046](../00-governance/DECISION_LOG.md#dir-142-and-appr-046--cr-002s-package-k-5-skeletons-for-a-region-that-is-loading-2026-11-28)
-- DESIGN_SYSTEM PT-05, PT-06, PT-19, PT-29, PT-31, §10; INFORMATION_ARCHITECTURE §§8.1, 9; AUTH_JOURNEYS; the classification of the ten old failures (the UI/UX session's record)
+- DESIGN_SYSTEM PT-05, PT-06, PT-19, PT-29, PT-31, §10; INFORMATION_ARCHITECTURE §§8.1, 9; AUTH_JOURNEYS; the classification of the ten old failures of the pilot's runs 45986909823 and 46002677044, which this Task commits to its gate record so that it is traceable from the repository
 - The pilot (read only): `record-blocks.tsx` (`StageTrack`), `Stock.tsx`, `Projects.tsx`, `Beranda.tsx`, `TotpEnrolment.tsx`
 
 **EXPECTED MODULES / FILE AREAS:**

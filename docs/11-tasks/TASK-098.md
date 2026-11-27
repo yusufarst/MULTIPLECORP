@@ -17,8 +17,8 @@ The design foundation of the approved redesign stands, on the shared components 
 **WHY THIS EXISTS:**
 
 - The Owner approved the packages on 2026-11-28 and Change 33 splits the redesign into seven Tasks in dependency order; the tokens, the skeleton and the shared helpers come first because every later Task builds on them (the Owner's order: foundation, navigation, list pattern, the four pilot areas, the other modules, the gate).
-- **D-8 #2, verified on `main` 18a6b664** — the server sends a quantity whole (for example "100", with no decimal point), and thirteen lines in six files trim trailing zeros without a guard, so "100" can be shown as "1" (`Reservations.tsx`, `Purchase.tsx`, `receipt-reversal.tsx` and the shared formatter among them). It is a defect against the old contract too (a figure is shown whole). The correction touches the display only: the source value, the business rounding and the server's calculation are untouched.
-- **D-8 #6, verified in the code** — `resources/js/components/ui/button.tsx` types a link drawn as a button as `type="button"` (unchanged since TASK-015); its impact is low and the correction is one line at the component.
+- **D-8 #2, verified on `main` 18a6b664** — the server sends a quantity whole (for example "100", with no decimal point), and fourteen of seventeen lines in six files trim trailing zeros without a guard, so "100" can be shown as "1" (`Reservations.tsx`, `Purchase.tsx`, `receipt-reversal.tsx`, `Journey.tsx`, `fulfilment.tsx` and `Stock.tsx`, found by search; the shared formatter `quantity()` trims only the fraction and is correct). It is a defect against the old contract too (a figure is shown whole). The correction touches the display only: the source value, the business rounding and the server's calculation are untouched.
+- **D-8 #6, read in the code** — `resources/js/components/ui/button.tsx` hands a link drawn as a button to Base UI's button, whose default makes it `type="button"` (unchanged since TASK-015); its impact is low and the correction is at the component.
 
 **DEPENDS ON:**
 
@@ -38,7 +38,7 @@ The design foundation of the approved redesign stands, on the shared components 
 - Skeleton: `components/ui/skeleton.tsx` and the region's loading state — shapes in the proportions of the content, after 300 ms, hidden from assistive technology, announced once through the region's own status line, reduced motion respected; **never for a region the account may not read** (no placeholder for a figure that needs a capability the account lacks) and the 300 ms rule for every skeleton, a stage column included (the Owner's correction 4)
 - Motion: the pulse and fade-in tokens of the pilot, reused by copy and review; the spinner of a busy control as TASK-097 left it
 - Base UI only: the primitives kept as they are; no `shadcn init`, `--force`, `--reinstall` or `add sidebar`; each `add` after `--dry-run` and an import check for `radix-ui`, `@radix-ui/*` or `vaul`; no new dependency
-- D-8 #2: one shared quantity helper, every one of its thirteen callers moved to it, with a test shown **red then green** on "100", "1000", "0.50", "10.000" and a value with a unit; D-8 #6: the link drawn as a button without `type="button"`, with its test
+- D-8 #2: one shared quantity helper, every one of its call sites moved to it, with a test shown **red then green** on "100", "1000", "0.50", "10.000" and a value with a unit; D-8 #6: the link drawn as a button without `type="button"`, with its test
 - The component gallery's specimens and the tokens' tests (`tests/Frontend/tokens.test.ts`) brought to the approved contract, none weakened
 - The pilot's code reused by copy and review, never by merge or rebase of `pilot/ux-v2`; without its provisional tokens (`pilot.css`) and without its Docker and CI files
 
@@ -59,7 +59,7 @@ The design foundation of the approved redesign stands, on the shared components 
 
 - `resources/css/tokens.css`, `resources/css/app.css`
 - `resources/js/components/ui/skeleton.tsx`, `button.tsx`, `resources/js/components/region-state.tsx`
-- `resources/js/lib/format.ts` and the six files whose thirteen lines trim a quantity
+- `resources/js/lib/format.ts` and the nine files whose seventeen lines trim a quantity
 - `tests/Frontend/`, `tests/Browser/Responsive/`; the gallery (`Pages/Fixtures/Components.tsx`)
 
 **BUSINESS RULES:**
@@ -164,7 +164,7 @@ The design foundation of the approved redesign stands, on the shared components 
 
 1. The tokens are the approved working direction; each text pair reaches 4.5:1 and each control edge, focus ring, mark and bar 3:1 on the surface it sits on; `--color-text-muted-canvas` is `#6f7074`; a done-stage marker that carries information reaches 3:1 and keeps a cue that is not colour.
 2. A region that loads shows a skeleton only after 300 ms, hidden from assistive technology and announced once; a fast answer never flashes one; a region the account may not read shows none and no placeholder figure; reduced motion keeps the shapes still.
-3. A quantity the server sends as "100" is shown as "100" at every one of its thirteen former call sites and everywhere else that formats a quantity; "1000", "0.50" and "10.000" are shown as the contract states; the test is red on `main`'s helper and green on the new one; no source value, rounding or calculation changes.
+3. A quantity the server sends as "100" is shown as "100" at every one of its former call sites and everywhere else that formats a quantity; "1000", "0.50" and "10.000" are shown as the contract states; the test is red on `main`'s helper and green on the new one; no source value, rounding or calculation changes.
 4. A link drawn as a button is not typed as a button; a real button keeps its type.
 5. No dependency is added and no Radix, Vaul or Sonner import exists.
 

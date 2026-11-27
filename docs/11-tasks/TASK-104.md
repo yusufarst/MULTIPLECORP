@@ -12,7 +12,7 @@ Approval: one of the seven Tasks of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-ta
 
 **OBJECTIVE:**
 
-The redesign passes its gate: the UI consistency gate, WCAG 2.2 AA on every page, localization completeness, the responsive matrix, the performance budgets and the full release regression run again on the redesigned application, the ten failures of the old specifications reconciled with traceable evidence, and the recorded validations that CR-002 keeps as mandatory gates — the novice validation of the *Menu* and its labels (E6, E7), the real-device and screen-reader checks (F-05, F-06) and the Owner's visual verdict on the palette and type scale (E8) — each recorded as it happens and none taken as passed.
+The redesign passes its gate: the UI consistency gate, WCAG 2.2 AA on every page, localization completeness, the responsive matrix, the performance budgets and the full release regression run again on the redesigned application, the ten failures of the old specifications reconciled with traceable evidence, and the recorded validations that CR-002 keeps as mandatory gates — the novice validation of the *Menu* and its labels (E6, E7), the real-device and screen-reader checks and the Owner's visual verdict on the palette and type scale (E8) — each recorded as it happens and none taken as passed.
 
 **WHY THIS EXISTS:**
 
@@ -37,7 +37,7 @@ The redesign passes its gate: the UI consistency gate, WCAG 2.2 AA on every page
 - Accessibility across every page (WCAG 2.2 AA) including non-text contrast per surface (1.4.11), high-contrast mode and colour-blindness; localization completeness and the per-page copy lists, the *proposed* copy listed with its status; performance targets and query budgets (QB-01, QB-10 for *Beranda*)
 - The full release regression and the device UAT's preparation re-run; the security test matrix, route integrity and zero dead interactions green
 - The ten failures of the old specifications reconciled with the classification of the pilot's runs 45986909823 and 46002677044 — updated against the new contract, none weakened, skipped or deleted
-- The recorded validations: the novice validation (E6, E7) of the *Menu*, its label and the group labels, with the result and the one Level 1 edit that follows; the real-device checks (F-05) and the screen readers (F-06); the Owner's visual verdict (E8), its final values set as one-row Level 3 edits — each recorded in the gate record with its date and evidence; an item that has not happened is recorded as **not done**, never as passed
+- The recorded validations: the novice validation (E6, E7) of the *Menu*, its label and the group labels, with the result and the one Level 1 edit that follows; the real-device checks and the screen-reader checks; the Owner's visual verdict (E8), its final values set as one-row Level 3 edits — each recorded in the gate record with its date and evidence; an item that has not happened is recorded as **not done**, never as passed
 - The gate record of this Task, and TASK_PLAN, this Task and CURRENT_HANDOFF updated at DONE
 
 **OUT OF SCOPE:**
@@ -161,7 +161,7 @@ The redesign passes its gate: the UI consistency gate, WCAG 2.2 AA on every page
 1. Every mandatory CI job is green on the head, including the Browser aggregate on Chromium and WebKit; the UI, accessibility and localization gates and the release regression pass on the redesigned application.
 2. Every page reaches WCAG 2.2 AA with the 1.4.11 contrast measured per surface; every text pair 4.5:1 and every control edge, focus ring, mark and bar 3:1.
 3. The ten failures are each reconciled with traceable evidence; no assertion is weakened, skipped or deleted anywhere in the redesign's Tasks.
-4. E6 and E7 are recorded — the participants, the tasks, the result for *Menu* and each group label, the one Level 1 edit that follows — or recorded as not done with the Task not DONE; F-05 and F-06 likewise; E8 is recorded as the Owner's verdict with the final values.
+4. E6 and E7 are recorded — the participants, the tasks, the result for *Menu* and each group label, the one Level 1 edit that follows — or recorded as not done with the Task not DONE; the real-device and screen-reader checks likewise; E8 is recorded as the Owner's verdict with the final values.
 5. No business behaviour, permission, calculation or datum changed anywhere in the redesign.
 
 **TEST REQUIREMENTS:**

@@ -12,7 +12,7 @@ Approval: one of the seven Tasks of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-ta
 
 **OBJECTIVE:**
 
-The pages of the sales and billing pages — quotations (TASK-033), commercial confirmation and fulfillment planning (TASK-034), invoices and the Kuitansi (TASK-049), billing and receivables (TASK-050), payments (TASK-051), settlements (TASK-052) and customer credit (TASK-053) follow the redesigned patterns — the foundation of TASK-098, the *Menu* of TASK-099 and the list pattern of TASK-100 — without a change of business behaviour, permission, calculation or datum: the same pages, routes, actions and rules, presented under the approved contract, each old specification reconciled against it.
+The pages of the sales and billing pages — quotations (TASK-033), commercial confirmation and fulfillment planning (TASK-034), invoices and the Kuitansi (TASK-049), billing and receivables (TASK-050), payments (TASK-051), settlements (TASK-052), customer credit (TASK-053) and expenses and other cash (TASK-054; PG-049) follow the redesigned patterns — the foundation of TASK-098, the *Menu* of TASK-099 and the list pattern of TASK-100 — without a change of business behaviour, permission, calculation or datum: the same pages, routes, actions and rules, presented under the approved contract, each old specification reconciled against it.
 
 **WHY THIS EXISTS:**
 
@@ -34,7 +34,7 @@ The pages of the sales and billing pages — quotations (TASK-033), commercial c
 
 **IN SCOPE:**
 
-- The sales and billing pages — quotations (TASK-033), commercial confirmation and fulfillment planning (TASK-034), invoices and the Kuitansi (TASK-049), billing and receivables (TASK-050), payments (TASK-051), settlements (TASK-052) and customer credit (TASK-053) — each page's list, form, detail and states on the patterns
+- The sales and billing pages — quotations (TASK-033), commercial confirmation and fulfillment planning (TASK-034), invoices and the Kuitansi (TASK-049), billing and receivables (TASK-050), payments (TASK-051), settlements (TASK-052), customer credit (TASK-053) and expenses and other cash (TASK-054; PG-049) — each page's list, form, detail and states on the patterns
 - Region states: the skeleton after 300 ms and never for a region the account may not read; the empty, error and denied states of PT-19
 - The page's copy in both languages; the path of each page as the NAV contract states it
 - The old specifications of these pages reconciled against the new contract, each with its evidence — none weakened, skipped or deleted

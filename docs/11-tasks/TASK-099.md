@@ -17,7 +17,7 @@ The navigation of the approved redesign ([APPR-050](../00-governance/DECISION_LO
 **WHY THIS EXISTS:**
 
 - The Owner approved K-4's structure ahead of the validation ([APPR-052](../00-governance/DECISION_LOG.md#dir-148-and-appr-052--change-33-the-redesigns-seven-tasks-d-8s-minimum-corrections-and-the-release-freeze-exception-2026-11-28) records the changed order); E6 and E7 stay mandatory gates. The structure is built after the foundation, so the validation's results exist before the labels are final.
-- The pilot proved the tree, the rail, the drawer and the phone sheet in its harness; its CI layer asserts only Beranda, Proyek, Stok and a few orders — the navigation tree itself has no real-stack evidence yet (K-4's note, Selisih 16).
+- The pilot proved the tree, the rail, the drawer and the phone sheet in its harness; its CI layer asserts only Beranda, Proyek, Stok and a few orders — the navigation tree itself has no real-stack evidence yet.
 
 **DEPENDS ON:**
 
