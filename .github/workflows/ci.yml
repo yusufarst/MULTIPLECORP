@@ -265,8 +265,10 @@ jobs:
         run: docker compose down -v
 
   # TL-05 on the deployment definition (TASK-072; TASK-078's staging findings): deploy/coolify/compose.yml started as
-  # Coolify v4.7.6 starts it — every service given every resource variable and attached to every network — with throwaway
-  # values and credential files generated on the runner, and checked as Coolify's proxy reaches it: the stores and php-fpm
+  # Coolify v4.7.6 starts a Raw Compose Deployment — the file as written, no variable added to a service, no network
+  # attached — with throwaway values and credential files generated on the runner, and checked as Coolify's proxy reaches
+  # it: each service on its own networks only, the database and the cache on one with no route out, the proxy's labels,
+  # the stores and php-fpm
   # listening on the internal network alone, private and authenticated, no migration, superuser or administration
   # credential in any container's configuration or running process, nothing mounted from the repository, the headers, the
   # trusted host and proxy, the request log, the maintenance mode and Valkey's keys across restarts. It deploys nothing

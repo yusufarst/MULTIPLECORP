@@ -857,3 +857,7 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-097 on its branch `task/TASK-097-shared-foundation`: §6's bands for the 65 `sm:` utilities, the spinner's turn, 16 px fields on a coarse pointer, one title on the phone, "Kode referensi" only with a code, the tablet's 80 px rail, one "WIB", and GF-01 — the issued document without the body's margin, the draft marking out of the preview's flow and the meta block's references at their own height, the composer tolerance asserted on DOC-09 and every layout issued through the one wrapper —; the pilot's validated foundation code reused without its provisional tokens (DIR-135).
 - Updated the locked `web-auth/webauthn-lib` to 5.3.17 for its five advisories fixed in 5.3.13, `symfony/http-foundation`, `symfony/http-kernel`, `symfony/mailer` and `symfony/routing` to 7.4.24 and `symfony/serializer` to 8.1.12 for the Symfony advisories of 2026-11-25 that TL-14's PHP audit refuses (SX-05; DIR-136); no package added or removed.
+
+## Unreleased — 2026-11-27, TASK-078 — Raw Compose Deployment
+
+- Moved the deployment definition to Coolify's Raw Compose Deployment (the Owner's decision, DIR-137): `edge` is the resource's own network, `web` alone on it and carrying the proxy's routing and certificate labels, so the database and the cache are on `internal` alone and no service has a variable it does not name; TL-05 checks each service's networks, the internal network's missing route out, the runtime's secrets per container and the labels.

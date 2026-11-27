@@ -1,4 +1,4 @@
-# MULTIPLECORP's deployment definition for Coolify's Docker Compose deployment (TASK-072; INFRASTRUCTURE §2, §4; DIR-117,
+# MULTIPLECORP's deployment definition for Coolify's Raw Compose Deployment (TASK-072, TASK-078; INFRASTRUCTURE §2, §4; DIR-117,
 # APPR-033): one Coolify resource per environment — staging and production — in MULTIPLECORP's own Coolify project, never
 # sharing a network, a volume, a database, a cache or a secret with the second application (INF-07). Placeholder values
 # only (PRQ-01): every setting comes from the resource's environment variables in Coolify, named in
@@ -8,23 +8,27 @@
 # deployment; the expand-only migrations and the catalogue sync are the one-shot `migrate` service, which every process of
 # the release waits on (INFRASTRUCTURE §5).
 #
-# Networks as declared: `edge` for the proxy to reach `web` (the resource's "Connect to predefined network" stays off);
-# `internal` holds the database and the cache, no published port, no proxy, no other application; `egress` gives the
-# application processes their outbound HTTPS and nothing else. Limits: each service's CPU and memory come from the
-# environment, their values from TASK-079's measurement.
-#
-# What Coolify v4.7.6 changes in this file when it deploys it, and how the definition holds against each change (TASK-078's
-# staging findings; COOLIFY_DEPLOYMENT §3):
-# - It gives every service every variable of the resource (`env_file: .env`). So the superuser, migration and
-#   administration logins are no resource variables: they are files in the operator's credentials directory
-#   (MULTIPLECORP_CREDENTIALS_DIR), mounted read-only into `db`, `db-roles` and `migrate` alone and read there by Docker's
-#   `_FILE` convention, so no container's configuration holds them (INFRASTRUCTURE §4.4).
-# - It attaches every service to every network of this file and to the resource's own network, which its proxy joins. So
-#   PostgreSQL, Valkey and php-fpm listen only on their address on `internal` — `db.internal`, `cache.internal` and
-#   `app.internal`, names no other network carries —, and the processes reach them by those names (H9-09).
-# - It resolves a relative bind mount against its own resource directory. So the site template and the roles script are
-#   built into their images, and nothing is mounted from the repository.
-name: multiplecorp
+# Raw Compose Deployment (the Owner's decision of 2026-11-27, DIR-137): Coolify v4.7.6 writes this file as it is. It adds no
+# variable to a service (no `env_file`), attaches no network and writes no routing label (it appends its own `coolify.*` markers); it gives Docker Compose the resource's
+# variables for this file's own `${…}` alone, and COOLIFY_RESOURCE_UUID, the name of the network it creates for the
+# resource and joins its proxy to. Docker Compose's own semantics therefore hold whole (COOLIFY_DEPLOYMENT §3):
+# - A service has the variables its `environment:` names and no others: the runtime's secrets reach the application's
+#   processes, `db-roles` its login's password and `cache` its own, nowhere else.
+# - A service is on the networks this file gives it and no other: the database and the cache on `internal` alone, a network
+#   with no route out, no published port, no proxy, no other application; `egress` gives the application processes their
+#   outbound HTTPS and nothing else; `edge` is the resource's own network, which the proxy joins, and `web` alone is on it.
+# - The proxy's routing and certificate come from the labels of `web` below, the domain from MULTIPLECORP_HOST, matched to
+#   the installed proxy (TASK-078's record).
+# The superuser, migration and administration logins stay files in the operator's credentials directory
+# (MULTIPLECORP_CREDENTIALS_DIR), mounted read-only into `db`, `db-roles` and `migrate` alone and read there by Docker's
+# `_FILE` convention, so no container's configuration holds them (INFRASTRUCTURE §4.4). PostgreSQL, Valkey and php-fpm keep
+# listening on their address on `internal` — `db.internal`, `cache.internal` and `app.internal` — as a second control that
+# does not depend on how a deployment tool attaches networks (H9-09). The site template and the roles script are built into
+# their images, so nothing is mounted from the repository. Limits: each service's CPU and memory come from the environment,
+# their values from TASK-079's measurement.
+# No `name:`: Coolify starts a Raw Compose Deployment without `--project-name`, so the project is named by the resource's
+# own directory, its UUID, as Coolify's build and pull steps already name it. A `name:` here would be one project for every
+# resource on the host, staging's and production's alike, sharing containers, networks and volumes (INF-07).
 
 x-app: &app
   build:
@@ -182,6 +186,28 @@ services:
       NGINX_ENVSUBST_FILTER: ^MULTIPLECORP_
     networks: [edge, internal]
     expose: ["8080"]
+    # Coolify's proxy (Traefik) routes by these labels and obtains the domain's certificate; a Raw Compose Deployment adds
+    # no routing label. Every name carries the environment, so staging's and production's routers never meet on the shared proxy, and
+    # nothing here names, changes or reads another application's router, middleware or service. `http` and `https` as the
+    # entrypoints and `letsencrypt` as the certificate resolver are Coolify's defaults, assumed until the operator's read-only
+    # diagnostic of the installed proxy confirms them (TASK-078's record). A list, not a map: Coolify appends its own labels to it.
+    labels:
+      - "traefik.enable=true"
+      # `web` is reached on the resource's network, the one the proxy shares, never on `internal`.
+      - "traefik.docker.network=${COOLIFY_RESOURCE_UUID}"
+      - "traefik.http.services.multiplecorp-${APP_ENV}.loadbalancer.server.port=8080"
+      # Plain HTTP answers a permanent redirect to the same address on HTTPS (WS-06; SM-08).
+      - "traefik.http.middlewares.multiplecorp-${APP_ENV}-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.multiplecorp-${APP_ENV}-https.redirectscheme.permanent=true"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-http.entrypoints=http"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-http.rule=Host(`${MULTIPLECORP_HOST}`)"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-http.middlewares=multiplecorp-${APP_ENV}-https"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-http.service=multiplecorp-${APP_ENV}"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-https.entrypoints=https"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-https.rule=Host(`${MULTIPLECORP_HOST}`)"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-https.tls=true"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-https.service=multiplecorp-${APP_ENV}"
     depends_on:
       app:
         condition: service_healthy
@@ -314,7 +340,11 @@ services:
         limits: { cpus: "${CACHE_CPUS:-0.25}", memory: "${CACHE_MEMORY:-256M}" }
 
 networks:
-  edge: {}
+  # The resource's own network: Coolify creates it, named by the resource's UUID, and joins its proxy to it before it starts
+  # the stack. `web` alone is attached; nothing else of this stack is on a network the proxy shares.
+  edge:
+    name: ${COOLIFY_RESOURCE_UUID:?set by Coolify}
+    external: true
   egress: {}
   internal:
     internal: true
