@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { ArrowLeft, Ellipsis } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -52,7 +53,7 @@ export function PageHeader({
             )}
             <div className="flex min-w-0 flex-wrap items-start gap-3">
                 {back !== undefined && (
-                    <Button variant="ghost" size="icon-md" render={<a href={back.href} />} aria-label={back.label} className="md:hidden">
+                    <Button variant="ghost" size="icon-md" render={<Link href={back.href} />} aria-label={back.label} className="md:hidden">
                         <Icon icon={ArrowLeft} size="md" />
                     </Button>
                 )}

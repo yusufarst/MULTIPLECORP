@@ -43,11 +43,14 @@ export function SignalGroup({
         <section aria-label={title} data-slot="signal-group" className="flex min-w-0 flex-col gap-2">
             <Collapsible open={open} onOpenChange={setOpen}>
                 <div className="flex min-w-0 items-center justify-between gap-3">
-                    <h3 className="min-w-0 text-body font-semibold text-text-primary">
-                        <CollapsibleTrigger className="group/signal flex min-h-touch min-w-0 items-center gap-2 rounded-sm text-left outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus md:pointer-events-none">
-                            {title}
-                            {countText !== '' && <span className="text-label font-normal text-text-tertiary tabular-nums">{countText}</span>}
-                            <Icon icon={ChevronDown} size="sm" className="text-text-tertiary group-data-[panel-open]/signal:rotate-180 md:hidden" />
+                    {/* APPR-042's pilot: on the phone the counts take their own line under the title, never squeezed beside it. */}
+                    <h3 className="min-w-0 flex-1 text-body font-semibold text-text-primary">
+                        <CollapsibleTrigger className="group/signal flex min-h-touch w-full min-w-0 items-center gap-2 rounded-sm text-left outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus md:pointer-events-none">
+                            <span className="flex min-w-0 flex-1 flex-col md:flex-row md:flex-wrap md:items-baseline md:gap-x-2">
+                                <span>{title}</span>
+                                {countText !== '' && <span className="text-label font-normal text-text-tertiary tabular-nums">{countText}</span>}
+                            </span>
+                            <Icon icon={ChevronDown} size="sm" className="shrink-0 text-text-tertiary transition-transform duration-(--mc-dur-fast) group-data-[panel-open]/signal:rotate-180 motion-reduce:transition-none md:hidden" />
                         </CollapsibleTrigger>
                     </h3>
                     {seeAll !== undefined && seeAll !== null && (

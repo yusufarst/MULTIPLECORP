@@ -4,7 +4,7 @@ import { searchStock, stockRun } from '../stock-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
 
-// TL-11 (TASK-040; NAV-018–NAV-020; PT-05; PT-06; PT-17): PG-018–PG-020 without a sideways scroll, a table from 768 px, dense rows on the phone.
+// TL-11 (TASK-040; TASK-100; NAV-018–NAV-020; PT-05; PT-06; PT-17; D-5): PG-018–PG-020 without a sideways scroll, a table from 1,025 px, labelled rows below.
 
 test.describe.configure({ timeout: 300_000 });
 
@@ -20,7 +20,7 @@ for (const width of [320, 390, 768, 1280]) {
         await expect(page.locator('#konten')).toContainText(run.name);
         expect(await fits()).toBe(true);
 
-        if (width >= 768) {
+        if (width >= 1025) {
             await expect(page.getByRole('table', { name: 'Stok' })).toBeVisible();
         } else {
             await expect(page.getByRole('table', { name: 'Stok' })).toHaveCount(0);

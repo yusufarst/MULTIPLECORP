@@ -33,6 +33,9 @@
     --breakpoint-lg: 64.0625rem;
     --breakpoint-xl: 75rem;
     --breakpoint-composer: 80rem;
+    /* A facts list measures its own container, not the screen (D-6): two columns from 30rem of room, three from 46rem. */
+    --container-facts-2: 30rem;
+    --container-facts-3: 46rem;
 
     /* §8: the spinner's turn (TASK-097) — `animate-spin` on a busy control's icon, shown after the 300 ms delay, one
        turn per `--mc-dur-spin`; `motion-reduce:animate-none` keeps it still under reduced motion. The reset above
@@ -402,6 +405,8 @@
     --spacing-progress: var(--progress-height);
     --spacing-search: var(--search-max-width);
     --spacing-dialog: 25rem;
+    /* The sign-in frame's card (the pilot's validated width). */
+    --spacing-auth: 25rem;
     --spacing-sheet-sm: 30rem;
     --spacing-sheet-lg: 40rem;
     --spacing-rail: 5rem;

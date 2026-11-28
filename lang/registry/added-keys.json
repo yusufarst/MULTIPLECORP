@@ -20730,6 +20730,114 @@
             "source": "GAP-073 defect B — PG-021's open lines, no sum across products or units (CALC-03; DESIGN_SYSTEM §16)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "pages.pg_004.step_of": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — PG-004's steps",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.step_scan": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — PG-004's steps (AUTH_JOURNEYS §2.4)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.step_code": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — PG-004's steps (AUTH_JOURNEYS §2.4)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.step_save": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — PG-004's steps (AUTH_JOURNEYS §2.4)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.copy_key": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — PG-004's text key",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.copy_codes": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — PG-004's recovery codes (DIR-134 E5)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.copied": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — the copy button's answer",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.copy_failed": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — the copy button's answer",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.codes_use": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — PG-004's recovery codes (AU-19)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.saved_ack": {
+            "task": "TASK-100",
+            "source": "CR-002 K-5 — the recovery-code acknowledgement, the pilot only (DIR-134 E5)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.clear_tpl": {
+            "task": "TASK-100",
+            "source": "CR-002 K-6 — PG-006's empty-group summary, the pilot only (DIR-134 E5)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.start_title": {
+            "task": "TASK-100",
+            "source": "CR-002 K-6 — PG-006's first step without K-6 (blueprint D1)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.start_line": {
+            "task": "TASK-100",
+            "source": "CR-002 K-6 — PG-006's first step without K-6 (blueprint D1)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.start_action": {
+            "task": "TASK-100",
+            "source": "CR-002 K-6 — PG-006's first step without K-6 (blueprint D1)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "journey.stage_of": {
+            "task": "TASK-100",
+            "source": "CR-002 K-6 — the project stage bar, numbers always written, the pilot only (DIR-134 E4)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.scope": {
+            "task": "TASK-100",
+            "source": "CR-002 K-1 — PG-018 says what its figures cover (PERMISSIONS_MATRIX PJ-01, PJ-22)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.related": {
+            "task": "TASK-100",
+            "source": "CR-002 K-1 — PG-018 names the warehouse pages the account opens (the navigation leaves)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.attention": {
+            "task": "TASK-100",
+            "source": "CR-002 K-1 — PG-018 gathers each product's minimum and pending notes in one column",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

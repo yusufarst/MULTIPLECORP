@@ -2,6 +2,10 @@
 
 Status: REVIEW | Updated: 2026-10-23 | Owner: Planning
 
+## Unreleased — 2026-11-28, TASK-100 — the list pattern and the four pilot areas
+
+- Built TASK-100 on its branch `task/TASK-100-list-pattern-and-pilot-areas`: *Masuk* with its two-step pages and the recovery codes' own stage, *Beranda*'s cards and first step, *Proyek*'s six columns and one-card journey with "Tahap n dari N" over a read-only track, *Stok*'s labelled rows below 1,025 px and its table above — the pilot's validated code by copy and review —, a project list restored by Back keeping its stages, and the ten failures of the old specifications reconciled with their evidence.
+
 ## Unreleased — 2026-11-28, TASK-099 — the navigation
 
 - Built TASK-099 on its branch `task/TASK-099-navigation`: the three-level *Menu* — eight modules in three groups, 37 pages as leaves —, the 248 px sidebar, the 80 px labelled rail with its drawer and the phone's full-screen *Menu*, K-4's contract text with its code and tests; the term and the group labels proposed. Two pages built long ago — *Dokumen Administrasi* and *Impor* — were hidden from the menu and are reachable again.

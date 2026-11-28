@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-28 | Owner: Planning
 
 Approval: one of the seven Tasks of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 33, which the Owner approved explicitly ([APPR-052](../00-governance/DECISION_LOG.md#dir-148-and-appr-052--change-33-the-redesigns-seven-tasks-d-8s-minimum-corrections-and-the-release-freeze-exception-2026-11-28); DIR-148), within the approvals of CR-002's packages ([DECISION_LOG](../00-governance/DECISION_LOG.md#approval-register), APPR-044–APPR-051).
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -183,19 +183,19 @@ The list pattern and the four pilot areas of the approved redesign are built on 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint: Pint and ESLint in this head's CI (TL-01)
-- [ ] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
-- [ ] Relevant automated tests: the frontend and Browser tests above in this head's CI
-- [ ] Authorization: the route audit (TL-07) and every denial suite unchanged and green
-- [ ] Route integrity: N/A — no route added or changed
-- [ ] Interaction behavior: the Browser tests above
-- [ ] Browser E2E if required: on Chromium and WebKit (TL-09)
-- [ ] Responsive/adaptive if required: the band edges and the labelled-rows thresholds (TL-11)
-- [ ] Visual breathing room/density if UI: against §5 and §§9–10; the density decisions (the 12 px floor, the 20/28 title) the Owner's, at the walkthrough
-- [ ] Production build: TL-13 in this head's CI
-- [ ] Security checks if required: no capability change; nothing shown that the account may not read
-- [ ] Database safety review: no schema change, no migration, no write path; production not touched
-- [ ] Final diff review: ER-06's independent review within DIR-096's bounded loop
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
+- [x] Relevant automated tests: the frontend and Browser tests above in this head's CI
+- [x] Authorization: the route audit (TL-07) and every denial suite unchanged and green
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: the Browser tests above
+- [x] Browser E2E if required: on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the band edges and the labelled-rows thresholds (TL-11)
+- [x] Visual breathing room/density if UI: against §5 and §§9–10; the density decisions (the 12 px floor, the 20/28 title) the Owner's, at the walkthrough
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: no capability change; nothing shown that the account may not read
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: ER-06's independent review within DIR-096's bounded loop
 
 **COMPLETION EVIDENCE:**
 
@@ -206,9 +206,9 @@ The list pattern and the four pilot areas of the approved redesign are built on 
 - Browser evidence: the Browser tests above on Chromium and WebKit, as the pull request's checks show before the merge
 - Localization evidence: the changed templates in both languages
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
-- Files changed: —
+- Files changed: `resources/js/layouts/AuthLayout.tsx` (new), `Pages/Auth/SignIn.tsx`, `SetPassword.tsx`, `TwoFactorChallenge.tsx`, `TotpEnrolment.tsx` (E5); `components/copy-button.tsx` (new), `data-list.tsx`, `record-blocks.tsx` (the read-only stage track), `company.tsx`, `page-header.tsx`, `signals.tsx`; `features/home/signals.tsx`, `features/prj/journey.tsx`; `Pages/Reporting/Beranda.tsx`, `Pages/PRJ/Projects.tsx`, `Pages/PRJ/Journey.tsx`, `Pages/INV/Stock.tsx`, `Pages/INV/ProductStock.tsx`; `resources/css/tokens.css` (the sign-in card's width, the facts lists' containers); `lang/id.json`, `lang/en.json`, `lang/registry/added-keys.json` (the pilot's eighteen keys); `tests/Browser/E2E/two-factor.spec.ts`, `projects.spec.ts`, `home.spec.ts`, `tests/Browser/Accessibility/home.spec.ts`, `tests/Browser/Responsive/stock.spec.ts` (reconciled), `tests/Browser/Responsive/areas.spec.ts` (new); `docs/08-testing/evidence/TASK-100_OLD_SPEC_RECONCILIATION.md`
 - Commit SHA: this branch's commits from `main`, the Owner's identity, no AI attribution
-- Notes: —
+- Notes: **The four areas** are the pilot's validated code, taken by copy and a three-way merge with `main`'s own changes since the pilot's base (TASK-096–TASK-098), never by merge or rebase of `pilot/ux-v2`: *Masuk* and its two-step pages in the shared sign-in frame, *Beranda*'s cards, first step and single empty-signal sentence, *Proyek*'s six columns and one-card journey with "Tahap n dari N" over a read-only track folded under "Tahap proyek" on the phone, *Stok*'s scope line, *Perhatian* column, SKU and unit at every width, related warehouse pages and its phone order. **E5** — the recovery codes on their own stage, "Lanjutkan" open only after the confirmation; the specification asserts the Owner's correction 5: no code in `history.state`, local or session storage or a field, and none on the page Back returns to. **Skeletons (the Owner's correction 4)** — the pilot drew the stage column's skeleton at once and a placeholder for the stock values even for an account without `cost.view`; here the stage column uses `DelayedSkeleton`, drawn only after the 300 ms with one status line saying "Memuat tahap…" for all its cells, and the values' fallback is rendered only for an account that holds `cost.view`, nothing otherwise (`region-loading.test.ts`). **The done marker** — the pilot drew a stage's check and its segment in the pale token (2.06:1); here the check is cobalt and a complete segment dark grey, so no marker that carries information is below 3:1 and the check stays the cue that is not colour (the Owner's correction 3). **D-8** — #2 closed in TASK-098 (the pilot's own `trimZeros` is not carried: `plainQuantity` serves every caller); #1 the history-restored list: the pilot's initial state from the page's own resolved journeys, asserted on the real stack by `projects.spec.ts`; #3–#5 (the units on the phone's PG-018, the SKU, the rack unit): carried as D-5 and D-6's arrangement — shown at every width — and **not proven a defect of the old contract**: the pilot's red evidence is on the old bundle only. **The ten failures of the old specifications** are reconciled, none weakened, in [the record](../08-testing/evidence/TASK-100_OLD_SPEC_RECONCILIATION.md). Not done and recorded as such: the novice validation (E6, E7), real devices and screen readers, the visual verdict (E8) — TASK-104's gate.
 - Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**

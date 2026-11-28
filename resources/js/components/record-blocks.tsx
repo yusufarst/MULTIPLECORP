@@ -17,12 +17,18 @@ import { cn } from '@/lib/utils';
 
 export type Fact = { label: ReactNode; value: ReactNode; numeric?: boolean };
 
-/** PT-12's facts summary: a definition list in two to four columns, stacked on the phone. */
-export function FactsList({ facts, columns = 3, className }: { facts: Fact[]; columns?: 2 | 3 | 4; className?: string }) {
-    return (
+/** PT-12's facts summary: a definition list in two to four columns, stacked on the phone. With `fit` (APPR-042's pilot) the
+    columns follow the room its own container gives — a narrow side column stacks it — one column where container
+    queries are unknown (Modern Web Guidance, size-aware-styling). */
+export function FactsList({ facts, columns = 3, fit = false, className }: { facts: Fact[]; columns?: 2 | 3 | 4; fit?: boolean; className?: string }) {
+    const list = (
         <dl
             data-slot="facts"
-            className={cn('grid min-w-0 grid-cols-1 gap-x-6 gap-y-3 md:grid-cols-2', columns >= 3 && 'lg:grid-cols-3', columns === 4 && 'xl:grid-cols-4', className)}
+            className={cn(
+                'grid min-w-0 grid-cols-1 gap-x-6 gap-y-3',
+                fit ? cn('@facts-2:grid-cols-2', columns >= 3 && '@facts-3:grid-cols-3') : cn('md:grid-cols-2', columns >= 3 && 'lg:grid-cols-3', columns === 4 && 'xl:grid-cols-4'),
+                className,
+            )}
         >
             {facts.map((fact, index) => (
                 <div key={index} className="flex min-w-0 flex-col gap-0.5">
@@ -32,6 +38,8 @@ export function FactsList({ facts, columns = 3, className }: { facts: Fact[]; co
             ))}
         </dl>
     );
+
+    return fit ? <div className="@container min-w-0">{list}</div> : list;
 }
 
 /** The metric strip: key figures in one row separated by hairlines, wrapping on narrow widths (§10). */
@@ -243,6 +251,29 @@ export function StageTrack({ stages, label, onSelect }: { stages: Stage[]; label
         <ol aria-label={label} data-slot="stage-track" className="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-3">
             {stages.map((stage, index) => {
                 const current = stage.state === 'current';
+                // APPR-042's pilot, the Owner's D-2 (P-1): the read-only track draws no disc, border or ring — nothing a
+                // reader could take for a button. A check for a stage done, a dot for one to come, the current stage's
+                // larger accent dot and bold name, the warning icon for one needing attention; its number in plain text.
+                const marker = (
+                    <span aria-hidden data-slot="stage-marker" className="inline-flex size-4 shrink-0 items-center justify-center">
+                        {stage.state === 'complete' ? (
+                            <Icon icon={Check} size="xs" className="text-accent-olive" />
+                        ) : stage.state === 'attention' ? (
+                            <Icon icon={TriangleAlert} size="xs" className="text-warning-fg" />
+                        ) : (
+                            <span className={cn('rounded-full', current ? 'size-3 bg-accent-olive' : 'size-2 bg-border-strong')} />
+                        )}
+                    </span>
+                );
+                const readOnly = (
+                    <span className="flex cursor-default items-center gap-2">
+                        {marker}
+                        <span className={cn('text-label', current ? 'font-semibold text-text-primary' : stage.state === 'upcoming' ? 'text-text-tertiary' : 'text-text-secondary')}>
+                            <span className="tabular-nums">{index + 1}</span> {stage.label}
+                            {current && <span className="sr-only"> {t('stage.step_of', { n: index + 1, total: stages.length })}</span>}
+                        </span>
+                    </span>
+                );
                 const body = (
                     <>
                         <span
@@ -267,7 +298,7 @@ export function StageTrack({ stages, label, onSelect }: { stages: Stage[]; label
                 return (
                     <li key={stage.key} aria-current={current ? 'step' : undefined} className="flex min-w-0 items-center gap-2">
                         {onSelect === undefined ? (
-                            <span className="flex items-center gap-2">{body}</span>
+                            readOnly
                         ) : (
                             <button
                                 type="button"

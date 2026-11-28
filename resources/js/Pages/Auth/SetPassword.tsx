@@ -3,15 +3,15 @@
 // the address and the history entry, keeps it in no page state, and sends it in the request body. A used, expired
 // or revoked link answers MSG-28 on the page; the password rules answer at the field. The language switch keeps
 // the token in memory (INT-001). An authentication boundary: the history is cleared here (AU-06).
-import { Head, router, useForm, usePage } from '@inertiajs/react';
+// APPR-042's pilot: the page sits in the shared sign-in frame (CR-002 K-5); its behaviour is unchanged.
+import { router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useId, useRef, useState } from 'react';
 
-import LanguageSwitch from '@/components/LanguageSwitch';
 import { PasswordInput } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import AuthLayout from '@/layouts/AuthLayout';
 import { useTranslation } from '@/lib/i18n';
-import { documentTitle } from '@/lib/title';
 
 export default function SetPassword() {
     const { locale, t } = useTranslation();
@@ -42,16 +42,9 @@ export default function SetPassword() {
     const linkError = missing ? t('messages.msg_28') : tokenError;
 
     return (
-        <main id="konten" className="mx-auto flex min-h-dvh w-full max-w-sheet-sm flex-col gap-6 bg-canvas px-m-gutter py-8">
-            <Head title={documentTitle(t('pages.pg_003.title'))}>
-                <meta name="referrer" content="no-referrer" />
-            </Head>
-            <div className="flex justify-end">
-                <LanguageSwitch />
-            </div>
-            <h1 className="text-m-title font-semibold text-text-primary md:text-title">{t('pages.pg_003.heading')}</h1>
+        <AuthLayout title={t('pages.pg_003.title')} heading={t('pages.pg_003.heading')} head={<meta name="referrer" content="no-referrer" />}>
             {linkError !== undefined && (
-                <p role="alert" className="text-body font-medium text-danger-fg">
+                <p role="alert" className="rounded-md bg-danger-bg px-3 py-2 text-body font-medium text-danger-fg">
                     {linkError}
                 </p>
             )}
@@ -99,10 +92,10 @@ export default function SetPassword() {
                         }}
                     />
                 </Field>
-                <Button type="submit" variant="primary" size="lg" disabled={missing} pending={form.processing} pendingLabel={t('pages.pg_003.submit')}>
+                <Button type="submit" variant="primary" size="lg" className="mt-2" disabled={missing} pending={form.processing} pendingLabel={t('pages.pg_003.submit')}>
                     {t('pages.pg_003.submit')}
                 </Button>
             </form>
-        </main>
+        </AuthLayout>
     );
 }
