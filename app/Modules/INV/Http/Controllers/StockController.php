@@ -52,7 +52,7 @@ final class StockController extends Controller
             'view' => $view,
             'filters' => ['saring' => $below ? StockViews::BELOW_MINIMUM : null, 'kondisi' => $condition],
             'list' => fn (): array => $view === 'rak' ? $this->stock->places($actor, $search, $condition, $after) : $this->stock->products($actor, $search, $below, $after),
-            'values' => $this->costs->mayViewStockValues($actor) ? Inertia::defer(self::group(fn (): array => $this->costs->stockValues($actor))) : [],
+            'values' => $this->history->mayViewCost($actor) ? Inertia::defer(self::group(fn (): array => $this->costs->stockValues($actor))) : [],
             'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor), 'move' => $this->adjustments->can($actor)['move']],
         ]);
     }
