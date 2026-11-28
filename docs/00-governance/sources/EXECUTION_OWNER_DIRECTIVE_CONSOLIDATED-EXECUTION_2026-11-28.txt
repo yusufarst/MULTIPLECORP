@@ -1,0 +1,23 @@
+Owner directive received in session during execution, 2026-11-28 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — CONSOLIDATED EXECUTION UNTIL PRODUCTION
+Saya mengonfirmasi konsolidasi DIR-138. Autonomous Executor menjadi satu-satunya sesi eksekusi utama MULTIPLECORP sampai production.
+Untuk CR-002, tampilkan atau lampirkan dokumen RINGKASAN-FINAL-CR-002.md, teks persis amandemen, 18 keputusan tambahan, serta rincian enam cacat D-8 yang sudah tersedia. Jangan membuat ulang dokumen, audit, atau perencanaan. Saya ingin mengambil seluruh keputusan dalam satu kali persetujuan.
+Secara prinsip saya menerima pengelompokan Change 33 menjadi tujuh Task, TASK-098 sampai TASK-104, dengan syarat cakupan dan kontrak CR-002 disetujui terlebih dahulu. Jangan membuat Task tambahan atau memulai implementasi yang belum diotorisasi.
+Untuk D-8, saya mengutamakan perbaikan minimum dalam Task terkait tanpa Task tambahan. Verifikasi masing-masing terhadap kontrak dan bukti aktual.
+Klarifikasi baru mengenai APPR-042: saya mengizinkan penggunaan GitHub Actions pada branch pilot terisolasi untuk validasi menggunakan data sintetis dan tanpa biaya tambahan. Repository bersifat publik. Tidak boleh ada rahasia, data pribadi, materi privat, atau informasi infrastruktur sensitif. Mandatory gates di main tidak boleh dikurangi. Jangan merge branch pilot ke main.
+Catat klarifikasi ini sebagai arahan baru dengan tanggal sebenarnya. Jangan menganggapnya sebagai transkrip asli arahan 27 November atau membuat sumber historis yang tidak tersedia.
+Untuk TASK-078, tampilkan kembali instruksi praktis menjalankan mc078-diagnose2.sh, termasuk cara memindahkan skrip ke VPS jika diperlukan. Seluruh eksekusi VPS tetap dilakukan oleh saya sebagai operator.
+Satukan seluruh keputusan yang membutuhkan tindakan saya dalam satu laporan. Jangan mengulang pertanyaan yang sudah dijawab.
+Pertahankan seluruh ketentuan:
+
+* Anggaran tambahan Rp0.
+* Tidak membeli atau menambah RAM.
+* Tidak meminta pembebasan RAM lagi.
+* Tidak menjalankan Docker Desktop.
+* Tidak membeli kredit tambahan.
+* Tidak menambah Task tanpa persetujuan eksplisit saya.
+* Tidak mengurangi scope V1, keamanan, integritas data atau mandatory gates.
+
+Lanjutkan semua pekerjaan yang sudah diotorisasi dan tidak terblokir. Fokus pada penyelesaian redesign, UAT dan production secepat mungkin.
+Seluruh aktivitas dan laporan dalam Bahasa Indonesia. Hemat token.

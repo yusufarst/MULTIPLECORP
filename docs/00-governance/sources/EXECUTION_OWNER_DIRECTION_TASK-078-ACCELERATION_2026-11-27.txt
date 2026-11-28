@@ -1,0 +1,19 @@
+Owner direction received in session during execution, 2026-11-27 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTION — TASK-078 ACCELERATION
+
+Saya memilih opsi 2, Raw Compose Deployment, untuk menyelesaikan temuan isolasi jaringan dan distribusi runtime secrets Coolify pada TASK-078.
+
+Catat keputusan ini sesuai CHANGE_CONTROL. Siapkan perubahan minimum pada definisi deployment TASK-072 beserta pengujian yang diperlukan. Jangan membuat Task baru.
+
+Koordinasikan dengan sesi UI/UX agar preflight VPS untuk TASK-078 dan preview pilot tidak menduplikasi pemeriksaan yang sama.
+
+Berikan panduan operator secara berurutan, satu langkah pada satu waktu, mulai dari diagnostik baca-saja dengan keluaran tersanitasi.
+
+Bantu saya menyelesaikan D1, D2, G-2 sampai G-4, OPI-28, OPI-32, DEP-05, dan REL-03 berdasarkan kondisi sebenarnya. Jangan mengarang bukti atau deklarasi.
+
+Tidak ada agent yang mengakses VPS. Jangan mengganggu aplikasi lain, membeli layanan tambahan, menambah RAM, atau menjalankan Docker Desktop.
+
+Selesaikan TASK-078 secepat mungkin sambil menunggu otorisasi implementasi CR-002.
+
+Seluruh laporan dalam Bahasa Indonesia, singkat dan berorientasi eksekusi.

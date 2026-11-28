@@ -39,6 +39,7 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 - TASK-068 — Performance targets and query budgets in CI
 - TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-075 — Monitoring — the business heartbeat, alerts and the uptime check
+- TASK-100 — The list pattern and the four pilot areas — labelled rows, the stage indicator and first step, the recovery codes' stage; Masuk, Beranda, Proyek and Stok (D-5; D-6; K-6; E5; D-8)
 
 **PARALLEL SAFE:** NO — its signal statements read the guards and roots of every module and set the shared query budget QB-10
 

@@ -1,0 +1,65 @@
+Owner approval received in session during execution, 2026-11-28 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received. The Owner's message carries the heading below; its text is given whole.
+
+OWNER FINAL APPROVAL — CR-002, CHANGE 33, D-8 AND ACCELERATED PRODUCTION EXECUTION
+Setelah second review terhadap tujuh dokumen CR-002, saya, Owner, menyetujui paket CR-002 K-7 (dengan K7-C1 sampai K7-C3), K-2 (dengan K2-DS-X dan K2-CQ-6), K-5, K-6 (varian c, termasuk E5), D-5, dan D-6, masing-masing atas teks persis di folder cr-002-teks-persis beserta klausul konsekuensinya yang tidak dicoret.
+K-4 saya setujui untuk struktur navigasi. Istilah "Menu", label grup, dan penerimaan hierarki final tetap proposed sampai uji pemula, perangkat nyata, dan validasi E6/E7 selesai.
+K-3 saya setujui sebagai arah kerja Grafit & Kobalt. Nilai palet dan skala tipografi final tetap menunggu vonis visual saya serta validasi E8.
+Saya secara eksplisit mengizinkan persetujuan struktur K-4 dan arah kerja K-3 mendahului validasi final. Catat perubahan urutan persetujuan ini terhadap ketentuan CR-002 sebelumnya. Jangan menganggap E6, E7, atau E8 telah lulus dan jangan menghapusnya sebagai gerbang wajib.
+Saya menyetujui keputusan tambahan 1–18 sesuai rekomendasi, dengan koreksi berikut:
+
+1. Masukkan supersesi S-9 dan S-10 K-2 sesuai teks opsional yang telah tersedia, rekonsiliasikan dengan K-4, dan pastikan GD-03 serta GD-05 tidak menyisakan Golden sebagai acuan visual yang mengikat.
+2. Pertahankan seluruh aturan bisnis, keamanan, otorisasi, aksesibilitas, dan hasil keputusan sebelumnya yang tidak secara eksplisit diamandemen.
+3. Gunakan #6f7074 untuk muted text pada kanvas terkait dan pastikan kontras seluruh pasangan warna memenuhi kontrak. Penanda tahap selesai yang menyampaikan informasi wajib mencapai minimal 3:1, dengan isyarat nonwarna tetap tersedia.
+4. Perbaiki skeleton agar tampil sesuai aturan 300 ms dan tidak muncul untuk wilayah yang tidak boleh diakses akun.
+5. E5 tidak boleh menyimpan kode pemulihan di history.state, penyimpanan persisten, log, atau memori formulir. Uji reload, navigasi kembali, dan perilaku autentikasi tanpa melemahkan keamanan.
+6. Terapkan K-2 terlebih dahulu ketika merekonsiliasi klausul yang bertumpang tindih. Jangan mengubah substansi teks yang telah disetujui secara sepihak.
+
+CHANGE 33
+Saya menyetujui Change 33, dengan total Task 97 menjadi 104:
+
+* TASK-098: fondasi desain.
+* TASK-099: navigasi.
+* TASK-100: pola daftar dan empat area pilot.
+* TASK-101: penjualan dan penagihan.
+* TASK-102: pembelian, penerimaan dan gudang.
+* TASK-103: admin, pengaturan dan laporan.
+* TASK-104: gerbang validasi akhir.
+
+Ketujuh Task tersebut adalah batas cakupan redesign yang saya setujui. Jangan membuat Task tambahan tanpa persetujuan eksplisit saya.
+Saya mengizinkan pengecualian release freeze khusus untuk cakupan redesign yang disetujui ini, dengan seluruh gerbang rilis tetap berlaku.
+D-8
+Saya menyetujui koreksi minimum enam temuan D-8 dalam TASK-098 dan TASK-100 sesuai pembagian terakhir Executor, tanpa Task tambahan.
+Prioritaskan kesalahan kuantitas 100 tampil menjadi 1, periksa seluruh pemanggil helper format terkait, dan buktikan dengan uji merah-hijau. Jangan mengubah nilai sumber, pembulatan bisnis, atau perhitungan server.
+Bedakan cacat yang melanggar kontrak lama dari perubahan tampilan yang baru diotorisasi D-5/D-6.
+EKSEKUSI
+Catat seluruh persetujuan dalam satu Change Control dan satu PR tata kelola. Satu DIR dan satu APPR per paket sesuai ketentuan. Saya mengizinkan merge PR tata kelola setelah seluruh gerbang wajib dan pemeriksaan independen lulus.
+Pertahankan hasil TASK-097. Gunakan kembali komponen pilot tanpa merge atau rebase branch pilot. Jangan mengulang audit dan perencanaan.
+Setelah PR tata kelola merge, segera mulai TASK-098 tanpa meminta persetujuan rutin lagi. Lanjutkan Task berikutnya sesuai dependency dan gerbang yang sah. Validasi K-4 dan K-3 tetap harus diselesaikan sesuai ketentuan persetujuan di atas.
+Sepuluh kegagalan spec lama harus direkonsiliasi terhadap kontrak baru dengan bukti yang dapat ditelusuri. Jangan menghapus, skip, atau melemahkan tes untuk memperoleh CI hijau.
+TASK-078 DAN SKRIP VPS
+Second reviewer telah memeriksa mc078-diagnose2.sh. SHA-256 cocok dan sintaks shell lulus, tetapi ada kelemahan pemilihan resource otomatis dan sanitasi output.
+Lakukan koreksi minimum pada skrip diagnostik:
+
+* Wajibkan UUID resource staging sebagai argumen eksplisit; jangan memilih kontainer otomatis berdasarkan nama service yang mungkin dipakai aplikasi lain.
+* Jangan mencetak daftar nama berkas dalam direktori bersama yang mungkin memuat informasi aplikasi lain.
+* Perketat sanitasi label Traefik dan konfigurasi proxy, termasuk kemungkinan custom headers, token, URL internal, kredensial, hostname, dan IP. Gunakan allowlist informasi yang benar-benar diperlukan.
+* Pertahankan sifat baca-saja dan jangan menambah perubahan konfigurasi server.
+* Berikan skrip final sebagai satu berkas, SHA-256 baru, dan instruksi operator yang praktis.
+
+Kerjakan koreksi skrip tersebut tanpa Task baru dan tanpa menahan PR tata kelola CR-002.
+BATASAN MUTLAK
+
+* Anggaran tambahan Rp0.
+* Tidak membeli atau menambah RAM.
+* Tidak meminta saya membebaskan RAM.
+* Tidak menjalankan Docker Desktop.
+* Tidak membeli kredit tambahan.
+* Tidak mengakses VPS secara langsung sebagai agent.
+* Tidak mengganggu aplikasi lain.
+* Tidak menggunakan data produksi pada staging atau preview.
+* Tidak membocorkan dokumen privat atau rahasia ke repository publik.
+* Tidak menambah Task selain TASK-098–104 tanpa persetujuan saya.
+* Tidak mengurangi scope V1, keamanan, integritas data, mandatory gates, atau persyaratan UAT.
+
+Lanjutkan FAST BUILD menuju production secepat mungkin. Gunakan satu sesi Autonomous Executor. Jangan membuka kembali sesi Audit UI/UX independen.
+Seluruh aktivitas dan laporan dalam Bahasa Indonesia. Hemat token, utamakan implementasi, dan minta keputusan saya hanya untuk tindakan yang memang membutuhkan otorisasi Owner atau operator.

@@ -31,6 +31,7 @@ Every document, project, purchase and invoice carries a legal company's identity
 - TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
 - TASK-032 — Projects — list, form, journey page and amendment
 - TASK-049 — Invoices and the pre-payment Kuitansi
+- TASK-103 — Administration, settings, records and reports on the redesigned patterns
 
 **PARALLEL SAFE:** NO — it owns the company rows (LK-06) and the master and configuration rows (LK-08) that every issuing and new-business command reads
 

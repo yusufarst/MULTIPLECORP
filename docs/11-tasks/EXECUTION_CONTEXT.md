@@ -14,6 +14,8 @@ Amendment: on 2026-10-20 the "CURRENT PHASE" line names the Task plan, the "visu
 
 Amendment: on 2026-10-20 the execution entry names the execution authorization in force from the freeze record and the standing rules ER-01–ER-13 of record 84 (DIR-085 OF-09; DIR-086), and the CURRENT PHASE line the approved Task plan; no other line changes. It is a narrow continuity record authorized by [DIR-086](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) §3.5 item 3 (TECH-041, where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-010).
 
+Amendment: on 2026-11-28 the "visual direction" line states that DESIGN_SYSTEM — MULTIPLECORP's own design system — binds the presentation and that the Golden Frontend Reference v1.0.0 is an inspiration and a comparison source only (DIR-141; CR-002's package K-2); no other line changes. It is a narrow continuity record authorized by [DIR-141](../00-governance/DECISION_LOG.md#dir-141-and-appr-045--cr-002s-package-k-2-the-golden-frontend-reference-as-inspiration-2026-11-28), and the document keeps the APPROVED status of the last approved revision (APPR-010).
+
 The stable minimum context for execution agents (AICWDF §34A). Every line points to its owning document; where a line and its owner differ, the owner wins.
 
 ## Project
@@ -37,7 +39,7 @@ The stable minimum context for execution agents (AICWDF §34A). Every line point
 
 - language: Indonesian default, English secondary, a language switch, no uncontrolled hardcoded copy; generated or issued documents and business data in Indonesian (DIR-037 D7) — [V1_SCOPE CAP-14](../01-product/V1_SCOPE.md#must-ship), [GAP-037](../00-governance/GAP_REGISTER.md#gap-037--bilingual-ui-obligations-are-not-yet-designed-or-tested)
 - mobile-first operation with desktop productivity; comfortable density and visual breathing room under AICWDF §18.2 with the retained anti-slop discipline (DIR-035 D4) — [V1_SCOPE](../01-product/V1_SCOPE.md#language-and-experience-contract)
-- visual direction: [DESIGN_SYSTEM](../07-ux-design/DESIGN_SYSTEM.md), normative under APPR-011, with the Golden Frontend Reference v1.0.0 for presentation only — behaviour follows the canonical specifications and the reference adapts to them (DIR-061 SD-02) —, adapted to shadcn/ui (DIR-059); interaction rules in force — [DESIGN_REFERENCES](../07-ux-design/DESIGN_REFERENCES.md), [ADMIN_FLOW](../07-ux-design/ADMIN_FLOW/README.md)
+- visual direction: [DESIGN_SYSTEM](../07-ux-design/DESIGN_SYSTEM.md), normative under APPR-011 — MULTIPLECORP's own design system on shadcn/ui, its §5 and §§9–10 above all —; the Golden Frontend Reference v1.0.0 is an inspiration and a comparison source only (DIR-141), and behaviour follows the canonical specifications (DIR-061 SD-02); interaction rules in force — [DESIGN_REFERENCES](../07-ux-design/DESIGN_REFERENCES.md), [ADMIN_FLOW](../07-ux-design/ADMIN_FLOW/README.md)
 - route, interaction and navigation contracts: [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md), [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) and [NAVIGATION_CONTRACTS](../07-ux-design/NAVIGATION_CONTRACTS.md), approved under APPR-011, each Task citing its rows — [GAP-035](../00-governance/GAP_REGISTER.md#gap-035--route-and-interaction-contracts-do-not-exist-yet) open for their tests
 
 ## Cost, safety and toolchain

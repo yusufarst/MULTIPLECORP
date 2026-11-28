@@ -1,0 +1,28 @@
+Owner directive received in session during execution, 2026-11-28 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — SINGLE PRIMARY EXECUTOR UNTIL PRODUCTION
+Mulai sekarang Anda menjadi satu-satunya sesi eksekusi utama MULTIPLECORP, mencakup backend, frontend, UI/UX, governance, testing, CI, release engineering, panduan operator, UAT, dan persiapan production.
+Terima seluruh handoff dari sesi Audit UI/UX. Verifikasi bahwa semua artefak, paket CR-002, keputusan, bukti pilot, skrip, dan pekerjaan tertunda dapat Anda akses sebelum sesi tersebut dihentikan.
+Jangan mengulang audit UI/UX, perencanaan, validasi, atau pekerjaan yang sudah memiliki bukti sah.
+Lanjutkan dari kondisi repository terbaru dan pertahankan seluruh hasil TASK-097.
+Selesaikan TASK-078 dan persetujuan CR-002 melalui satu jalur komunikasi kepada saya. Konsolidasikan seluruh keputusan Owner yang masih diperlukan. Jangan menganggap persetujuan yang belum diberikan sebagai APPROVED.
+Gunakan kembali pilot dan artefak yang telah tersedia. Jangan merge atau rebase branch pilot.
+Setelah CR-002 dan Change implementasi disetujui, lanjutkan build redesign seluruh aplikasi, regression testing, UAT, dan persiapan production.
+Gunakan subagent internal hanya apabila diperlukan dan sesuai DIR-108: maksimal tiga helper dalam satu Task aktif, dengan kepemilikan berkas eksklusif, tanpa Git operation independen dan tanpa konflik pekerjaan.
+Jangan membuka sesi eksekutor independen tambahan tanpa persetujuan saya.
+Catat konsolidasi sesi dengan perubahan governance minimum. Jangan membuat Task baru hanya untuk handoff ini.
+Pertahankan FAST BUILD, seluruh mandatory gates, keamanan, integritas data, cakupan PRD, dan ketentuan Owner/operator.
+Batasan mutlak:
+
+* Anggaran tambahan Rp0.
+* Tidak menambah RAM.
+* Tidak meminta pembebasan RAM.
+* Tidak menjalankan Docker Desktop.
+* Tidak membeli kredit tambahan.
+* Tidak mengakses VPS secara langsung sebagai agent.
+* Tidak menambah Task tanpa persetujuan saya.
+* Tidak mengulang audit atau CI tanpa alasan material.
+
+Gunakan satu laporan MULTIPLECORP — FAST BUILD PROGRESS yang mencakup seluruh jalur menuju production.
+Mulai dengan menerima handoff UI/UX, kemudian lanjutkan pekerjaan yang sah dan tidak terblokir tanpa meminta persetujuan rutin.
+Seluruh aktivitas dan laporan dalam Bahasa Indonesia. Fokus pada eksekusi dan penyelesaian production.
