@@ -5,15 +5,26 @@ import { expect, type Page, test } from '@playwright/test';
 // first render and its one word said once, the shapes hidden from assistive technology and still under reduced motion, and a
 // link drawn as a button that stays a plain link.
 
-/** Presses the specimen's button and reads the region at the next frame and when its first shape arrives. */
+/** Presses the specimen's button and reads the region at the next frame and when its first shape arrives. The page is
+    drawn only after its locale has loaded, so the specimen's button is awaited first; a specimen that is not there fails
+    at once rather than leaving the promise unsettled. */
 async function load(page: Page): Promise<{ early: { role: string | null; text: string; shapes: number }; elapsed: number }> {
+    await expect(page.locator('[data-specimen="loading"] button')).toBeEnabled();
+
     return page.evaluate(
         () =>
-            new Promise((resolve) => {
+            new Promise((resolve, reject) => {
                 const specimen = document.querySelector('[data-specimen="loading"]');
                 const button = specimen?.querySelector('button');
+
+                if (!specimen || !button) {
+                    reject(new Error('the loading specimen or its button is not on the page'));
+
+                    return;
+                }
+
                 const started = performance.now();
-                const shapes = () => specimen?.querySelectorAll('[data-region-state="loading"] [data-slot="skeleton"]').length ?? 0;
+                const shapes = () => specimen.querySelectorAll('[data-region-state="loading"] [data-slot="skeleton"]').length;
                 let early = { role: null as string | null, text: '', shapes: -1 };
                 const observer = new MutationObserver(() => {
                     if (shapes() > 0) {
@@ -23,9 +34,9 @@ async function load(page: Page): Promise<{ early: { role: string | null; text: s
                 });
 
                 observer.observe(document.body, { childList: true, subtree: true });
-                button?.click();
+                button.click();
                 requestAnimationFrame(() => {
-                    const region = specimen?.querySelector('[data-region-state="loading"]') ?? null;
+                    const region = specimen.querySelector('[data-region-state="loading"]');
                     early = { role: region?.getAttribute('role') ?? null, text: region?.textContent ?? '', shapes: shapes() };
                 });
             }),

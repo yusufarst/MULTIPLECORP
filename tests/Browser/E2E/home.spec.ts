@@ -27,7 +27,12 @@ test('shows the Owner Beranda, Pekerjaan and Tinjauan, each group loading after 
 
     await page.goto('/tinjauan');
     await expect(page.getByRole('heading', { name: 'Tinjauan', level: 1 })).toBeVisible();
-    await expect(page.getByRole('region', { name: 'Kondisi yang Masih Terbuka' })).toBeVisible();
+    const conditions = page.getByRole('region', { name: 'Kondisi yang Masih Terbuka' });
+    await expect(conditions).toBeVisible();
+    // The conditions' group arrives after the frame, above the tabs: the tab is pressed once it has, not while the
+    // region's skeleton gives way to its content and moves the tabs under the pointer.
+    await expect(conditions.locator('[data-region-state="loading"]')).toHaveCount(0);
+    await expect(conditions.getByRole('table', { name: 'Kondisi yang Masih Terbuka' }).or(conditions.locator('[data-region-state="empty"]'))).toBeVisible();
     await page.getByRole('tab', { name: 'Keamanan' }).click();
     await expect(page.getByRole('tab', { name: 'Keamanan' })).toHaveAttribute('aria-selected', 'true');
     for (const control of ['Setujui', 'Abaikan', 'Tandai dibaca']) {
