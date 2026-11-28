@@ -112,6 +112,21 @@ function Section({ id, children }: { id: string; children: ReactNode }) {
     );
 }
 
+/** A region that starts to load when its button is pressed (K-5's 300 ms, read by the browser test). */
+function LoadingSpecimen() {
+    const { t } = useTranslation();
+    const [on, setOn] = useState(false);
+
+    return (
+        <div data-specimen="loading" className="flex flex-col gap-3">
+            <Button variant="outline" size="sm" onClick={() => { setOn(true); }}>
+                {t('actions.try_again')}
+            </Button>
+            {on && <RegionLoading />}
+        </div>
+    );
+}
+
 export default function ComponentGallery() {
     const { t } = useTranslation();
     const toast = useToastManager();
@@ -604,6 +619,14 @@ export default function ComponentGallery() {
 
             <Section id="PT-19">
                 <RegionLoading />
+                {/* K-5: a region that starts to load when asked, so a test reads it before and after the 300 ms; D-8 #6: a link drawn as a button. */}
+                <LoadingSpecimen />
+                <div data-specimen="link-button" className="flex gap-3">
+                    <Button variant="outline" render={<a href="/__fixtures/komponen" />}>
+                        {t('actions.print')}
+                    </Button>
+                    <Button variant="outline">{t('actions.cancel')}</Button>
+                </div>
                 <RegionEmpty text={t('signals.qs_02_empty')} />
                 <RegionError reference={SAMPLE.reference} onReload={() => undefined} />
                 {/* A part's error the server gave no code for, as Beranda's failed group is: no "Kode referensi" line (TASK-097). */}

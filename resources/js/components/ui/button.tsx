@@ -1,6 +1,6 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { ReactNode } from 'react';
+import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
@@ -52,7 +52,18 @@ export type ButtonProps = ButtonPrimitive.Props &
         children?: ReactNode;
     };
 
-export function Button({ className, variant, size, block, pending = false, pendingLabel, disabled, children, ...props }: ButtonProps) {
+export function Button({ className, variant, size, block, pending = false, pendingLabel, disabled, children, render, ...props }: ButtonProps) {
+    // D-8 #6: a link drawn as a button stays a plain link. Base UI's button would add `type="button"` to the anchor and warn
+    // that it expects a <button>; a link needs neither its key handling nor a disabled state.
+    if (isValidElement<{ className?: string }>(render) && render.type !== 'button') {
+        return cloneElement(render as ReactElement<Record<string, unknown>>, {
+            ...props,
+            'data-slot': 'button',
+            className: cn(buttonVariants({ variant, size, block }), typeof className === 'string' ? className : undefined, render.props.className),
+            children,
+        });
+    }
+
     return (
         <ButtonPrimitive
             data-slot="button"
@@ -61,6 +72,7 @@ export function Button({ className, variant, size, block, pending = false, pendi
             disabled={disabled === true || pending}
             focusableWhenDisabled={pending}
             className={cn(buttonVariants({ variant, size, block }), className)}
+            render={render}
             {...props}
         >
             {children}

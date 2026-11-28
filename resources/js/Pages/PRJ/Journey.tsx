@@ -28,6 +28,7 @@ import { type Failed, isFailed, ItemText, type Journey as JourneyShape, predicat
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
+import { plainQuantity } from '@/lib/format';
 
 type Line = { no: number; product: string; description: string; quantity: string; unit: string; mode: 'WAREHOUSE' | 'DROPSHIP' | 'SERVICE'; price?: string | null };
 type Link = { id: string | null; number: string | null; title: string | null; visible: boolean; reason: string | null };
@@ -384,7 +385,7 @@ export default function Journey({ project, journey, financial, can, return_href:
                                         {line.description !== line.product && <span className="block text-caption text-text-secondary">{line.description}</span>}
                                     </span>
                                     <span className="flex shrink-0 flex-wrap items-baseline gap-x-3 text-body text-text-secondary">
-                                        <span className="tabular-nums text-text-primary">{`${line.quantity.replace(/\.?0+$/, '')} ${line.unit}`}</span>
+                                        <span className="tabular-nums text-text-primary">{`${plainQuantity(line.quantity)} ${line.unit}`}</span>
                                         <span>{t(modeName(line.mode))}</span>
                                         {'price' in line && <span>{line.price == null ? '—' : <Money value={line.price} />}</span>}
                                     </span>

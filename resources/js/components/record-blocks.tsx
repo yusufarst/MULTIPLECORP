@@ -249,7 +249,7 @@ export function StageTrack({ stages, label, onSelect }: { stages: Stage[]; label
                             aria-hidden
                             className={cn(
                                 'inline-flex size-stepper shrink-0 items-center justify-center rounded-full border text-caption font-semibold tabular-nums',
-                                stage.state === 'complete' && 'border-transparent bg-step-done-dot text-text-on-primary',
+                                stage.state === 'complete' && 'border-transparent bg-accent-olive text-text-on-primary',
                                 current && 'border-accent-olive bg-surface text-text-primary ring-2 ring-accent-olive ring-offset-2 ring-offset-surface',
                                 stage.state === 'upcoming' && 'border-border bg-surface text-text-tertiary',
                                 stage.state === 'attention' && 'border-warning-dot bg-warning-bg text-warning-fg',
@@ -294,7 +294,7 @@ export function SegmentedStage({ stages, current }: { stages: { key: string; don
         <span data-slot="segmented-stage" className="inline-flex min-w-0 items-center gap-2">
             <span aria-hidden className="inline-flex gap-0.5">
                 {stages.map((stage) => (
-                    <span key={stage.key} className={cn('h-1.5 w-3 rounded-full', stage.done ? 'bg-step-done-dot' : 'bg-border')} />
+                    <span key={stage.key} className={cn('h-1.5 w-3 rounded-full', stage.done ? 'bg-accent-olive' : 'bg-border')} />
                 ))}
             </span>
             <span className="text-label text-text-secondary">{current}</span>

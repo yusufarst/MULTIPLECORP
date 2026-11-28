@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 104
 
-DONE: 87
+DONE: 88
 READY: 1
 IN_PROGRESS: 1
 BLOCKED: 2
 VERIFYING: 0
-TODO: 13
+TODO: 12
 SUPERSEDED: 0
 
 Progress:
-87 / 104
-Percentage: 83.7 %
+88 / 104
+Percentage: 84.6 %
 
 CURRENT TASK: TASK-078 — Staging stack, the two applications' isolation and the provider features IN_PROGRESS, the human operator's: staging deployed on 2026-11-22, its three findings fixed in the deployment definition, the Owner's decision on Coolify's network attachment and variables made — Raw Compose Deployment (DIR-137) —, its definition's change and the operator's read-only diagnostic pending (TASK-078's OPERATOR RECORD)
-NEXT READY TASK: TASK-098 — Design foundation — the working tokens (Grafit & Kobalt), the skeleton and motion, Base UI only, and D-8's quantity and link-button corrections (K-3; K-5; K-7; D-8), Change 33 (APPR-052), the first of the redesign's seven Tasks; TASK-099 to TASK-104 follow in their dependency order
+NEXT READY TASK: TASK-099 — Navigation — the three-level Menu: the shell, rail, sidebar and phone menu, the 37 pages and the 65 NAV contracts (K-4), Change 33 (APPR-052) — TASK-098 DONE; TASK-100–TASK-104 follow in their dependency order
 LAST TASK PLAN CHANGE: Change 33 of 2026-11-28 — the redesign's seven Tasks, TASK-098 to TASK-104, the Owner's APPR-052; the current total 97 → 104
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -146,7 +146,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-095](TASK-095.md) — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28)
 - [x] [TASK-096](TASK-096.md) — Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17)
 - [x] [TASK-097](TASK-097.md) — Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01)
-- [ ] [TASK-098](TASK-098.md) — Design foundation — the working tokens (Grafit & Kobalt), the skeleton and motion, Base UI only, and D-8's quantity and link-button corrections (K-3; K-5; K-7; D-8)
+- [x] [TASK-098](TASK-098.md) — Design foundation — the working tokens (Grafit & Kobalt), the skeleton and motion, Base UI only, and D-8's quantity and link-button corrections (K-3; K-5; K-7; D-8)
 - [ ] [TASK-099](TASK-099.md) — Navigation — the three-level Menu: the shell, rail, sidebar and phone menu, the 37 pages and the 65 NAV contracts (K-4)
 - [ ] [TASK-100](TASK-100.md) — The list pattern and the four pilot areas — labelled rows, the stage indicator and first step, the recovery codes' stage; Masuk, Beranda, Proyek and Stok (D-5; D-6; K-6; E5; D-8)
 - [ ] [TASK-101](TASK-101.md) — Sales and billing on the redesigned patterns — quotations, commercial confirmation, invoices, billing, payments and customer credit
@@ -255,8 +255,8 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-095](TASK-095.md) | Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) | Platform · UI | HIGH | DONE | 011, 016, 023, 032 | 064 | NO | AGENT | NONE | YES |
 | [TASK-096](TASK-096.md) | Defects A–D — form input kept across an evidence upload; quantities never summed across products or units; the primary action on the phone; a non-matching invoice lookup told from an empty list (NV-04; IP-16; PT-03; IP-17) | Platform · UI | HIGH | DONE | 015, 016, 030, 032, 037, 039, 040, 042, 043, 045, 046, 047, 048, 049, 051, 053, 054 | 086 | YES | AGENT | NONE | YES |
 | [TASK-097](TASK-097.md) | Shared-foundation defects and GF-01 — the responsive bands, the spinner, touch input size, one heading, reference codes, the tablet rail, one "WIB", the composer's tolerance (§6; D-DS-02; GF-01) | Platform · UI | HIGH | DONE | 014, 015, 016, 029, 032 | 086, 098 | YES | AGENT | NONE | YES |
-| [TASK-098](TASK-098.md) | Design foundation — the working tokens (Grafit & Kobalt), the skeleton and motion, Base UI only, and D-8's quantity and link-button corrections (K-3; K-5; K-7; D-8) | Platform · UI | STANDARD | READY | 015, 097 | 099 | NO | AGENT | NONE | YES |
-| [TASK-099](TASK-099.md) | Navigation — the three-level Menu: the shell, rail, sidebar and phone menu, the 37 pages and the 65 NAV contracts (K-4) | Platform · UI | HIGH | TODO | 016, 098 | 100 | NO | AGENT | NONE | YES |
+| [TASK-098](TASK-098.md) | Design foundation — the working tokens (Grafit & Kobalt), the skeleton and motion, Base UI only, and D-8's quantity and link-button corrections (K-3; K-5; K-7; D-8) | Platform · UI | STANDARD | DONE | 015, 097 | 099 | NO | AGENT | NONE | YES |
+| [TASK-099](TASK-099.md) | Navigation — the three-level Menu: the shell, rail, sidebar and phone menu, the 37 pages and the 65 NAV contracts (K-4) | Platform · UI | HIGH | READY | 016, 098 | 100 | NO | AGENT | NONE | YES |
 | [TASK-100](TASK-100.md) | The list pattern and the four pilot areas — labelled rows, the stage indicator and first step, the recovery codes' stage; Masuk, Beranda, Proyek and Stok (D-5; D-6; K-6; E5; D-8) | Module · UI | HIGH | TODO | 018, 032, 040, 058, 099 | 101, 102, 103 | NO | AGENT | NONE | YES |
 | [TASK-101](TASK-101.md) | Sales and billing on the redesigned patterns — quotations, commercial confirmation, invoices, billing, payments and customer credit | Module · UI | STANDARD | TODO | 034, 049, 053, 100 | 104 | NO | AGENT | NONE | YES |
 | [TASK-102](TASK-102.md) | Purchasing, receiving and the other warehouse pages on the redesigned patterns | Module · UI | STANDARD | TODO | 037, 039, 045, 100 | 104 | NO | AGENT | NONE | YES |

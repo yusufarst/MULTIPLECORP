@@ -17,7 +17,7 @@ import { OutcomeMessage } from '@/components/outcome-message';
 import { Button } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
 import { DateText, Money } from '@/components/values';
-import { quantity as formatQuantity } from '@/lib/format';
+import { quantity as formatQuantity, plainQuantity } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
@@ -58,7 +58,7 @@ type Payload = Record<string, string | number | boolean | null | Record<string, 
 
 const modeName = (mode: string): TranslationKey => `projects.mode.${mode.toLowerCase()}` as TranslationKey;
 const evidenceName = (type: string): TranslationKey => `fulfilment.evidence_type.${type.toLowerCase()}` as TranslationKey;
-const amount = (value: string, unit: string): string => formatQuantity(value.replace(/\.?0+$/, '') || '0', unit);
+const amount = (value: string, unit: string): string => formatQuantity(plainQuantity(value), unit);
 const positive = (value: string): boolean => /[1-9]/.test(value);
 // The hint's ceiling only — the line's reservable quantity, or the availability when lower; AX-01 decides at commit.
 const ceiling = (line: FulfilmentLine): string => (line.available !== undefined && Number(line.available) < Number(line.reservable) ? line.available : line.reservable);
@@ -194,8 +194,8 @@ export function FulfilmentSection({ projectId, lockVersion, fulfilment, today, t
                             <LineProgress
                                 key={line.handle}
                                 line={line}
-                                onReserve={() => { if (reserved.current === line.handle) reserve.clear(); else reserve.leave(); reserved.current = line.handle; setQuantity(ceiling(line).replace(/\.?0+$/, '')); setReserving(line); }}
-                                onCancel={() => { cancel.clear(); setQuantity(line.remainder.replace(/\.?0+$/, '')); setReason(''); setCancelling(line); }}
+                                onReserve={() => { if (reserved.current === line.handle) reserve.clear(); else reserve.leave(); reserved.current = line.handle; setQuantity(plainQuantity(ceiling(line))); setReserving(line); }}
+                                onCancel={() => { cancel.clear(); setQuantity(plainQuantity(line.remainder)); setReason(''); setCancelling(line); }}
                                 onReplan={() => { replan.clear(); setMode(line.mode === 'WAREHOUSE' ? 'DROPSHIP' : 'WAREHOUSE'); setReason(''); setReplanning(line); }}
                             />
                         ))}

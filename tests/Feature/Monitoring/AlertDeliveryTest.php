@@ -54,10 +54,10 @@ it('forwards an alert logged anywhere to the channel once per signal per window 
 
     Log::critical('Backup alert (BK-10): the backup run failed', ['reason' => 'rahasia 1234567']);
     Log::critical('Backup alert (BK-10): the backup run failed', ['reason' => 'rahasia 1234567']);
-    Log::alert('A second-factor cooldown started (AU-05; LG-07).', ['user_id' => 42]);
+    Log::alert('A second-factor cooldown started (AU-05; LG-07).', ['user_id' => 918273645]);
     Log::warning('Something ordinary happened.');
 
     Http::assertSentCount(2);
     Http::assertSent(fn (Request $request): bool => $request['subject'] === 'MULTIPLECORP alert: Backup alert (BK-10): the backup run failed' && ! str_contains($request->body(), 'rahasia'));
-    Http::assertSent(fn (Request $request): bool => $request['subject'] === 'MULTIPLECORP alert: A second-factor cooldown started (AU-05; LG-07).' && ! str_contains($request->body(), '42'));
+    Http::assertSent(fn (Request $request): bool => $request['subject'] === 'MULTIPLECORP alert: A second-factor cooldown started (AU-05; LG-07).' && ! str_contains($request->body(), '918273645'));
 });

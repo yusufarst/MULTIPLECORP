@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-28 | Owner: Planning
 
 Approval: one of the seven Tasks of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 33, which the Owner approved explicitly ([APPR-052](../00-governance/DECISION_LOG.md#dir-148-and-appr-052--change-33-the-redesigns-seven-tasks-d-8s-minimum-corrections-and-the-release-freeze-exception-2026-11-28); DIR-148), within the approvals of CR-002's packages ([DECISION_LOG](../00-governance/DECISION_LOG.md#approval-register), APPR-044–APPR-051).
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -180,19 +180,19 @@ The design foundation of the approved redesign stands, on the shared components 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint: Pint and ESLint in this head's CI (TL-01)
-- [ ] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
-- [ ] Relevant automated tests: the frontend and Browser tests above in this head's CI
-- [ ] Authorization: the route audit (TL-07) and every denial suite unchanged and green
-- [ ] Route integrity: N/A — no route added or changed
-- [ ] Interaction behavior: the Browser tests above
-- [ ] Browser E2E if required: on Chromium and WebKit (TL-09)
-- [ ] Responsive/adaptive if required: the band edges and the labelled-rows thresholds (TL-11)
-- [ ] Visual breathing room/density if UI: against §5 and §§9–10; the density decisions (the 12 px floor, the 20/28 title) the Owner's, at the walkthrough
-- [ ] Production build: TL-13 in this head's CI
-- [ ] Security checks if required: no capability change; nothing shown that the account may not read
-- [ ] Database safety review: no schema change, no migration, no write path; production not touched
-- [ ] Final diff review: ER-06's independent review within DIR-096's bounded loop
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
+- [x] Relevant automated tests: the frontend and Browser tests above in this head's CI
+- [x] Authorization: the route audit (TL-07) and every denial suite unchanged and green
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: the Browser tests above
+- [x] Browser E2E if required: on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the band edges and the labelled-rows thresholds (TL-11)
+- [x] Visual breathing room/density if UI: against §5 and §§9–10; the density decisions (the 12 px floor, the 20/28 title) the Owner's, at the walkthrough
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: no capability change; nothing shown that the account may not read
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: ER-06's independent review within DIR-096's bounded loop
 
 **COMPLETION EVIDENCE:**
 
@@ -203,9 +203,9 @@ The design foundation of the approved redesign stands, on the shared components 
 - Browser evidence: the Browser tests above on Chromium and WebKit, as the pull request's checks show before the merge
 - Localization evidence: the changed templates in both languages
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
-- Files changed: —
+- Files changed: the tokens — `resources/css/tokens.css` (§5's colour values, the type scale's title 20/28 and floor of 12 px, the phone's title 18/24 and heading 16/22, the CTA's glow and shadow, the focus halo, `--animate-pulse` and `--animate-fade-in` with their keyframes) —; `resources/js/components/ui/skeleton.tsx` (new), `button.tsx`, `resources/js/components/region-state.tsx`, `record-blocks.tsx`; `resources/js/lib/format.ts` (`plainQuantity`) and the nine files that called a quantity's zeros away themselves (`components/form.tsx`, `features/inv/receipt-reversal.tsx`, `features/inv/receive-line.tsx`, `features/prj/fulfilment.tsx`, `Pages/INV/Reservations.tsx`, `Pages/INV/Stock.tsx`, `Pages/PRJ/Journey.tsx`, `Pages/PRJ/ProjectForm.tsx`, `Pages/PUR/Purchase.tsx`); the gallery's specimens (`Pages/Fixtures/Components.tsx`); `docs/07-ux-design/DESIGN_SYSTEM.md` (K-3's exact text, applied with the tokens it agrees with); `tests/Frontend/design-foundation.test.ts` (new), `tests/Browser/Responsive/design-foundation.spec.ts` (new); the review's P1: `app/Modules/INV/Queries/MovementHistory.php` (`mayViewCost`), `app/Modules/INV/Http/Controllers/StockController.php`, `tests/Feature/INV/StockViewsTest.php`; the CI's three test defects: `tests/Feature/Monitoring/AlertDeliveryTest.php`, `tests/Browser/E2E/home.spec.ts`, `tests/Browser/Responsive/design-foundation.spec.ts`.
 - Commit SHA: this branch's commits from `main`, the Owner's identity, no AI attribution
-- Notes: —
+- Notes: **K-3's contract text with its tokens** — DESIGN_SYSTEM's §5.1, §5.2, §7, the shell row, the stage marker, §12.1's pill and Annex B GR-01–GR-04 as the Owner approved them (APPR-051) land in this pull request with `tokens.css`, the tokens test (TL-08) reading §5 as written; every value stays a working direction until the Owner's visual verdict (E8). **Tokens** — graphite for the primary action, cobalt for links, focus, selection and progress; `--color-text-muted-canvas` `#6f7074`; a text floor of 12 px and the title 20/28; the contrast of every text pair, control edge and the done marker held by a test (4.5:1 and 3:1). **The pale done token** `--brand-step-done-dot` (2.06:1 on white) draws nothing: the stage marker and the segmented indicator use cobalt (6.47:1) and no component names the token (the Owner's correction 3). **Skeleton (K-5)** — `RegionLoading` shows lines in the shape of its content after the spinner's 300 ms, its `role="status"` there from the first render and its one word said once, the shapes `aria-hidden` and still under reduced motion; the 43 deferred regions use it; a region the account may not read is never rendered through it (the server defers a group only to an account that may read it — INFORMATION_ARCHITECTURE §9; PJ-13), so no placeholder stands in for a figure without its capability. **D-8 #2** — the server sends a quantity whole ("100"); seventeen lines trimmed its trailing zeros with `/\.?0+$/`, fourteen of them without a guard, so "100" became "1"; one helper, `plainQuantity`, trims only after a decimal point and every call site uses it — the new test fails on `main` (no helper, seventeen sites) and passes here; no source value, rounding or calculation changed. **D-8 #6** — a link drawn as a button is cloned as a plain link and no longer typed `button`. Base UI kept: no dependency added, no `shadcn` command run. **Review resolution (P1, Codex, on `resources/js/components/region-state.tsx`)** — confirmed: PG-018 deferred its `values` group to every account and checked `cost.view` only when the deferred request resolved, so an account without it was shown a skeleton after 300 ms for figures it may not read, against DESIGN_SYSTEM §10 and K-5. `StockController::index` now asks `MovementHistory::mayViewCost` — beside `mayPurchase`, the same `cost.view` the figures require; SM-03's architecture rule keeps every public method of CST's query classes to a scoped read, and its first placement there failed TL-03 — and defers the group only to an account that holds it; any other receives `values` as an empty array on the first response, so the client has no pending deferred request and Inertia's `Deferred` renders its children at once, never its fallback — at any delay. The decision is the server's, not client-side hiding. A feature test proves both sides: without `cost.view`, `values` is on the page and not among `deferredProps`; with it, `values` stays deferred and arrives with the figures. The other deferred groups were inspected only to rule out the same defect: *Beranda*'s groups belong to a `review.view` route; *Pekerjaan* defers a group only when it is granted; the per-lot cost group of PG-019 draws no skeleton; none repeats it. **CI resolution (three test defects, each from its job's log and trace, no product code changed)** — TL-04: `AlertDeliveryTest` proved an alert's context was not forwarded by the body not containing "42", while the body carries the send time in WIB to the second, so a time with 42 in it failed the test; the context's value is now one no timestamp can contain, the assertion unchanged. TL-09 on WebKit: the trace shows the *Keamanan* tab pressed while the conditions' group above it was giving way from its skeleton to its content, and no visit sent — the press landed on a moving target; the test now waits for that group to arrive (loading gone, the table or its empty state shown) before pressing, which also proves the group arrives. TL-11 on WebKit: the trace shows `page.evaluate` starting before the page was drawn (the page renders only after its locale loads), so the specimen was absent, the click did nothing and the promise never settled; the helper now awaits the specimen's button and fails at once if it is absent. The 300 ms threshold, the reduced-motion and the accessibility assertions are unchanged; no timeout raised, no sleep, no test skipped.
 - Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**

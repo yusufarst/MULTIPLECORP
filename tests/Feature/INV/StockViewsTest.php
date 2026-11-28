@@ -99,6 +99,21 @@ it('carries no cost in any prop, partial reload or deferred group of the pooled 
     expect($own)->not->toBe($foreign);
 });
 
+it('defers the stock values only for an account holding cost.view, so no other is ever sent the loading placeholder of figures it may not read, however late a deferred answer would come (K-5; PJ-13; DESIGN_SYSTEM §10)', function () {
+    StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '3');
+
+    $restricted = $this->actingAs($this->viewer)->get('/gudang/stok')->assertOk()->viewData('page');
+    $granted = $this->actingAs($this->actor)->get('/gudang/stok')->assertOk()->viewData('page');
+
+    // Without cost.view the group is not deferred: it is on the page at once, empty, so the client has nothing pending that could outlast 300 ms.
+    expect($restricted['props'])->toHaveKey('values')->and($restricted['props']['values'])->toBe([])
+        ->and(json_encode($restricted['deferredProps'] ?? []))->not->toContain('values')
+        // With it the group stays deferred (its skeleton after 300 ms is the intended loading state) and arrives with the figures.
+        ->and($granted['props'])->not->toHaveKey('values')
+        ->and(json_encode($granted['deferredProps'] ?? []))->toContain('values')
+        ->and(deferred($this, $this->actor, '/gudang/stok', 'INV/Stock', 'values')['values'])->toHaveCount(1);
+});
+
 it('values only its own companies\' lots per company, never a total across companies (PJ-22; CS-08; criterion 4)', function () {
     StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '3');
     $otherActor = ReceivingWorld::actor($this->other, StockWorld::CAPABILITIES);

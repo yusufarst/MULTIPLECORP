@@ -366,6 +366,14 @@ final class MovementHistory
         return $this->capabilities->for($viewerId)->has('purchase.manage');
     }
 
+    /**
+     * Whether PG-018 carries a stock value region for this viewer at all (K-5; PJ-13; DESIGN_SYSTEM §10 "States of a region"): the same `cost.view` the figures require of CST's own reader. Asked before the region is deferred, so an account without it is never sent a loading placeholder for figures it may not read.
+     */
+    public function mayViewCost(int $viewerId): bool
+    {
+        return $this->capabilities->for($viewerId)->has('cost.view');
+    }
+
     /** @return int|false|null a product's id, false when none has that id, null when none is asked */
     private static function productId(?string $publicId): int|false|null
     {

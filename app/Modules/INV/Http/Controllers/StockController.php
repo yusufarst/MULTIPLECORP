@@ -38,7 +38,7 @@ final class StockController extends Controller
         private readonly SupplierReturnQueries $returns,
     ) {}
 
-    /** ROUTE-018: per product or per rack and condition, the stock value of a holder's own companies deferred (PJ-22). */
+    /** ROUTE-018: per product or per rack and condition, the stock value of a holder's own companies deferred (PJ-22) — and only for a viewer holding `cost.view`: any other is sent no deferred group, so the page never draws a skeleton for figures it may not read (K-5). */
     public function index(Request $request): Response
     {
         $actor = self::actor($request);
@@ -52,7 +52,7 @@ final class StockController extends Controller
             'view' => $view,
             'filters' => ['saring' => $below ? StockViews::BELOW_MINIMUM : null, 'kondisi' => $condition],
             'list' => fn (): array => $view === 'rak' ? $this->stock->places($actor, $search, $condition, $after) : $this->stock->products($actor, $search, $below, $after),
-            'values' => Inertia::defer(self::group(fn (): array => $this->costs->stockValues($actor))),
+            'values' => $this->history->mayViewCost($actor) ? Inertia::defer(self::group(fn (): array => $this->costs->stockValues($actor))) : [],
             'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor), 'move' => $this->adjustments->can($actor)['move']],
         ]);
     }
