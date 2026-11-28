@@ -1,4 +1,4 @@
-import { expect as base, test } from '@playwright/test';
+import { expect as base, type Page, test } from '@playwright/test';
 
 import { currentLine, fillLine, receivingRun, record, scan } from '../receiving-fixtures';
 
@@ -191,13 +191,25 @@ test('reverses a receipt on PG-016 with its reason, the remainder open again (IN
     await expect(currentLine(page)).toContainText('Sisa diterima 10');
 });
 
+/** PG-015 through the shell, as CJ-02 opens it: a leaf of its module in the *Menu*, the module opened when it is shut (CR-002 K-4). */
+async function openPurchases(page: Page): Promise<void> {
+    const nav = page.getByRole('navigation', { name: 'Navigasi utama' }).first();
+    const purchases = nav.getByRole('link', { name: 'Pembelian' });
+
+    if (!(await purchases.isVisible())) {
+        await nav.getByRole('button', { name: 'Pembelian', exact: true }).click();
+    }
+
+    await purchases.click();
+}
+
 test('asks MSG-35 before leaving with an unsent line, keeping it on staying (NAV-022; NV-05; INT-009)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await receivingRun(page, `terima-tinggal-${String(Date.now())}`);
     await page.goto(`/gudang/barang-masuk/${run.purchase}`);
     await currentLine(page).getByRole('textbox', { name: 'Layak pakai' }).fill('4');
 
-    await page.getByRole('navigation', { name: 'Navigasi utama' }).getByRole('link', { name: 'Pembelian' }).click();
+    await openPurchases(page);
     const dialog = page.getByRole('alertdialog', { name: 'Isian yang belum dikirim' });
     await expect(dialog.getByText('Isian yang belum dikirim akan hilang. Tetap tinggalkan halaman?')).toBeVisible();
     await dialog.getByRole('button', { name: 'Kembali' }).click();
@@ -205,7 +217,7 @@ test('asks MSG-35 before leaving with an unsent line, keeping it on staying (NAV
     await expect(currentLine(page).getByRole('textbox', { name: 'Layak pakai' })).toHaveValue('4');
 
     // "Tinggalkan Halaman" goes, asked once.
-    await page.getByRole('navigation', { name: 'Navigasi utama' }).getByRole('link', { name: 'Pembelian' }).click();
+    await openPurchases(page);
     await dialog.getByRole('button', { name: 'Tinggalkan Halaman' }).click();
     await page.waitForURL('**/pembelian');
     await expect(page.getByRole('heading', { name: 'Pembelian', exact: true })).toBeVisible();

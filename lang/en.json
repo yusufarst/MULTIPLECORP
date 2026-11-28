@@ -277,7 +277,7 @@
     "glossary.gl_191": "Access preview",
     "glossary.gl_192": "Work",
     "glossary.gl_193": "Review",
-    "glossary.gl_194": "Full menu",
+    "glossary.gl_194": "Menu",
     "glossary.gl_195": "Work areas",
     "glossary.gl_196": "Create",
     "glossary.gl_197": "Search or scan a code",
@@ -986,7 +986,11 @@
     "shell.nav.akun": "Account",
     "shell.nav.beranda": "Home",
     "shell.nav.cari": "Search",
+    "shell.nav.group_administration": "Administration",
+    "shell.nav.group_finance_documents": "Finance & documents",
+    "shell.nav.group_operations": "Operations",
     "shell.nav.lainnya": "More",
+    "shell.nav.menu": "Menu",
     "shell.nav.pekerjaan": "Work",
     "shell.palette.no_results": "No results for “:q”.",
     "shell.search": "Search or scan a code",
@@ -4351,9 +4355,5 @@
     "pages.pg_008.conditions_empty": "No condition is still open.",
     "pages.pg_008.empty": "No activity in this window.",
     "pages.pg_008.all_companies": "All companies",
-    "receiving.list.open_lines": ":count line not yet received|:count lines not yet received",
-    "shell.nav.group_operations": "Operations",
-    "shell.nav.group_finance_documents": "Finance & documents",
-    "shell.nav.group_administration": "Administration",
-    "shell.nav.menu": "Menu"
+    "receiving.list.open_lines": ":count line not yet received|:count lines not yet received"
 }

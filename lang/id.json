@@ -277,7 +277,7 @@
     "glossary.gl_191": "Pratinjau Akses",
     "glossary.gl_192": "Pekerjaan",
     "glossary.gl_193": "Tinjauan",
-    "glossary.gl_194": "Menu lengkap",
+    "glossary.gl_194": "Menu",
     "glossary.gl_195": "Kerja",
     "glossary.gl_196": "Buat",
     "glossary.gl_197": "Cari atau pindai kode",
@@ -986,7 +986,11 @@
     "shell.nav.akun": "Akun",
     "shell.nav.beranda": "Beranda",
     "shell.nav.cari": "Cari",
+    "shell.nav.group_administration": "Administrasi",
+    "shell.nav.group_finance_documents": "Keuangan & dokumen",
+    "shell.nav.group_operations": "Operasional",
     "shell.nav.lainnya": "Lainnya",
+    "shell.nav.menu": "Menu",
     "shell.nav.pekerjaan": "Pekerjaan",
     "shell.palette.no_results": "Tidak ada hasil untuk “:q”.",
     "shell.search": "Cari atau pindai kode",
@@ -4351,9 +4355,5 @@
     "pages.pg_008.conditions_empty": "Tidak ada kondisi yang masih terbuka.",
     "pages.pg_008.empty": "Tidak ada aktivitas dalam jangka ini.",
     "pages.pg_008.all_companies": "Semua perusahaan",
-    "receiving.list.open_lines": ":count baris belum diterima",
-    "shell.nav.group_operations": "Operasional",
-    "shell.nav.group_finance_documents": "Keuangan & dokumen",
-    "shell.nav.group_administration": "Administrasi",
-    "shell.nav.menu": "Menu"
+    "receiving.list.open_lines": ":count baris belum diterima"
 }

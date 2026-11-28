@@ -1,0 +1,57 @@
+Owner directive received in session during execution, 2026-11-29 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — IMMEDIATE RESUME AND ACCELERATED PRODUCTION COMPLETION
+
+TASK
+Resume MULTIPLECORP immediately. Development HOLD is explicitly lifted.
+
+READ
+AGENTS.md
+CURRENT_HANDOFF
+TASK_PLAN
+TASK-078 through TASK-104, as applicable.
+DIR-127, DIR-128, DIR-136–148.
+RELEASE_PLAN and PRODUCTION_DATA_SAFETY.
+
+GOAL
+Deliver FULL V1 for real client use as early as possible, targeting November 30, 2026.
+
+PREREQUISITES / HOLDS
+- Development HOLD is lifted.
+- Shared firewall, Traefik and certificate changes remain on HOLD unless explicitly authorized.
+- Protect BantuKasir and all existing services.
+- Rp0 additional cost.
+- No additional laptop or VPS RAM.
+- No Docker Desktop.
+
+DO
+- Verify current HEAD, PR and CI.
+- Resolve PR #106's open P1 and confirmed CI failures in one corrective batch.
+- Reuse all existing local implementations of TASK-100–103.
+- Preserve the approved Task boundaries.
+- Complete remaining Tasks continuously without routine Owner confirmation.
+- No additional pilot project, planning cycle, optional testing, cosmetic refinement or redundant audit.
+- Reuse all valid existing evidence.
+- Prepare the shortest executable operator procedure covering all remaining production blockers.
+- Prioritize actual release-critical work over documentation cleanup.
+
+VERIFY
+- Mandatory release gates only.
+- Preserve FULL V1, authorization, company isolation, financial and inventory integrity.
+- Never fabricate PASS, DONE or production readiness.
+- Merge only eligible PRs.
+
+STOP IF
+- A genuine P0/P1 blocker requires Owner intervention.
+- Further CI cycles require authorization under DIR-127.
+- An irreversible production action requires the human operator.
+- Shared infrastructure or BantuKasir could be affected.
+
+UPDATE
+Record this resume directive through existing governance.
+Do not add Tasks.
+Continue autonomously until the next genuine Owner action.
+Consolidate all mandatory operator actions into one concise report.
+Do not promise an unverified release date.
+
+Respond exclusively in Bahasa Indonesia using the MULTIPLECORP — FAST BUILD PROGRESS format.

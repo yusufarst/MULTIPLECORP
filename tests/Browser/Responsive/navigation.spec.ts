@@ -21,12 +21,29 @@ const column = (page: Page) =>
         return { rail: nav?.hasAttribute('data-rail') ?? null, width: Math.round(nav?.getBoundingClientRect().width ?? 0) };
     });
 
+/** The width `--sidebar-width` resolves to at this viewport, measured on a probe of that width. */
+const sidebarToken = (page: Page) =>
+    page.evaluate(() => {
+        const probe = document.createElement('div');
+        probe.style.width = 'var(--sidebar-width)';
+        document.body.append(probe);
+        const width = Math.round(probe.getBoundingClientRect().width);
+        probe.remove();
+
+        return width;
+    });
+
 test('shows the 248 px sidebar with the three groups and each module opening in place, from 1,025 px (K-4; PT-01)', async ({ page }) => {
     for (const viewport of [1025, 1280, 1440]) {
         await open(page, 'owner', viewport);
         const nav = page.getByRole('navigation', { name: 'Navigasi utama' }).first();
 
-        expect(await column(page), `${String(viewport)} px`).toEqual({ rail: false, width: 248 });
+        // DESIGN_SYSTEM §6: 248 px at the canvas, at least 220 px at runtime — the desktop band's `--sidebar-width` is
+        // `max(220px, 248 × --du)`, so the column is exactly the token's width at this viewport, within those bounds.
+        const token = await sidebarToken(page);
+        expect(token, `${String(viewport)} px`).toBeGreaterThanOrEqual(220);
+        expect(token, `${String(viewport)} px`).toBeLessThanOrEqual(248);
+        expect(await column(page), `${String(viewport)} px`).toEqual({ rail: false, width: token });
 
         for (const group of ['Operasional', 'Keuangan & dokumen', 'Administrasi']) {
             await expect(nav.getByText(group, { exact: true })).toBeVisible();

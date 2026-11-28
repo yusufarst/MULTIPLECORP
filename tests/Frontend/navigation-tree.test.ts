@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { type AccountHints, currentLeaf, GROUPS, navigationTree } from '../../resources/js/lib/navigation.ts';
 
 const source = readFileSync(fileURLToPath(new URL('../../resources/js/lib/navigation.ts', import.meta.url)), 'utf8');
+const routes = readFileSync(fileURLToPath(new URL('../../routes/web.php', import.meta.url)), 'utf8');
 
 /** Every capability the navigation names, and a company in scope: the account that reaches every page. */
 const capabilities = [...new Set([...source.matchAll(/'([a-z_]+\.[a-z_]+)'/g)].map((match) => match[1] ?? ''))];
@@ -58,4 +59,36 @@ void test('K-4: a page is marked by the longest leaf path its address starts wit
     assert.equal(currentLeaf(all, '/gudang/riwayat-stok'), 'PG-020');
     assert.equal(currentLeaf(all, '/tidak-ada'), null);
     assert.ok(all.every((leaf) => leaf.href.startsWith('/') && !GROUPS.some((group) => group.key === leaf.href.split('/')[1])), 'no path begins with a group');
+});
+
+/** The capabilities a page's GET route declares (`capability:a,b`), or null for a route every signed-in account opens. */
+function routeCapabilities(href: string): string[] | null {
+    const line = routes.split('\n').find((text) => text.startsWith(`Route::get('${href}', `));
+
+    assert.ok(line !== undefined, `${href} has a GET route`);
+    const declared = /'capability:([^']+)'/.exec(line)?.[1];
+
+    return declared === undefined ? null : declared.split(',');
+}
+
+void test('AZ-01 and NV-08: a leaf is in the tree of an account holding one capability alone only when its route admits that capability — no link that answers 403 (review P1 on #106)', () => {
+    const company = everything.companies;
+    const all = [...new Set([...capabilities, ...[...routes.matchAll(/'capability:([^']+)'/g)].flatMap((match) => (match[1] ?? '').split(','))])];
+
+    for (const capability of all) {
+        const account: AccountHints = { name: capability, capabilities: [capability], companies: company };
+
+        for (const leaf of leaves(account)) {
+            const declared = routeCapabilities(leaf.href);
+
+            assert.ok(declared === null || declared.includes(capability), `${leaf.pg} (${leaf.href}) shown to an account with ${capability} alone, its route asking ${String(declared)}`);
+        }
+    }
+
+    // The two cases the review named: evidence and the project documents follow their own routes, not the module's admission.
+    const pages = (held: string[]) => leaves({ name: 'x', capabilities: held, companies: company }).map((leaf) => leaf.pg);
+
+    assert.deepEqual(pages(['evidence.view']).filter((pg) => ['PG-035', 'PG-037', 'PG-038', 'PG-039', 'PG-040'].includes(pg)), ['PG-038']);
+    assert.deepEqual(pages(['projects.view']).filter((pg) => ['PG-035', 'PG-037', 'PG-038', 'PG-039', 'PG-040'].includes(pg)), ['PG-035', 'PG-037', 'PG-039', 'PG-040']);
+    assert.deepEqual(pages(['users.manage']).filter((pg) => pg.startsWith('PG-059') || pg.startsWith('PG-06')), ['PG-060']);
 });

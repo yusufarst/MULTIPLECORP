@@ -141,7 +141,9 @@ export const GROUPS: { key: string; label: TranslationKey; modules: string[] }[]
 ];
 
 /** Each module's leaves in the order a beginner looks for them; the rarely used ones after a separator. Every leaf keeps
-    its route and the capability its route asks (the server still decides each request; AZ-01). */
+    its route and asks the capability its route asks (`routes/web.php`), not only the module's broader admission: a leaf
+    without `allowed` is one whose route asks exactly the module's capability, or none (the server still decides each
+    request; AZ-01). */
 const LEAVES: Record<string, Leaf[]> = {
     pembelian: [{ pg: 'PG-015', href: '/pembelian', label: 'pages.pg_015.title' }],
     gudang: [
@@ -160,7 +162,7 @@ const LEAVES: Record<string, Leaf[]> = {
         { pg: 'PG-041', href: '/keuangan/invoice', label: 'pages.pg_041.title' },
         { pg: 'PG-044', href: '/keuangan/piutang', label: 'pages.pg_044.title' },
         { pg: 'PG-045', href: '/keuangan/pembayaran', label: 'pages.pg_045.title' },
-        { pg: 'PG-047', href: '/keuangan/potongan', label: 'pages.pg_047.title' },
+        { pg: 'PG-047', href: '/keuangan/potongan', label: 'pages.pg_047.title', allowed: scoped('settlement.record') },
         { pg: 'PG-048', href: '/keuangan/kredit-pelanggan', label: 'pages.pg_048.title', rare: true },
         { pg: 'PG-049', href: '/keuangan/kas-lain', label: 'pages.pg_049.title', allowed: scoped('finance.view', 'expense.record'), rare: true },
         { pg: 'PG-050', href: '/keuangan/mutasi-bank', label: 'pages.pg_050.title', allowed: scoped('bank_statement.record'), rare: true },
@@ -168,12 +170,12 @@ const LEAVES: Record<string, Leaf[]> = {
     dokumen: [
         { pg: 'PG-035', href: '/dokumen', label: 'pages.pg_035.title', allowed: scoped('projects.view') },
         { pg: 'PG-037', href: '/dokumen/penawaran', label: 'pages.pg_037.title', allowed: scoped('projects.view') },
-        { pg: 'PG-038', href: '/dokumen/bukti', label: 'pages.pg_038.title' },
-        { pg: 'PG-039', href: '/dokumen/administrasi', label: 'pages.pg_039.title' },
-        { pg: 'PG-040', href: '/dokumen/kasus', label: 'pages.pg_040.title' },
+        { pg: 'PG-038', href: '/dokumen/bukti', label: 'pages.pg_038.title', allowed: scoped('evidence.view') },
+        { pg: 'PG-039', href: '/dokumen/administrasi', label: 'pages.pg_039.title', allowed: scoped('projects.view') },
+        { pg: 'PG-040', href: '/dokumen/kasus', label: 'pages.pg_040.title', allowed: scoped('projects.view') },
     ],
     laporan: [
-        { pg: 'PG-051', href: '/laporan', label: 'pages.pg_051.title' },
+        { pg: 'PG-051', href: '/laporan', label: 'pages.pg_051.title', allowed: (account) => has('stock.view')(account) || scoped('projects.view', 'finance.view', 'cost.view', 'profit.view')(account) },
         { pg: 'PG-052', href: '/laporan/gabungan', label: 'pages.pg_052.title', allowed: has('reports.consolidated') },
         { pg: 'PG-053', href: '/laporan/ekspor', label: 'pages.pg_053.title', allowed: has('reports.export') },
     ],
@@ -182,17 +184,17 @@ const LEAVES: Record<string, Leaf[]> = {
         { pg: 'PG-055', href: '/data-master/pemasok', label: 'pages.pg_055.title' },
         { pg: 'PG-056', href: '/data-master/produk', label: 'pages.pg_056.title' },
         { pg: 'PG-057', href: '/data-master/lokasi-rak', label: 'pages.pg_057.title', allowed: has('stock.view') },
-        { pg: 'PG-058', href: '/data-master/impor', label: 'pages.pg_058.title', allowed: (account) => has('import.commit')(account) || scoped('import.prepare')(account) },
+        { pg: 'PG-058', href: '/data-master/impor', label: 'pages.pg_058.title', allowed: scoped('import.prepare') },
     ],
     aktivitas: [
         { pg: 'PG-063', href: '/aktivitas/riwayat', label: 'pages.pg_063.title', allowed: has('audit.view') },
         { pg: 'PG-064', href: '/aktivitas/log-keamanan', label: 'pages.pg_064.title', allowed: has('security_log.view') },
     ],
     pengaturan: [
-        { pg: 'PG-059', href: '/pengaturan/perusahaan', label: 'pages.pg_059.title' },
-        { pg: 'PG-060', href: '/pengaturan/pengguna', label: 'pages.pg_060.title' },
-        { pg: 'PG-061', href: '/pengaturan/penomoran', label: 'pages.pg_061.title' },
-        { pg: 'PG-062', href: '/pengaturan/pajak', label: 'pages.pg_062.title' },
+        { pg: 'PG-059', href: '/pengaturan/perusahaan', label: 'pages.pg_059.title', allowed: has('companies.manage') },
+        { pg: 'PG-060', href: '/pengaturan/pengguna', label: 'pages.pg_060.title', allowed: has('users.manage') },
+        { pg: 'PG-061', href: '/pengaturan/penomoran', label: 'pages.pg_061.title', allowed: has('companies.manage') },
+        { pg: 'PG-062', href: '/pengaturan/pajak', label: 'pages.pg_062.title', allowed: has('tax.configure') },
     ],
 };
 
