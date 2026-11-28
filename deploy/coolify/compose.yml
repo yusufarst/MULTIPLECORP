@@ -189,8 +189,10 @@ services:
     # Coolify's proxy (Traefik) routes by these labels and obtains the domain's certificate; a Raw Compose Deployment adds
     # no routing label. Every name carries the environment, so staging's and production's routers never meet on the shared proxy, and
     # nothing here names, changes or reads another application's router, middleware or service. `http` and `https` as the
-    # entrypoints and `letsencrypt` as the certificate resolver are Coolify's defaults, assumed until the operator's read-only
-    # diagnostic of the installed proxy confirms them (TASK-078's record). A list, not a map: Coolify appends its own labels to it.
+    # entrypoints and `letsencrypt` as the certificate resolver are the installed proxy's (Traefik v3.7 under Coolify v4.7.6), confirmed
+    # by the operator's read-only diagnostic of 2026-11-28 (TASK-078's record). The routers Coolify generated for the earlier
+    # deployment also carried a noindex and a compression middleware: both are kept, so staging stays out of search indexes and
+    # responses stay compressed. A list, not a map: Coolify appends its own labels to it.
     labels:
       - "traefik.enable=true"
       # `web` is reached on the resource's network, the one the proxy shares, never on `internal`.
@@ -199,14 +201,20 @@ services:
       # Plain HTTP answers a permanent redirect to the same address on HTTPS (WS-06; SM-08).
       - "traefik.http.middlewares.multiplecorp-${APP_ENV}-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.multiplecorp-${APP_ENV}-https.redirectscheme.permanent=true"
+      # Staging stays out of search engines: `X-Robots-Tag` from the proxy, its value MULTIPLECORP_ROBOTS_TAG when the resource sets it.
+      - "traefik.http.middlewares.multiplecorp-${APP_ENV}-noindex.headers.customresponseheaders.X-Robots-Tag=${MULTIPLECORP_ROBOTS_TAG:-noindex, nofollow}"
+      # The proxy compresses the responses, as it did, bar a stream of server-sent events.
+      - "traefik.http.middlewares.multiplecorp-${APP_ENV}-gzip.compress=true"
+      - "traefik.http.middlewares.multiplecorp-${APP_ENV}-gzip.compress.excludedcontenttypes=text/event-stream"
       - "traefik.http.routers.multiplecorp-${APP_ENV}-http.entrypoints=http"
       - "traefik.http.routers.multiplecorp-${APP_ENV}-http.rule=Host(`${MULTIPLECORP_HOST}`)"
-      - "traefik.http.routers.multiplecorp-${APP_ENV}-http.middlewares=multiplecorp-${APP_ENV}-https"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-http.middlewares=multiplecorp-${APP_ENV}-noindex,multiplecorp-${APP_ENV}-https"
       - "traefik.http.routers.multiplecorp-${APP_ENV}-http.service=multiplecorp-${APP_ENV}"
       - "traefik.http.routers.multiplecorp-${APP_ENV}-https.entrypoints=https"
       - "traefik.http.routers.multiplecorp-${APP_ENV}-https.rule=Host(`${MULTIPLECORP_HOST}`)"
       - "traefik.http.routers.multiplecorp-${APP_ENV}-https.tls=true"
       - "traefik.http.routers.multiplecorp-${APP_ENV}-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.multiplecorp-${APP_ENV}-https.middlewares=multiplecorp-${APP_ENV}-gzip,multiplecorp-${APP_ENV}-noindex"
       - "traefik.http.routers.multiplecorp-${APP_ENV}-https.service=multiplecorp-${APP_ENV}"
     depends_on:
       app:
