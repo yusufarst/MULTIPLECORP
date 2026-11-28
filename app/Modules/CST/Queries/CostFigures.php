@@ -88,6 +88,14 @@ final class CostFigures
     }
 
     /**
+     * Whether PG-018 carries a stock value region for this viewer at all (K-5; PJ-13; DESIGN_SYSTEM §10 "States of a region"): the same `cost.view` the figures below require. Asked before the region is deferred, so an account without it is never sent a loading placeholder for figures it may not read.
+     */
+    public function mayViewStockValues(int $viewerId): bool
+    {
+        return $this->capabilities->for($viewerId)->has('cost.view');
+    }
+
+    /**
      * PG-018's stock value: each company in scope whose `cost.view` the viewer holds, its own lots only, labelled per company and never a total across them; with its own exposure on a pending case, never the case's pending quantity or another candidate (PJ-22; CS-08; UXS-39).
      *
      * @return list<array{company: string, name: string, value: string, exposures: list<array{qty: string, unit: string}>}>
