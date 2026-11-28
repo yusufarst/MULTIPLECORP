@@ -286,10 +286,12 @@ Found while proving these fixes, on a slow first start: `db`'s health check went
 - **The networks:** `web` on the resource, `edge` and `internal`; `app`, both workers, the scheduler, `migrate` and `public` on the resource, `egress` and `internal`; `db-roles`, `db` and `cache` on the resource and `internal` — still on the resource network the proxy shares, which the Raw Compose definition ends. The resource network is a bridge, not internal, with eight containers and the proxy on it. The persistent volumes are `cache-data`, `db-data`, `public` and `storage`: the redeployment must leave all four as they are, checked before and after (step 3).
 - **The host patches:** the Nginx site template and the roles script on the host each equal the repository's file at `7104790`, each in a directory of one entry, and no container of MULTIPLECORP mounts either. They are not deleted before step 3's check of every dependency and the removal criterion.
 
+*2026-11-28 — step 2 done: the credentials directory checked.* The operator ran a read-only listing of staging's credentials directory (owner, group, mode and size of each entry; no content read), the Owner's evidence sanitized: the directory and `superuser/`, `admin/` and `migration/` are present; the directory, `superuser/` and `admin/` are root's with mode `0700`, `migration/` uid 82's with `0500`; each of the six files — `username` and `password` in each — is present, non-empty and `0400`, root's in `superuser/` and `admin/`, uid 82's in `migration/`. This is the structure and the permissions COOLIFY_DEPLOYMENT §5 requires, and it is all it shows: it says nothing of the logins' validity, which `db-roles` and `migrate` prove at the deployment. No permission, owner or credential is changed or rotated on this evidence.
+
 **The operator's steps** are the Owner's, given one at a time with sanitized output, in this order:
 
 1. A read-only diagnostic of the proxy's facts, the staging labels, networks and volumes, the redirect and the content security policy header — **done on 2026-11-28**, recorded above.
-2. The credentials directory of the former steps, unchanged ([COOLIFY_DEPLOYMENT §5](../09-operations/COOLIFY_DEPLOYMENT.md#5-staging)).
+2. The credentials directory of the former steps, unchanged — **checked on 2026-11-28**, recorded above ([COOLIFY_DEPLOYMENT §5](../09-operations/COOLIFY_DEPLOYMENT.md#5-staging)).
 3. In the resource: *Raw Compose Deployment* on, no domain entered for `web`, `MULTIPLECORP_CREDENTIALS_DIR` set, the six variables deleted, the host patches removed.
 4. The deployment of the merge commit of this change and §5's checks after a deployment, with the proxy's redirect and certificate.
 
