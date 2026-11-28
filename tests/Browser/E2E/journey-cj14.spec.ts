@@ -23,13 +23,13 @@ const SALES_HEADER = ['Nomor', 'Tanggal', 'Klien', 'Proyek', 'Nilai penjualan', 
 const MSG_21 = 'Data melebihi batas satu ekspor. Persempit periode, lalu minta lagi.';
 const MSG_22 = 'Dua ekspor Anda masih diproses. Tunggu salah satunya selesai.';
 
-/** PG-051 through the shell: the Owner's primary entries hold no *Laporan*, so *Menu lengkap* opens it when it is shut (shell.spec.ts). */
+/** PG-051 through the shell: the Owner's primary entries hold no *Laporan*, so its module in the *Menu* opens it when it is shut (shell.spec.ts). */
 async function openReports(page: Page): Promise<void> {
     const nav = page.getByRole('navigation', { name: 'Navigasi utama' }).first();
     const reports = nav.getByRole('link', { name: 'Laporan', exact: true });
 
     if (!(await reports.isVisible())) {
-        await nav.getByRole('button', { name: 'Menu lengkap' }).click();
+        await nav.getByRole('button', { name: 'Laporan', exact: true }).click();
     }
 
     await reports.scrollIntoViewIfNeeded();

@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 // TL-12 (TASK-016): the shell — skip link, landmarks, names and focus order — passes the WCAG 2.2 AA checks at the
-// phone and desktop bands, with *Lainnya* open on the phone.
+// phone and desktop bands, with the full-screen *Menu* open on the phone.
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -16,7 +16,7 @@ for (const width of [390, 1280]) {
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
 
         if (width < 768) {
-            await page.getByRole('button', { name: 'Lainnya' }).click();
+            await page.getByRole('button', { name: 'Menu', exact: true }).click();
             await expect(page.getByRole('dialog')).toBeVisible();
             // The sheet fades in over --mc-dur-sheet: its colours are measured at rest, never blended mid-motion.
             const sheet = page.locator('[data-slot="sheet-content"]');
