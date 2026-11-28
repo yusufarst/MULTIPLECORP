@@ -27,7 +27,7 @@ export type Entry = {
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
 // PG-061 *Penomoran Dokumen* is TASK-021's; PG-060 *Pengguna & Akses* TASK-024's.
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-006', 'PG-007', 'PG-008', 'PG-009', 'PG-015', 'PG-016', 'PG-017', 'PG-018', 'PG-019', 'PG-020', 'PG-021', 'PG-022', 'PG-023', 'PG-024', 'PG-026', 'PG-027', 'PG-028', 'PG-029', 'PG-030', 'PG-031', 'PG-032', 'PG-034', 'PG-010', 'PG-011', 'PG-013', 'PG-014', 'PG-025', 'PG-033', 'PG-035', 'PG-036', 'PG-037', 'PG-038', 'PG-040', 'PG-041', 'PG-042', 'PG-043', 'PG-044', 'PG-045', 'PG-046', 'PG-047', 'PG-048', 'PG-049', 'PG-050', 'PG-051', 'PG-052', 'PG-053', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-063', 'PG-064', 'PG-065', 'ROUTE-118']);
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-006', 'PG-007', 'PG-008', 'PG-009', 'PG-015', 'PG-016', 'PG-017', 'PG-018', 'PG-019', 'PG-020', 'PG-021', 'PG-022', 'PG-023', 'PG-024', 'PG-026', 'PG-027', 'PG-028', 'PG-029', 'PG-030', 'PG-031', 'PG-032', 'PG-034', 'PG-010', 'PG-011', 'PG-013', 'PG-014', 'PG-025', 'PG-033', 'PG-035', 'PG-036', 'PG-037', 'PG-038', 'PG-039', 'PG-040', 'PG-041', 'PG-042', 'PG-043', 'PG-044', 'PG-045', 'PG-046', 'PG-047', 'PG-048', 'PG-049', 'PG-050', 'PG-051', 'PG-052', 'PG-053', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-058', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-063', 'PG-064', 'PG-065', 'ROUTE-118']);
 
 const has =
     (...capabilities: string[]) =>
@@ -129,6 +129,104 @@ export const MODULES: Entry[] = [
         ],
     },
 ];
+
+/** APPR-042's pilot (K-1, K-4; blueprint C): the modules under three group labels, each module opening into its own pages
+    as leaves. The labels are candidates, validated with novice users before any contract changes (DIR-134 E7). */
+export type Leaf = { pg: string; href: string; label: TranslationKey; rare?: boolean; allowed?: (account: AccountHints) => boolean };
+
+export const GROUPS: { key: string; label: TranslationKey; modules: string[] }[] = [
+    { key: 'operasional', label: 'shell.nav.group_operations', modules: ['pembelian', 'gudang'] },
+    { key: 'keuangan-dokumen', label: 'shell.nav.group_finance_documents', modules: ['keuangan', 'dokumen', 'laporan'] },
+    { key: 'administrasi', label: 'shell.nav.group_administration', modules: ['data-master', 'aktivitas', 'pengaturan'] },
+];
+
+/** Each module's leaves in the order a beginner looks for them; the rarely used ones after a separator. Every leaf keeps
+    its route and asks the capability its route asks (`routes/web.php`), not only the module's broader admission: a leaf
+    without `allowed` is one whose route asks exactly the module's capability, or none (the server still decides each
+    request; AZ-01). */
+const LEAVES: Record<string, Leaf[]> = {
+    pembelian: [{ pg: 'PG-015', href: '/pembelian', label: 'pages.pg_015.title' }],
+    gudang: [
+        { pg: 'PG-018', href: '/gudang/stok', label: 'pages.pg_018.title', allowed: has('stock.view') },
+        { pg: 'PG-021', href: '/gudang/barang-masuk', label: 'pages.pg_021.title', allowed: scoped('stock.receive') },
+        { pg: 'PG-023', href: '/gudang/barang-keluar', label: 'pages.pg_023.title', allowed: scoped('stock.dispatch') },
+        { pg: 'PG-025', href: '/gudang/reservasi', label: 'pages.pg_025.title', allowed: scoped('stock.reserve') },
+        { pg: 'PG-026', href: '/gudang/stok-opname', label: 'pages.pg_026.title', allowed: scoped('stock.count') },
+        { pg: 'PG-020', href: '/gudang/riwayat-stok', label: 'pages.pg_020.title', allowed: has('stock.view'), rare: true },
+        { pg: 'PG-027', href: '/gudang/penyesuaian', label: 'pages.pg_027.title', allowed: scoped('stock.condition', 'stock.adjust'), rare: true },
+        { pg: 'PG-028', href: '/gudang/retur-pemasok', label: 'pages.pg_028.title', allowed: scoped('purchase_return.record'), rare: true },
+        { pg: 'PG-029', href: '/gudang/selisih-temuan', label: 'pages.pg_029.title', allowed: scoped('stock.resolve_unattributed', 'stock.attribute_surplus', 'stock.resolve_unattributed_evidence'), rare: true },
+        { pg: 'PG-030', href: '/gudang/pengiriman', label: 'pages.pg_030.title', allowed: scoped('projects.view'), rare: true },
+    ],
+    keuangan: [
+        { pg: 'PG-041', href: '/keuangan/invoice', label: 'pages.pg_041.title' },
+        { pg: 'PG-044', href: '/keuangan/piutang', label: 'pages.pg_044.title' },
+        { pg: 'PG-045', href: '/keuangan/pembayaran', label: 'pages.pg_045.title' },
+        { pg: 'PG-047', href: '/keuangan/potongan', label: 'pages.pg_047.title', allowed: scoped('settlement.record') },
+        { pg: 'PG-048', href: '/keuangan/kredit-pelanggan', label: 'pages.pg_048.title', rare: true },
+        { pg: 'PG-049', href: '/keuangan/kas-lain', label: 'pages.pg_049.title', allowed: scoped('finance.view', 'expense.record'), rare: true },
+        { pg: 'PG-050', href: '/keuangan/mutasi-bank', label: 'pages.pg_050.title', allowed: scoped('bank_statement.record'), rare: true },
+    ],
+    dokumen: [
+        { pg: 'PG-035', href: '/dokumen', label: 'pages.pg_035.title', allowed: scoped('projects.view') },
+        { pg: 'PG-037', href: '/dokumen/penawaran', label: 'pages.pg_037.title', allowed: scoped('projects.view') },
+        { pg: 'PG-038', href: '/dokumen/bukti', label: 'pages.pg_038.title', allowed: scoped('evidence.view') },
+        { pg: 'PG-039', href: '/dokumen/administrasi', label: 'pages.pg_039.title', allowed: scoped('projects.view') },
+        { pg: 'PG-040', href: '/dokumen/kasus', label: 'pages.pg_040.title', allowed: scoped('projects.view') },
+    ],
+    laporan: [
+        { pg: 'PG-051', href: '/laporan', label: 'pages.pg_051.title', allowed: (account) => has('stock.view')(account) || scoped('projects.view', 'finance.view', 'cost.view', 'profit.view')(account) },
+        { pg: 'PG-052', href: '/laporan/gabungan', label: 'pages.pg_052.title', allowed: has('reports.consolidated') },
+        { pg: 'PG-053', href: '/laporan/ekspor', label: 'pages.pg_053.title', allowed: has('reports.export') },
+    ],
+    'data-master': [
+        { pg: 'PG-054', href: '/data-master/klien', label: 'pages.pg_054.title' },
+        { pg: 'PG-055', href: '/data-master/pemasok', label: 'pages.pg_055.title' },
+        { pg: 'PG-056', href: '/data-master/produk', label: 'pages.pg_056.title' },
+        { pg: 'PG-057', href: '/data-master/lokasi-rak', label: 'pages.pg_057.title', allowed: has('stock.view') },
+        { pg: 'PG-058', href: '/data-master/impor', label: 'pages.pg_058.title', allowed: scoped('import.prepare') },
+    ],
+    aktivitas: [
+        { pg: 'PG-063', href: '/aktivitas/riwayat', label: 'pages.pg_063.title', allowed: has('audit.view') },
+        { pg: 'PG-064', href: '/aktivitas/log-keamanan', label: 'pages.pg_064.title', allowed: has('security_log.view') },
+    ],
+    pengaturan: [
+        { pg: 'PG-059', href: '/pengaturan/perusahaan', label: 'pages.pg_059.title', allowed: has('companies.manage') },
+        { pg: 'PG-060', href: '/pengaturan/pengguna', label: 'pages.pg_060.title', allowed: has('users.manage') },
+        { pg: 'PG-061', href: '/pengaturan/penomoran', label: 'pages.pg_061.title', allowed: has('companies.manage') },
+        { pg: 'PG-062', href: '/pengaturan/pajak', label: 'pages.pg_062.title', allowed: has('tax.configure') },
+    ],
+};
+
+/** A module's leaves the account opens: built, allowed by the module and by the leaf's own capability. */
+export function leavesOf(module: Entry, account: AccountHints, built: ReadonlySet<string> = BUILT): Leaf[] {
+    if (!module.allowed(account)) {
+        return [];
+    }
+
+    return (LEAVES[module.key] ?? []).filter((leaf) => built.has(leaf.pg) && (leaf.allowed === undefined || leaf.allowed(account)));
+}
+
+/** The groups with their modules and leaves, empty groups and modules left out. */
+export function navigationTree(account: AccountHints, built: ReadonlySet<string> = BUILT): { key: string; label: TranslationKey; modules: { module: Entry; leaves: Leaf[] }[] }[] {
+    return GROUPS.map((group) => ({
+        key: group.key,
+        label: group.label,
+        modules: group.modules.flatMap((key) => {
+            const module = MODULES.find((entry) => entry.key === key);
+            const leaves = module === undefined ? [] : leavesOf(module, account, built);
+
+            return module === undefined || leaves.length === 0 ? [] : [{ module, leaves }];
+        }),
+    })).filter((group) => group.modules.length > 0);
+}
+
+/** The leaf the address shows: the longest leaf path the address starts with, so a record page marks its list. */
+export function currentLeaf(leaves: Leaf[], pathname: string): string | null {
+    const match = leaves.filter((leaf) => pathname === leaf.href || pathname.startsWith(`${leaf.href}/`)).sort((a, b) => b.href.length - a.href.length)[0];
+
+    return match?.pg ?? null;
+}
 
 /** "Buat" — each item with its capability and a company in scope, as every command needs (CS-05); each new root
     names its company in its own form (§10; CS-03). */

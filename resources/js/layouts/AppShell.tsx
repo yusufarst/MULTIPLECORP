@@ -1,10 +1,10 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft, LogOut, ShieldAlert, UserRound } from 'lucide-react';
-import { type ReactNode, useRef, useState, useSyncExternalStore } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 import { GlobalSearch } from '@/components/shell/global-search';
 import { AccountMenu, CreateMenu, roleLabel } from '@/components/shell/menus';
-import { BottomBar, MoreDrawer, Sidebar } from '@/components/shell/navigation';
+import { BottomBar, NavigationDrawer, PHONE, Sidebar, TABLET, useMediaQuery } from '@/components/shell/navigation';
 import { NoticeStrip, ShortcutsHelp } from '@/components/shell/notices';
 import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
@@ -45,31 +45,16 @@ export type ShellProps = {
     composer?: boolean;
 };
 
-// §6's tablet band, 768–1,024 px: the navigation is the 80 px rail there (KB-03; TASK-097).
-const TABLET = '(width >= 48rem) and (width < 64.0625rem)';
-
-function useTabletBand(): boolean {
-    return useSyncExternalStore(
-        (notify) => {
-            const query = window.matchMedia(TABLET);
-            query.addEventListener('change', notify);
-
-            return () => {
-                query.removeEventListener('change', notify);
-            };
-        },
-        () => window.matchMedia(TABLET).matches,
-    );
-}
-
 export default function AppShell({ title, back, focused = false, children, built = BUILT, gateway, composer = false }: ShellProps) {
     const { t } = useTranslation();
-    const tablet = useTabletBand();
     const page = usePage<{ auth: AccountHints }>();
     const account = page.props.auth;
     const pathname = new URL(page.url, window.location.origin).pathname;
     const [rail, setRail] = useState(() => composer && window.matchMedia('(width >= 64.0625rem) and (width < 80rem)').matches);
-    const [more, setMore] = useState(false);
+    // §6's tablet band, 768–1,024 px, always shows the 80 px rail (KB-03; TASK-097), the phone the bottom bar and its full-screen *Menu* (K-4).
+    const phone = useMediaQuery(PHONE);
+    const tablet = useMediaQuery(TABLET);
+    const [menu, setMenu] = useState(false);
     const [phoneSearch, setPhoneSearch] = useState(false);
     const [help, setHelp] = useState(false);
     const [leaving, setLeaving] = useState(false);
@@ -119,7 +104,12 @@ export default function AppShell({ title, back, focused = false, children, built
                     onToggle={() => {
                         setRail((value) => !value);
                     }}
-                built={built} />
+                    onMenu={() => {
+                        setMenu(true);
+                    }}
+                    menuOpen={menu}
+                    built={built}
+                />
                 <div className="flex min-w-0 flex-1 flex-col">
                     <header className="sticky top-0 z-(--z-bar) flex h-appbar items-center gap-2 border-b border-border-subtle bg-surface px-m-gutter md:h-header md:gap-3 md:px-gutter">
                         {back !== undefined && (
@@ -166,17 +156,19 @@ export default function AppShell({ title, back, focused = false, children, built
                             setPhoneSearch(true);
                         }
                     }}
-                    onMore={() => {
-                        setMore(true);
+                    onMenu={() => {
+                        setMenu(true);
                     }}
+                    menuOpen={menu}
                     built={built}
                 />
             )}
-            <MoreDrawer
+            <NavigationDrawer
                 account={account}
                 pathname={pathname}
-                open={more}
-                onOpenChange={setMore}
+                open={menu}
+                onOpenChange={setMenu}
+                phone={phone}
                 built={built}
                 accountItems={
                     <div className="flex flex-col gap-2">

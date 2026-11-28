@@ -1,8 +1,8 @@
 import { expect, type Page, test } from '@playwright/test';
 
 // TL-09 (TASK-016; acceptance criteria 2, 5, 7, 8): the shell's paths on desktop and phone on the local stack's
-// shell fixture (routes/fixtures.php) — each persona's entries, *Menu lengkap*, "Buat" and the account menu, the
-// rail, the skip link and the *Pintasan* help, the phone's bottom bar and *Lainnya* —; the search type-ahead with
+// shell fixture (routes/fixtures.php) — each persona's entries, *Menu* with its three groups, "Buat" and the account menu, the
+// rail, the skip link and the *Pintasan* help, the phone's bottom bar and its full-screen *Menu* —; the search type-ahead with
 // the term only in the request body; and the re-authentication in place and the step-up against a stub of the
 // sign-in, the unsent input kept and the pending `command_id` replayed rather than run twice.
 // TASK-069 traceability: INT-011 — the step-up asked with a status, never a redirect, and the same command sent after the password (IP-10).
@@ -29,15 +29,20 @@ async function endSession(page: Page): Promise<void> {
     expect((await ended).ok(), 'the session ended').toBe(true);
 }
 
-test('shows the Owner the primary entries, *Menu lengkap* and every "Buat" item (INT-003, INT-004)', async ({ page }) => {
+test('shows the Owner the primary entries, the *Menu*\'s groups and modules and every "Buat" item (INT-003, INT-004; CR-002 K-4)', async ({ page }) => {
     await open(page, 'owner');
     const nav = page.getByRole('navigation', { name: 'Navigasi utama' }).first();
 
     await expect(nav.getByRole('link')).toHaveText(['Beranda', 'Proyek', 'Pekerjaan', 'Tinjauan']);
-    await nav.getByRole('button', { name: 'Menu lengkap' }).click();
-    await expect(nav.getByRole('link', { name: 'Keuangan' })).toHaveAttribute('href', '/keuangan/invoice');
+    // The three groups, each a label over its modules; a module opens in place into its own pages.
+    for (const group of ['Operasional', 'Keuangan & dokumen', 'Administrasi']) {
+        await expect(nav.getByText(group, { exact: true })).toBeVisible();
+    }
+
+    await nav.getByRole('button', { name: 'Keuangan', exact: true }).click();
+    await expect(nav.getByRole('link', { name: 'Invoice' })).toHaveAttribute('href', '/keuangan/invoice');
     await expect(nav.locator('[aria-current]')).toHaveCount(0);
-    await expect(nav.getByRole('link', { name: 'Aktivitas & Keamanan' })).toBeVisible();
+    await expect(nav.getByRole('button', { name: 'Aktivitas & Keamanan' })).toBeVisible();
 
     await page.getByRole('button', { name: 'Buat', exact: true }).click();
     await expect(page.getByRole('menuitem')).toHaveText(['Proyek', 'Pembelian', 'Barang Masuk', 'Pembayaran', 'Unggah Dokumen']);
@@ -56,9 +61,8 @@ test('gives an Admin only what the account\'s capabilities open — no Owner ent
     const nav = page.getByRole('navigation', { name: 'Navigasi utama' }).first();
 
     await expect(nav.getByRole('link')).toHaveText(['Pekerjaan', 'Proyek']);
-    await nav.getByRole('button', { name: 'Menu lengkap' }).click();
-    await expect(nav.getByRole('link', { name: 'Pengaturan' })).toHaveCount(0);
-    await expect(nav.getByRole('link', { name: 'Aktivitas & Keamanan' })).toHaveCount(0);
+    await expect(nav.getByRole('button', { name: 'Pengaturan' })).toHaveCount(0);
+    await expect(nav.getByRole('button', { name: 'Aktivitas & Keamanan' })).toHaveCount(0);
     await expect(page.locator('[disabled], [aria-disabled="true"]').filter({ hasText: /Tinjauan|Pengaturan/ })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Buat', exact: true }).click();
@@ -82,20 +86,23 @@ test('collapses to the rail with Ctrl+B, opens the help with Ctrl+/, and leads w
     await expect(page.getByRole('dialog', { name: 'Pintasan' })).toContainText('Buka pencarian');
 });
 
-test('gives the phone its bottom bar of four and *Lainnya* with *Kerja*, *Menu lengkap* and *Akun* (PT-02; GR-11)', async ({ page }) => {
+test('gives the phone its bottom bar of four and a full-screen *Menu* with *Kerja*, the groups and *Akun* (PT-02; GR-11; CR-002 K-4)', async ({ page }) => {
     await open(page, 'owner', 390);
     const bar = page.getByRole('navigation', { name: 'Navigasi utama' }).last();
 
     await expect(bar.getByRole('link')).toHaveText(['Beranda', 'Proyek']);
-    await expect(bar.getByRole('button')).toHaveText(['Cari', 'Lainnya']);
+    await expect(bar.getByRole('button')).toHaveText(['Cari', 'Menu']);
 
     for (const box of await bar.locator('a, button').evaluateAll((items) => items.map((item) => item.getBoundingClientRect()))) {
         expect(Math.min(box.width, box.height)).toBeGreaterThanOrEqual(60);
     }
 
-    await bar.getByRole('button', { name: 'Lainnya' }).click();
+    await bar.getByRole('button', { name: 'Menu', exact: true }).click();
     const drawer = page.getByRole('dialog');
-    await expect(drawer.locator('section h2')).toHaveText(['Kerja', 'Menu lengkap', 'Akun']);
+    for (const label of ['Kerja', 'Operasional', 'Keuangan & dokumen', 'Administrasi', 'Akun']) {
+        await expect(drawer.getByText(label, { exact: true })).toBeVisible();
+    }
+
     await expect(drawer.getByRole('link', { name: 'Tinjauan' })).toBeVisible();
 });
 

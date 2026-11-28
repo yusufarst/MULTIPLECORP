@@ -7,8 +7,8 @@ import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
 // hardcoded copy.
 
 for (const [locale, texts] of [
-    ['id', { clients: 'Klien', suppliers: 'Pemasok', createClient: 'Buat Klien', createSupplier: 'Buat Pemasok', search: 'Cari klien' }],
-    ['en', { clients: 'Clients', suppliers: 'Suppliers', createClient: 'Create Client', createSupplier: 'Create Supplier', search: 'Search clients' }],
+    ['id', { clients: 'Klien', suppliers: 'Pemasok', createClient: 'Buat Klien', createSupplier: 'Buat Pemasok', search: 'Cari klien', sections: 'Bagian Data Master' }],
+    ['en', { clients: 'Clients', suppliers: 'Suppliers', createClient: 'Create Client', createSupplier: 'Create Supplier', search: 'Search clients', sections: 'Master data sections' }],
 ] as const) {
     test(`shows PG-054 and PG-055 in ${locale}`, async ({ page }) => {
         await ownerSignedIn(page, `pihak-${locale}-${String(Date.now())}`, locale);
@@ -18,7 +18,7 @@ for (const [locale, texts] of [
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.clients);
         await expect(page.getByRole('combobox', { name: texts.search })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.createClient }).first()).toBeVisible();
-        await expect(page.getByRole('navigation').getByRole('link', { name: texts.suppliers })).toBeVisible();
+        await expect(page.getByRole('navigation', { name: texts.sections }).getByRole('link', { name: texts.suppliers })).toBeVisible();
         await auditPage(page, locale, 'PG-054');
 
         await page.goto('/data-master/pemasok');

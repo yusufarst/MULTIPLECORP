@@ -14,7 +14,7 @@ Amendment: on 2026-10-31, under [DIR-101](../00-governance/DECISION_LOG.md#dir-1
 
 Amendment: on 2026-11-01, under [DIR-104](../00-governance/DECISION_LOG.md#dir-104--the-owners-decision-on-p11q-08), the Owner's decision on P11Q-08 (APPR-028) and Change 16 of [TASK_PLAN §7](../11-tasks/TASK_PLAN.md#7-controlled-task-plan-changes), only the control of PG-048 in §8.3. It is marked `DIR-104`.
 
-Amendment: on 2026-11-28, under [APPR-046](../00-governance/DECISION_LOG.md#dir-142-and-appr-046--cr-002s-package-k-5-skeletons-for-a-region-that-is-loading-2026-11-28), §9's groups wait behind a skeleton shown after 300 ms and announced once; under [APPR-047](../00-governance/DECISION_LOG.md#dir-143-and-appr-047--cr-002s-package-k-6-the-stage-indicator-the-first-step-and-the-recovery-codes-stage-2026-11-28), §8.1's stage of the recovery codes and §9's first step and its one sentence for several empty signals; under [APPR-049](../00-governance/DECISION_LOG.md#dir-145-and-appr-049--cr-002s-addition-d-6-the-arrangements-of-pg-010-pg-011-pg-018-and-pg-019-2026-11-28), the rows of PG-010, PG-011, PG-018 and PG-019. The changed statements are those the approved exact texts list.
+Amendment: on 2026-11-28, under [APPR-050](../00-governance/DECISION_LOG.md#dir-146-and-appr-050--cr-002s-package-k-4-the-three-level-menu-2026-11-28), the Owner's approval of CR-002 package K-4 on its exact text — §4's D-IA-01, §§5.2–5.5, §§6.1–6.2, the paths of §§8, 13 and 14.4 and the glossary rows GL-030, GL-187, GL-194 and GL-195: *Menu* — the modules in three labelled groups, each opening into its own pages — replaces *Menu lengkap*, the module tabs and *Lainnya*; no page, route, capability or rule changes; the term *Menu* and the three group labels are proposed — final after novice validation (DIR-134 E7). Under [APPR-046](../00-governance/DECISION_LOG.md#dir-142-and-appr-046--cr-002s-package-k-5-skeletons-for-a-region-that-is-loading-2026-11-28), §9's groups wait behind a skeleton shown after 300 ms and announced once; under [APPR-047](../00-governance/DECISION_LOG.md#dir-143-and-appr-047--cr-002s-package-k-6-the-stage-indicator-the-first-step-and-the-recovery-codes-stage-2026-11-28), §8.1's stage of the recovery codes and §9's first step and its one sentence for several empty signals; under [APPR-049](../00-governance/DECISION_LOG.md#dir-145-and-appr-049--cr-002s-addition-d-6-the-arrangements-of-pg-010-pg-011-pg-018-and-pg-019-2026-11-28), the rows of PG-010, PG-011, PG-018 and PG-019. The changed statements are those the approved exact texts list.
 
 **Sources.** Stage 2's drafts are reused, never re-derived (DIR-078 §0): [IA_PAGE_INVENTORY](stage2/IA_PAGE_INVENTORY.md) — its personas, product map, shell, company context and the 65 pages PG-001–PG-065 with their stable identifiers —, [NAVIGATION_MAP](stage2/NAVIGATION_MAP.md) — the role navigation, reachability and task paths —, [QUERY_BUDGET_CHECKS](stage2/QUERY_BUDGET_CHECKS.md) and [NON_LOSS_MATRIX](stage2/NON_LOSS_MATRIX.md); the structure R1 that Checkpoint C1 approved (GD-01, GD-03); the Owner's CP-A decisions ([DIR-077](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts)) — the project list's journey summary (CA-06), the dispatch-ready signal QS-24 (CA-07) and the Owner's overdue signal QS-23 (CA-10); and every concern the approved revision owns, carried or superseded below with its [NON_LOSS_MATRIX](stage2/NON_LOSS_MATRIX.md) row.
 
@@ -105,7 +105,7 @@ The single home of the Indonesian UI vocabulary. **Label** is what the interface
 | GL-027 | Security log | Log Keamanan | Owner only | — |
 | GL-028 | Own exports | Ekspor Saya | the requester's own list | Unduhan |
 | GL-029 | Account page | Akun Saya | — | Profil saya |
-| GL-030 | More (phone navigation) | Lainnya | — | Menu lain |
+| GL-030 | More (phone navigation) — retired as a label by APPR-050 (CR-002 K-4); GL-194 is the phone's fourth item | Lainnya | no longer labels an entry; GL-187 and GL-188 keep their own words | Menu lain |
 
 ### 3.2 People, access and companies
 
@@ -292,7 +292,7 @@ The single home of the Indonesian UI vocabulary. **Label** is what the interface
 | GL-184 | Cutoff date | Tanggal batas | — | — |
 | GL-185 | Shortcut help | Pintasan | — | Hotkey |
 | GL-186 | Reference code (correlation id) | Kode rujukan | on error pages | Error ID |
-| GL-187 | Overflow menu of page actions | Tindakan Lain | the page's secondary actions; distinct from the phone navigation's *Lainnya* | Lainnya, Opsi |
+| GL-187 | Overflow menu of page actions | Tindakan Lain | the page's secondary actions; distinct from *Menu* (GL-194) | Lainnya, Opsi |
 | GL-188 | Overflow menu of a record's parts | Bagian Lain | the tabs that do not fit, in order (D-IA-09) | Lainnya |
 | GL-189 | A project's purchasing part | Pengadaan | the part of SCR-10 listing the project's purchases and allocated cost; the area and the record stay *Pembelian* (GL-006) | Pembelian (as the part's name) |
 | GL-190 | Undo a line removal | Urungkan | offered in the line editor after a line is removed, before the form is sent (KB-07) | Batal (for undo) |
@@ -308,8 +308,8 @@ The labels R1's structure and the Owner's CP-A decisions add, recorded in the ga
 | --- | --- | --- | --- | --- |
 | GL-192 | Work home — work grouped by what has to happen next | Pekerjaan | every account's work page, PG-007, and the Admin's landing page; it takes the place of GL-002's *Antrean Tindakan* | Antrean Tindakan, To-do |
 | GL-193 | The Owner's review entry | Tinjauan | the Owner's primary entry and page PG-008 — GL-003's queue, named as R1 names the entry | Persetujuan |
-| GL-194 | Full menu | Menu lengkap | the collapsed list of the modules behind the primary entries (§5.3) | Semua menu |
-| GL-195 | Work section of the phone's *Lainnya* | Kerja | the Owner's *Pekerjaan* and *Tinjauan* on the phone | — |
+| GL-194 | Menu — the grouped list of modules and pages, and the item that opens it | Menu | the three groups of modules and their pages behind the primary entries (§5.3), shown in the sidebar and opened by the phone's and the rail's *Menu* item — proposed, final after novice validation (DIR-134 E7) | Menu lengkap, Lainnya, Semua menu |
+| GL-195 | Work section of the phone's *Menu* | Kerja | the Owner's *Pekerjaan* and *Tinjauan* on the phone | — |
 | GL-196 | Create menu | Buat | the top bar's menu of new roots (§10) | Tambah, Baru |
 | GL-197 | Search-and-scan field | Cari atau pindai kode | the top bar's one field for typed and scanned codes (D-IA-04) | — |
 | GL-198 | Display language | Bahasa tampilan | the switch "Indonesia \| English" in the account menu and on *Akun Saya* (`DIR-077` CA-08) | Bahasa sistem |
@@ -328,7 +328,7 @@ The labels R1's structure and the Owner's CP-A decisions add, recorded in the ga
 | GL-211 | Overdue project | Proyek melewati tenggat | QS-23's row, the Owner's only (`DIR-077` CA-10) — proposed | Proyek terlambat |
 | GL-212 | Dispatch-ready | Siap dikeluarkan | QS-24's rows (`DIR-077` CA-07) — proposed | — |
 
-**Entries the structure changes.** GL-002 *Antrean Tindakan* gives way to GL-192 *Pekerjaan* as the work home's label; GL-003 keeps the queue's meaning, its entry and page named *Tinjauan* (GL-193); GL-030 *Lainnya* stays the phone's fifth place. Every other entry of §3.1–§3.7 is unchanged.
+**Entries the structure changes.** GL-002 *Antrean Tindakan* gives way to GL-192 *Pekerjaan* as the work home's label; GL-003 keeps the queue's meaning, its entry and page named *Tinjauan* (GL-193); GL-030 *Lainnya* is retired as a label and GL-194 *Menu* is the phone's fourth item and the rail's last (APPR-050, CR-002 K-4). Every other entry of §3.1–§3.7 is unchanged.
 
 ## 4. Design decisions
 
@@ -336,7 +336,7 @@ The approved revision's D-IA-01–D-IA-17 with their Stage 3 disposition — the
 
 | ID | Disposition | Where honoured or what replaces it |
 | --- | --- | --- |
-| D-IA-01 | SUPERSEDE (R1's delta) | task-first primary entries per persona with the collapsed *Menu lengkap* — §5.2, §5.3, §6.1 |
+| D-IA-01 | SUPERSEDE (R1's delta) | task-first primary entries per persona, then *Menu* — the modules in three labelled groups, each opening into its own pages — §5.2, §5.3, §6.1, §6.2 (revised again by APPR-050, CR-002 K-4) |
 | D-IA-02 | KEEP | the company filter in list headers and on *Beranda* and *Pekerjaan*, never in the shell — §7 |
 | D-IA-03 | ADAPT (R1's delta) | the phone's bottom bar per persona, four entries and at most five — §6.2 |
 | D-IA-04 | KEEP | one entry, "Cari atau pindai kode", for typed and scanned codes — §6.1, §10 |
@@ -416,41 +416,48 @@ Every capability above that the table does not mark for a persona is not held. B
 
 ### 5.2 Primary entries
 
-Task first: two to four primary entries per persona, the modules behind them in a collapsed *Menu lengkap* ([R1 a)](evidence/P7_REBASELINE_GATE.md#a-navigation--task-first-oc-02-pl-4); [OC-02](../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework); [D-IA-01](#4-design-decisions) SUPERSEDE as R1 revised it).
+Task first: two to four primary entries per persona, then *Menu* — the modules in three labelled groups, each opening into its own pages (§5.3) — ([R1 a)](evidence/P7_REBASELINE_GATE.md#a-navigation--task-first-oc-02-pl-4); [OC-02](../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework); [D-IA-01](#4-design-decisions) SUPERSEDE as R1 revised it and as APPR-050, CR-002 K-4, revises it again).
 
 | Persona | Primary entries, desktop | Bottom bar, phone | Lands on | Why each entry exists (R1 a)) |
 | --- | --- | --- | --- | --- |
-| Owner | *Beranda* · *Proyek* · *Pekerjaan* · *Tinjauan* | *Beranda* · *Proyek* · *Cari* · *Lainnya* | *Beranda* | the Owner's decisions, exceptions and figures (OC-05); the projects as journeys; the operational queues, demoted from *Beranda* and one click away; the review queue ([QS-14](../03-workflows/WORKFLOWS/s10-14-signals-decisions-traceability.md#10-derived-signals-and-action-queue)) |
-| Admin | *Pekerjaan* · *Proyek* | *Pekerjaan* · *Proyek* · *Cari* · *Lainnya* | *Pekerjaan* | work grouped by what has to happen next (OC-01); the projects as journeys |
+| Owner | *Beranda* · *Proyek* · *Pekerjaan* · *Tinjauan* | *Beranda* · *Proyek* · *Cari* · *Menu* | *Beranda* | the Owner's decisions, exceptions and figures (OC-05); the projects as journeys; the operational queues, demoted from *Beranda* and one click away; the review queue ([QS-14](../03-workflows/WORKFLOWS/s10-14-signals-decisions-traceability.md#10-derived-signals-and-action-queue)) |
+| Admin | *Pekerjaan* · *Proyek* | *Pekerjaan* · *Proyek* · *Cari* · *Menu* | *Pekerjaan* | work grouped by what has to happen next (OC-01); the projects as journeys |
 
-Work is entered from *Beranda*'s decision rows, *Pekerjaan*'s work rows, the journey's *Berikutnya* and primary action, search and scan, and "Buat" (§10).
+Work is entered from *Beranda*'s decision rows, *Pekerjaan*'s work rows, the journey's *Berikutnya* and primary action, search and scan, and "Buat" (§10). The same primary entries lead the sidebar and the tablet's rail; *Menu* — the phone's fourth item, the rail's last — opens the modules (§5.3).
 
-### 5.3 *Menu lengkap* — the modules and their sub-pages as tabs
+### 5.3 *Menu* — the modules in three groups, each with its pages
 
-Each module opens on its first sub-page, its sub-pages shown as tabs, and rarely used ones behind a *Lainnya* tab (R1 a), "as Gudang › Stok shows"). The places come from R1's [revised non-loss map](evidence/P7_REBASELINE_GATE.md#revised-screens-scr-01scr-60).
+*Menu* is the way to every module (R1 a) as amended by APPR-050, CR-002 K-4). It is a tree of three levels and nothing deeper: a **group**, which is a label and not a step; a **module**, which opens in place; and its **pages**, the leaves. It lists what is open to the account (§6.3) and is shown as the lower part of the sidebar from 1,025 px, as the drawer that the rail's *Menu* item opens from 768 to 1,024 px, and as the full-screen *Menu* of the phone (§6). A path is written *Menu* › module › page — and, inside a module's own context, module › page; a group label is never a step of a path.
 
-| Module | Sub-pages, as tabs | Pages (§8) | Present when the account holds |
-| --- | --- | --- | --- |
-| *Pembelian* | *Daftar Pembelian* | PG-015–PG-017 | `cost.view` |
-| *Gudang* | *Stok* · *Barang Masuk* · *Barang Keluar* · *Reservasi* · *Stok Opname* · *Lainnya* — *Riwayat Stok*, *Penyesuaian & Kondisi*, *Retur ke Pemasok*, *Selisih & Temuan*, *Pengiriman* | PG-018–PG-030 | `stock.view`, or a warehouse command capability (`stock.receive`, `stock.dispatch`); *Selisih & Temuan* the Owner and `stock.resolve_unattributed_evidence` (the approved revision's §5); *Pengiriman* `projects.view` |
-| *Keuangan* | *Invoice* · *Piutang* · *Pembayaran* · *Potongan* · *Lainnya* — *Kredit Pelanggan*, *Pengeluaran & Kas Lain*, *Mutasi Bank* | PG-041–PG-050 | `finance.view` |
-| *Dokumen* | *Dokumen* · *Penawaran* · *Bukti* · *Dokumen Administrasi* · *Kasus Koreksi* (§7.4) | PG-035–PG-040 | `projects.view`; *Bukti* `evidence.view` |
-| *Laporan* | *Laporan* · *Laporan Gabungan* (Owner) · *Ekspor Saya* | PG-051–PG-053 | a report's read class (RD-02–RD-07); *Ekspor Saya* `reports.export` |
-| *Data Master* | *Klien* · *Pemasok* · *Produk & Jasa* · *Lokasi Rak* · *Impor Data Awal* | PG-054–PG-058 | every active account for S0 names ([CS-06](../05-security/PERMISSIONS_MATRIX.md#6-company-scope-rules)); *Impor Data Awal* `import.prepare` or the Owner |
-| *Aktivitas & Keamanan* (Owner) | *Riwayat Aktivitas* · *Log Keamanan* | PG-063, PG-064 | `audit.view`, `security_log.view` (OWNER_ONLY) |
-| *Pengaturan* (Owner) | *Perusahaan* · *Pengguna & Akses* · *Penomoran Dokumen* · *Pajak* | PG-059–PG-062 | `companies.manage`, `users.manage`, `permissions.manage`, `tax.configure` (OWNER_ONLY) |
+The term *Menu* and the three group labels — *Operasional*, *Keuangan & dokumen*, *Administrasi* — are **proposed — final after novice validation (DIR-134 E7)**. A term that validation changes is replaced wherever it occurs by one Level 1 edit that records the validation's result; the structure below does not change with it.
 
-The journey's own pages — the quotation, the completion page, the delivery record, direct shipment, the service handover and the client return — are reached from the project and from work rows, not from *Menu lengkap* (R1's revised map). [CAP-16](../01-product/V1_SCOPE.md#must-ship)'s local backups have no screen, CAP-14 is the design as a whole, and SIPLAH is a project channel with its own fields, never an area (the approved revision's §5; V1_SCOPE).
+| Group (proposed) | Module | Pages, as leaves, in order | Pages (§8) | Present when the account holds |
+| --- | --- | --- | --- | --- |
+| *Operasional* | *Pembelian* | *Pembelian* | PG-015–PG-017 | `cost.view` |
+| | *Gudang* | *Stok* · *Barang Masuk* · *Barang Keluar* · *Reservasi* · *Stok Opname*; then, after a rule, *Riwayat Stok* · *Penyesuaian & Kondisi* · *Retur ke Pemasok* · *Selisih & Temuan* · *Pengiriman* | PG-018–PG-030 | `stock.view`, or a warehouse command capability (`stock.receive`, `stock.dispatch`); *Selisih & Temuan* the Owner and `stock.resolve_unattributed_evidence` (the approved revision's §5); *Pengiriman* `projects.view` |
+| *Keuangan & dokumen* | *Keuangan* | *Invoice* · *Piutang* · *Pembayaran* · *Potongan*; then, after a rule, *Kredit Pelanggan* · *Pengeluaran & Kas Lain* · *Mutasi Bank* | PG-041–PG-050 | `finance.view` |
+| | *Dokumen* | *Dokumen* · *Daftar Penawaran* · *Bukti* · *Dokumen Administrasi* · *Kasus Koreksi* (§7.4) | PG-035–PG-040 | `projects.view`; *Bukti* `evidence.view` |
+| | *Laporan* | *Laporan* · *Laporan Gabungan* (Owner) · *Ekspor Saya* | PG-051–PG-053 | a report's read class (RD-02–RD-07); *Ekspor Saya* `reports.export` |
+| *Administrasi* | *Data Master* | *Klien* · *Pemasok* · *Produk & Jasa* · *Lokasi Rak* · *Impor Data Awal* | PG-054–PG-058 | every active account for S0 names ([CS-06](../05-security/PERMISSIONS_MATRIX.md#6-company-scope-rules)); *Impor Data Awal* `import.prepare` or the Owner |
+| | *Aktivitas & Keamanan* (Owner) | *Riwayat Aktivitas* · *Log Keamanan* | PG-063, PG-064 | `audit.view`, `security_log.view` (OWNER_ONLY) |
+| | *Pengaturan* (Owner) | *Perusahaan* · *Pengguna & Akses* · *Penomoran Dokumen* · *Pajak* | PG-059–PG-062 | `companies.manage`, `users.manage`, `permissions.manage`, `tax.configure` (OWNER_ONLY) |
+
+- **Order and absence.** Modules and pages keep the order of the table. A page the account does not hold is absent, never disabled; a module with no page open to the account is absent, and so is a group with no module (UXN-09; NV-08). No group, module or page carries a badge or a count (D-IA-06).
+- **How a module opens.** A module is a disclosure — a real button with `aria-expanded` — that opens in place; the module holding the current page is open when the page loads. The current page carries `aria-current="page"` and is marked by weight, a rule and a tint, never by colour alone. A closed module's pages stay findable by the browser's find. The rarely used pages follow the frequent ones after a rule and carry no label of their own; none is deeper than a leaf or behind another entry.
+- **Labels.** A leaf carries its page's title (§8), so two leaves read differently from their former tab labels: *Pembelian* (formerly *Daftar Pembelian*) and *Daftar Penawaran* (formerly *Penawaran*); every other leaf keeps its label.
+- **Nothing lost.** The 37 pages above — 1 + 10 + 7 + 5 + 3 + 5 + 2 + 4 — are the 37 sub-pages of the approved revision's §5.3: the pages that were tabs, and those behind its *Lainnya* tab — *Riwayat Stok*, *Penyesuaian & Kondisi*, *Retur ke Pemasok*, *Selisih & Temuan*, *Pengiriman*, *Kredit Pelanggan*, *Pengeluaran & Kas Lain* and *Mutasi Bank* —, each at its route (§11) and under its NAV- contract. No page moved to another module, none was added and none removed; the module's first page stays the page its Back target names (NAVIGATION_CONTRACTS).
+
+The journey's own pages — the quotation, the completion page, the delivery record, direct shipment, the service handover and the client return — are reached from the project and from work rows, not from *Menu* (R1's revised map). [CAP-16](../01-product/V1_SCOPE.md#must-ship)'s local backups have no screen, CAP-14 is the design as a whole, and SIPLAH is a project channel with its own fields, never an area (the approved revision's §5; V1_SCOPE).
 
 ### 5.4 Account menu, system page and the pages outside the shell
 
-- **Account menu** — the account's name and role (*Owner* or *Admin Operasional*); *Akun Saya* (PG-065); *Bahasa tampilan: Indonesia | English*, which changes the account's own display language at once and keeps it in `users.locale` ([LOCALIZATION](LOCALIZATION.md); `DIR-077` CA-08); *Keluar*, which asks first only when input is unsent ([MSG-35](ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue); GR-09 as corrected). On the phone, *Lainnya* › *Akun* holds the same three (R1 a)).
+- **Account menu** — the account's name and role (*Owner* or *Admin Operasional*); *Akun Saya* (PG-065); *Bahasa tampilan: Indonesia | English*, which changes the account's own display language at once and keeps it in `users.locale` ([LOCALIZATION](LOCALIZATION.md); `DIR-077` CA-08); *Keluar*, which asks first only when input is unsent ([MSG-35](ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue); GR-09 as corrected). On the phone, *Menu* › *Akun* holds the same three (R1 a)).
 - **System page** — *Halaman Sistem* (PG-005): not found, forbidden and error, the not-found answer identical for an unknown, an out-of-scope and an Owner-only address (AZ-11; IP-21).
 - **Outside the shell** — sign-in (PG-001), its second-factor step (PG-002), the credential-link page (PG-003) and the enrolment-only session's page (PG-004); their journeys are [AUTH_JOURNEYS](stage2/AUTH_JOURNEYS.md)'s.
 
 ### 5.5 The project journey as the hub, and what has no entry
 
-The project journey (PG-011) is the operational hub UXN-02 asks for: its header and primary action, *Tahap proyek*, *Sekarang · Berikutnya · Hambatan*, "Yang tersisa sebelum selesai", "Kesiapan dokumen", "Posisi keuangan" and "Rincian proyek" carry the brief's parts — overview, items, quotation, procurement, fulfilment, delivery, documents, billing, payments, administrative requirements and history (OB §11) —, and every cross-project list leads back to it. The journey's own pages — the quotation, the completion page, the delivery record, the direct shipment, the service handover and the client return — are reached from the project and from work rows, not from *Menu lengkap*.
+The project journey (PG-011) is the operational hub UXN-02 asks for: its header and primary action, *Tahap proyek*, *Sekarang · Berikutnya · Hambatan*, "Yang tersisa sebelum selesai", "Kesiapan dokumen", "Posisi keuangan" and "Rincian proyek" carry the brief's parts — overview, items, quotation, procurement, fulfilment, delivery, documents, billing, payments, administrative requirements and history (OB §11) —, and every cross-project list leads back to it. The journey's own pages — the quotation, the completion page, the delivery record, the direct shipment, the service handover and the client return — are reached from the project and from work rows, not from *Menu*.
 
 Correction entry points are not an area: each correction starts from the record it corrects ([ADMIN_FLOW §11](ADMIN_FLOW/s11-13-corrections-numbering-import.md#11-corrections-and-reversals)); *Kasus Koreksi* lists the cases those corrections open (§14.4). *Impor Data Awal* sits under *Data Master* so that an Admin holding `import.prepare` reaches it; its commit is the Owner's (PJ-20; OD-13). CAP-16's local backups are operated by the human operator and have no page; CAP-14 is this design as a whole; SIPLAH is a project channel with its own fields on the project, never an area (CAP-12; V1_SCOPE OUT OF SCOPE).
 
@@ -462,7 +469,7 @@ The shell is the frame every authenticated page shares; its visual form is PT-01
 
 | Part | Content | Rules |
 | --- | --- | --- |
-| Navigation | the persona's primary entries (§5.2), then the collapsed *Menu lengkap* (§5.3) | the treatment of the navigation components is DESIGN_SYSTEM's, PT-01 and PT-02 ([GD-03](../00-governance/DECISION_LOG.md#dir-059-dir-060-obs-022-and-tech-030--p7-ux-re-baseline-checkpoint-c1-closure-golden-frontend-reference-adoption-authorization-baseline-and-reconciliation)); the current entry carries `aria-current="page"`; Ctrl+B collapses and expands the navigation ([KB-03](DESIGN_SYSTEM.md#131-keyboard)) |
+| Navigation | the persona's primary entries (§5.2), then *Menu* in its three groups (§5.3) — the sidebar from 1,025 px; at the tablet band, 768–1,024 px, the 80 px rail of the labelled primary entries and *Menu*, which opens the same groups as a drawer from the rail's side | the treatment of the navigation components is DESIGN_SYSTEM's, PT-01 and PT-02 ([GD-03](../00-governance/DECISION_LOG.md#dir-059-dir-060-obs-022-and-tech-030--p7-ux-re-baseline-checkpoint-c1-closure-golden-frontend-reference-adoption-authorization-baseline-and-reconciliation)); the current entry carries `aria-current="page"` and the module holding it is open; Ctrl+B collapses and expands the navigation ([KB-03](DESIGN_SYSTEM.md#131-keyboard)) |
 | Top bar | the field **"Cari atau pindai kode"** with the hint "Ctrl K" (KB-01; [D-IA-04](#4-design-decisions) KEEP); **"Buat"** with its items (§10); the **account menu** (§5.4) | no company switch, company name, count or notification bell (§6.1; D-IA-02 KEEP); scanner input goes to the field when it has focus (§10) |
 | Notice strip | absent unless a notice is due — the absolute session limit ([MSG-34](ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue)) and a lost connection | the idle warning is a dialog, not a strip (D-IA-05 KEEP; [AU-07](../05-security/SECURITY.md#2-authentication-sessions-and-credentials); H7-05) |
 | Content | the page header and the page; a list's company filter in its header (§7) | the page states its purpose through its title and its first actionable element (R1 g); OC-06) |
@@ -475,7 +482,7 @@ The *Pintasan* help stays reachable by its key, Ctrl+/ (KB-02); R1's top bar sho
 | --- | --- | --- |
 | Top bar | a back arrow below a module's first page; the page title; the account button | the title is the screen's name, never a business number or name (H7-10) |
 | Bottom bar | the persona's four entries (§5.2), each item at least 60 × 60 px (DESIGN_SYSTEM §5.3) | at most five entries (D-IA-03 ADAPT, R1's delta); an entry the account cannot open is absent, never disabled |
-| *Lainnya* drawer | *Kerja* — for the Owner *Pekerjaan* and *Tinjauan* —; *Menu lengkap*; *Akun* with *Bahasa tampilan* and *Keluar* | grouped and ordered as on the desktop (R1 a)) |
+| *Menu*, full-screen | *Kerja* — for the Owner *Pekerjaan* and *Tinjauan* —; the groups of §5.3, each module opening in place; *Akun* with *Bahasa tampilan* and *Keluar* | grouped and ordered as on the desktop (R1 a)); focus moves into it and stays inside, a page chosen closes it, Esc closes it and returns focus to the *Menu* item |
 | Focused tasks | a scan step, a full-height form sheet, a confirmation and the re-authentication dialog hide the bottom bar, the task's own action bar taking its place | leaving a task with unsent input asks first (ADMIN_FLOW §6; MSG-35) |
 
 Starting new on the phone happens where the work is — "Buat Proyek" on the project list, "Mulai" on a work row — rather than through "Buat" (R1 a)).
@@ -542,7 +549,7 @@ The **page inventory**: sixty-five pages, PG-001–PG-065 — four outside the s
 | PG-007 | *Pekerjaan* · Work | `/pekerjaan` | work queue | work grouped by what has to happen next — goods, documents and cases, invoices and payments, project completion —, rows of QS signals only, the dispatch-ready lines among them (OC-01; PJ-13; `DIR-077` CA-07) | SCR-06, and SCR-05's operational groups for the Owner · R1 b), f), RS-4, RS-5 | NAV-007 · ROUTE-007 |
 | PG-008 | *Tinjauan* · Review | `/tinjauan` | work queue | the Owner review queue — open conditions and activity to review (PERMISSIONS_MATRIX §10; QS-14) | SCR-07 · R1 a), the Owner's entry | NAV-008 · ROUTE-008 |
 | PG-009 | *Cari* · Search | `/cari`, the term never in the address (§11) | system | results by type, an exact code first ([PF-19](../06-api-performance/PERFORMANCE.md#5-search); IP-17) | SCR-08 · R1 a), the top-bar field and the phone's *Cari* | NAV-009 · ROUTE-009 |
-| PG-065 | *Akun Saya* · My account | `/akun` | account | the account's own profile, role, capabilities and companies, its own events, its password, TOTP, recovery codes and Google link, and its display language (AU-13; `DIR-077` CA-08) | SCR-03 · the account menu; *Lainnya* › *Akun*; §7.2 | NAV-065 · ROUTE-065 |
+| PG-065 | *Akun Saya* · My account | `/akun` | account | the account's own profile, role, capabilities and companies, its own events, its password, TOTP, recovery codes and Google link, and its display language (AU-13; `DIR-077` CA-08) | SCR-03 · the account menu; *Menu* › *Akun*; §7.2 | NAV-065 · ROUTE-065 |
 
 | PG | Personas · capability | Field families | Company | Entry points | Tag · phone | Hosts — dialogs, sheets, confirmations |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -555,7 +562,7 @@ The **page inventory**: sixty-five pages, PG-001–PG-065 — four outside the s
 | PG-007 | all three; each group by its read class (PJ-13), *Tagihan dan pembayaran* only with `finance.view` | S1, S2 and S3 as each signal's read class | a view filter over the companies in scope; counts per company (CS-08) | primary — the Admin's landing page, the Owner's entry | `[both]` · groups collapsible; Bayu's "Berikutnya" card first (R1 f)) | the deferred signal groups (QB-10); the dispatch-ready rows (QS-24) and their "Lihat Semua" to *Barang Keluar*'s worklist (`DIR-077` CA-07; D-IA-20) |
 | PG-008 | Laras (`review.view`) | each item's projection (RD-09; PJ-11) | branches and the items without a company | primary (Owner); *Beranda*'s QS-14 row | `[desk]` · rows with the window switch | four source tabs and the window filter (§9.2) |
 | PG-009 | all three; company records by their view capability (PJ-10) | S0 masters; company records by family | branches for company records | the top bar, Ctrl K, the phone's *Cari* | `[both]` · full-screen search | the type-ahead and the 200-candidate notice (IP-17) |
-| PG-065 | every account, itself (SELF; PJ-17) | own | global | the account menu; *Lainnya* › *Akun* | `[both]` | the password change (AU-13); *Bahasa tampilan* (`DIR-077` CA-08); TOTP, recovery codes and the Google link behind the step-up (AU-15) — [AUTH_JOURNEYS](stage2/AUTH_JOURNEYS.md) |
+| PG-065 | every account, itself (SELF; PJ-17) | own | global | the account menu; *Menu* › *Akun* | `[both]` | the password change (AU-13); *Bahasa tampilan* (`DIR-077` CA-08); TOTP, recovery codes and the Google link behind the step-up (AU-15) — [AUTH_JOURNEYS](stage2/AUTH_JOURNEYS.md) |
 
 ### 8.2 Projects and quotations
 
@@ -581,50 +588,50 @@ The **page inventory**: sixty-five pages, PG-001–PG-065 — four outside the s
 
 | PG | Name — Indonesian · English (proposed) | Route | Kind | Purpose | SCR · R1 element | Contracts |
 | --- | --- | --- | --- | --- | --- | --- |
-| PG-015 | *Pembelian* · Purchases | `/pembelian` | list | purchases (WF-PUR-01; WF-PUR-02) | SCR-15 · *Menu lengkap* › *Pembelian* | NAV-015 · ROUTE-015 |
+| PG-015 | *Pembelian* · Purchases | `/pembelian` | list | purchases (WF-PUR-01; WF-PUR-02) | SCR-15 · *Menu* › *Pembelian* | NAV-015 · ROUTE-015 |
 | PG-016 | *Detail Pembelian* · Purchase | `/pembelian/{id}` | record workspace | lines with received and remaining, charges and their allocation, receipts, disbursements, documents (WF-PUR-01–WF-PUR-03) | SCR-16 · the list, a work row, *Rincian proyek* › *Pengadaan* | NAV-016 · ROUTE-016 |
 | PG-017 | *Buat Pembelian* · New purchase | `/pembelian/baru`, a project's shortage prefilled by its public id | form or editor | a purchase with lines and charges, a line linked to a project's demand (WF-PUR-01; WF-PUR-02; AX-29) | SCR-17 · "Buat" › *Pembelian*; the QS-02 work row; the journey's *Gudang* stage, RS-9 | NAV-017 · ROUTE-017 |
 | PG-018 | *Stok* · Stock | `/gudang/stok` | list | pooled availability per product ([CALC-01](../02-domain/BUSINESS_RULES.md#5-calculation-semantics); PJ-01), each product named with its SKU and each quantity with its unit, under one line that says what the figures cover and when they were read, with "Muat Ulang"; what needs attention — below its minimum, a difference waiting for the Owner — in one *Perhatian* column; the stock value of the viewer's own companies as a card per company; and the warehouse pages the account may open, beside the list | SCR-18 · *Gudang* › *Stok*, RS-2 | NAV-018 · ROUTE-018 |
 | PG-019 | *Detail Stok Produk* · Product stock | `/gudang/stok/{id}` | record workspace | racks, lots, serials, reservations and recent movements of one product, named with its SKU and each quantity with its unit (PJ-01–PJ-04) | SCR-19 · from *Stok*, search and scan | NAV-019 · ROUTE-019 |
-| PG-020 | *Riwayat Stok* · Stock history | `/gudang/riwayat-stok` | list | movement history (PJ-03) | SCR-20 · *Gudang* › *Lainnya*, dense | NAV-020 · ROUTE-020 |
+| PG-020 | *Riwayat Stok* · Stock history | `/gudang/riwayat-stok` | list | movement history (PJ-03) | SCR-20 · *Gudang* › *Riwayat Stok*, dense | NAV-020 · ROUTE-020 |
 | PG-021 | *Barang Masuk* · Goods receiving | `/gudang/barang-masuk` | work queue | the receiving worklist — open purchase remainders (QS-05; PJ-18) | SCR-21's worklist · *Gudang* › *Barang Masuk* | NAV-021 · ROUTE-021 |
 | PG-022 | *Terima Barang* · Receive goods | `/gudang/barang-masuk/{id}`, the purchase | task step | receive one purchase line by line, scan-led — the three outcomes, the rack, the same-action reservation offer, the summary, [DOC-12](../01-product/V1_SCOPE.md#selectable-document-catalog) on request (WF-INV-01; AX-04; IP-19) | SCR-21's task · R1 f), RS-10 — work rows, "Mulai Terima Barang", "Buat" › *Barang Masuk* | NAV-022 · ROUTE-022 |
 | PG-023 | *Barang Keluar* · Goods dispatch | `/gudang/barang-keluar` | work queue | the dispatch worklist of remaining reservations (CALC-02) | SCR-22's worklist · *Gudang* › *Barang Keluar*; *Pekerjaan*'s link (QUERY_BUDGET_CHECKS §3.4) | NAV-023 · ROUTE-023 |
 | PG-024 | *Keluarkan Barang* · Dispatch goods | `/gudang/barang-keluar/{id}`, the project | task step | dispatch a project's reserved lines, scan-led, lots and serials confirmed; the Surat Jalan on request (WF-INV-03; WF-INV-07; AX-03) | SCR-22's task · the work rows "Catat Barang Keluar" and "Keluarkan barang" | NAV-024 · ROUTE-024 |
 | PG-025 | *Reservasi* · Reservations | `/gudang/reservasi` | list | reserve, reduce and release (WF-INV-02; AX-01; AX-02) | SCR-23 · *Gudang* › *Reservasi*; *Rincian proyek* › *Item dan pemenuhan* | NAV-025 · ROUTE-025 |
 | PG-026 | *Stok Opname* · Stock count | `/gudang/stok-opname` | list | counts, their lines and their application (WF-INV-05; AX-06) | SCR-24 · *Gudang* › *Stok Opname* | NAV-026 · ROUTE-026 |
-| PG-027 | *Penyesuaian & Kondisi* · Adjustments and condition | `/gudang/penyesuaian` | form or editor | condition change, disposal, shrinkage and loss (WF-INV-04; WF-INV-06; AX-06; AX-30) | SCR-25 · *Gudang* › *Lainnya* | NAV-027 · ROUTE-027 |
-| PG-028 | *Retur ke Pemasok* · Supplier return | `/gudang/retur-pemasok` | record workspace | a purchase return and its case (WF-PUR-03; AX-11) | SCR-26 · *Gudang* › *Lainnya*; the purchase page | NAV-028 · ROUTE-028 |
-| PG-029 | *Selisih & Temuan* · Discrepancies and findings | `/gudang/selisih-temuan` | list | the Owner's attribution of pending losses and count surpluses; an ADM+ evidence resolution (SF-UNATTRIBUTED; AX-07; AX-37) | SCR-27 · *Beranda*'s decision rows (QS-22, QS-18); *Gudang* › *Lainnya* | NAV-029 · ROUTE-029 |
+| PG-027 | *Penyesuaian & Kondisi* · Adjustments and condition | `/gudang/penyesuaian` | form or editor | condition change, disposal, shrinkage and loss (WF-INV-04; WF-INV-06; AX-06; AX-30) | SCR-25 · *Gudang* › *Penyesuaian & Kondisi* | NAV-027 · ROUTE-027 |
+| PG-028 | *Retur ke Pemasok* · Supplier return | `/gudang/retur-pemasok` | record workspace | a purchase return and its case (WF-PUR-03; AX-11) | SCR-26 · *Gudang* › *Retur ke Pemasok*; the purchase page | NAV-028 · ROUTE-028 |
+| PG-029 | *Selisih & Temuan* · Discrepancies and findings | `/gudang/selisih-temuan` | list | the Owner's attribution of pending losses and count surpluses; an ADM+ evidence resolution (SF-UNATTRIBUTED; AX-07; AX-37) | SCR-27 · *Beranda*'s decision rows (QS-22, QS-18); *Gudang* › *Selisih & Temuan* | NAV-029 · ROUTE-029 |
 
 | PG | Personas · capability | Field families | Company | Entry points | Tag · phone | Hosts — dialogs, sheets, confirmations |
 | --- | --- | --- | --- | --- | --- | --- |
-| PG-015 | Laras, Dimas (`cost.view`) | S2; S3 cost | a view filter | *Menu lengkap* › *Pembelian* | `[desk]` | "Buat Pembelian" (`purchase.manage`); "Muat Lagi" (IP-18) |
+| PG-015 | Laras, Dimas (`cost.view`) | S2; S3 cost | a view filter | *Menu* › *Pembelian* | `[desk]` | "Buat Pembelian" (`purchase.manage`); "Muat Lagi" (IP-18) |
 | PG-016 | Laras, Dimas (`cost.view`; disbursements `finance.view`) | S2; S3 cost and finance | record | the list; work rows; *Rincian proyek* › *Pengadaan* | `[desk]` | "Terima Barang" (→ PG-022); "Terbitkan PO" (→ PG-036 with its draft, where IP-08's confirmation issues it; `DIR-081` OB-02); ADM+ corrections with their reason (IP-09), absent without the capability (H7-03); "Tandai Terlaksana" on a non-stock line (ROUTE-180; `DIR-101`) |
 | PG-017 | Laras, Dimas (`purchase.manage` with `cost.view`) | S2; S3 cost | new root: the project's company, shown and not chosen, or the chosen company (CS-03; L-05) | "Buat" › *Pembelian*; the QS-02 row, prefilled; the journey's *Gudang* stage | `[desk]` · readable, small edits on the phone | the line editor and charges (IP-13; PT-10); "Rincian lain" (R1 j)); the summary an estimate (UXI-14); save (NX-04) |
 | PG-018 | all three (`stock.view`) | S1; own companies' stock value `cost.view` | pool | *Gudang* › *Stok* | `[both]` · scan or search first; the list before the company values on a phone, the values above the list from 768 px | the filter sheet; the pending line (MSG-41) |
 | PG-019 | all three (`stock.view`) | S1; lot cost `cost.view` (PJ-02) | pool, with the relation marker (PJ-04) | *Stok*; search; scan | `[both]` | "Pindah Lokasi", "Ubah Kondisi", "Catat Penyesuaian Stok", "Mulai Hitungan" by capability; the reservation cut (IP-20) |
-| PG-020 | all three (`stock.view`; project `projects.view`; purchase `cost.view`) | S1; S2; S3 cost | branches and the pool branch | *Gudang* › *Lainnya* | `[both]` · dense | "Balikkan" (`stock.reverse`) with its reason (IP-09) |
+| PG-020 | all three (`stock.view`; project `projects.view`; purchase `cost.view`) | S1; S2; S3 cost | branches and the pool branch | *Gudang* › *Riwayat Stok* | `[both]` · dense | "Balikkan" (`stock.reverse`) with its reason (IP-09) |
 | PG-021 | Laras, Bayu (`stock.receive`, PJ-18) | the receiving projection — no price, tax, charge or cost (PJ-18) | branches — purchases of companies in scope | *Gudang* › *Barang Masuk*; work rows | `[floor]` | "Muat Lagi" (IP-18) |
 | PG-022 | Laras, Bayu (`stock.receive`; the offer `stock.reserve`, absent in S2-R06's variant) | S1; the receiving projection | the purchase's company | work rows; "Mulai Terima Barang"; "Buat" › *Barang Masuk* | `[floor]` · the line checklist, the scan field fixed at the bottom (D-UX-11) | the line sheet — three outcomes, rack, the reservation offer (AX-04; D-UX-12); IP-08's confirmation per line; "Cari Produk"; one answer per line (IP-19); no duplicate warning — AX-04's duplicate is BD-01's identity (BD-13; `DIR-100`); the summary; "Terbitkan Nota Terima Barang" per receiving event (→ PG-036 with its draft, where IP-08's confirmation issues it — on the phone Edit → Preview → Finalize, the floor step (DC-11; AN-6); `DIR-081` OB-02) |
 | PG-023 | Laras, Bayu (`stock.dispatch`) | S1; S2 | branches — projects in scope | *Gudang* › *Barang Keluar*; *Pekerjaan*'s QS-24 "Lihat Semua" (`DIR-077`) | `[floor]` | "Muat Lagi" (IP-18) |
 | PG-024 | Laras, Bayu (`stock.dispatch`); another company's lot only with `stock.allocate_intercompany` (XL-1), held by neither Admin | S1; S2; the relation marker | the project's company; lots: pool | *Pekerjaan*'s QS-24 rows (`DIR-077` CA-07); work rows; the worklist | `[floor]` · scan-led | the oldest-first aid (PJ-01); IP-08's confirmation; a routed refusal (IP-06; MSG-14); IP-05's fungible-duplicate warning; "Terbitkan Surat Jalan" (→ PG-036 with its draft, where IP-08's confirmation issues it; `DIR-081` OB-02) |
 | PG-025 | all three (`stock.reserve`, with `stock.view` and `projects.view`) | S1; S2 | branches; other projects as the marker (PJ-04) | *Gudang* › *Reservasi*; *Rincian proyek* | `[desk]` | "Reservasi", "Kurangi Reservasi", "Lepas" (AX-01; AX-02) |
 | PG-026 | Laras, Bayu (`stock.count`; applying `stock.count_apply`) | S1 | pool | *Gudang* › *Stok Opname*; QS-18 rows | `[floor]` | "Terapkan Selisih" with its reason (AX-06; IP-09); the reservation cut (IP-20); the count sheet's print |
-| PG-027 | Laras, Bayu (`stock.condition`; `stock.adjust`) | S1; the bearer company | pool | *Gudang* › *Lainnya*; the product page | `[floor]` | the reason step (IP-09); the reservation cut (IP-20) |
-| PG-028 | Laras (`purchase_return.record`, with `stock.view` and `cost.view`) | S1; S2; S3 cost | record | *Gudang* › *Lainnya*; the purchase page | `[floor]` | opening the case; stock out (AX-11); "Tutup Kasus" (`cases.close`); the reason step (IP-09) |
-| PG-029 | Laras (`stock.resolve_unattributed`, `stock.attribute_surplus`); an ADM+ holder of `stock.resolve_unattributed_evidence` under PJ-07 | S1; the case snapshot (RD-09) | pool | *Beranda*'s decision rows (QS-22, QS-18); *Gudang* › *Lainnya* | `[desk]` | "Tetapkan Perusahaan", "Tetapkan dengan Bukti", "Tetapkan Surplus", "Balikkan Penetapan", each with its reason (IP-09) |
+| PG-027 | Laras, Bayu (`stock.condition`; `stock.adjust`) | S1; the bearer company | pool | *Gudang* › *Penyesuaian & Kondisi*; the product page | `[floor]` | the reason step (IP-09); the reservation cut (IP-20) |
+| PG-028 | Laras (`purchase_return.record`, with `stock.view` and `cost.view`) | S1; S2; S3 cost | record | *Gudang* › *Retur ke Pemasok*; the purchase page | `[floor]` | opening the case; stock out (AX-11); "Tutup Kasus" (`cases.close`); the reason step (IP-09) |
+| PG-029 | Laras (`stock.resolve_unattributed`, `stock.attribute_surplus`); an ADM+ holder of `stock.resolve_unattributed_evidence` under PJ-07 | S1; the case snapshot (RD-09) | pool | *Beranda*'s decision rows (QS-22, QS-18); *Gudang* › *Selisih & Temuan* | `[desk]` | "Tetapkan Perusahaan", "Tetapkan dengan Bukti", "Tetapkan Surplus", "Balikkan Penetapan", each with its reason (IP-09) |
 
 ### 8.4 Fulfilment, cases and documents
 
 | PG | Name — Indonesian · English (proposed) | Route | Kind | Purpose | SCR · R1 element | Contracts |
 | --- | --- | --- | --- | --- | --- | --- |
-| PG-030 | *Pengiriman* · Deliveries | `/gudang/pengiriman` | list | shipments not yet delivered, and delivery records (WF-FUL-02) | SCR-28 · QS-06 rows; *Rincian proyek* › *Pengiriman*; *Gudang* › *Lainnya* › *Pengiriman* | NAV-030 · ROUTE-030 |
+| PG-030 | *Pengiriman* · Deliveries | `/gudang/pengiriman` | list | shipments not yet delivered, and delivery records (WF-FUL-02) | SCR-28 · QS-06 rows; *Rincian proyek* › *Pengiriman*; *Gudang* › *Pengiriman* | NAV-030 · ROUTE-030 |
 | PG-031 | *Catat Pengiriman* · Record delivery | `/gudang/pengiriman/{id}`, the shipment | form or editor | the delivery record and its discrepancy (WF-FUL-02; AX-09) | SCR-29 · the journey's primary action; the work row | NAV-031 · ROUTE-031 |
 | PG-032 | *Kirim Langsung* · Direct shipment | `/proyek/{id}/kirim-langsung` | form or editor | drop-ship confirmation (WF-FUL-03; AX-08) | SCR-30 · the journey's *Kirim langsung* stage | NAV-032 · ROUTE-032 |
 | PG-033 | *Serah Terima Jasa* · Service handover | `/proyek/{id}/serah-terima` | form or editor | the service handover (WF-FUL-04) with its BAST draft in the document composer — on the desktop the handover's form on the left and the live preview of the BAST on the right (DESIGN_SYSTEM D-DS-23; `DIR-079` CD-04) | SCR-31 · the journey's *Jasa* stage and its primary action | NAV-033 · ROUTE-033 |
 | PG-034 | *Retur dari Klien* · Client return | `/proyek/{id}/retur` | record workspace | a sales return and its case (WF-FUL-05; AX-10) | SCR-32 · *Rincian proyek* › *Pengiriman*; *Tindakan Lain*; §7.3 | NAV-034 · ROUTE-034 |
-| PG-035 | *Dokumen* · Documents | `/dokumen` | list | generated documents (WF-DOC-01) | SCR-34 · *Menu lengkap* › *Dokumen*; the journey's "Kesiapan dokumen" › "Semua dokumen" (RS-8) | NAV-035 · ROUTE-035 |
+| PG-035 | *Dokumen* · Documents | `/dokumen` | list | generated documents (WF-DOC-01) | SCR-34 · *Menu* › *Dokumen*; the journey's "Kesiapan dokumen" › "Semua dokumen" (RS-8) | NAV-035 · ROUTE-035 |
 | PG-036 | *Detail Dokumen* · Document | `/dokumen/{id}` | form or editor | a document's draft composer — carried and entered data on the left and, on the desktop, the live preview marked "DRAF — belum terbit" on the right (DESIGN_SYSTEM D-DS-23; `DIR-079` CD-04) —, its versions, rendition state, issue, revision and void (WF-DOC-01; WF-FIN-08; DC-1–DC-12) | SCR-35 · document readiness and the document list; VC1's composer | NAV-036 · ROUTE-036 |
 | PG-038 | *Bukti* · Evidence | `/dokumen/bukti` | list | evidence — upload, register, versions and links (WF-DOC-02; SF-EVIDENCE) | SCR-36 · *Dokumen* › *Bukti*; "Buat" › *Unggah Dokumen* | NAV-038 · ROUTE-038 |
 | PG-039 | *Dokumen Administrasi* · Administrative documents | `/dokumen/administrasi` | list | the cross-project view of unmet requirement items; each project's checklist sits in its journey's document readiness (WF-ADM-01) | SCR-37 · *Dokumen* › *Dokumen Administrasi*; RS-8 | NAV-039 · ROUTE-039 |
@@ -632,12 +639,12 @@ The **page inventory**: sixty-five pages, PG-001–PG-065 — four outside the s
 
 | PG | Personas · capability | Field families | Company | Entry points | Tag · phone | Hosts — dialogs, sheets, confirmations |
 | --- | --- | --- | --- | --- | --- | --- |
-| PG-030 | all three (`projects.view`; recording `delivery.record`) | S2 | branches | QS-06 rows; *Rincian proyek* › *Pengiriman*; *Gudang* › *Lainnya* › *Pengiriman* | `[both]` | "Catat Pengiriman" (→ PG-031) |
+| PG-030 | all three (`projects.view`; recording `delivery.record`) | S2 | branches | QS-06 rows; *Rincian proyek* › *Pengiriman*; *Gudang* › *Pengiriman* | `[both]` | "Catat Pengiriman" (→ PG-031) |
 | PG-031 | Laras, Bayu (`delivery.record`; closure `delivery.close`; correction `fulfillment.correct`) | S2; S4 DELIVERY_PROOF (PJ-08) | record | the journey's primary action; the work row | `[both]` · one column with photo proof | the evidence upload (IP-16); IP-05's fungible-duplicate warning; "Tutup Pengiriman" with its reason (IP-09); "Terbitkan" — DOC-08 or DOC-10 — (→ PG-036 with its draft, where IP-08's confirmation issues it; `DIR-081` OB-02) |
 | PG-032 | Laras (`dropship.confirm`; reversal `fulfillment.correct`; return `sales_return.record`; cost `cost.view`; the delivery note `documents.issue`) | S2; S3 cost | record | the journey's *Kirim langsung* stage | `[desk]` | "Konfirmasi Kirim Langsung" (AX-08); the confirmation's reversal and a drop-ship return, each with its reason (IP-09; AX-08; AX-10); "Terbitkan Surat Jalan" (→ PG-036 with its draft, where IP-08's confirmation issues it; `DIR-100`) |
 | PG-033 | Laras (`handover.record`) | S2 | record | the journey's *Jasa* stage | `[both]` | the handover; the BAST draft with its preview "DRAF — belum terbit" (DC-2; D-DS-23) |
 | PG-034 | Laras (`sales_return.record`; companions by their capability) | S1; S2 | record | *Rincian proyek* › *Pengiriman*; *Tindakan Lain* | `[both]` | opening the case; the restoration with its reservation offer (AX-10; CM-05); "Tutup Kasus"; IP-09 |
-| PG-035 | all three (`projects.view` for metadata; payload by family, PJ-15) | S2; S3 by family | branches | *Menu lengkap* › *Dokumen*; "Semua dokumen" | `[both]` | the exact number lookup (PF-19) |
+| PG-035 | all three (`projects.view` for metadata; payload by family, PJ-15) | S2; S3 by family | branches | *Menu* › *Dokumen*; "Semua dokumen" | `[both]` | the exact number lookup (PF-19) |
 | PG-036 | Laras, Dimas; Bayu for the operational family (`documents.issue`; revision and void `documents.correct`) | S2; S3 by family (PJ-15) | record | document readiness; the document list; the "Terbitkan …" controls of PG-016, PG-022, PG-024, PG-031 and PG-043 (`DIR-081` OB-02) | `[desk]` · Edit → Preview → Finalize, full-screen, on the phone (DC-11), DOC-12's floor step included (AN-6) | the composer's preview beside the form (DC-2; D-DS-23); IP-08's issue confirmation; revision and void with their reason (IP-09); "Tautkan Kuitansi" (AX-31) |
 | PG-038 | all three (`evidence.view` with the family's view capability; `evidence.upload`) | S4 by family (PJ-08) | branches and pool evidence | *Dokumen* › *Bukti*; "Buat" › *Unggah Dokumen* | `[both]` | the upload sheet (IP-16); duplicate-evidence warnings (IP-05; FL-10); "Jadikan Versi Berlaku" |
 | PG-039 | all three read (`projects.view`); Laras, Dimas act (`requirements.manage`, `requirements.waive`); the Owner's fields Laras (OD-05, OD-06) | S2 | branches | *Dokumen* › *Dokumen Administrasi* | `[desk]` | "Tandai Tidak Berlaku" with its reason (IP-09); the Owner's relaxations |
@@ -654,9 +661,9 @@ The **page inventory**: sixty-five pages, PG-001–PG-065 — four outside the s
 | PG-045 | *Pembayaran* · Payments | `/keuangan/pembayaran` | list | payments and their applications (WF-FIN-03) | SCR-41 · *Keuangan* › *Pembayaran* | NAV-045 · ROUTE-045 |
 | PG-046 | *Catat Pembayaran* · Record payment | `/keuangan/pembayaran/baru` | form or editor | a payment with its same-command applications (WF-FIN-03; AX-18; SF-APPLY) | SCR-42 · "Buat" › *Pembayaran*; the journey's *Pembayaran* stage | NAV-046 · ROUTE-046 |
 | PG-047 | *Potongan* · Deductions | `/keuangan/potongan` | form or editor | fee and tax deduction settlements (WF-FIN-04; AX-21) | SCR-43 · *Keuangan* › *Potongan*; QS-13 rows | NAV-047 · ROUTE-047 |
-| PG-048 | *Kredit Pelanggan* · Customer credit | `/keuangan/kredit-pelanggan` | list | customer credit and refunds (WF-FIN-06) | SCR-44 · *Keuangan* › *Lainnya*; QS-12 rows | NAV-048 · ROUTE-048 |
-| PG-049 | *Pengeluaran & Kas Lain* · Disbursements and other cash | `/keuangan/kas-lain` | list | disbursements, expenses and other Cash-In (WF-FIN-07) | SCR-45 · *Keuangan* › *Lainnya* | NAV-049 · ROUTE-049 |
-| PG-050 | *Mutasi Bank* · Bank statement | `/keuangan/mutasi-bank` | list | bank statement lines and their citation (L-22) | SCR-46 · *Keuangan* › *Lainnya*, dense | NAV-050 · ROUTE-050 |
+| PG-048 | *Kredit Pelanggan* · Customer credit | `/keuangan/kredit-pelanggan` | list | customer credit and refunds (WF-FIN-06) | SCR-44 · *Keuangan* › *Kredit Pelanggan*; QS-12 rows | NAV-048 · ROUTE-048 |
+| PG-049 | *Pengeluaran & Kas Lain* · Disbursements and other cash | `/keuangan/kas-lain` | list | disbursements, expenses and other Cash-In (WF-FIN-07) | SCR-45 · *Keuangan* › *Pengeluaran & Kas Lain* | NAV-049 · ROUTE-049 |
+| PG-050 | *Mutasi Bank* · Bank statement | `/keuangan/mutasi-bank` | list | bank statement lines and their citation (L-22) | SCR-46 · *Keuangan* › *Mutasi Bank*, dense | NAV-050 · ROUTE-050 |
 
 | PG | Personas · capability | Field families | Company | Entry points | Tag · phone | Hosts — dialogs, sheets, confirmations |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -667,18 +674,18 @@ The **page inventory**: sixty-five pages, PG-001–PG-065 — four outside the s
 | PG-045 | Laras, Dimas (`finance.view`; "Terapkan" `payment.apply`) | S3 finance | branches | *Keuangan* › *Pembayaran* | `[both]` | "Terapkan"; corrections with their reason (IP-09) |
 | PG-046 | Laras, Dimas (`payment.record` with `finance.view`, which covers same-command applications) | S3 finance; S4 PAYMENT_PROOF (PJ-08) | new root: the chosen company (CS-03) | "Buat" › *Pembayaran*; the journey's *Pembayaran* stage; *Piutang* | `[both]` · one column with its application step | the application step (AX-18; SF-APPLY); the duplicate-payment warning, continued only with `warnings.override` (IP-05; BD-02); the missing-proof reason (L-29); IP-08's confirmation |
 | PG-047 | Laras (`settlement.record`, with `finance.view` and `evidence.view`) | S3; S4 | record | *Keuangan* › *Potongan*; QS-13 rows | `[desk]` | "Catat Potongan" (AX-21) with its confirmation, reason and evidence (IP-08; IP-09) |
-| PG-048 | Laras, Dimas (`finance.view`; `payment.apply`); refund Laras (`refund.record`) | S3 | branches | *Keuangan* › *Lainnya*; QS-12 rows | `[desk]` | "Terapkan ke Invoice"; "Kembalikan Dana" (AX-23; IP-08; IP-09); "Tahan Kredit" (ROUTE-264; `refund.record`; IP-08; IP-09; `DIR-104`) |
-| PG-049 | Laras, Dimas (`finance.view`; expenses `cost.view`, and the expenses alone with `expense.record`); recording by capability — Laras | S3 | branches | *Keuangan* › *Lainnya* | `[desk]` | each kind's form by capability; a correction (IP-09) |
-| PG-050 | Laras (`bank_statement.record`, with `finance.view` and `evidence.upload`); for another viewer QS-12's bank-line row is text without a link (§9.1) | S3; S4 BANK_STATEMENT | branches | *Keuangan* › *Lainnya* | `[desk]` · dense | recording a line; a void (`cash.correct`, IP-09) |
+| PG-048 | Laras, Dimas (`finance.view`; `payment.apply`); refund Laras (`refund.record`) | S3 | branches | *Keuangan* › *Kredit Pelanggan*; QS-12 rows | `[desk]` | "Terapkan ke Invoice"; "Kembalikan Dana" (AX-23; IP-08; IP-09); "Tahan Kredit" (ROUTE-264; `refund.record`; IP-08; IP-09; `DIR-104`) |
+| PG-049 | Laras, Dimas (`finance.view`; expenses `cost.view`, and the expenses alone with `expense.record`); recording by capability — Laras | S3 | branches | *Keuangan* › *Pengeluaran & Kas Lain* | `[desk]` | each kind's form by capability; a correction (IP-09) |
+| PG-050 | Laras (`bank_statement.record`, with `finance.view` and `evidence.upload`); for another viewer QS-12's bank-line row is text without a link (§9.1) | S3; S4 BANK_STATEMENT | branches | *Keuangan* › *Mutasi Bank* | `[desk]` · dense | recording a line; a void (`cash.correct`, IP-09) |
 
 ### 8.6 Reports, master data, settings and Owner areas
 
 | PG | Name — Indonesian · English (proposed) | Route | Kind | Purpose | SCR · R1 element | Contracts |
 | --- | --- | --- | --- | --- | --- | --- |
-| PG-051 | *Laporan* · Reports | `/laporan` | report | stock, purchase, sales, receivable, payment, profit and cash-flow reports (CAP-11; CAP-17) | SCR-47 · *Menu lengkap* › *Laporan*, dense | NAV-051 · ROUTE-051 |
+| PG-051 | *Laporan* · Reports | `/laporan` | report | stock, purchase, sales, receivable, payment, profit and cash-flow reports (CAP-11; CAP-17) | SCR-47 · *Menu* › *Laporan*, dense | NAV-051 · ROUTE-051 |
 | PG-052 | *Laporan Gabungan* · Consolidated report | `/laporan/gabungan` | report | consolidated figures and the inter-company allocation report (CALC-12) | SCR-48 · *Laporan* › *Laporan Gabungan*; *Beranda*'s "Rincian angka" | NAV-052 · ROUTE-052 |
 | PG-053 | *Ekspor Saya* · My exports | `/laporan/ekspor` | list | the requester's own export requests (HO-09) | SCR-49 · *Laporan* › *Ekspor Saya* | NAV-053 · ROUTE-053 |
-| PG-054 | *Klien* · Clients | `/data-master/klien` | list | client organizations, units and PICs, search-first (WF-MD-02; D-IA-14 KEEP) | SCR-50 · *Menu lengkap* › *Data Master* › *Klien* | NAV-054 · ROUTE-054 |
+| PG-054 | *Klien* · Clients | `/data-master/klien` | list | client organizations, units and PICs, search-first (WF-MD-02; D-IA-14 KEEP) | SCR-50 · *Menu* › *Data Master* › *Klien* | NAV-054 · ROUTE-054 |
 | PG-055 | *Pemasok* · Suppliers | `/data-master/pemasok` | list | suppliers (WF-MD-03) | SCR-51 · *Data Master* › *Pemasok* | NAV-055 · ROUTE-055 |
 | PG-056 | *Produk & Jasa* · Products and services | `/data-master/produk` | list | products and services, their barcodes and labels (WF-MD-04) | SCR-52 · *Data Master* › *Produk & Jasa* | NAV-056 · ROUTE-056 |
 | PG-057 | *Lokasi Rak* · Rack locations | `/data-master/lokasi-rak` | list | racks and minimum stock (WF-MD-05) | SCR-53 · *Data Master* › *Lokasi Rak* | NAV-057 · ROUTE-057 |
@@ -692,7 +699,7 @@ The **page inventory**: sixty-five pages, PG-001–PG-065 — four outside the s
 
 | PG | Personas · capability | Field families | Company | Entry points | Tag · phone | Hosts — dialogs, sheets, confirmations |
 | --- | --- | --- | --- | --- | --- | --- |
-| PG-051 | each report by its read class (RD-02–RD-06) — Laras all; Dimas those of `stock.view`, `projects.view`, `finance.view` and `cost.view`; Bayu the stock report | by read class | branches; one section per company for an Admin (D-IA-12 KEEP) | *Menu lengkap* › *Laporan* | `[desk]` · dense | "Ekspor" (`reports.export`, → PG-053) |
+| PG-051 | each report by its read class (RD-02–RD-06) — Laras all; Dimas those of `stock.view`, `projects.view`, `finance.view` and `cost.view`; Bayu the stock report | by read class | branches; one section per company for an Admin (D-IA-12 KEEP) | *Menu* › *Laporan* | `[desk]` · dense | "Ekspor" (`reports.export`, → PG-053) |
 | PG-052 | Laras (`reports.consolidated`) | consolidated (RD-07) | all companies | *Laporan* › *Laporan Gabungan*; *Beranda*'s "Rincian angka" | `[desk]` · dense | "Ekspor" |
 | PG-053 | Laras (`reports.export`, the requester only) | own requests | own | *Laporan* › *Ekspor Saya* | `[both]` | "Unduh"; "Minta Lagi" |
 | PG-054 | all three — S0 names; units, addresses, PICs `projects.view`; edits `parties.manage` (Laras) | S0; S2 relations (PJ-10) | global; related records by branches | *Data Master* › *Klien* | `[both]` · search-first | search-first creation (PT-27) |
@@ -909,10 +916,10 @@ Lands on *Beranda* (PG-006).
   - *Proyek* (PG-010) › a row › PG-011 › its stages and drill-down: PG-014 (*Kesepakatan*), PG-025 (*Item dan pemenuhan*), PG-016 (*Pengadaan*), PG-030 and PG-031 (*Pengiriman*), PG-032 (*Kirim langsung*), PG-033 (*Jasa*), PG-034 (a delivery's "Retur dari Klien"), PG-036 ("Kesiapan dokumen"), PG-042 ("Buat invoice"), PG-043 (*Keuangan*), PG-046 (*Pembayaran*), PG-012 (*Penyelesaian*, *Tindakan Lain* › "Selesaikan Paksa"); "Buat Proyek" › PG-013.
   - *Pekerjaan* (PG-007) — every group, each row by its signal: QS-01, QS-03 › PG-025; QS-02 › PG-017; QS-04, QS-16 › PG-011; QS-05 › PG-022; QS-06 › PG-031; QS-24 › PG-024, its "Lihat Semua" › PG-023 (`DIR-077` CA-07); QS-07 › PG-040; QS-08, QS-19 › PG-036; QS-09 › PG-044 *Belum Ditagihkan* › PG-043; QS-10, QS-11 › PG-044; QS-12 › PG-048, PG-045, PG-050; QS-13 › PG-047; QS-15 › PG-011; QS-17 › PG-018; QS-18 › PG-026; QS-20, QS-21 › the record.
   - *Tinjauan* (PG-008) › a record.
-- ***Menu lengkap***
+- ***Menu*** — the three groups of §5.3; each module opens in place into its pages
   - *Pembelian* › PG-015 › PG-016; "Buat Pembelian" › PG-017.
-  - *Gudang* › *Stok* PG-018 › PG-019 · *Barang Masuk* PG-021 › PG-022 · *Barang Keluar* PG-023 › PG-024 · *Reservasi* PG-025 · *Stok Opname* PG-026 · *Lainnya* › PG-020, PG-027, PG-028, PG-029, PG-030 › PG-031.
-  - *Keuangan* › *Invoice* PG-041 › PG-043, "Buat Invoice" › PG-042 · *Piutang* PG-044 · *Pembayaran* PG-045, "Catat Pembayaran" › PG-046 · *Potongan* PG-047 · *Lainnya* › PG-048, PG-049, PG-050.
+  - *Gudang* › *Stok* PG-018 › PG-019 · *Barang Masuk* PG-021 › PG-022 · *Barang Keluar* PG-023 › PG-024 · *Reservasi* PG-025 · *Stok Opname* PG-026; after a rule — *Riwayat Stok* PG-020 · *Penyesuaian & Kondisi* PG-027 · *Retur ke Pemasok* PG-028 · *Selisih & Temuan* PG-029 · *Pengiriman* PG-030 › PG-031.
+  - *Keuangan* › *Invoice* PG-041 › PG-043, "Buat Invoice" › PG-042 · *Piutang* PG-044 · *Pembayaran* PG-045, "Catat Pembayaran" › PG-046 · *Potongan* PG-047; after a rule — *Kredit Pelanggan* PG-048 · *Pengeluaran & Kas Lain* PG-049 · *Mutasi Bank* PG-050.
   - *Dokumen* › PG-035 › PG-036 · *Penawaran* PG-037 · *Bukti* PG-038 · *Dokumen Administrasi* PG-039 · *Kasus Koreksi* PG-040.
   - *Laporan* › PG-051 · *Laporan Gabungan* PG-052 · *Ekspor Saya* PG-053.
   - *Data Master* › PG-054, PG-055, PG-056, PG-057, PG-058.
@@ -924,8 +931,8 @@ Lands on *Beranda* (PG-006).
 
 Lands on *Beranda* (PG-006). The same pages as §13.1; the entries differ:
 
-- **Bottom bar** — *Beranda* (PG-006, the first two decision rows, then "Lihat semua keputusan") · *Proyek* (PG-010) · *Cari* (PG-009, full-screen, typed or scanned codes) · *Lainnya*.
-- ***Lainnya* drawer** — *Kerja* › *Pekerjaan* (PG-007), *Tinjauan* (PG-008); *Menu lengkap* › the modules of §13.1; *Akun* › *Akun Saya* (PG-065), *Bahasa tampilan*, *Keluar*.
+- **Bottom bar** — *Beranda* (PG-006, the first two decision rows, then "Lihat semua keputusan") · *Proyek* (PG-010) · *Cari* (PG-009, full-screen, typed or scanned codes) · *Menu*.
+- ***Menu***, full-screen — *Kerja* › *Pekerjaan* (PG-007), *Tinjauan* (PG-008); the groups › the modules of §13.1; *Akun* › *Akun Saya* (PG-065), *Bahasa tampilan*, *Keluar*.
 - **No "Buat"** — new work starts where it is: "Buat Proyek" on PG-010, "Mulai" on a work row (R1 a)). A `[desk]` page opens for reading and small tasks and does not break (this document §8).
 
 ### 13.3 Dimas, Admin Operasional — at the desk
@@ -935,28 +942,28 @@ Lands on *Pekerjaan* (PG-007). ARJ and BTN in scope, so lists carry the company 
 - **Primary entries**
   - *Pekerjaan* (PG-007) — the groups his read classes open ([PJ-13](../05-security/PERMISSIONS_MATRIX.md#73-special-projections)): *Barang: terima, keluarkan, kirim* — QS-01, QS-03 › PG-025; QS-02 › PG-017; QS-04, QS-16 › PG-011; QS-05 › PG-016, receiving not being his (`stock.receive`); QS-06 › PG-030, the delivery record not being his (`delivery.record`); QS-24 › PG-011, dispatching not being his (`stock.dispatch`); QS-17 › PG-018; QS-18's open findings and stale counts › PG-019, counting not being his (`stock.count`); QS-20 › the record — *Dokumen dan kasus* — QS-07 › PG-040; QS-08 › PG-036; QS-21 › the record — *Tagihan dan pembayaran* (`finance.view`) — QS-09 › PG-044 › PG-043; QS-10, QS-11 › PG-044; QS-12 › PG-048 and PG-045, its bank-line rows text without a link (`bank_statement.record`); QS-13 › PG-043, the settlement not being his (`settlement.record`); QS-19 › PG-036 — *Penyelesaian proyek* — QS-15 › PG-011, money items with `finance.view`.
   - *Proyek* (PG-010) › PG-011 › PG-014, PG-025, PG-016, PG-030, PG-036, PG-042, PG-043, PG-046, PG-012; "Buat Proyek" › PG-013.
-- ***Menu lengkap*** — *Pembelian* › PG-015, PG-016, PG-017 · *Gudang* › *Stok* PG-018 › PG-019 · *Reservasi* PG-025 · *Lainnya* › PG-020, PG-030 — *Barang Masuk*, *Barang Keluar*, *Stok Opname*, *Penyesuaian & Kondisi*, *Retur ke Pemasok* and *Selisih & Temuan* absent · *Keuangan* › *Invoice* PG-041, PG-042, PG-043 · *Piutang* PG-044 · *Pembayaran* PG-045, PG-046 · *Lainnya* › PG-048, PG-049 — *Potongan* and *Mutasi Bank* absent · *Dokumen* › PG-035 to PG-040 · *Laporan* › PG-051, the reports of his read classes — *Laporan Gabungan* and *Ekspor Saya* absent · *Data Master* › PG-054 to PG-057 — *Impor Data Awal* absent.
+- ***Menu*** — *Pembelian* › PG-015, PG-016, PG-017 · *Gudang* › *Stok* PG-018 › PG-019 · *Reservasi* PG-025; after a rule — *Riwayat Stok* PG-020 · *Pengiriman* PG-030 — *Barang Masuk*, *Barang Keluar*, *Stok Opname*, *Penyesuaian & Kondisi*, *Retur ke Pemasok* and *Selisih & Temuan* absent · *Keuangan* › *Invoice* PG-041, PG-042, PG-043 · *Piutang* PG-044 · *Pembayaran* PG-045, PG-046; after a rule — *Kredit Pelanggan* PG-048 · *Pengeluaran & Kas Lain* PG-049 — *Potongan* and *Mutasi Bank* absent · *Dokumen* › PG-035 to PG-040 · *Laporan* › PG-051, the reports of his read classes — *Laporan Gabungan* and *Ekspor Saya* absent · *Data Master* › PG-054 to PG-057 — *Impor Data Awal* absent.
 - **Top bar** — PG-009; "Buat" › *Proyek* PG-013 · *Pembelian* PG-017 · *Pembayaran* PG-046 · *Unggah Dokumen* PG-038; the account menu › PG-065, *Bahasa tampilan*, *Keluar*.
 - **Absent** — *Beranda*, *Tinjauan*, *Aktivitas & Keamanan*, *Pengaturan* and *Laporan Gabungan* (OWNER_ONLY; IA_PAGE_INVENTORY §3.3).
 
 ### 13.4 Dimas — phone
 
-Lands on *Pekerjaan* (PG-007). **Bottom bar** *Pekerjaan* · *Proyek* · *Cari* · *Lainnya*; ***Lainnya*** › *Menu lengkap* (the modules of §13.3) and *Akun* (PG-065, *Bahasa tampilan*, *Keluar*) — no *Kerja* section, which is the Owner's. His `[desk]` pages — the editors of PG-013, PG-014 and PG-017, the composer PG-042 — open for reading and small tasks; the invoice's issue step follows WF-FIN-01's `[desk]` rule (S2-J03).
+Lands on *Pekerjaan* (PG-007). **Bottom bar** *Pekerjaan* · *Proyek* · *Cari* · *Menu*; ***Menu*** › the groups (the modules of §13.3) and *Akun* (PG-065, *Bahasa tampilan*, *Keluar*) — no *Kerja* section, which is the Owner's. His `[desk]` pages — the editors of PG-013, PG-014 and PG-017, the composer PG-042 — open for reading and small tasks; the invoice's issue step follows WF-FIN-01's `[desk]` rule (S2-J03).
 
 ### 13.5 Bayu, Admin Operasional with warehouse grants — phone
 
 Lands on *Pekerjaan* (PG-007). ARJ only in scope, so lists carry no company filter and rows no company code (§7).
 
-- **Bottom bar** — *Pekerjaan* · *Proyek* · *Cari* · *Lainnya*.
+- **Bottom bar** — *Pekerjaan* · *Proyek* · *Cari* · *Menu*.
   - *Pekerjaan* (PG-007) — "Berikutnya" first: "Terima ARJ/PB/2026/0216 — 4 baris belum dicatat" › "Mulai Terima Barang" › PG-022 (R1 f)); then *Barang: terima, keluarkan, kirim* — QS-05 › PG-022 (`stock.receive`, PJ-18); QS-06 › PG-031 (`delivery.record`); QS-24 › PG-024 (`DIR-077` CA-07), its "Lihat Semua" › PG-023; QS-01, QS-03 › PG-025; QS-02, QS-04, QS-16 › PG-011, purchasing not being his; QS-17 › PG-018; QS-18 › PG-026 (`stock.count`); QS-20 › the record — *Dokumen dan kasus* — QS-07 › PG-040; QS-08 › PG-036; QS-21 › the record — *Penyelesaian proyek* — QS-15's non-money items › PG-011. *Tagihan dan pembayaran* does not exist for him (no `finance.view`).
   - *Proyek* (PG-010) › PG-011 without *Posisi keuangan*, *Pengadaan* or money figures (R1 e)).
   - *Cari* (PG-009) — a scanned or typed code › PG-019.
-- ***Lainnya* drawer** — *Menu lengkap* › *Gudang* › *Stok* PG-018 › PG-019 · *Barang Masuk* PG-021 › PG-022 · *Barang Keluar* PG-023 › PG-024 · *Reservasi* PG-025 · *Stok Opname* PG-026 · *Lainnya* › PG-020, PG-027, PG-030 › PG-031 — *Retur ke Pemasok* and *Selisih & Temuan* absent · *Dokumen* › PG-035 to PG-040, payloads of the operational family only (PJ-15) · *Laporan* › PG-051, the stock report · *Data Master* › PG-054 to PG-057; *Akun* › PG-065, *Bahasa tampilan*, *Keluar*.
+- ***Menu*** — *Gudang* › *Stok* PG-018 › PG-019 · *Barang Masuk* PG-021 › PG-022 · *Barang Keluar* PG-023 › PG-024 · *Reservasi* PG-025 · *Stok Opname* PG-026; after a rule — *Riwayat Stok* PG-020 · *Penyesuaian & Kondisi* PG-027 · *Pengiriman* PG-030 › PG-031 — *Retur ke Pemasok* and *Selisih & Temuan* absent · *Dokumen* › PG-035 to PG-040, payloads of the operational family only (PJ-15) · *Laporan* › PG-051, the stock report · *Data Master* › PG-054 to PG-057; *Akun* › PG-065, *Bahasa tampilan*, *Keluar*.
 - **Absent** — *Pembelian* and *Keuangan* (no `cost.view`, no `finance.view`), "Buat" (the phone starts work where it is), and every OWNER_ONLY area.
 
 ### 13.6 Reachability
 
-Every page against every persona and a **full Admin** — an Admin holding every ADM and ADM_PLUS capability (63 of [PERMISSIONS_MATRIX](../05-security/PERMISSIONS_MATRIX.md#permissions-matrix) §4) in all three companies, who shows every page an Admin can reach. Each cell gives the path from the landing page — *Beranda* for Laras, *Pekerjaan* for an Admin — on the desktop, for Bayu on his phone, or "absent" with the capability not held; "the same" repeats the path of the column before it, the first step on Bayu's phone going through the bottom bar or *Lainnya* (§1.5). The phone reaches the same pages as the desktop (§1.2, §1.4).
+Every page against every persona and a **full Admin** — an Admin holding every ADM and ADM_PLUS capability (63 of [PERMISSIONS_MATRIX](../05-security/PERMISSIONS_MATRIX.md#permissions-matrix) §4) in all three companies, who shows every page an Admin can reach. Each cell gives the path from the landing page — *Beranda* for Laras, *Pekerjaan* for an Admin — on the desktop, for Bayu on his phone, or "absent" with the capability not held; "the same" repeats the path of the column before it, the first step on Bayu's phone going through the bottom bar or *Menu* (§1.5). The phone reaches the same pages as the desktop (§1.2, §1.4).
 
 | PG | Laras (Owner) | Dimas | Bayu | Full Admin |
 | --- | --- | --- | --- | --- |
@@ -974,57 +981,57 @@ Every page against every persona and a **full Admin** — an Admin holding every
 | PG-012 | PG-011 › *Penyelesaian* | PG-011 › *Penyelesaian*; "Selesaikan Proyek" (`projects.complete`) | PG-011 › *Penyelesaian*, read only | PG-011 › *Penyelesaian*, with "Selesaikan Proyek" |
 | PG-013 | "Buat" › *Proyek*; *Proyek* › "Buat Proyek" | the same | absent — `projects.manage` | the same as Dimas |
 | PG-014 | PG-011 › *Kesepakatan* | PG-011 › *Kesepakatan* | absent — `quotation.manage` | PG-011 › *Kesepakatan* |
-| PG-015 | *Menu lengkap* › *Pembelian* | the same | absent — `cost.view` | the same |
+| PG-015 | *Menu* › *Pembelian* | the same | absent — `cost.view` | the same |
 | PG-016 | *Pembelian* › row; PG-011 › *Pengadaan* | the same; *Pekerjaan* › QS-05 row | absent — `cost.view` | the same as Dimas |
 | PG-017 | "Buat" › *Pembelian*; PG-015 › "Buat Pembelian"; *Pekerjaan* › QS-02 row; PG-011 › *Gudang* stage | the same | absent — `purchase.manage` | the same |
-| PG-018 | *Menu lengkap* › *Gudang* › *Stok* | the same | *Lainnya* › *Menu lengkap* › *Gudang* › *Stok* | the same as Dimas |
+| PG-018 | *Menu* › *Gudang* › *Stok* | the same | *Menu* › *Gudang* › *Stok* | the same as Dimas |
 | PG-019 | *Stok* › product; search or scan | the same | the same | the same |
-| PG-020 | *Gudang* › *Lainnya* › *Riwayat Stok* | the same | the same | the same |
+| PG-020 | *Gudang* › *Riwayat Stok* | the same | the same | the same |
 | PG-021 | *Gudang* › *Barang Masuk*; "Buat" › *Barang Masuk* | absent — `stock.receive` | *Gudang* › *Barang Masuk* | the same as Laras |
 | PG-022 | *Pekerjaan* › QS-05 row; PG-021 › purchase | absent — `stock.receive` | *Pekerjaan* › "Berikutnya" › "Mulai Terima Barang"; QS-05 row; PG-021 › purchase | *Pekerjaan* › QS-05 row; PG-021 › purchase |
 | PG-023 | *Gudang* › *Barang Keluar*; *Pekerjaan* › QS-24's "Lihat Semua" | absent — `stock.dispatch` | the same as Laras | the same as Laras |
 | PG-024 | *Pekerjaan* › QS-24 row; PG-023 › project | absent — `stock.dispatch` | the same as Laras | the same as Laras |
 | PG-025 | *Gudang* › *Reservasi*; *Pekerjaan* › QS-01 or QS-03 row; PG-011 › *Item dan pemenuhan* | the same | the same | the same |
 | PG-026 | *Gudang* › *Stok Opname*; *Pekerjaan* › QS-18 row | absent — `stock.count` | the same as Laras | the same as Laras |
-| PG-027 | *Gudang* › *Lainnya* › *Penyesuaian & Kondisi*; PG-019's actions | absent — `stock.condition`, `stock.adjust` | the same as Laras | the same as Laras |
-| PG-028 | *Gudang* › *Lainnya* › *Retur ke Pemasok*; PG-016 | absent — `purchase_return.record` | absent — `purchase_return.record` | the same as Laras |
-| PG-029 | *Beranda* › QS-22 or QS-18 decision row; *Gudang* › *Lainnya* | absent — `stock.resolve_unattributed_evidence` | absent — `stock.resolve_unattributed_evidence` | *Gudang* › *Lainnya* › *Selisih & Temuan*, the evidence resolution only (PJ-07) |
-| PG-030 | *Gudang* › *Lainnya* › *Pengiriman*; *Pekerjaan* › QS-06 row; PG-011 › *Pengiriman* | the same | the same | the same |
+| PG-027 | *Gudang* › *Penyesuaian & Kondisi*; PG-019's actions | absent — `stock.condition`, `stock.adjust` | the same as Laras | the same as Laras |
+| PG-028 | *Gudang* › *Retur ke Pemasok*; PG-016 | absent — `purchase_return.record` | absent — `purchase_return.record` | the same as Laras |
+| PG-029 | *Beranda* › QS-22 or QS-18 decision row; *Gudang* › *Selisih & Temuan* | absent — `stock.resolve_unattributed_evidence` | absent — `stock.resolve_unattributed_evidence` | *Gudang* › *Selisih & Temuan*, the evidence resolution only (PJ-07) |
+| PG-030 | *Gudang* › *Pengiriman*; *Pekerjaan* › QS-06 row; PG-011 › *Pengiriman* | the same | the same | the same |
 | PG-031 | PG-011's primary action "Catat Pengiriman"; *Pekerjaan* › QS-06 row; PG-030 › shipment | absent — `delivery.record` | the same as Laras | the same as Laras |
 | PG-032 | PG-011 › *Kirim langsung* | absent — `dropship.confirm` | absent — `dropship.confirm` | PG-011 › *Kirim langsung* |
 | PG-033 | PG-011 › *Jasa* | absent — `handover.record` | absent — `handover.record` | PG-011 › *Jasa* |
 | PG-034 | PG-011 › *Pengiriman* › a delivery › "Retur dari Klien"; PG-030 › a delivered record | absent — `sales_return.record` | absent — `sales_return.record` | the same as Laras |
-| PG-035 | *Menu lengkap* › *Dokumen*; PG-011 › "Kesiapan dokumen" › "Semua dokumen" | the same | the same | the same |
+| PG-035 | *Menu* › *Dokumen*; PG-011 › "Kesiapan dokumen" › "Semua dokumen" | the same | the same | the same |
 | PG-036 | PG-035 › document; PG-011 › "Kesiapan dokumen" › item; *Pekerjaan* › QS-08 or QS-19 row | the same | the same, payloads of the operational family only (PJ-15) | the same as Laras |
 | PG-037 | *Dokumen* › *Penawaran* | the same | the same, without values | the same |
 | PG-038 | *Dokumen* › *Bukti*; "Buat" › *Unggah Dokumen* | the same | *Dokumen* › *Bukti* | the same as Laras |
 | PG-039 | *Dokumen* › *Dokumen Administrasi* | the same | the same, read only | the same |
 | PG-040 | *Dokumen* › *Kasus Koreksi*; *Pekerjaan* › QS-07 row; PG-011 › *Retur dan koreksi* | the same | the same | the same |
-| PG-041 | *Menu lengkap* › *Keuangan* › *Invoice* | the same | absent — `finance.view` | the same |
+| PG-041 | *Menu* › *Keuangan* › *Invoice* | the same | absent — `finance.view` | the same |
 | PG-042 | PG-011 › *Invoice* › "Buat invoice"; PG-041 › "Buat Invoice" | the same; *Pekerjaan* › QS-15 row › PG-011 › "Buat invoice" | absent — `invoice.issue` | the same as Dimas |
 | PG-043 | PG-041 › row; PG-011 › *Keuangan*; *Pekerjaan* › QS-09 row › PG-044 › row | the same | absent — `finance.view` | the same |
 | PG-044 | *Beranda* › QS-10 or QS-11 decision row; *Keuangan* › *Piutang* | *Keuangan* › *Piutang*; *Pekerjaan* › QS-09, QS-10 or QS-11 row | absent — `finance.view` | the same as Dimas |
 | PG-045 | *Keuangan* › *Pembayaran*; *Pekerjaan* › QS-12 row | the same | absent — `finance.view` | the same |
 | PG-046 | "Buat" › *Pembayaran*; PG-011 › *Pembayaran*; PG-044 › "Catat Pembayaran" | the same | absent — `payment.record` | the same |
 | PG-047 | *Keuangan* › *Potongan*; *Pekerjaan* › QS-13 row | absent — `settlement.record` | absent — `settlement.record` | the same as Laras |
-| PG-048 | *Keuangan* › *Lainnya* › *Kredit Pelanggan*; *Pekerjaan* › QS-12 row | the same | absent — `finance.view` | the same |
-| PG-049 | *Keuangan* › *Lainnya* › *Pengeluaran & Kas Lain* | the same | absent — `finance.view` | the same |
-| PG-050 | *Keuangan* › *Lainnya* › *Mutasi Bank*; *Pekerjaan* › QS-12's bank-line row | absent — `bank_statement.record` | absent — `finance.view`, `bank_statement.record` | the same as Laras |
-| PG-051 | *Menu lengkap* › *Laporan* | the same, the reports of his read classes | the same, the stock report | the same, every report but the consolidated one |
+| PG-048 | *Keuangan* › *Kredit Pelanggan*; *Pekerjaan* › QS-12 row | the same | absent — `finance.view` | the same |
+| PG-049 | *Keuangan* › *Pengeluaran & Kas Lain* | the same | absent — `finance.view` | the same |
+| PG-050 | *Keuangan* › *Mutasi Bank*; *Pekerjaan* › QS-12's bank-line row | absent — `bank_statement.record` | absent — `finance.view`, `bank_statement.record` | the same as Laras |
+| PG-051 | *Menu* › *Laporan* | the same, the reports of his read classes | the same, the stock report | the same, every report but the consolidated one |
 | PG-052 | *Laporan* › *Laporan Gabungan*; *Beranda* › "Rincian angka" | absent — `reports.consolidated` | absent — `reports.consolidated` | absent — `reports.consolidated` |
 | PG-053 | *Laporan* › *Ekspor Saya* | absent — `reports.export` | absent — `reports.export` | the same as Laras |
-| PG-054 | *Menu lengkap* › *Data Master* › *Klien* | the same | the same | the same |
+| PG-054 | *Menu* › *Data Master* › *Klien* | the same | the same | the same |
 | PG-055 | *Data Master* › *Pemasok* | the same | the same | the same |
 | PG-056 | *Data Master* › *Produk & Jasa* | the same | the same | the same |
 | PG-057 | *Data Master* › *Lokasi Rak* | the same | the same | the same |
 | PG-058 | *Data Master* › *Impor Data Awal* | absent — `import.prepare` | absent — `import.prepare` | the same as Laras, preparing only (`import.commit` is OWNER_ONLY) |
-| PG-059 | *Menu lengkap* › *Pengaturan* › *Perusahaan* | absent — `companies.manage` | absent — `companies.manage` | absent — `companies.manage` |
+| PG-059 | *Menu* › *Pengaturan* › *Perusahaan* | absent — `companies.manage` | absent — `companies.manage` | absent — `companies.manage` |
 | PG-060 | *Pengaturan* › *Pengguna & Akses*; *Beranda* › the security notice | absent — `users.manage`, `permissions.manage` | absent — `users.manage`, `permissions.manage` | absent — `users.manage`, `permissions.manage` |
 | PG-061 | *Pengaturan* › *Penomoran Dokumen* | absent — `companies.manage` | absent — `companies.manage` | absent — `companies.manage` |
 | PG-062 | *Pengaturan* › *Pajak* | absent — `tax.configure` | absent — `tax.configure` | absent — `tax.configure` |
-| PG-063 | *Menu lengkap* › *Aktivitas & Keamanan* › *Riwayat Aktivitas* | absent — `audit.view` | absent — `audit.view` | absent — `audit.view` |
+| PG-063 | *Menu* › *Aktivitas & Keamanan* › *Riwayat Aktivitas* | absent — `audit.view` | absent — `audit.view` | absent — `audit.view` |
 | PG-064 | *Aktivitas & Keamanan* › *Log Keamanan*; *Beranda* › the security notice | absent — `security_log.view` | absent — `security_log.view` | absent — `security_log.view` |
-| PG-065 | the account menu › *Akun Saya* | the same | *Lainnya* › *Akun* › *Akun Saya* | the same as Laras |
+| PG-065 | the account menu › *Akun Saya* | the same | *Menu* › *Akun* › *Akun Saya* | the same as Laras |
 
 **Pages reached in the shell (PG-005–PG-065, 61 pages):** Laras 61; Dimas 36; Bayu 30; the full Admin 52 — every page but the nine that only OWNER_ONLY capabilities open: PG-006 (`review.view`), PG-008, PG-052 and PG-059–PG-064. The counts equal IA_PAGE_INVENTORY §8's. Every persona reaches what its grants open and nothing else: each "absent" cell names a capability §1 of IA_PAGE_INVENTORY does not give that persona.
 
@@ -1032,7 +1039,7 @@ Every page against every persona and a **full Admin** — an Admin holding every
 
 | Variation | What changes | Sources |
 | --- | --- | --- |
-| An Admin without `finance.view` — Bayu | *Pekerjaan*'s group *Tagihan dan pembayaran* does not exist; *Keuangan* is absent from *Menu lengkap*; on the journey, *Posisi keuangan* and [QS-15](../03-workflows/WORKFLOWS/s10-14-signals-decisions-traceability.md#10-derived-signals-and-action-queue)'s money items are absent; documents of the finance family show their metadata without payload ([PJ-15](../05-security/PERMISSIONS_MATRIX.md#73-special-projections)) | this document §9; R1 b) and e); PJ-13; PJ-15 |
+| An Admin without `finance.view` — Bayu | *Pekerjaan*'s group *Tagihan dan pembayaran* does not exist; *Keuangan* is absent from *Menu*; on the journey, *Posisi keuangan* and [QS-15](../03-workflows/WORKFLOWS/s10-14-signals-decisions-traceability.md#10-derived-signals-and-action-queue)'s money items are absent; documents of the finance family show their metadata without payload ([PJ-15](../05-security/PERMISSIONS_MATRIX.md#73-special-projections)) | this document §9; R1 b) and e); PJ-13; PJ-15 |
 | An Admin without `stock.view` | every pooled view is denied — *Gudang*'s stock pages, S1 search facets and props, availability on the journey —, and with it every capability that needs it (RG-06): reservation, receiving, dispatch, counting; such an Admin still sees the S2–S4 records of the families granted, never another company's (the AC-13 resolution) | PERMISSIONS_MATRIX §3 (AC-13 resolution), §4, RG-06; PJ-01 |
 | One company in scope — Bayu | no company filter; a list names the company once in its header and its rows carry no company label | §7; CS-02 |
 | Several companies in scope — Dimas | the filter "Tampilkan: Semua perusahaan" on every list and on *Pekerjaan*; every row carries its company code; every count is per company — "ARJ 4 · BTN 2" —, never summed | CS-08; [PF-15](../06-api-performance/PERFORMANCE.md#4-pagination); PF-41; R1 b) |
@@ -1048,8 +1055,8 @@ From the landing page to the task's first page, for each task of the [persona ta
 | Laras | the period position and what needs attention | *Beranda* (PG-006) | 0 |
 | Laras | review recorded activity | *Tinjauan* (PG-008) | 1 |
 | Laras | look up a project, invoice or receivable, often on the phone | *Cari* › the record (PG-009 › PG-011, PG-043 or PG-044) | 2 |
-| Laras | reports per company and consolidated | *Menu lengkap* › *Laporan* (PG-051) or *Laporan Gabungan* (PG-052); *Beranda* › "Rincian angka" | 2–3 |
-| Laras | accounts, grants and credential links | *Menu lengkap* › *Pengaturan* › *Pengguna & Akses* (PG-060) | 3 |
+| Laras | reports per company and consolidated | *Menu* › *Laporan* (PG-051) or *Laporan Gabungan* (PG-052); *Beranda* › "Rincian angka" | 2–3 |
+| Laras | accounts, grants and credential links | *Menu* › *Pengaturan* › *Pengguna & Akses* (PG-060) | 3 |
 | Laras | the attribution of unexplained losses and count surpluses | *Beranda* › the decision row › PG-029 | 1 |
 | Laras | write-off | *Beranda* › the [QS-10](../03-workflows/WORKFLOWS/s10-14-signals-decisions-traceability.md#10-derived-signals-and-action-queue) row › PG-044 › the invoice (PG-043) › "Hapuskan Piutang" | 3 |
 | Laras | Force Complete | *Proyek* › row › PG-011 › *Tindakan Lain* › "Selesaikan Paksa" (PG-012) | 4 |
@@ -1072,7 +1079,7 @@ From the landing page to the task's first page, for each task of the [persona ta
 | Bayu | dispatch | *Pekerjaan* › a QS-24 row › "Keluarkan Barang" (PG-024) | 1 — OQ-03's option (b), decided (`DIR-077` CA-07) |
 | Bayu | checking stock and racks | *Cari* › a scanned or typed code (PG-019) | 2 |
 | Bayu | delivery records | *Pekerjaan* › QS-06 row › "Catat Pengiriman" (PG-031) | 1 |
-| Bayu | stock opname | *Pekerjaan* › QS-18 row (PG-026); *Lainnya* › *Menu lengkap* › *Gudang* › *Stok Opname* | 1–4 |
+| Bayu | stock opname | *Pekerjaan* › QS-18 row (PG-026); *Menu* › *Gudang* › *Stok Opname* | 1–4 |
 | Bayu | condition changes and losses | *Cari* › PG-019 › "Ubah Kondisi" or "Catat Penyesuaian Stok" (PG-027) | 3 |
 
 Every frequent task of the Admin at the desk and of the warehouse persona has a path of at most three steps from *Pekerjaan*, "Buat" or the project; dispatch now takes one step, through QS-24 in *Pekerjaan* (`DIR-077` CA-07; [QB-10](../06-api-performance/PERFORMANCE.md#6-query-budgets) as amended).
@@ -1105,7 +1112,7 @@ R1 kept five Stage 1 notes for Stage 2 ([revised non-loss map](evidence/P7_REBAS
 ### 14.4 SCR-33 — *Kasus Koreksi*, its cross-project home
 
 - **Question.** Where the cross-project list of correction cases lives, since cases also arise from purchases and stock (SCR-26), not only from projects.
-- **Options.** (a) *Menu lengkap* › *Dokumen* › *Kasus Koreksi* (PG-040), beside the documents, as *Pekerjaan*'s group *Dokumen dan kasus* pairs them. (b) A module of its own in *Menu lengkap*, as §5 had an area *Kasus Koreksi*. (c) Under *Proyek*, as Stage 1 prototyped it — narrower than the cases' origins.
+- **Options.** (a) *Menu* › *Dokumen* › *Kasus Koreksi* (PG-040), beside the documents, as *Pekerjaan*'s group *Dokumen dan kasus* pairs them. (b) A module of its own in *Menu*, as §5 had an area *Kasus Koreksi*. (c) Under *Proyek*, as Stage 1 prototyped it — narrower than the cases' origins.
 - **Resolution (Stage 3).** (a), keeping R1's module list unchanged; the open cases also appear in *Pekerjaan* (QS-07) and in the journey's *Retur dan koreksi* condition, and each case is reached from the record that opened it.
 - **Grounds.** §5; R1 a) and b); QS-07; PJ-16; XL-3.
 

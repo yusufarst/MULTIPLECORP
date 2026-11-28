@@ -16,13 +16,13 @@ test.describe.configure({ timeout: 300_000 });
 
 const UUID = /\/pembelian\/[0-9a-f-]{36}$/;
 
-/** PG-015 through the shell: the Owner's primary entries hold no *Pembelian*, so *Menu lengkap* opens it when it is shut (shell.spec.ts). */
+/** PG-015 through the shell: the Owner's primary entries hold no *Pembelian*, so its module in the *Menu* opens it when it is shut (shell.spec.ts). */
 async function openPurchases(page: Page): Promise<void> {
     const nav = page.getByRole('navigation', { name: 'Navigasi utama' }).first();
     const purchases = nav.getByRole('link', { name: 'Pembelian' });
 
     if (!(await purchases.isVisible())) {
-        await nav.getByRole('button', { name: 'Menu lengkap' }).click();
+        await nav.getByRole('button', { name: 'Pembelian', exact: true }).click();
     }
 
     await purchases.click();

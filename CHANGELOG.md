@@ -2,6 +2,10 @@
 
 Status: REVIEW | Updated: 2026-10-23 | Owner: Planning
 
+## Unreleased — 2026-11-28, TASK-099 — the navigation
+
+- Built TASK-099 on its branch `task/TASK-099-navigation`: the three-level *Menu* — eight modules in three groups, 37 pages as leaves —, the 248 px sidebar, the 80 px labelled rail with its drawer and the phone's full-screen *Menu*, K-4's contract text with its code and tests; the term and the group labels proposed. Two pages built long ago — *Dokumen Administrasi* and *Impor* — were hidden from the menu and are reachable again.
+
 ## Unreleased — 2026-11-28, TASK-098 — the design foundation
 
 - Built TASK-098 on its branch `task/TASK-098-design-foundation`: the tokens of the approved working direction (Grafit & Kobalt) with DESIGN_SYSTEM §5's text they must agree with, a text floor of 12 px and the title at 20/28, the skeleton and its 300 ms rule for a region that loads, and D-8's two shared corrections — one helper that never turns a quantity of "100" into "1", and a link drawn as a button no longer typed as one. No page, navigation or business behaviour changes.
